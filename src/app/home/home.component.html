@@ -1,0 +1,27 @@
+<div *ngIf="!loading">
+  <div class="row">
+    <div class="col-sm-3">
+      <h4><u>Vernal Pool Atlas</u></h4>
+      <table class="table table-striped">
+          <tr>
+              <td>Mapped Pools</td>
+              <td>{{count.mapped}}</td>
+          </tr>
+          <tr>
+              <td>Visited Pools</td>
+              <td>{{count.visited}}</td>
+          </tr>
+          <tr>
+              <td>Monitored Pools</td>
+              <td>{{count.monitored}}</td>
+          </tr>
+      </table>
+    </div>
+    <div class="col-sm-9">
+      <app-map [mapPools]="vpmap"></app-map>
+    </div>
+  </div>
+</div>
+<div *ngIf="loading">
+  ...Loading
+</div>

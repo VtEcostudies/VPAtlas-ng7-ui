@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-sm-4">
+    <h4><u>View Mapped Pool Detail</u></h4>
+    <table class="table table-striped">
+        <tr>
+            <td>Mapped Pool ID</td>
+            <td>{{pool.mappedPoolId}}</td>
+        </tr>
+        <tr>
+            <td>Mapped By</td>
+            <td>{{pool.mappedByUser}}</td>
+        </tr>
+        <tr>
+            <td>Source</td>
+            <td>{{pool.mappedSource}}</td>
+        </tr>
+        <tr>
+            <td>Source2</td>
+            <td>{{pool.mappedSource2}}</td>
+        </tr>
+        <tr>
+            <td>Confidence</td>
+            <td>{{pool.mappedConfidence}}</td>
+        </tr>
+        <tr>
+            <td>Latitude</td>
+            <td>{{pool.mappedLatitude}}</td>
+        </tr>
+        <tr>
+            <td>Longitude</td>
+            <td>{{pool.mappedLongitude}}</td>
+        </tr>
+    </table>
+  </div>
+  <div class="col-sm-8">
+    <div *ngIf="!dataLoading">
+      <app-map [mapPools]="vpmap"></app-map>
+    </div>
+    <div *ngIf="dataLoading">
+      ...Loading
+    </div>
+  </div>
+</div>

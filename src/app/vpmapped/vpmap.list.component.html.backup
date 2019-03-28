@@ -1,0 +1,74 @@
+﻿<h2><u>Search Mapped Vernal Pools</u></h2>
+<div class="row">
+  <div class="col-sm-3">
+  <form [formGroup]="filterForm">
+    <div class="row">
+      <div class="form-group col-sm-3">
+        <label for="mappedPoolId">Pool ID (Like)</label>
+        <input (keyup.enter)="firstPage()" type="text" formControlName="mappedPoolId" class="form-control"/>
+      </div>
+      <div class="form-group col-sm-3">
+        <label for="mappedByUser">Mapped By User (Like)</label>
+        <input (keyup.enter)="firstPage()" type="text"  formControlName="mappedByUser" class="form-control"/>
+      </div>
+      <div class="form-group col-sm-3">
+        <label for="mappedConfidence">Confidence (Equals)</label>
+        <input (keyup.enter)="firstPage()" type="text"  formControlName="mappedConfidence" class="form-control"/>
+      </div>
+      <div class="form-group col-sm-3">
+        <label for="mappedLocation">Location (Equals)</label>
+        <input (keyup.enter)="firstPage()" (keyup)="filterLocation()" type="text"  formControlName="mappedLocation" class="form-control"/>
+      </div>
+    </div>
+  </form>
+
+  <button (click)="firstPage()" class="btn btn-link">|< First Page</button>
+  <button (click)="prevPage()" class="btn btn-link"><< Previous Page</button>
+  <button (click)="nextPage()" class="btn btn-link">Next Page >></button>
+  <button (click)="lastPage()" class="btn btn-link">Last Page >|</button>
+  <button (click)="loadAll()" class="btn btn-link">Load All</button>
+  <button class="btn">{{count}} Records</button>
+  <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
+  <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
+
+  </div> <!-- col-sm-3 -->
+
+  <div class="col-sm-9">
+    <div *ngIf="!loading">
+
+      <div *ngIf="!mapView">
+        <table class="table table-striped">
+            <tr>
+                <th>Mapped Pool ID</th>
+                <th>Source</th>
+                <th>Source2</th>
+                <th>Mapped By</th>
+                <th>Confidence</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+            <tr *ngFor="let pool of vpmap">
+                <td><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <td>{{pool.mappedSource}}</td>
+                <td>{{pool.mappedSource2}}</td>
+                <td>{{pool.mappedByUser}}</td>
+                <td>{{pool.mappedConfidence}}</td>
+                <td>{{pool.mappedLatitude}}</td>
+                <td>{{pool.mappedLongitude}}</td>
+            </tr>
+        </table>
+      </div>
+
+      <div *ngIf="mapView">
+        <app-map [mapPools]="vpmap"></app-map>
+      </div>
+
+    </div> <!-- loading -->
+
+    <div *ngIf="loading">
+      ...Loading
+    </div>
+
+  </div><!-- col-sm-9 -->
+
+</div><!-- row -->
