@@ -1,43 +1,137 @@
 ﻿<h2>Map a New Vernal Pool</h2>
 <form [formGroup]="vpMappedForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-        <label for="mappedPoolId">Mapped Pool ID</label>
-        <input type="text" formControlName="mappedPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedPoolId.errors }" />
-        <div *ngIf="submitted && f.mappedPoolId.errors" class="invalid-feedback">
-            <div *ngIf="f.mappedPoolId.errors.required">First Name is required</div>
-        </div>
+  <div class="row">
+    <div class="col-6">
+  <!--
+      mappedPoolId
+  -->
+      <div class="form-group">
+          <label for="mappedPoolId">Mapped Pool ID</label>
+          <input type="text" formControlName="mappedPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedPoolId.errors }" />
+          <div *ngIf="submitted && f.mappedPoolId.errors" class="invalid-feedback">
+              <div *ngIf="f.mappedPoolId.errors.required">Mapped Pool ID is required</div>
+          </div>
+      </div>
+  <!--
+      mappedByUser
+  -->
+      <div class="form-group">
+          <label for="mappedByUser">Mapped By User</label>
+          <input type="text" formControlName="mappedByUser" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedByUser.errors }" />
+          <div *ngIf="submitted && f.mappedByUser.errors" class="invalid-feedback">
+              <div *ngIf="f.mappedByUser.errors.required">Mapped By User is required</div>
+          </div>
+      </div>
+  <!--
+      mappedSource
+  -->
+      <div class="form-group">
+          <label for="mappedSource">Mapped Source</label>
+          <input type="text" formControlName="mappedSource" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedSource.errors }" />
+          <div *ngIf="submitted && f.mappedSource.errors" class="invalid-feedback">
+              <div *ngIf="f.mappedSource.errors.required">Mapped Source is required</div>
+          </div>
+      </div>
+  <!--
+      mappedSourceTwo
+  -->
+      <div class="form-group">
+          <label for="mappedSourceTwo">Mapped Source Two</label>
+          <input type="mappedSourceTwo" formControlName="mappedSourceTwo" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedSourceTwo.errors }" />
+  <!--
+          <div *ngIf="submitted && f.mappedSourceTwo.errors" class="invalid-feedback">
+              <div *ngIf="f.mappedSourceTwo.errors.required">Mapped Source Two is required</div>
+          </div>
+  -->
+      </div>
+  <!--
+      mappedDateText
+  -->
+          <div class="form-group">
+              <label for="mappedDateText">Mapped Date</label>
+              <input type="text" formControlName="mappedDateText" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedDateText.errors }" />
+              <div *ngIf="submitted && f.mappedDateText.errors" class="invalid-feedback">
+                  <div *ngIf="f.mappedDateText.errors.required">Mapped Date is required</div>
+                  <div *ngIf="f.mappedDateText.errors.date">Mapped Date must be a valid date in the format MM/DD/YYYY</div>
+              </div>
+          </div>
+    <!--
+      mappedPhotoNumber
+    -->
+            <div class="form-group">
+                <label for="mappedPhotoNumber">Mapped Photo Number</label>
+                <input type="text" formControlName="mappedPhotoNumber" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedPhotoNumber.errors }" />
+<!--
+                <div *ngIf="submitted && f.mappedPhotoNumber.errors" class="invalid-feedback">
+                    <div *ngIf="f.mappedPhotoNumber.errors.required">Mapped Photo Number is required</div>
+                </div>
+-->
+            </div>
     </div>
-    <div class="form-group">
-        <label for="mappedByUser">Mapped By User</label>
-        <input type="text" formControlName="mappedByUser" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedByUser.errors }" />
-        <div *ngIf="submitted && f.mappedByUser.errors" class="invalid-feedback">
-            <div *ngIf="f.mappedByUser.errors.required">Mapped By User is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="mappedSource">Mapped Source</label>
-        <input type="text" formControlName="mappedSource" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedSource.errors }" />
-        <div *ngIf="submitted && f.mappedSource.errors" class="invalid-feedback">
-            <div *ngIf="f.mappedSource.errors.required">Mapped Source is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="mappedSourceTwo">Mapped Source Two</label>
-        <input type="mappedSourceTwo" formControlName="mappedSourceTwo" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedSourceTwo.errors }" />
-        <div *ngIf="submitted && f.mappedSourceTwo.errors" class="invalid-feedback">
-            <div *ngIf="f.mappedSourceTwo.errors.required">Mapped Source Two is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="replace">replace</label>
-        <input type="text" formControlName="replace" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.replace.errors }" />
-        <div *ngIf="submitted && f.replace.errors" class="invalid-feedback">
-            <div *ngIf="f.replace.errors.required">Mapped Source is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <button [disabled]="loading" class="btn btn-primary">Save</button>
-        <img *ngIf="loading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-        <a routerLink="/vpmapped" class="btn btn-link">Cancel</a>
-    </div>
+    <div class="col-6">
+    <!--
+      mappedConfidence
+    -->
+            <div class="form-group">
+                <label for="mappedConfidence">Mapped Confidence</label>
+                <input type="text" formControlName="mappedConfidence" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedConfidence.errors }" />
+                <div *ngIf="submitted && f.mappedConfidence.errors" class="invalid-feedback">
+                    <div *ngIf="f.mappedConfidence.errors.required">Mapped Confidence is required</div>
+                </div>
+            </div>
+    <!--
+      mappedLocationAccuracy
+    -->
+            <div class="form-group">
+                <label for="mappedLocationAccuracy">Mapped Location Accuracy</label>
+                <input type="text" formControlName="mappedLocationAccuracy" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLocationAccuracy.errors }" />
+                <div *ngIf="submitted && f.mappedLocationAccuracy.errors" class="invalid-feedback">
+                    <div *ngIf="f.mappedLocationAccuracy.errors.required">Mapped Location Accuracy is required</div>
+                </div>
+            </div>
+    <!--
+      mappedComments
+    -->
+            <div class="form-group">
+                <label for="mappedComments">Mapped Comments</label>
+                <input type="text" formControlName="mappedComments" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedComments.errors }" />
+<!--
+                <div *ngIf="submitted && f.mappedComments.errors" class="invalid-feedback">
+                    <div *ngIf="f.mappedComments.errors.required">Mapped Comments is required</div>
+                </div>
+-->
+            </div>
+    <!--
+      mappedLatitude
+    -->
+            <div class="form-group">
+                <label for="mappedLatitude">Mapped Latitude</label>
+                <input type="text" formControlName="mappedLatitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLatitude.errors }" />
+                <div *ngIf="submitted && f.mappedLatitude.errors" class="invalid-feedback">
+                    <div *ngIf="f.mappedLatitude.errors.required">Mapped Latitude is required</div>
+                </div>
+            </div>
+    <!--
+      mappedLongitude
+    -->
+      <div class="form-group">
+          <label for="mappedLongitude">Mapped Longitude</label>
+          <input type="text" formControlName="mappedLongitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLongitude.errors }" />
+          <div *ngIf="submitted && f.mappedLongitude.errors" class="invalid-feedback">
+              <div *ngIf="f.mappedLongitude.errors.required">Mapped Longitude is required</div>
+          </div>
+      </div>
+
+  <!--
+    Action buttons
+  -->
+  <div class="form-group">
+      <button [disabled]="loading" class="btn btn-primary">Save</button>
+      <img *ngIf="loading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+      <a routerLink="/vpmapped" class="btn btn-link">Cancel</a>
+  </div>
+
+    </div> <!-- col -->
+  </div> <!-- row -->
+
 </form>

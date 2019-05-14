@@ -7,7 +7,7 @@ export class pgVpMappedApi {
       oid: string;
       rows: vpMapped[];
       fields: pgFields[];
-      parsers: [];
+      _parsers: [];
       RowCtor: string;
       rowAsArray: boolean;
 };

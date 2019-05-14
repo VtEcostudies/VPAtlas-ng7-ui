@@ -55,17 +55,32 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
         maxNativeZoom: 20,
         zIndex: 0,
         maxZoom: 20
-      });
+      } as any);
 
     const light = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
       {
         id: 'mapbox.light',
         maxNativeZoom: 20,
         maxZoom: 20
-      });
+      } as any);
+
+    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        id: 'esri.topo',
+        maxNativeZoom: 20,
+        maxZoom: 20,
+      	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+      } as any);
+      
+    const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        id: 'open.topo',
+      	maxZoom: 17,
+      	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+      } as any);
 
     this.layerControl.addBaseLayer(streets, "Mapbox Streets");
     this.layerControl.addBaseLayer(light, "Mapbox Grayscale");
+    this.layerControl.addBaseLayer(esriTopo, "ESRI Topo Map");
+    this.layerControl.addBaseLayer(openTopo, "Open Topo Map");
 
     //this.layerControl.setPosition("bottomright");
 
@@ -96,8 +111,10 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     if (this.map) {
       if (this.cmLLArr.length > 1) { //can't zoom to a single point - causes an error
         this.map.fitBounds(this.cmLLArr);
+      } else if (this.cmLLArr.length == 1 ) {
+        this.map.setView(this.cmLLArr[0], 12);
       } else {
-        //this.map.fitBounds(?);
+        //no points in array?
       }
     }
   }
@@ -116,8 +133,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   }
 
   setCmRadius(rad = this.cmRadius) {
-    this.cmGroup.eachLayer(function (layer) {
-      layer.setRadius(rad);
+    this.cmGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
+      cmLayer.setRadius(rad);
     });
   }
 
@@ -157,8 +174,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
       this.cmLLArr.push(llLoc);
 
-      circle.bindPopup(`<a href="pools/mapped/update?mappedPoolId=${vpools[i].mappedPoolId}">
-                        Update Pool ${vpools[i].mappedPoolId}<br>
+      circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].mappedPoolId}">
+                        View Pool ${vpools[i].mappedPoolId}<br>
                         Lat: ${vpools[i].mappedLatitude}<br>
                         Lon:${vpools[i].mappedLongitude}</a><br/>`);
 

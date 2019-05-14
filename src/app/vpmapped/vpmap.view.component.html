@@ -1,14 +1,40 @@
 <div class="row">
   <div class="col-sm-4">
     <h4><u>View Mapped Pool Detail</u></h4>
+<!--
+mappedPoolId
+mappedByUser
+mappedDateText
+mappedConfidence
+mappedShape
+mappedSource
+mappedSourceTwo
+mappedPhotoNumber
+mappedLocationAccuracy
+mappedComments
+mappedLatitude
+mappedLongitude
+-->
     <table class="table table-striped">
         <tr>
-            <td>Mapped Pool ID</td>
+            <td>Pool ID</td>
             <td>{{pool.mappedPoolId}}</td>
         </tr>
         <tr>
             <td>Mapped By</td>
             <td>{{pool.mappedByUser}}</td>
+        </tr>
+        <tr>
+            <td>Date</td>
+            <td>{{pool.mappedDateText}}</td>
+        </tr>
+        <tr>
+            <td>Confidence</td>
+            <td>{{pool.mappedConfidence}}</td>
+        </tr>
+        <tr>
+            <td>Shape</td>
+            <td>{{pool.mappedShape}}</td>
         </tr>
         <tr>
             <td>Source</td>
@@ -19,8 +45,16 @@
             <td>{{pool.mappedSource2}}</td>
         </tr>
         <tr>
-            <td>Confidence</td>
-            <td>{{pool.mappedConfidence}}</td>
+            <td>Photo Number</td>
+            <td>{{pool.mappedPhotoNumber}}</td>
+        </tr>
+        <tr>
+            <td>Location Accuracy</td>
+            <td>{{pool.mappedLocationAccuracy}}</td>
+        </tr>
+        <tr>
+            <td>Comments</td>
+            <td>{{pool.mappedComments}}</td>
         </tr>
         <tr>
             <td>Latitude</td>

@@ -10,11 +10,11 @@ export class vpMapped {
     mappedDateText: string;
     mappedDateUnixSeconds: number;
     mappedByUser: string;
+    mappedByUserId: number;
     mappedPhotoNumber: string;
     mappedConfidence: string;
     mappedLocationAccuracy: string;
     mappedComments: string;
     mappedLatitude: number;
     mappedLongitude: number;
-    mappedByUserId: number;
 }

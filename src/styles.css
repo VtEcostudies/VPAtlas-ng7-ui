@@ -1,4 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+
+/*
+  alter font size in table-condensed
+*/
 .table-condensed{
-  font-size: small;
+  font-size: 18px;
+}
+
+/*
+  make an item topmost in the display.
+  eg. a link on top of the map that does things to the map...
+*/
+.topmost {
+  position: relative;
+  z-index: 999;
 }

@@ -26,18 +26,18 @@ export class vpMapCreateComponent implements OnInit {
 
     ngOnInit() {
         this.vpMappedForm = this.formBuilder.group({
-            mappedPoolId: ['', Validators.required],
-            mappedShape: ['', Validators.required],
-            mappedSource: ['', Validators.required],
-            mappedSourceTwo: ['', Validators.required],
-            mappedDateText: ['', Validators.required],
-            mappedByUser: ['', Validators.required],
-            mappedPhotoNumber: ['', Validators.required],
-            mappedConfidence: ['', Validators.required],
-            mappedLocationAccuracy: ['', Validators.required],
-            mappedComments: ['', Validators.required],
-            mappedLatitude: ['', Validators.required],
-            mappedLongitude: ['', Validators.required]
+            mappedPoolId: ['AAA1', Validators.required],
+            mappedShape: ['Point', Validators.required],
+            mappedSource: ['NRCS', Validators.required],
+            mappedSourceTwo: ['OTHER', Validators.required],
+            mappedDateText: ['1/1/2019', Validators.required],
+            mappedByUser: ['AW', Validators.required],
+            mappedPhotoNumber: ['1234-99Z', Validators.required],
+            mappedConfidence: ['MH', Validators.required],
+            mappedLocationAccuracy: ['L', Validators.required],
+            mappedComments: ['Some comments...', Validators.required],
+            mappedLatitude: ['44.5', Validators.required],
+            mappedLongitude: ['-72.5', Validators.required]
         });
     }
 
@@ -45,10 +45,14 @@ export class vpMapCreateComponent implements OnInit {
     get f() { return this.vpMappedForm.controls; }
 
     onSubmit() {
+
+        console.log(`vpmap.create.onSubmit`);
+
         this.submitted = true;
 
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {
+          console.log(`vpMappedForm.invalid`);
             return;
         }
 
@@ -57,10 +61,12 @@ export class vpMapCreateComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
-                    this.alertService.success('Successfully mappped vernal pool.', true);
+                    console.log(`vpmap.create=>data ${data}`);
+                    this.alertService.success('Successfully mapped vernal pool.', true);
                     this.router.navigate(['/pools/mapped/view']);
                 },
                 error => {
+                    console.log(`vpmap.create=>error: ${error}`);
                     this.alertService.error(error);
                     this.loading = false;
                 });
