@@ -20,6 +20,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   cmGroup = L.layerGroup();
   cmLLArr = [];
   zoom = 0;
+  baseLayer = null;
   vceCenter = new L.LatLng(43.6962, -72.3197); //VCE coordinates
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
   vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
@@ -40,8 +41,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
       "Google Satellite Plus": L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
         {
           subdomains: ["mt0", "mt1", "mt2", "mt3"],
-          maxNativeZoom: 20,
           zIndex: 0,
+          maxNativeZoom: 20,
           maxZoom: 20
         }
       ).addTo(this.map)
@@ -49,30 +50,35 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
     this.layerControl = L.control.layers(googleSat, null, { collapsed: false }).addTo(this.map);
 
+    this.baseLayer = googleSat; //set our tracking variable
+
     const streets = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
       {
         id: 'mapbox.streets',
-        maxNativeZoom: 20,
         zIndex: 0,
+        maxNativeZoom: 20,
         maxZoom: 20
       } as any);
 
     const light = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
       {
         id: 'mapbox.light',
+        zIndex: 0,
         maxNativeZoom: 20,
         maxZoom: 20
       } as any);
 
     const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
         id: 'esri.topo',
+        zIndex: 0,
         maxNativeZoom: 20,
         maxZoom: 20,
       	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
       } as any);
-      
+
     const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         id: 'open.topo',
+        zIndex: 0,
       	maxZoom: 17,
       	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
       } as any);
@@ -84,10 +90,13 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
     //this.layerControl.setPosition("bottomright");
 
-    this.map.on("layeradd", e => this.onLayerAdd(e));
+    //this.map.on("layeradd", e => this.onLayerAdd(e));
+
+    this.map.on("baselayerchange", e => this.onBaseLayerChange(e));
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
-/*
+
+/* use something like this to alter VP location with the map 
     this.marker = L.marker(this.map.getCenter(), {
       draggable: true,
       icon: L.icon({
@@ -101,10 +110,18 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 */
   }
 
+  /*
+    this is magic. this is called when the parent (containing) component's data
+    changes. so, when a map is included on a page with <app-map></app-map>, this
+    event fires when the page's data changes.
+  */
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     console.log('ngOnChanges(changes), changes:', changes);
     this.clearPools();
     this.plotPools(this.mapPools);
+    if (this.map && this.baseLayer) {
+      this.baseLayer.addTo(this.map);
+    }
   }
 
   zoomExtents() {
@@ -119,8 +136,20 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     }
   }
 
+  zoomVermont() {
+    if (this.map) {
+      this.map.setView(this.vtCenter, 8 );
+    }
+  }
+
   onLayerAdd(e) {
     //this.zoomExtents(); //this might be causing huge client-side slowdown and resource hogging...
+  }
+
+  onBaseLayerChange(e) {
+    console.log(`onBaseLayerChange | name: ${e.name}`);
+    //console.dir(e.layer);
+    this.baseLayer = e.layer;
   }
 
   onZoomEnd(e) {
@@ -183,6 +212,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
                         Lat: ${vpools[i].mappedLatitude}<br>
                         Lon:${vpools[i].mappedLongitude}<br>`);
     }
+    //this.baseLayer.addTo(this.map);
   }
 
 }
