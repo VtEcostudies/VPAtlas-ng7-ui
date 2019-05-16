@@ -5,15 +5,19 @@
     <form [formGroup]="filterForm" class="">
         <div class="form-group row">
           <label for="mappedPoolId">Pool ID</label>
-          <input (keyup.enter)="firstPage()" type="text" formControlName="mappedPoolId" class="form-control"/>
+          <!--
+          consider using keyup.enter and keyup.tab instead of keyup?
+          need to see db performance on cloud server to decide...
+          -->
+          <input (keyup)="firstPage()" type="text" formControlName="mappedPoolId" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="mappedByUser">Mapped By User</label>
-          <input (keyup.enter)="firstPage()" type="text"  formControlName="mappedByUser" class="form-control"/>
+          <input (keyup)="firstPage()" type="text"  formControlName="mappedByUser" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="mappedConfidence">Confidence</label>
-          <input (keyup.enter)="firstPage()" type="text"  formControlName="mappedConfidence" class="form-control"/>
+          <input (keyup)="firstPage()" type="text"  formControlName="mappedConfidence" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="mappedLocation">Location</label>

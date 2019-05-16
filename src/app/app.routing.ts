@@ -7,6 +7,7 @@ import { AdminComponent } from './admin';
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
+import { vpMapUpdateComponent } from './vpmapped';
 import { vpMapLeafletComponent } from './vpmapped';
 import { AuthGuard } from './_guards';
 
@@ -19,10 +20,11 @@ const appRoutes: Routes = [
     { path: 'pools/mapped/list', component: vpMapListComponent },
     { path: 'pools/mapped/view/:mappedPoolId', component: vpMapViewComponent },
     { path: 'pools/mapped/create', component: vpMapCreateComponent, canActivate: [AuthGuard] },
+    { path: 'pools/mapped/update/:mappedPoolId', component: vpMapUpdateComponent, canActivate: [AuthGuard] },
     { path: 'pools/mapped/leaflet', component: vpMapLeafletComponent },
 
     // otherwise redirect to home
-    { path: '**', redirectTo: '' }
+    //{ path: '**', redirectTo: '' }
 ];
 
 export const routing = RouterModule.forRoot(appRoutes);

@@ -24,7 +24,7 @@ export class vpMapViewComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-      console.log('ngOnInit route.snapshont params: ', this.route.snapshot.params.mappedPoolId);
+      console.log('vpmap.view.ngOnInit route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
       this.loadPage(this.route.snapshot.params.mappedPoolId);
     }
 

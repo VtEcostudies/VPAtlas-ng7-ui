@@ -1,11 +1,16 @@
+﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, OnChanges, SimpleChange } from "@angular/core";
 import * as L from "leaflet";
+//import { globals } from @app/_service;
+import { uxValuesService } from '@app/_services';
 
 @Component({
   selector: 'app-map',
   templateUrl: 'vpmap.leaflet.component.html',
   styleUrls: ['vpmap.leaflet.component.css']
 })
+
+@Injectable({providedIn: 'root'}) //this makes a service single-instance. what does it do for a component?
 
 export class vpMapLeafletComponent implements OnInit, OnChanges {
   @Input() mapPools : [];
@@ -20,10 +25,64 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   cmGroup = L.layerGroup();
   cmLLArr = [];
   zoom = 0;
-  baseLayer = null;
   vceCenter = new L.LatLng(43.6962, -72.3197); //VCE coordinates
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
   vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
+  googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
+    {
+      id: 'google.sat',
+      name: 'Google Satellite +',
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+      zIndex: 0,
+      maxNativeZoom: 20,
+      maxZoom: 20
+    } as any);
+  streets = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
+    {
+      id: 'mapbox.streets',
+      name: 'Mapbox Streets',
+      zIndex: 0,
+      maxNativeZoom: 20,
+      maxZoom: 20
+    } as any);
+  light = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
+    {
+      id: 'mapbox.light',
+      name: 'Mapbox Light',
+      zIndex: 0,
+      maxNativeZoom: 20,
+      maxZoom: 20
+    } as any);
+  esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      id: 'esri.topo',
+      name: 'ESRI Topo Map',
+      zIndex: 0,
+      maxNativeZoom: 20,
+      maxZoom: 20,
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+    } as any);
+  openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      id: 'open.topo',
+      name: 'Open Topo Map',
+      zIndex: 0,
+      maxZoom: 17,
+      attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    } as any);
+    baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
+    baseLayers = [this.googleSat, this.streets, this.light, this.esriTopo, this.openTopo];
+
+
+  constructor(private uxValuesService: uxValuesService) {
+
+    /*
+      preserve baseLayer shown across page loads with outside service
+      which holds baseLayers[] array index of last-selected baseLayer.
+    */
+    this.baseLayer = this.uxValuesService.baseLayerIndex;
+
+    console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
+
+  }
 
   ngOnInit() {
 
@@ -37,77 +96,17 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
     this.cmGroup.addTo(this.map); //an empty layerGroup for circleMarkers to be added to the map
 
-    const googleSat = {
-      "Google Satellite Plus": L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
-        {
-          subdomains: ["mt0", "mt1", "mt2", "mt3"],
-          zIndex: 0,
-          maxNativeZoom: 20,
-          maxZoom: 20
-        }
-      ).addTo(this.map)
-    };
+    this.layerControl = L.control.layers(null, null, { collapsed: true }).addTo(this.map);
 
-    this.layerControl = L.control.layers(googleSat, null, { collapsed: false }).addTo(this.map);
+    for (var i=0;i<this.baseLayers.length;i++) {
+      this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i].options.name);
+    }
 
-    this.baseLayer = googleSat; //set our tracking variable
-
-    const streets = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
-      {
-        id: 'mapbox.streets',
-        zIndex: 0,
-        maxNativeZoom: 20,
-        maxZoom: 20
-      } as any);
-
-    const light = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
-      {
-        id: 'mapbox.light',
-        zIndex: 0,
-        maxNativeZoom: 20,
-        maxZoom: 20
-      } as any);
-
-    const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-        id: 'esri.topo',
-        zIndex: 0,
-        maxNativeZoom: 20,
-        maxZoom: 20,
-      	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
-      } as any);
-
-    const openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        id: 'open.topo',
-        zIndex: 0,
-      	maxZoom: 17,
-      	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-      } as any);
-
-    this.layerControl.addBaseLayer(streets, "Mapbox Streets");
-    this.layerControl.addBaseLayer(light, "Mapbox Grayscale");
-    this.layerControl.addBaseLayer(esriTopo, "ESRI Topo Map");
-    this.layerControl.addBaseLayer(openTopo, "Open Topo Map");
-
-    //this.layerControl.setPosition("bottomright");
-
-    //this.map.on("layeradd", e => this.onLayerAdd(e));
+    this.baseLayers[this.baseLayer].addTo(this.map);
 
     this.map.on("baselayerchange", e => this.onBaseLayerChange(e));
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
-
-/* use something like this to alter VP location with the map 
-    this.marker = L.marker(this.map.getCenter(), {
-      draggable: true,
-      icon: L.icon({
-        iconUrl: "https://unpkg.com/leaflet@1.4.0/dist/images/marker-icon.png",
-        iconSize: [25, 35],
-        iconAnchor: [30 / 2, 35]
-      })
-    }).addTo(this.map);
-    console.log("this.marker", this.marker);
-    this.map.on("click", e => this.onMapClick(e));
-*/
   }
 
   /*
@@ -116,12 +115,9 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     event fires when the page's data changes.
   */
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    console.log('ngOnChanges(changes), changes:', changes);
+    //console.log('ngOnChanges(changes), changes:', changes);
     this.clearPools();
     this.plotPools(this.mapPools);
-    if (this.map && this.baseLayer) {
-      this.baseLayer.addTo(this.map);
-    }
   }
 
   zoomExtents() {
@@ -147,9 +143,14 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   }
 
   onBaseLayerChange(e) {
-    console.log(`onBaseLayerChange | name: ${e.name}`);
-    //console.dir(e.layer);
-    this.baseLayer = e.layer;
+    //find the array index of the baseLayer that was chosen from the envent value
+    var index = this.baseLayers.findIndex(elm => {
+      return elm == e.layer;
+    });
+
+    console.log(`onBaseLayerChange | name: ${e.name} | index: ${index}`);
+
+    this.uxValuesService.setBaseLayer(index);
   }
 
   onZoomEnd(e) {
@@ -203,8 +204,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
       this.cmLLArr.push(llLoc);
 
-      circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].mappedPoolId}">
-                        View Pool ${vpools[i].mappedPoolId}<br>
+      circle.bindPopup(`<a href="pools/mapped/update/${vpools[i].mappedPoolId}">
+                        Update Pool ${vpools[i].mappedPoolId}<br>
                         Lat: ${vpools[i].mappedLatitude}<br>
                         Lon:${vpools[i].mappedLongitude}</a><br/>`);
 
@@ -212,7 +213,6 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
                         Lat: ${vpools[i].mappedLatitude}<br>
                         Lon:${vpools[i].mappedLongitude}<br>`);
     }
-    //this.baseLayer.addTo(this.map);
   }
 
 }

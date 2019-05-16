@@ -8,7 +8,7 @@ import { AlertService, AuthenticationService, vpMappedService } from '@app/_serv
 @Component({templateUrl: 'vpmap.create.component.html'})
 export class vpMapCreateComponent implements OnInit {
     vpMappedForm: FormGroup;
-    loading = false;
+    dataLoading = false;
     submitted = false;
 
     constructor(
@@ -56,7 +56,7 @@ export class vpMapCreateComponent implements OnInit {
             return;
         }
 
-        this.loading = true;
+        this.dataLoading = true;
         this.vpMappedService.create(this.vpMappedForm.value)
             .pipe(first())
             .subscribe(
@@ -68,7 +68,7 @@ export class vpMapCreateComponent implements OnInit {
                 error => {
                     console.log(`vpmap.create=>error: ${error}`);
                     this.alertService.error(error);
-                    this.loading = false;
+                    this.dataLoading = false;
                 });
     }
 }

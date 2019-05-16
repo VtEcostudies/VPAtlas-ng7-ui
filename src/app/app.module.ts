@@ -18,6 +18,7 @@ import { AdminComponent } from './admin';
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
+import { vpMapUpdateComponent } from './vpmapped';
 import { vpMapLeafletComponent } from './vpmapped';
 
 @NgModule({
@@ -38,6 +39,7 @@ import { vpMapLeafletComponent } from './vpmapped';
         vpMapListComponent,
         vpMapViewComponent,
         vpMapCreateComponent,
+        vpMapUpdateComponent,
         vpMapLeafletComponent
     ],
     providers: [

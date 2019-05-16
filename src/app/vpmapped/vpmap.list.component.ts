@@ -17,10 +17,10 @@ export class vpMapListComponent implements OnInit {
     last = 1;
     count: number = 1;
     filter = '';
-    vpmap = [];
+    vpmap = []; //data array from db
     //vpmap: vpMapped = [];
     //pgApi: pgVpMappedApi;
-    mapView = false; //flag to toggle between table and map view
+    mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
         private formBuilder: FormBuilder,
@@ -43,28 +43,17 @@ export class vpMapListComponent implements OnInit {
           mappedPoolId: [''],
           mappedByUser: [''],
           mappedConfidence: [''],
-          mappedLocation: ['']
+          mappedLocation: [{value: '', disabled: true}]
       });
       //and load page 1
       this.firstPage();
     }
-/*
-    //this was mooted by adding SQL SELECT count(*) to every getPage()
-    getCount() {
-      //get a record count from the db
-      this.vpMappedService.getCount(this.filter)
-          .pipe(first())
-          .subscribe(
-              data => {
-                this.count = data.rows[0].count;
-              },
-              error => {
-                  this.alertService.error(error);
-                  this.loading = false;
-              });
-        console.log('count:',this.count,"last:",this.last);
-    }
-*/
+
+    /*
+      Construct an SQL WHERE clause search filter to be passed to vpmapped.services
+      to filter db query results.
+      Put the value of that fileter into the class variable.
+    */
     getFilter() {
       this.filter = ''; //must clear first to undo filters
 
@@ -94,6 +83,11 @@ export class vpMapListComponent implements OnInit {
       }
 
       console.log('vpmap.list.components.ts::getfilter()', this.filter);
+    }
+
+    //a stub that does nothing for now
+    filterLocation() {
+
     }
 
     firstPage() {
