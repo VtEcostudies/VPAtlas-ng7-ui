@@ -5,4 +5,6 @@
     firstName: string;
     lastName: string;
     token: string;
+    role: string; //jtl added
+    admin: boolean; //jtl added
 }

@@ -29,7 +29,7 @@
   <div class="col-sm-9">
     <div *ngIf="!loading">
       <div class="row">
-        <button class="btn">{{count}} Records</button>
+        <button (click)="loadAll()" class="btn btn-link">{{count}} Records</button>
         <button (click)="firstPage()" class="btn btn-link">|< First</button>
         <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
         <button (click)="nextPage()" class="btn btn-link">Next >></button>

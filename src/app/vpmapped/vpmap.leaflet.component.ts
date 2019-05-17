@@ -1,8 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, OnChanges, SimpleChange } from "@angular/core";
 import * as L from "leaflet";
-//import { globals } from @app/_service;
-import { uxValuesService } from '@app/_services';
+import { AuthenticationService, uxValuesService } from '@app/_services';
 
 @Component({
   selector: 'app-map',
@@ -13,6 +12,7 @@ import { uxValuesService } from '@app/_services';
 @Injectable({providedIn: 'root'}) //this makes a service single-instance. what does it do for a component?
 
 export class vpMapLeafletComponent implements OnInit, OnChanges {
+  userIsAdmin = true;
   @Input() mapPools : [];
   public map;
   marker;
@@ -30,8 +30,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
-      id: 'google.sat',
-      name: 'Google Satellite +',
+      id: 'google.sat', //illegal property
+      name: 'Google Satellite +', //illegal property
       subdomains: ["mt0", "mt1", "mt2", "mt3"],
       zIndex: 0,
       maxNativeZoom: 20,
@@ -68,11 +68,15 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
       maxZoom: 17,
       attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     } as any);
+
     baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-    baseLayers = [this.googleSat, this.streets, this.light, this.esriTopo, this.openTopo];
+    baseLayers = [this.openTopo, this.googleSat, this.streets, this.light, this.esriTopo];
 
 
-  constructor(private uxValuesService: uxValuesService) {
+  constructor(
+    private uxValuesService: uxValuesService,
+    private authenticationService: AuthenticationService
+    ) {
 
     /*
       preserve baseLayer shown across page loads with outside service
@@ -82,9 +86,14 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
     console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
 
-  }
+  } //constructor
 
   ngOnInit() {
+    console.log(this.authenticationService.currentUserValue);
+    //for now, logged-in users are administrators
+    if (this.authenticationService.currentUserValue) {
+      this.userIsAdmin = true;
+    }
 
     this.map = new L.Map("map", {
       zoomControl: false,
@@ -99,7 +108,9 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     this.layerControl = L.control.layers(null, null, { collapsed: true }).addTo(this.map);
 
     for (var i=0;i<this.baseLayers.length;i++) {
-      this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i].options.name);
+      //note: get around TypeScript type-checking by accessing non-declared object .properties in
+      //the following way: as ['property']['sub-property'], not array[i].property.sub-property.
+      this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
 
     this.baseLayers[this.baseLayer].addTo(this.map);
@@ -204,10 +215,20 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
       this.cmLLArr.push(llLoc);
 
-      circle.bindPopup(`<a href="pools/mapped/update/${vpools[i].mappedPoolId}">
-                        Update Pool ${vpools[i].mappedPoolId}<br>
-                        Lat: ${vpools[i].mappedLatitude}<br>
-                        Lon:${vpools[i].mappedLongitude}</a><br/>`);
+      if (this.userIsAdmin) {
+        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].mappedPoolId}">View ${vpools[i].mappedPoolId}</a><br>
+                          <a href="pools/mapped/update/${vpools[i].mappedPoolId}">Edit ${vpools[i].mappedPoolId}</a><br>
+                          Lat: ${vpools[i].mappedLatitude}<br>
+                          Lon:${vpools[i].mappedLongitude}<br>
+                          `
+                        );
+      } else {
+        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].mappedPoolId}">View ${vpools[i].mappedPoolId}</a><br>
+                          Lat: ${vpools[i].mappedLatitude}<br>
+                          Lon:${vpools[i].mappedLongitude}<br>
+                          `
+                        );
+      }
 
       circle.bindTooltip(`${vpools[i].mappedPoolId}<br>
                         Lat: ${vpools[i].mappedLatitude}<br>

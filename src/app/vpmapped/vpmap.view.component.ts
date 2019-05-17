@@ -3,12 +3,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { vpMapped } from '@app/_models';
-import { vpMapLeafletComponent } from './vpmap.leaflet.component';
-
 import { AlertService, AuthenticationService, vpMappedService } from '@app/_services';
+import { vpMapLeafletComponent } from './vpmap.leaflet.component';
 
 @Component({templateUrl: 'vpmap.view.component.html'})
 export class vpMapViewComponent implements OnInit {
+    userIsAdmin = true;
     vpMappedForm: FormGroup;
     dataLoading = false;
     pool = {};
@@ -24,6 +24,10 @@ export class vpMapViewComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+      //for now, logged-in users are administrators
+      if (this.authenticationService.currentUserValue) {
+        // this.userIsAdmin = true;
+      }
       console.log('vpmap.view.ngOnInit route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
       this.loadPage(this.route.snapshot.params.mappedPoolId);
     }

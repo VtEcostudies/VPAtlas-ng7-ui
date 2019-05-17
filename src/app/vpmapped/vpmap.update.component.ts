@@ -24,33 +24,42 @@ export class vpMapUpdateComponent implements OnInit {
         private alertService: AlertService,
         private vpMappedService: vpMappedService
     ) {
+        console.log('currentUserValue:', this.authenticationService.currentUserValue);
+
         // redirect to vpMapped if already logged in
         if (this.authenticationService.currentUserValue) {
-            this.router.navigate(['/pools/mapped/update']);
+        } else {
+          this.router.navigate(['/pools/mapped/list']);
         }
     }
 
     ngOnInit() {
-      this.poolId = this.route.snapshot.params.mappedPoolId;
+
+      //get mappedPoolId from route params and load pool data from db
       console.log('vpmap.update.ngOnInit route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
       this.loadPage(this.route.snapshot.params.mappedPoolId);
+      this.poolId = this.route.snapshot.params.mappedPoolId;
 
       this.vpMappedForm = this.formBuilder.group({
           mappedPoolId: [{value: this.poolId, disabled: true}, Validators.required],
           mappedByUser: ['', Validators.required],
-          mappedSource: ['', Validators.required],
-          mappedSource2: ['', Validators.required],
           mappedDateText: ['', Validators.required],
-          mappedPhotoNumber: ['', Validators.required],
-          mappedShape: ['', Validators.required],
-          mappedConfidence: ['', Validators.required],
-          mappedLocationAccuracy: ['', Validators.required],
-          mappedComments: ['', Validators.required],
           mappedLatitude: ['', Validators.required],
-          mappedLongitude: ['', Validators.required]
+          mappedLongitude: ['', Validators.required],
+          mappedConfidence: ['', Validators.required],
+
+          mappedLocationAccuracy: ['', Validators.required],
+          mappedSource: ['', Validators.required],
+          mappedSource2: ['', Validators.nullValidator],
+          mappedPhotoNumber: ['', Validators.nullValidator],
+          mappedShape: ['', Validators.nullValidator],
+          mappedComments: ['', Validators.nullValidator],
       });
     }
 
+    /*
+      Update form fields with values loaded from db.
+    */
     afterLoad() {
       //this.vpMappedForm.controls['mappedPoolId'].setValue(this.pool.mappedPoolId);
       this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
@@ -78,7 +87,7 @@ export class vpMapUpdateComponent implements OnInit {
                 console.log('vpmap.update.component.loadPage result:', data);
                 this.pool = data.rows[0];
                 this.dataLoading = false; //this forces a map update, which plots a point
-                this.afterLoad();
+                this.afterLoad(); //update form fields with values loaded from db
               },
               error => {
                   this.alertService.error(error);

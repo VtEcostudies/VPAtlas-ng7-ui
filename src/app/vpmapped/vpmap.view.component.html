@@ -1,20 +1,20 @@
-<div class="row">
-  <div class="col-sm-4">
-    <h4><u>View Mapped Pool Detail</u></h4>
 <!--
 mappedPoolId
 mappedByUser
 mappedDateText
-mappedConfidence
-mappedShape
-mappedSource
-mappedSourceTwo
-mappedPhotoNumber
-mappedLocationAccuracy
-mappedComments
 mappedLatitude
 mappedLongitude
+mappedConfidence
+mappedLocationAccuracy
+mappedShape
+mappedSource
+mappedSource2
+mappedPhotoNumber
+mappedComments
 -->
+<div class="row">
+  <div class="col-sm-4">
+    <h4><u>Mapped Pool Detail</u><a *ngIf="userIsAdmin" href="/pools/mapped/update/{{pool.mappedPoolId}}">  (Edit)</a></h4>
     <table class="table table-striped">
         <tr>
             <td>Pool ID</td>
@@ -33,8 +33,17 @@ mappedLongitude
             <td>{{pool.mappedConfidence}}</td>
         </tr>
         <tr>
-            <td>Shape</td>
-            <td>{{pool.mappedShape}}</td>
+            <td>Latitude</td>
+            <td>{{pool.mappedLatitude}}</td>
+        </tr>
+        <tr>
+            <td>Longitude</td>
+            <td>{{pool.mappedLongitude}}</td>
+        </tr>
+
+        <tr>
+            <td>Location Accuracy</td>
+            <td>{{pool.mappedLocationAccuracy}}</td>
         </tr>
         <tr>
             <td>Source</td>
@@ -45,25 +54,18 @@ mappedLongitude
             <td>{{pool.mappedSource2}}</td>
         </tr>
         <tr>
-            <td>Photo Number</td>
-            <td>{{pool.mappedPhotoNumber}}</td>
+            <td>Shape</td>
+            <td>{{pool.mappedShape}}</td>
         </tr>
         <tr>
-            <td>Location Accuracy</td>
-            <td>{{pool.mappedLocationAccuracy}}</td>
+            <td>Photo Number</td>
+            <td>{{pool.mappedPhotoNumber}}</td>
         </tr>
         <tr>
             <td>Comments</td>
             <td>{{pool.mappedComments}}</td>
         </tr>
-        <tr>
-            <td>Latitude</td>
-            <td>{{pool.mappedLatitude}}</td>
-        </tr>
-        <tr>
-            <td>Longitude</td>
-            <td>{{pool.mappedLongitude}}</td>
-        </tr>
+
     </table>
   </div>
   <div class="col-sm-8">
