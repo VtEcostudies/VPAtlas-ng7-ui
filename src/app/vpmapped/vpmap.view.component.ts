@@ -8,7 +8,8 @@ import { vpMapLeafletComponent } from './vpmap.leaflet.component';
 
 @Component({templateUrl: 'vpmap.view.component.html'})
 export class vpMapViewComponent implements OnInit {
-    userIsAdmin = true;
+    poolUser = null;
+    userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
     pool = {};
@@ -24,11 +25,12 @@ export class vpMapViewComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-      //for now, logged-in users are administrators
       if (this.authenticationService.currentUserValue) {
-        // this.userIsAdmin = true;
-      }
-      console.log('vpmap.view.ngOnInit route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
+        this.poolUser = this.authenticationService.currentUserValue.user;
+        console.log('vpmap.view.component.ngOnInit | currentUser.userrole:', this.poolUser.userrole);
+        this.userIsAdmin = this.poolUser.userrole == 'admin';
+      } else { this.userIsAdmin = false;}
+      console.log('vpmap.view.compoenent.ngOnInit | route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
       this.loadPage(this.route.snapshot.params.mappedPoolId);
     }
 

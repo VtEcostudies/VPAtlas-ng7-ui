@@ -9,6 +9,8 @@ import { vpMapped } from '@app/_models';
 
 @Component({templateUrl: 'vpmap.create.component.html'}) //attempt to reuse the create html. it's all the same
 export class vpMapUpdateComponent implements OnInit {
+    poolUser = null;
+    userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
     submitted = false;
@@ -24,13 +26,15 @@ export class vpMapUpdateComponent implements OnInit {
         private alertService: AlertService,
         private vpMappedService: vpMappedService
     ) {
-        console.log('currentUserValue:', this.authenticationService.currentUserValue);
-
-        // redirect to vpMapped if already logged in
-        if (this.authenticationService.currentUserValue) {
-        } else {
-          this.router.navigate(['/pools/mapped/list']);
-        }
+      if (this.authenticationService.currentUserValue) {
+        this.poolUser = this.authenticationService.currentUserValue.user;
+        console.log('vpmap.view.component.ngOnInit | currentUser.userrole:', this.poolUser.userrole);
+        this.userIsAdmin = this.poolUser.userrole == 'admin';
+      } else { this.userIsAdmin = false;}
+       // redirect to pool search if user not admin
+      if (!this.userIsAdmin) {
+        this.router.navigate(['/pools/mapped/list']);
+      }
     }
 
     ngOnInit() {

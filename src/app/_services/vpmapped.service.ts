@@ -17,7 +17,9 @@ export class vpMappedService {
 
     getPage(page: number, filter: string) {
         //return value is pgVpMappedApi - the format of node-postgres query result from nodejs server
-        return this.http.get<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/page/${page}?${filter}`);
+        const url = `${environment.apiUrl}/pools/mapped/page/${page}?${filter}`;
+        console.log(`vpmapped.service.getPage | url:`, url);
+        return this.http.get<pgVpMappedApi>(url);
     }
 
     getById(id: number) {

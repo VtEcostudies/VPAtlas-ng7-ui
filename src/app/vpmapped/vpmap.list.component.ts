@@ -31,7 +31,7 @@ export class vpMapListComponent implements OnInit {
     ) {
         // redirect to home if user not logged in - the API can't handle no-token access (yet)
         if (!this.authenticationService.currentUserValue) {
-            this.router.navigate(['/login']);
+            //this.router.navigate(['/login']);
         }
     }
 
@@ -39,6 +39,7 @@ export class vpMapListComponent implements OnInit {
     get f() { return this.filterForm.controls; }
 
     ngOnInit() {
+      //these are the pool search filter fields
       this.filterForm = this.formBuilder.group({
           mappedPoolId: [''],
           mappedByUser: [''],

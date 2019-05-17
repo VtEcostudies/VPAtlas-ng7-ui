@@ -1,15 +1,18 @@
 ﻿<!-- nav -->
-<nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
+<nav class="navbar navbar-expand navbar-dark bg-dark"> <!-- *ngIf="currentUser"> -->
     <div class="navbar-nav">
         <a class="nav-item nav-link" routerLink="/">Home</a>
         <a class="nav-item nav-link" routerLink="/pools/mapped/list" >Search Pools</a>
-        <a class="nav-item nav-link" routerLink="/pools/mapped/create" >Add Pool</a>
+        <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="currentUser" >Add Pool</a>
         <!--
         <a class="nav-item nav-link" routerLink="/pools/mapped/import" >Import Pools</a>
         -->
-        <a class="nav-item nav-link" routerLink="/admin">Admin</a>
-        <a class="nav-item nav-link" routerLink="/user">Profile</a>
-        <a class="nav-item nav-link" (click)="logout()">Logout</a>
+        <a class="nav-item nav-link" routerLink="/admin" *ngIf="userIsAdmin" >Admin</a>
+        <!--
+        <a class="nav-item nav-link" routerLink="/user" *ngIf="currentUser" >Profile</a>
+        -->
+        <a class="nav-item nav-link" (click)="logout()" *ngIf="currentUser" >Logout</a>
+        <a class="nav-item nav-link" routerLink="/login" *ngIf="!currentUser" >Login/Register</a>
     </div>
 </nav>
 

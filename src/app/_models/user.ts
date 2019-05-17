@@ -4,7 +4,8 @@
     password: string;
     firstName: string;
     lastName: string;
+    email: string; //jtl added
     token: string;
-    role: string; //jtl added
+    userrole: string; //jtl added
     admin: boolean; //jtl added
 }

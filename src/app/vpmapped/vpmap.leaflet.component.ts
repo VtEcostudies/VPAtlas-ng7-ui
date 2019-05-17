@@ -12,7 +12,7 @@ import { AuthenticationService, uxValuesService } from '@app/_services';
 @Injectable({providedIn: 'root'}) //this makes a service single-instance. what does it do for a component?
 
 export class vpMapLeafletComponent implements OnInit, OnChanges {
-  userIsAdmin = true;
+  userIsAdmin = false;
   @Input() mapPools : [];
   public map;
   marker;

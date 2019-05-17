@@ -9,6 +9,7 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 
 @Component({templateUrl: 'vpmap.create.component.html'})
 export class vpMapCreateComponent implements OnInit {
+    userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
     submitted = false;
@@ -20,20 +21,22 @@ export class vpMapCreateComponent implements OnInit {
         private alertService: AlertService,
         private vpMappedService: vpMappedService
     ) {
-        console.log('currentUserValue:', this.authenticationService.currentUserValue);
-
-        // redirect to vpMapped if already logged in
-        if (this.authenticationService.currentUserValue) {
-        } else {
-          this.router.navigate(['/pools/mapped/list']);
-        }
+      if (this.authenticationService.currentUserValue) {
+        let currentUser = this.authenticationService.currentUserValue.user;
+        console.log('vpmap.view.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
+        this.userIsAdmin = currentUser.userrole == 'admin';
+      } else {
+        this.userIsAdmin = false;
+        // redirect to pool search if user not logged-in
+        this.router.navigate(['/pools/mapped/list']);
+      }
     }
 
     ngOnInit() {
         this.vpMappedForm = this.formBuilder.group({
 
-            mappedPoolId: ['AAA1', Validators.required],
-            mappedByUser: [this.authenticationService.currentUserValue.username, Validators.required],
+            mappedPoolId: [`${this.authenticationService.currentUserValue.user.username}1`, Validators.required],
+            mappedByUser: [{value: this.authenticationService.currentUserValue.user.username, disabled: true}, Validators.required],
             mappedDateText: [Moment().format('MM/DD/YYYY'), Validators.required],
             mappedConfidence: ['', Validators.required],
             mappedLatitude: ['', Validators.required],

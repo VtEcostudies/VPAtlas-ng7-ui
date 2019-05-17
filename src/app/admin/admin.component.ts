@@ -2,12 +2,12 @@
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { User } from '@app/_models';
+import { User, Auth } from '@app/_models';
 import { UserService, AuthenticationService } from '@app/_services';
 
 @Component({ templateUrl: 'admin.component.html' })
 export class AdminComponent implements OnInit, OnDestroy {
-    currentUser: User;
+    currentUser: Auth;
     currentUserSubscription: Subscription;
     users: User[] = [];
 
@@ -37,6 +37,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     private loadAllUsers() {
         this.userService.getAll().pipe(first()).subscribe(users => {
+            //console.log('admin.component.loadAllUsers | users:', users)
             this.users = users;
         });
     }

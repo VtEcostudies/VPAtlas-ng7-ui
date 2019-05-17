@@ -23,9 +23,13 @@ export class HomeComponent implements OnInit, OnDestroy {
         private authenticationService: AuthenticationService,
         private vpMappedService: vpMappedService
     ) {
-      // redirect to home if user not logged in - the API can't handle no-token access (yet)
+      /*
+        API handles this UI route's (/home) API route calls (/pools/mapped)
+        without authentication.
+        Leave this code stub here for future use.
+      */
       if (!this.authenticationService.currentUserValue) {
-          this.router.navigate(['/login']);
+          //this.router.navigate(['/login']);
       }
     }
 
