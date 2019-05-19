@@ -12,7 +12,7 @@ export class vpMapViewComponent implements OnInit {
     userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
-    pool = {};
+    pool: vpMapped;
     vpmap: vpMapped[];
 
     constructor(

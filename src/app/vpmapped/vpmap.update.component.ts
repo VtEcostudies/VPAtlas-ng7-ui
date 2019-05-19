@@ -9,12 +9,12 @@ import { vpMapped } from '@app/_models';
 
 @Component({templateUrl: 'vpmap.create.component.html'}) //attempt to reuse the create html. it's all the same
 export class vpMapUpdateComponent implements OnInit {
-    poolUser = null;
+    update = true; //flag for html config that this is update (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
+    currentUser = null;
     userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
     submitted = false;
-    update = true;
     poolId = null;
     pool: vpMapped;
 
@@ -27,11 +27,13 @@ export class vpMapUpdateComponent implements OnInit {
         private vpMappedService: vpMappedService
     ) {
       if (this.authenticationService.currentUserValue) {
-        this.poolUser = this.authenticationService.currentUserValue.user;
-        console.log('vpmap.view.component.ngOnInit | currentUser.userrole:', this.poolUser.userrole);
-        this.userIsAdmin = this.poolUser.userrole == 'admin';
+        this.currentUser = this.authenticationService.currentUserValue.user;
+        console.log('vpmap.view.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+        this.userIsAdmin = this.currentUser.userrole == 'admin';
       } else { this.userIsAdmin = false;}
        // redirect to pool search if user not admin
+       // TO-DO: non-admin users can *edit* the pools they've created. Do that check upon load of a pool,
+       // later. Again, if vpmapped.createdByUser != currentUser.user.username, navigate away from this page.
       if (!this.userIsAdmin) {
         this.router.navigate(['/pools/mapped/list']);
       }

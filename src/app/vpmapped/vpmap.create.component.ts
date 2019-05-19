@@ -9,6 +9,7 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 
 @Component({templateUrl: 'vpmap.create.component.html'})
 export class vpMapCreateComponent implements OnInit {
+    update = false; //flag for html config that this is create (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
     userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
