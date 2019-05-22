@@ -20,7 +20,9 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   lng;
   layerControl;
   myRenderer = L.canvas({ padding: 0.5 });
-  cmColors = {0:"#800000",1:"green",2:"blue",3:"yellow",4:"orange",5:"purple",6:"cyan",7:"grey"};
+  cmColors = ["#f5d108","#800000","blue","yellow","orange","purple","cyan","grey"];
+  cmColor = 0; //current color index
+  cmClrCnt = 7; //(this.cmColors).length();
   cmRadius = 1;
   cmGroup = L.layerGroup();
   cmLLArr = [];
@@ -208,7 +210,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
       var circle = L.circleMarker(llLoc, {
           renderer: this.myRenderer,
           radius: this.cmRadius,
-          color: this.cmColors[0]
+          color: this.cmColors[0] //yellow by default
       });
 
       this.cmGroup.addLayer(circle); //add this marker to the current layerGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
@@ -234,6 +236,21 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
                         Lat: ${vpools[i].mappedLatitude}<br>
                         Lon:${vpools[i].mappedLongitude}<br>`);
     }
+  }
+
+  changeColor(index=null) {
+
+    console.log(`changeColor(${index})`);
+    if (!index) {
+      this.cmColor++;
+      if (this.cmColor > this.cmClrCnt) {this.cmColor = 0;}
+      index = this.cmColor;
+    }
+    console.log(`changeColor(${index})`);
+
+    this.cmGroup.eachLayer((layer: any) => {
+      layer.setStyle({color: this.cmColors[index]})
+    });
   }
 
 }
