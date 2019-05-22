@@ -37,14 +37,15 @@ export class vpMapCreateComponent implements OnInit {
         this.vpMappedForm = this.formBuilder.group({
 
             mappedPoolId: [`${this.authenticationService.currentUserValue.user.username}1`, Validators.required],
-            mappedByUser: [{value: this.authenticationService.currentUserValue.user.username, disabled: true}, Validators.required],
+            //mappedByUser: [{value: this.authenticationService.currentUserValue.user.username, disabled: true}, Validators.required],
+            mappedByUser: [this.authenticationService.currentUserValue.user.username, Validators.required],
             mappedDateText: [Moment().format('MM/DD/YYYY'), Validators.required],
-            mappedConfidence: ['', Validators.required],
-            mappedLatitude: ['', Validators.required],
-            mappedLongitude: ['', Validators.required],
+            mappedConfidence: ['M', Validators.required],
+            mappedLatitude: ['43.5', Validators.required],
+            mappedLongitude: ['-72', Validators.required],
 
-            mappedLocationAccuracy: ['', Validators.required],
-            mappedSource: ['', Validators.required],
+            mappedLocationAccuracy: ['M', Validators.required],
+            mappedSource: ['Visit', Validators.required],
             mappedSource2: ['', Validators.nullValidator],
             mappedShape: ['Point', Validators.nullValidator],
             mappedPhotoNumber: ['', Validators.nullValidator],
@@ -60,6 +61,23 @@ export class vpMapCreateComponent implements OnInit {
         console.log(`vpmap.create.onSubmit`);
 
         this.submitted = true;
+
+        //kluge to get around disabled fields not being included in form values
+        //and not having an easy validator for requiring mappedByUser = logon user
+        if (this.vpMappedForm.value.mappedByUser != this.authenticationService.currentUserValue.user.username) {
+          this.alertService.error("Mapped By User must be your username.");
+          return;
+        }
+
+        if (Number(this.vpMappedForm.value.mappedLatitude) < 42.3 || Number(this.vpMappedForm.value.mappedLatitude) > 45.1) {
+          this.alertService.error("Latitude must be between 42.3 and 45.1 to be in Vermont.");
+          return;
+        }
+
+        if (Number(this.vpMappedForm.value.mappedLongitude) > -71.5 || Number(this.vpMappedForm.value.mappedLongitude) < -73.5) {
+          this.alertService.error("Longitude must be between 71.5 and 73.5 to be in Vermont.");
+          return;
+        }
 
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {
