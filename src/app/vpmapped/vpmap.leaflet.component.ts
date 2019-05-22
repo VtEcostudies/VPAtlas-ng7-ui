@@ -19,6 +19,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   lat;
   lng;
   layerControl;
+  zoomControl = L.control.zoom();
   myRenderer = L.canvas({ padding: 0.5 });
   cmColors = ["#f5d108","#800000","blue","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
@@ -114,6 +115,9 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
       //the following way: as ['property']['sub-property'], not array[i].property.sub-property.
       this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
+
+    this.zoomControl.setPosition('topright');
+    this.zoomControl.addTo(this.map);
 
     this.baseLayers[this.baseLayer].addTo(this.map);
 
