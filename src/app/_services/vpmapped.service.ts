@@ -38,11 +38,11 @@ export class vpMappedService {
         return this.http.post<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped`, vpmap);
     }
 
-    update(mappedPoolId:string, vpmap: vpMapped) {
+    update(mappedPoolId: string, vpmap: vpMapped) {
         return this.http.put<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/${mappedPoolId}`, vpmap);
     }
 
-    delete(id: number) {
-        return this.http.delete<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/${id}`);
+    delete(mappedPoolId: string) {
+        return this.http.delete<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/${mappedPoolId}`);
     }
 }

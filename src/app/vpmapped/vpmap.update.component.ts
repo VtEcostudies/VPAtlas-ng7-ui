@@ -132,4 +132,22 @@ export class vpMapUpdateComponent implements OnInit {
                     this.dataLoading = false;
                 });
     }
+
+    deletePool() {
+      if (confirm(`Are you sure you want to delete pool ${this.pool.mappedPoolId}?`)) {
+        this.vpMappedService.delete(this.pool.mappedPoolId)
+          .pipe(first())
+          .subscribe(
+              data => {
+                  console.log(`vpmap.delete=>data ${data}`);
+                  this.alertService.success('Successfully deleted vernal pool.', true);
+                  this.router.navigate([`/pools/mapped/list`]);
+              },
+              error => {
+                  console.log(`vpmap.update=>error: ${error}`);
+                  this.alertService.error(error);
+                  this.dataLoading = false;
+              });
+      }
+    }
 }
