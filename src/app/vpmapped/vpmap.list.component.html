@@ -40,24 +40,30 @@
       </div>
 
       <div *ngIf="!mapView">
-        <table class="table table-striped">
+        <table class="table table-striped table-sm table-responsive">
             <tr>
                 <th>Pool ID</th>
-                <th>Source</th>
-                <th>Source2</th>
                 <th>Mapped By</th>
+                <th>Method</th>
+                <th>Town</th>
                 <th>Confidence</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
+                <th>Owner Known</th>
+                <th>Source</th>
+                <th>Source2</th>
             </tr>
             <tr *ngFor="let pool of vpmap">
                 <td><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
-                <td>{{pool.mappedSource}}</td>
-                <td>{{pool.mappedSource2}}</td>
                 <td>{{pool.mappedByUser}}</td>
+                <td>{{pool.mappedMethod}}</td>
+                <td>{{pool.mappedTown.townName}}</td>
                 <td>{{pool.mappedConfidence}}</td>
                 <td>{{pool.mappedLatitude}}</td>
                 <td>{{pool.mappedLongitude}}</td>
+                <td>{{pool.mappedLandownerKnown}}</td>
+                <td>{{pool.mappedSource}}</td>
+                <td>{{pool.mappedSource2}}</td>
             </tr>
         </table>
       </div>

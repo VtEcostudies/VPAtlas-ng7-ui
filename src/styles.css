@@ -6,6 +6,9 @@
 .table-condensed{
   font-size: 18px;
 }
+.table-sm{
+  font-size: 12px;
+}
 
 /*
   make an item topmost in the display.

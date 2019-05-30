@@ -10,7 +10,7 @@ export class vpMapCreateComponent implements OnInit {
     update = false; //flag for html config that this is create (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
     userIsAdmin = false;
     vpMappedForm: FormGroup;
-    locUncs = [50, 100, '>100'];//[{display:'50',value:50}, {display:'100',value:100}, {display:'>100',value:1000}]; //https://angular.io/api/forms/SelectControlValueAccessor
+    locUncs = [50, 100, '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
     towns = [];
     townCount = 0;
     dataLoading = false;
@@ -45,11 +45,12 @@ export class vpMapCreateComponent implements OnInit {
             mappedDateText: [Moment().format('MM/DD/YYYY'), Validators.required],
             mappedLatitude: ['43.5', Validators.required],
             mappedLongitude: ['-72', Validators.required],
-            mappedTownName: new FormControl(this.towns[this.townCount]),
 
+            mappedTown: [{townId: 0, townName: 'Unknown'}, new FormControl(this.towns[this.townCount])],
+            mappedTownId: [],
             mappedLandownerKnown: [false, Validators.nullValidator],
             mappedLandownerInfo: ['', Validators.nullValidator],
-            mappedLocationUncertainty: [50, new FormControl(this.locUncs[3])],
+            mappedLocationUncertainty: [50, new FormControl(this.locUncs[3], Validators.required)],
             mappedComments: ['', Validators.nullValidator],
         });
     }
@@ -88,6 +89,12 @@ export class vpMapCreateComponent implements OnInit {
           this.alertService.error("Please enter Location Uncertainty.");
           return;
         }
+
+        console.log('vpmap.create.component.onSubmit | mappedTown',this.vpMappedForm.value.mappedTown);
+        //our method to extract townId from townObject is to have a non-display formControl and
+        //assign its value here. the API expects a db column name with a single value, and we
+        //choose to add that complexity here rather than parse requests in API code.
+        this.vpMappedForm.value.mappedTownId = this.vpMappedForm.value.mappedTown.townId;
 
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {
@@ -128,4 +135,12 @@ export class vpMapCreateComponent implements OnInit {
             });
 
   }
+
+  //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
+  //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
+  compareTownFn(t1: vtTown, t2: vtTown) {
+    //console.log('compareTownFn t1:', t1, ' t2:', t2);
+    return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
+  }
+
 }

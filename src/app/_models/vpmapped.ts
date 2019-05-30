@@ -1,3 +1,4 @@
+import { vtTown } from '@app/_models';
 
 export class vpMapped {
     count: number;
@@ -24,7 +25,6 @@ export class vpMapped {
     mappedLandownerInfo: string;
     mappedLocationUncertaintyUnits: string;
     mappedLocationUncertainty: number;
-    mappedTownId: number;
-    mappedTownName: string;
 
+    mappedTown: vtTown;
 }

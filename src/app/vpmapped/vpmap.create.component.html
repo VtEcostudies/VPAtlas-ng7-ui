@@ -65,11 +65,11 @@
     <div class="col-6">
 
       <!--
-        mappedTownName
+        mappedTown
       -->
       <div class="form-group">
-          <label for="mappedTownName">Town Name</label>
-          <select formControlName="mappedTownName" class="form-control">
+          <label for="mappedTown">Town</label>
+          <select [compareWith]="compareTownFn" formControlName="mappedTown" class="form-control">
             <option *ngFor="let town of towns" [ngValue]="town">
               {{ town.townName }}
             </option>

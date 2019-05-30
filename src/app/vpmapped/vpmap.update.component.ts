@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vtInfoService } from '@app/_services';
 
 import { vpMapped } from '@app/_models';
+import { vtTown } from '@app/_models';
 
 @Component({templateUrl: 'vpmap.create.component.html'}) //attempt to reuse the create html. it's all the same
 export class vpMapUpdateComponent implements OnInit {
@@ -53,31 +54,25 @@ export class vpMapUpdateComponent implements OnInit {
 
       this.vpMappedForm = this.formBuilder.group({
           mappedPoolId: [{value: this.poolId, disabled: true}, Validators.required],
-/*
           mappedByUser: ['', Validators.required],
           mappedDateText: ['', Validators.required],
           mappedLatitude: ['', Validators.required],
           mappedLongitude: ['', Validators.required],
-          mappedLandownerKnown: ['', Validators.nullValidator],
-          mappedLandownerInfo: ['', Validators.nullValidator],
 
+          mappedTown: new FormControl(this.towns[this.townCount]),
+          mappedTownId: [],
+          mappedLandownerKnown: [Validators.nullValidator],
+          mappedLandownerInfo: [Validators.nullValidator],
+          mappedLocationUncertainty: new FormControl(this.locUncs[3]),
+          mappedComments: [Validators.nullValidator],
+          /*
           mappedLocationAccuracy: ['', Validators.required],
           mappedSource: ['', Validators.required],
           mappedSource2: ['', Validators.nullValidator],
           mappedPhotoNumber: ['', Validators.nullValidator],
           mappedShape: ['', Validators.nullValidator],
           mappedComments: ['', Validators.nullValidator],
-*/
-          mappedByUser: ['', Validators.required],
-          mappedDateText: ['', Validators.required],
-          mappedLatitude: ['', Validators.required],
-          mappedLongitude: ['', Validators.required],
-
-          mappedTownName: new FormControl(this.towns[this.townCount]),
-          mappedLandownerKnown: [Validators.nullValidator],
-          mappedLandownerInfo: [Validators.nullValidator],
-          mappedLocationUncertainty: new FormControl(this.locUncs[3]),
-          mappedComments: [Validators.nullValidator],
+          */
       });
     }
 
@@ -86,22 +81,24 @@ export class vpMapUpdateComponent implements OnInit {
     */
     afterLoad() {
       //this.vpMappedForm.controls['mappedPoolId'].setValue(this.pool.mappedPoolId);
-/*
-      this.vpMappedForm.controls['mappedSource'].setValue(this.pool.mappedSource);
-      this.vpMappedForm.controls['mappedSource2'].setValue(this.pool.mappedSource2);
-      this.vpMappedForm.controls['mappedPhotoNumber'].setValue(this.pool.mappedPhotoNumber);
-      this.vpMappedForm.controls['mappedShape'].setValue(this.pool.mappedShape);
-*/
       this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
       this.vpMappedForm.controls['mappedDateText'].setValue(this.pool.mappedDateText);
       this.vpMappedForm.controls['mappedLatitude'].setValue(this.pool.mappedLatitude);
       this.vpMappedForm.controls['mappedLongitude'].setValue(this.pool.mappedLongitude);
 
-      this.vpMappedForm.controls['mappedTownName'].setValue(this.pool.mappedTownName);
+      //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
+      //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
+      this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
       this.vpMappedForm.controls['mappedLandownerKnown'].setValue(this.pool.mappedLandownerKnown);
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
+      /*
+      this.vpMappedForm.controls['mappedSource'].setValue(this.pool.mappedSource);
+      this.vpMappedForm.controls['mappedSource2'].setValue(this.pool.mappedSource2);
+      this.vpMappedForm.controls['mappedPhotoNumber'].setValue(this.pool.mappedPhotoNumber);
+      this.vpMappedForm.controls['mappedShape'].setValue(this.pool.mappedShape);
+      */
 
       console.dir(this.vpMappedForm.value);
     }
@@ -133,6 +130,12 @@ export class vpMapUpdateComponent implements OnInit {
         console.log(`vpmap.update.onSubmit`);
 
         this.submitted = true;
+
+        console.log('vpmap.create.component.onSubmit | mappedTown',this.vpMappedForm.value.mappedTown);
+        //our method to extract townId from townObject is to have a non-display formControl and
+        //assign its value here. the API expects a db column name with a single value, and we
+        //choose to add that complexity here rather than parse requests in API code.
+        this.vpMappedForm.value.mappedTownId = this.vpMappedForm.value.mappedTown.townId;
 
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {
@@ -172,6 +175,13 @@ export class vpMapUpdateComponent implements OnInit {
                   this.dataLoading = false;
               });
       }
+    }
+
+    //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
+    //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
+    compareTownFn(t1: vtTown, t2: vtTown) {
+      //console.log('compareTownFn t1:', t1, ' t2:', t2);
+      return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
     }
 
     private loadTowns() {

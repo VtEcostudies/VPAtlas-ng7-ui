@@ -1,4 +1,4 @@
-export class town {
+export class vtTown {
   townId: number;
   townName: string;
   townCountyId: number;

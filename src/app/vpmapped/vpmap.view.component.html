@@ -4,18 +4,25 @@ mappedByUser
 mappedDateText
 mappedLatitude
 mappedLongitude
+mappedTownName
+mappedLocationUncertainty
+mappedLandownerKnown
+mappedLandownerInfo
+mappedComments
+
+
 mappedConfidence
 mappedLocationAccuracy
 mappedShape
 mappedSource
 mappedSource2
 mappedPhotoNumber
-mappedComments
+
 -->
 <div class="row">
   <div class="col-sm-4">
     <h4><u>Mapped Pool Detail</u><a *ngIf="userIsAdmin" href="/pools/mapped/update/{{pool.mappedPoolId}}">  (Edit)</a></h4>
-    <table class="table table-striped">
+    <table class="table table-striped table-sm">
         <tr>
             <td>Pool ID</td>
             <td>{{pool.mappedPoolId}}</td>
@@ -29,8 +36,20 @@ mappedComments
             <td>{{pool.mappedDateText}}</td>
         </tr>
         <tr>
-            <td>Confidence</td>
-            <td>{{pool.mappedConfidence}}</td>
+            <td>Town</td>
+            <td>{{pool.mappedTown.townName}}</td>
+        </tr>
+        <tr>
+            <td>Location Uncertainty</td>
+            <td>{{pool.mappedLocationUncertainty}}</td>
+        </tr>
+        <tr>
+            <td>Landowner Known?</td>
+            <td>{{pool.mappedLandownerKnown}}</td>
+        </tr>
+        <tr>
+            <td>Landowner Information</td>
+            <td>{{pool.mappedLandownerInfo}}</td>
         </tr>
         <tr>
             <td>Latitude</td>
@@ -40,7 +59,14 @@ mappedComments
             <td>Longitude</td>
             <td>{{pool.mappedLongitude}}</td>
         </tr>
-
+        <tr>
+            <td>Comments</td>
+            <td>{{pool.mappedComments}}</td>
+        </tr>
+        <tr>
+            <td>Confidence</td>
+            <td>{{pool.mappedConfidence}}</td>
+        </tr>
         <tr>
             <td>Location Accuracy</td>
             <td>{{pool.mappedLocationAccuracy}}</td>
@@ -60,10 +86,6 @@ mappedComments
         <tr>
             <td>Photo Number</td>
             <td>{{pool.mappedPhotoNumber}}</td>
-        </tr>
-        <tr>
-            <td>Comments</td>
-            <td>{{pool.mappedComments}}</td>
         </tr>
 
     </table>

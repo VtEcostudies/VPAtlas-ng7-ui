@@ -50,6 +50,6 @@ export class vpMapViewComponent implements OnInit {
                   this.alertService.error(error);
                   this.dataLoading = false; //this forces a map update, which plots a point
               });
-
     }
+
 }
