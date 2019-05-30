@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, OnChanges, SimpleChange } from "@angular/core";
 import * as L from "leaflet";
+//import * as LP from "leaflet.browser.print";
 import { AuthenticationService, uxValuesService } from '@app/_services';
 
 @Component({
@@ -12,6 +13,7 @@ import { AuthenticationService, uxValuesService } from '@app/_services';
 @Injectable({providedIn: 'root'}) //this makes a service single-instance. what does it do for a component?
 
 export class vpMapLeafletComponent implements OnInit, OnChanges {
+  currentUser = null;
   userIsAdmin = false;
   @Input() mapPools : [];
   public map;
@@ -20,6 +22,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   lng;
   layerControl;
   zoomControl = L.control.zoom();
+  scaleControl = L.control.scale();
+  //printControl = LP.control.browserPrint();
   myRenderer = L.canvas({ padding: 0.5 });
   cmColors = ["#f5d108","#800000","blue","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
@@ -73,7 +77,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     } as any);
 
     baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-    baseLayers = [this.openTopo, this.googleSat, this.streets, this.light, this.esriTopo];
+    baseLayers = [this.openTopo, this.esriTopo, this.streets, this.light];
 
 
   constructor(
@@ -92,21 +96,22 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   } //constructor
 
   ngOnInit() {
-    console.log(this.authenticationService.currentUserValue);
-    //for now, logged-in users are administrators
     if (this.authenticationService.currentUserValue) {
-      this.userIsAdmin = true;
-    }
+      this.currentUser = this.authenticationService.currentUserValue.user;
+      console.log('vpmap.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+      this.userIsAdmin = this.currentUser.userrole == 'admin';
+    } else { this.userIsAdmin = false;}
 
     this.map = new L.Map("map", {
       zoomControl: false,
       maxZoom: 20,
-      minZoom: 5,
+      minZoom: 1,
       center: this.vtCenter,
       zoom: 8
     });
 
-    this.cmGroup.addTo(this.map); //an empty layerGroup for circleMarkers to be added to the map
+    this.scaleControl.setPosition('topright');
+    this.scaleControl.addTo(this.map);
 
     this.layerControl = L.control.layers(null, null, { collapsed: true }).addTo(this.map);
 
@@ -116,8 +121,13 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
       this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
 
+    this.cmGroup.addTo(this.map); //an empty layerGroup for circleMarkers to be added to the map
+
     this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
+
+    //this.printControl.position('topright');
+    //this.printControl.addTo(this.map);
 
     this.baseLayers[this.baseLayer].addTo(this.map);
 

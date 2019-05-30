@@ -1,9 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
-import { AlertService, AuthenticationService, vpMappedService } from '@app/_services';
+import { AlertService, AuthenticationService, vpMappedService, vtInfoService } from '@app/_services';
 
 import { vpMapped } from '@app/_models';
 
@@ -17,6 +17,9 @@ export class vpMapUpdateComponent implements OnInit {
     submitted = false;
     poolId = null;
     pool: vpMapped;
+    locUncs = [50, 100, '>100'];
+    towns = [];
+    townCount = 0;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -24,7 +27,8 @@ export class vpMapUpdateComponent implements OnInit {
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
-        private vpMappedService: vpMappedService
+        private vpMappedService: vpMappedService,
+        private townService: vtInfoService
     ) {
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
@@ -37,6 +41,7 @@ export class vpMapUpdateComponent implements OnInit {
       if (!this.userIsAdmin) {
         this.router.navigate(['/pools/mapped/list']);
       }
+      this.loadTowns();
     }
 
     ngOnInit() {
@@ -48,11 +53,13 @@ export class vpMapUpdateComponent implements OnInit {
 
       this.vpMappedForm = this.formBuilder.group({
           mappedPoolId: [{value: this.poolId, disabled: true}, Validators.required],
+/*
           mappedByUser: ['', Validators.required],
           mappedDateText: ['', Validators.required],
           mappedLatitude: ['', Validators.required],
           mappedLongitude: ['', Validators.required],
-          mappedConfidence: ['', Validators.required],
+          mappedLandownerKnown: ['', Validators.nullValidator],
+          mappedLandownerInfo: ['', Validators.nullValidator],
 
           mappedLocationAccuracy: ['', Validators.required],
           mappedSource: ['', Validators.required],
@@ -60,6 +67,17 @@ export class vpMapUpdateComponent implements OnInit {
           mappedPhotoNumber: ['', Validators.nullValidator],
           mappedShape: ['', Validators.nullValidator],
           mappedComments: ['', Validators.nullValidator],
+*/
+          mappedByUser: ['', Validators.required],
+          mappedDateText: ['', Validators.required],
+          mappedLatitude: ['', Validators.required],
+          mappedLongitude: ['', Validators.required],
+
+          mappedTownName: new FormControl(this.towns[this.townCount]),
+          mappedLandownerKnown: [Validators.nullValidator],
+          mappedLandownerInfo: [Validators.nullValidator],
+          mappedLocationUncertainty: new FormControl(this.locUncs[3]),
+          mappedComments: [Validators.nullValidator],
       });
     }
 
@@ -68,17 +86,22 @@ export class vpMapUpdateComponent implements OnInit {
     */
     afterLoad() {
       //this.vpMappedForm.controls['mappedPoolId'].setValue(this.pool.mappedPoolId);
-      this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
+/*
       this.vpMappedForm.controls['mappedSource'].setValue(this.pool.mappedSource);
       this.vpMappedForm.controls['mappedSource2'].setValue(this.pool.mappedSource2);
-      this.vpMappedForm.controls['mappedDateText'].setValue(this.pool.mappedDateText);
       this.vpMappedForm.controls['mappedPhotoNumber'].setValue(this.pool.mappedPhotoNumber);
       this.vpMappedForm.controls['mappedShape'].setValue(this.pool.mappedShape);
-      this.vpMappedForm.controls['mappedConfidence'].setValue(this.pool.mappedConfidence);
-      this.vpMappedForm.controls['mappedLocationAccuracy'].setValue(this.pool.mappedLocationAccuracy);
-      this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
+*/
+      this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
+      this.vpMappedForm.controls['mappedDateText'].setValue(this.pool.mappedDateText);
       this.vpMappedForm.controls['mappedLatitude'].setValue(this.pool.mappedLatitude);
       this.vpMappedForm.controls['mappedLongitude'].setValue(this.pool.mappedLongitude);
+
+      this.vpMappedForm.controls['mappedTownName'].setValue(this.pool.mappedTownName);
+      this.vpMappedForm.controls['mappedLandownerKnown'].setValue(this.pool.mappedLandownerKnown);
+      this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
+      this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
+      this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
 
       console.dir(this.vpMappedForm.value);
     }
@@ -149,5 +172,22 @@ export class vpMapUpdateComponent implements OnInit {
                   this.dataLoading = false;
               });
       }
+    }
+
+    private loadTowns() {
+      this.dataLoading = true;
+      this.townService.getTowns()
+          .pipe(first())
+          .subscribe(
+              data => {
+                this.towns = data.rows;
+                this.townCount = data.rowCount;
+                this.dataLoading = false;
+              },
+              error => {
+                this.alertService.error(error);
+                this.dataLoading = false;
+              });
+
     }
 }

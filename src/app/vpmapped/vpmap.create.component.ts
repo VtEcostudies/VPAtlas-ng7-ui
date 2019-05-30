@@ -1,10 +1,8 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-
-import { AlertService, AuthenticationService, vpMappedService } from '@app/_services';
-
+import { AlertService, AuthenticationService, vpMappedService, vtInfoService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({templateUrl: 'vpmap.create.component.html'})
@@ -12,6 +10,9 @@ export class vpMapCreateComponent implements OnInit {
     update = false; //flag for html config that this is create (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
     userIsAdmin = false;
     vpMappedForm: FormGroup;
+    locUncs = [50, 100, '>100'];//[{display:'50',value:50}, {display:'100',value:100}, {display:'>100',value:1000}]; //https://angular.io/api/forms/SelectControlValueAccessor
+    towns = [];
+    townCount = 0;
     dataLoading = false;
     submitted = false;
 
@@ -20,7 +21,8 @@ export class vpMapCreateComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
-        private vpMappedService: vpMappedService
+        private vpMappedService: vpMappedService,
+        private townService: vtInfoService
     ) {
       if (this.authenticationService.currentUserValue) {
         let currentUser = this.authenticationService.currentUserValue.user;
@@ -31,6 +33,7 @@ export class vpMapCreateComponent implements OnInit {
         // redirect to pool search if user not logged-in
         this.router.navigate(['/pools/mapped/list']);
       }
+      this.loadTowns();
     }
 
     ngOnInit() {
@@ -40,15 +43,13 @@ export class vpMapCreateComponent implements OnInit {
             //mappedByUser: [{value: this.authenticationService.currentUserValue.user.username, disabled: true}, Validators.required],
             mappedByUser: [this.authenticationService.currentUserValue.user.username, Validators.required],
             mappedDateText: [Moment().format('MM/DD/YYYY'), Validators.required],
-            mappedConfidence: ['M', Validators.required],
             mappedLatitude: ['43.5', Validators.required],
             mappedLongitude: ['-72', Validators.required],
+            mappedTownName: new FormControl(this.towns[this.townCount]),
 
-            mappedLocationAccuracy: ['M', Validators.required],
-            mappedSource: ['Visit', Validators.required],
-            mappedSource2: ['', Validators.nullValidator],
-            mappedShape: ['Point', Validators.nullValidator],
-            mappedPhotoNumber: ['', Validators.nullValidator],
+            mappedLandownerKnown: [false, Validators.nullValidator],
+            mappedLandownerInfo: ['', Validators.nullValidator],
+            mappedLocationUncertainty: [50, new FormControl(this.locUncs[3])],
             mappedComments: ['', Validators.nullValidator],
         });
     }
@@ -79,6 +80,15 @@ export class vpMapCreateComponent implements OnInit {
           return;
         }
 
+        if (this.vpMappedForm.value.mappedLocationUncertainty == '>100') {
+          this.vpMappedForm.value.mappedLocationUncertainty = 500;
+        }
+
+        if (Number(this.vpMappedForm.value.mappedLocationUncertainty) < 50) {
+          this.alertService.error("Please enter Location Uncertainty.");
+          return;
+        }
+
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {
           console.log(`vpMappedForm.invalid`);
@@ -101,4 +111,21 @@ export class vpMapCreateComponent implements OnInit {
                     this.dataLoading = false;
                 });
     }
+
+  private loadTowns() {
+    this.dataLoading = true;
+    this.townService.getTowns()
+        .pipe(first())
+        .subscribe(
+            data => {
+              this.towns = data.rows;
+              this.townCount = data.rowCount;
+              this.dataLoading = false;
+            },
+            error => {
+              this.alertService.error(error);
+              this.dataLoading = false;
+            });
+
+  }
 }

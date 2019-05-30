@@ -17,4 +17,14 @@ export class vpMapped {
     mappedComments: string;
     mappedLatitude: number;
     mappedLongitude: number;
+
+    mappedMethod: string;
+    mappedlocationInfoDirections: string;
+    mappedLandownerKnown: boolean;
+    mappedLandownerInfo: string;
+    mappedLocationUncertaintyUnits: string;
+    mappedLocationUncertainty: number;
+    mappedTownId: number;
+    mappedTownName: string;
+
 }
