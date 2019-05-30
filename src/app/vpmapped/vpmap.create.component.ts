@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vtInfoService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import { vtTown } from '@app/_models';
 
 @Component({templateUrl: 'vpmap.create.component.html'})
 export class vpMapCreateComponent implements OnInit {
