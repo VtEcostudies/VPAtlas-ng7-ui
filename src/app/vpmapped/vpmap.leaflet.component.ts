@@ -25,7 +25,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   scaleControl = L.control.scale();
   //printControl = LP.control.browserPrint();
   myRenderer = L.canvas({ padding: 0.5 });
-  cmColors = ["#f5d108","#800000","blue","yellow","orange","purple","cyan","grey"];
+  cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
   cmClrCnt = 7; //(this.cmColors).length();
   cmRadius = 1;

@@ -43,8 +43,9 @@ export class vpMapListComponent implements OnInit {
       this.filterForm = this.formBuilder.group({
           mappedPoolId: [''],
           mappedByUser: [''],
+          mappedTown: [''],
           mappedConfidence: [''],
-          mappedLocation: [{value: '', disabled: true}]
+          //mappedTown: [{value: '', disabled: true}]
       });
       //and load page 1
       this.firstPage();
@@ -69,6 +70,13 @@ export class vpMapListComponent implements OnInit {
         this.filter += `mappedByUser|LIKE=%${this.f.mappedByUser.value}%`;
       }
 
+      if (this.f.mappedTown.value) {
+        if (this.filter) {
+          this.filter += '&';
+        }
+        this.filter += `vptown."townName"|LIKE=%${this.f.mappedTown.value}%`;
+      }
+
       if (this.f.mappedConfidence.value) {
         if (this.filter) {
           this.filter += '&';
@@ -76,19 +84,7 @@ export class vpMapListComponent implements OnInit {
         this.filter += `mappedConfidence=${this.f.mappedConfidence.value}`;
       }
 
-      if (this.f.mappedLocation.value) {
-        if (this.filter) {
-          this.filter += '&';
-        }
-        this.filter += `mappedLocation=${this.f.mappedLocation.value}`;
-      }
-
       console.log('vpmap.list.components.ts::getfilter()', this.filter);
-    }
-
-    //a stub that does nothing for now
-    filterLocation() {
-
     }
 
     firstPage() {
