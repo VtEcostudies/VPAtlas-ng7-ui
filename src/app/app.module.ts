@@ -1,5 +1,4 @@
 ﻿import { NgModule } from '@angular/core';
-//import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -19,13 +18,11 @@ import { AdminComponent } from './admin';
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
-import { vpMapUpdateComponent } from './vpmapped';
 import { vpMapLeafletComponent } from './vpmapped';
 
 @NgModule({
     imports: [
         BrowserModule,
-        //FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
         routing
@@ -41,7 +38,6 @@ import { vpMapLeafletComponent } from './vpmapped';
         vpMapListComponent,
         vpMapViewComponent,
         vpMapCreateComponent,
-        vpMapUpdateComponent,
         vpMapLeafletComponent
     ],
     providers: [

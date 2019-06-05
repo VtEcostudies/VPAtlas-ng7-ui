@@ -20,6 +20,7 @@ export class vpMapped {
     mappedLongitude: number = -72.668056;
 
     mappedMethod: string = '';
+    mappedPoolStatus: string = '';
     mappedlocationInfoDirections: string = '';
     mappedLandownerPermission: boolean = false;
     mappedLandownerName: string = '';
