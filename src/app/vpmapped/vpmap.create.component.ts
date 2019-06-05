@@ -60,8 +60,8 @@ export class vpMapCreateComponent implements OnInit {
         this.pool.mappedPoolId = `${this.authenticationService.currentUserValue.user.username}1`;
         this.pool.mappedByUser = this.authenticationService.currentUserValue.user.username;
         this.pool.mappedDateText = Moment().format('MM/DD/YYYY');
-        this.pool.mappedLatitude = 44.5;
-        this.pool.mappedLongitude = -73;
+        this.pool.mappedLatitude = 43.916944;
+        this.pool.mappedLongitude = -72.668056;
       }
 
       //create a separate form for landowner data, to be nested within vpMappedForm

@@ -16,8 +16,8 @@ export class vpMapped {
     mappedConfidence: string = '';
     mappedLocationAccuracy: string = '';
     mappedComments: string = '';
-    mappedLatitude: number = 44.5;
-    mappedLongitude: number = -73.0;
+    mappedLatitude: number = 43.916944;
+    mappedLongitude: number = -72.668056;
 
     mappedMethod: string = '';
     mappedlocationInfoDirections: string = '';

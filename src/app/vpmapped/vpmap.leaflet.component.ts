@@ -18,12 +18,11 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   vceCenter = new L.LatLng(43.6962, -72.3197); //VCE coordinates
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
   vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
-  @Input() mapPools;
-  @Input() update = false;
-  @Output() poolUpdate = new EventEmitter<L.LatLng>();
+  @Input() mapPools; //single pool or array of pools to plot, set by the parent
+  @Input() update = false; //external flag to invoke the map with a moveable marker
+  @Output() poolUpdate = new EventEmitter<L.LatLng>(); //
   poolLoc: L.LatLng;
   public map;
-  //update = true; //flag that we will create a moveable marker for editing pool location
   marker = L.marker(this.vtCenter, {
               draggable: true,
               autoPan: true
