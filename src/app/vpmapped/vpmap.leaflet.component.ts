@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
-import { Component, OnInit, Input, OnChanges, SimpleChange } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
 import * as L from "leaflet";
 //import * as LP from "leaflet.browser.print";
 import { AuthenticationService, uxValuesService } from '@app/_services';
@@ -10,16 +10,24 @@ import { AuthenticationService, uxValuesService } from '@app/_services';
   styleUrls: ['vpmap.leaflet.component.css']
 })
 
-@Injectable({providedIn: 'root'}) //this makes a service single-instance. what does it do for a component?
+@Injectable({providedIn: 'root'}) //this makes a component single-instance, which applies to services, as well.
 
 export class vpMapLeafletComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
-  @Input() mapPools : [];
+  vceCenter = new L.LatLng(43.6962, -72.3197); //VCE coordinates
+  vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
+  vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
+  @Input() mapPools;
+  @Input() update = false;
+  @Output() poolUpdate = new EventEmitter<L.LatLng>();
+  poolLoc: L.LatLng;
   public map;
-  marker;
-  lat;
-  lng;
+  //update = true; //flag that we will create a moveable marker for editing pool location
+  marker = L.marker(this.vtCenter, {
+              draggable: true,
+              autoPan: true
+            });
   layerControl;
   zoomControl = L.control.zoom();
   scaleControl = L.control.scale();
@@ -32,9 +40,6 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   cmGroup = L.layerGroup();
   cmLLArr = [];
   zoom = 0;
-  vceCenter = new L.LatLng(43.6962, -72.3197); //VCE coordinates
-  vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
-  vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
       id: 'google.sat', //illegal property
@@ -77,19 +82,19 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     } as any);
 
     baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-    baseLayers = [this.openTopo, this.esriTopo, this.streets, this.light];
+    baseLayers = [this.openTopo, this.esriTopo, this.googleSat, this.streets, this.light];
 
 
   constructor(
     private uxValuesService: uxValuesService,
     private authenticationService: AuthenticationService
     ) {
-
     /*
       preserve baseLayer shown across page loads with outside service
       which holds baseLayers[] array index of last-selected baseLayer.
     */
     this.baseLayer = this.uxValuesService.baseLayerIndex;
+    this.cmColor = this.uxValuesService.pointColorIndex;
 
     console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
 
@@ -103,12 +108,12 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     } else { this.userIsAdmin = false;}
 
     this.map = new L.Map("map", {
-      zoomControl: false,
-      maxZoom: 20,
-      minZoom: 1,
-      center: this.vtCenter,
-      zoom: 8
-    });
+               zoomControl: false,
+               maxZoom: 20,
+               minZoom: 1,
+               center: this.vtCenter,
+               zoom: 8
+             });
 
     this.scaleControl.setPosition('topright');
     this.scaleControl.addTo(this.map);
@@ -121,7 +126,11 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
       this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
 
-    this.cmGroup.addTo(this.map); //an empty layerGroup for circleMarkers to be added to the map
+    if (this.update) {
+      this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
+    } else {
+      this.cmGroup.addTo(this.map); //a layerGroup of circleMarkers added in plotPoolCircles
+    }
 
     this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
@@ -134,6 +143,10 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     this.map.on("baselayerchange", e => this.onBaseLayerChange(e));
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
+
+    this.map.on("click", e => this.onMapClick(e));
+
+    this.marker.on("moveend", e => this.onMarkerMoveEnd(e));
   }
 
   /*
@@ -144,7 +157,11 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     //console.log('ngOnChanges(changes), changes:', changes);
     this.clearPools();
-    this.plotPools(this.mapPools);
+    if (this.update) {
+      this.plotPoolMarker(this.mapPools);
+    } else {
+      this.plotPoolCircles(this.mapPools);
+    }
   }
 
   zoomExtents() {
@@ -165,10 +182,6 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     }
   }
 
-  onLayerAdd(e) {
-    //this.zoomExtents(); //this might be causing huge client-side slowdown and resource hogging...
-  }
-
   onBaseLayerChange(e) {
     //find the array index of the baseLayer that was chosen from the envent value
     var index = this.baseLayers.findIndex(elm => {
@@ -182,9 +195,9 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
   onZoomEnd(e) {
     this.zoom = this.map.getZoom();
-    console.log('onZoomEnd', this.zoom);
+    //console.log('onZoomEnd', this.zoom);
     this.cmRadius = this.zoom > 10 ? this.zoom - 10: 1;
-    console.log('cmCount', this.cmLLArr.length);
+    //console.log('cmCount', this.cmLLArr.length);
     if (this.cmLLArr.length < 20) {this.cmRadius = 5;}
     this.setCmRadius();
   }
@@ -196,12 +209,26 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   }
 
   onMapClick(e) {
-    this.lat = e.latlng.lat;
-    this.lng = e.latlng.lng;
-    console.log("this.marker", this.marker);
-    this.marker.setLatLng(new L.LatLng(e.latlng.lat, e.latlng.lng));
-    this.map.panTo(new L.LatLng(e.latlng.lat, e.latlng.lng));
-    this.map.setView(new L.LatLng(e.latlng.lat, e.latlng.lng), 18);
+    this.poolLoc = L.latLng(e.latlng.lat, e.latlng.lng);
+    this.marker.setLatLng(this.poolLoc);
+    this.poolUpdate.emit(this.poolLoc);
+    //this.map.panTo(this.poolLoc);
+    //this.map.setView(this.poolLoc, 18);
+    console.log("vpmap.leaflet.onMapClick | poolLoc: ", this.poolLoc);
+    this.marker.bindTooltip(`Pool ID: ${this.mapPools.mappedPoolId}<br>
+                             Lat: ${this.poolLoc.lat}<br>
+                             Lng: ${this.poolLoc.lng}
+                            `);
+  }
+
+  onMarkerMoveEnd(e) {
+    this.poolLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
+    this.poolUpdate.emit(this.poolLoc);
+    console.log("vpmap.leaflet.onMarkerMoveEnd | poolLoc: ", this.poolLoc);
+    this.marker.bindTooltip(`Pool ID: ${this.mapPools.mappedPoolId}<br>
+                             Lat: ${this.poolLoc.lat}<br>
+                             Lng: ${this.poolLoc.lng}
+                            `);
   }
 
   clearPools() {
@@ -209,7 +236,25 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     this.cmLLArr = [];
   }
 
-  plotPools(vpools) {
+  plotPoolMarker(vpool) {
+
+    console.log('vpmap.leaflet.plotPoolMarker(',vpool,')');
+
+    if (!vpool) return;
+
+    if (Array.isArray(vpool)) {vpool = vpool[0];}
+
+    this.marker.setLatLng(L.latLng(vpool.mappedLatitude, vpool.mappedLongitude));
+
+    this.marker.bindTooltip(`Pool ID: ${vpool.mappedPoolId}<br>
+                             Lat: ${vpool.mappedLatitude}<br>
+                             Lng: ${vpool.mappedLongitude}
+                            `);
+  }
+
+  plotPoolCircles(vpools) {
+
+    console.log('vpmap.leaflet.plotPoolCircles(',vpools,')');
 
     if (!vpools) return;
 
@@ -221,10 +266,27 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
       var llLoc = L.latLng(vpools[i].mappedLatitude, vpools[i].mappedLongitude);
 
+      var ptRadius = this.cmRadius;
+
+      //set the cmRadius based upon mappedLocationUncertainty
+      switch (vpools[i].mappedLocationUncertainty) {
+        case null:
+        case '50':
+          break;
+        case '100':
+          ptRadius = 2 * this.cmRadius;
+          break;
+        case '>100':
+          ptRadius = 4 * this.cmRadius;
+          break;
+      }
+
+      // TODO: set the cmColor based upon mappedPoolStatus
+
       var circle = L.circleMarker(llLoc, {
           renderer: this.myRenderer,
-          radius: this.cmRadius,
-          color: this.cmColors[0] //yellow by default
+          radius: ptRadius,
+          color: this.cmColors[this.cmColor]
       });
 
       this.cmGroup.addLayer(circle); //add this marker to the current layerGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
@@ -249,8 +311,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
       circle.bindTooltip(`${vpools[i].mappedPoolId}<br>
                         Lat: ${vpools[i].mappedLatitude}<br>
                         Lon:${vpools[i].mappedLongitude}<br>`);
-    }
-  }
+    } // else userIsAdmin
+  } // plotPoolCircles()
 
   changeColor(index=null) {
 
@@ -258,13 +320,14 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     if (!index) {
       this.cmColor++;
       if (this.cmColor > this.cmClrCnt) {this.cmColor = 0;}
-      index = this.cmColor;
     }
     console.log(`changeColor(${index})`);
 
     this.cmGroup.eachLayer((layer: any) => {
-      layer.setStyle({color: this.cmColors[index]})
+      layer.setStyle({color: this.cmColors[this.cmColor]})
     });
+
+    this.uxValuesService.pointColorIndex = this.cmColor; //apply the change to the UX service to preserve value across page loads
   }
 
 }

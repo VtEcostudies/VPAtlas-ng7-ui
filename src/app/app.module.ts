@@ -1,6 +1,7 @@
-﻿import { NgModule }      from '@angular/core';
+﻿import { NgModule } from '@angular/core';
+//import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule }    from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // used to create fake backend
@@ -24,6 +25,7 @@ import { vpMapLeafletComponent } from './vpmapped';
 @NgModule({
     imports: [
         BrowserModule,
+        //FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
         routing

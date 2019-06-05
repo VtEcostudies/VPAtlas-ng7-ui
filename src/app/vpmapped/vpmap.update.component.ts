@@ -18,7 +18,7 @@ export class vpMapUpdateComponent implements OnInit {
     submitted = false;
     poolId = null;
     pool: vpMapped;
-    locUncs = [50, 100, '>100'];
+    locUncs = ['50', '100', '>100'];
     towns = [];
     townCount = 0;
 
@@ -61,7 +61,16 @@ export class vpMapUpdateComponent implements OnInit {
 
           mappedTown: new FormControl(this.towns[this.townCount]),
           mappedTownId: [],
-          mappedLandownerKnown: [Validators.nullValidator],
+          mappedLandownerPermission: [Validators.nullValidator],
+
+          mappedLandownerName: [{value: '', disabled: true}, Validators.required], //flip to enabled if Permission
+          mappedLandownerAddress: [{value: '', disabled: true}, Validators.required], //flip to enabled if Permission
+          mappedLandownerTown: [{value: '', disabled: true}, Validators.required], //flip to enabled if Permission
+          mappedLandownerStateAbbrev: [{value: '', disabled: true}, Validators.required], //flip to enabled if Permission
+          mappedLandownerZip5: [{value: '', disabled: true}, Validators.required], //flip to enabled if Permission
+          mappedLandownerPhone: [{value: '', disabled: true}, Validators.required], //flip to enabled if Permission
+          mappedLandownerEmail: [{value: '', disabled: true}, Validators.required], //flip to enabled if Permission
+
           mappedLandownerInfo: [Validators.nullValidator],
           mappedLocationUncertainty: new FormControl(this.locUncs[3]),
           mappedComments: [Validators.nullValidator],
@@ -89,7 +98,16 @@ export class vpMapUpdateComponent implements OnInit {
       //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
       //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
       this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
-      this.vpMappedForm.controls['mappedLandownerKnown'].setValue(this.pool.mappedLandownerKnown);
+      this.vpMappedForm.controls['mappedLandownerPermission'].setValue(this.pool.mappedLandownerPermission);
+
+      this.vpMappedForm.controls['mappedLandownerName'].setValue(this.pool.mappedLandownerName);
+      this.vpMappedForm.controls['mappedLandownerAddress'].setValue(this.pool.mappedLandownerAddress);
+      this.vpMappedForm.controls['mappedLandownerTown'].setValue(this.pool.mappedLandownerTown);
+      this.vpMappedForm.controls['mappedLandownerStateAbbrev'].setValue(this.pool.mappedLandownerStateAbbrev);
+      this.vpMappedForm.controls['mappedLandownerZip5'].setValue(this.pool.mappedLandownerZip5);
+      this.vpMappedForm.controls['mappedLandownerPhone'].setValue(this.pool.mappedLandownerPhone);
+      this.vpMappedForm.controls['mappedLandownerEmail'].setValue(this.pool.mappedLandownerEmail);
+
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);

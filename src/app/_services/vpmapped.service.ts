@@ -30,11 +30,12 @@ export class vpMappedService {
         return this.http.get<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/count?${filter}`);
     }
 
+    createOrUpdate(update: boolean, poolId: string, vpmap: vpMapped) {
+      if (update) {return this.update(poolId, vpmap);}
+      else {return this.create(vpmap);}
+    }
+
     create(vpmap: vpMapped) {
-    //create(vpmap: {}) { //both of these work...
-        console.log(`vpmapped.service.ts | vpmap:`);
-        console.dir(vpmap);
-        console.log(`post to url: ${environment.apiUrl}/pools/mapped`);
         return this.http.post<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped`, vpmap);
     }
 

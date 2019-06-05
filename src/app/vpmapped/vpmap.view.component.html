@@ -2,14 +2,23 @@
 mappedPoolId
 mappedByUser
 mappedDateText
+mappedPoolStatus
 mappedLatitude
 mappedLongitude
 mappedTownName
 mappedLocationUncertainty
-mappedLandownerKnown
+mappedLandownerPermission
+
+mappedLandownerName
+mappedLandownerAddress
+mappedLandownerTown
+mappedLandownerStateAbbrev
+mappedLandownerZip5
+mappedLandownerPhone
+mappedLandownerEmail
+
 mappedLandownerInfo
 mappedComments
-
 
 mappedConfidence
 mappedLocationAccuracy
@@ -20,7 +29,7 @@ mappedPhotoNumber
 
 -->
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-3">
     <h4><u>Mapped Pool Detail</u><a *ngIf="userIsAdmin" href="/pools/mapped/update/{{pool.mappedPoolId}}">  (Edit)</a></h4>
     <table class="table table-striped table-sm">
         <tr>
@@ -36,6 +45,10 @@ mappedPhotoNumber
             <td>{{pool.mappedDateText}}</td>
         </tr>
         <tr>
+            <td>Status</td>
+            <td>{{pool.mappedPoolStatus}}</td>
+        </tr>
+        <tr>
             <td>Town</td>
             <td>{{pool.mappedTown.townName}}</td>
         </tr>
@@ -44,11 +57,23 @@ mappedPhotoNumber
             <td>{{pool.mappedLocationUncertainty}}</td>
         </tr>
         <tr>
-            <td>Landowner Known?</td>
-            <td>{{pool.mappedLandownerKnown}}</td>
+            <td>Landowner Permission?</td>
+            <td>{{pool.mappedLandownerPermission}}</td>
         </tr>
         <tr>
-            <td>Landowner Information</td>
+            <td>Landowner Conact Info</td>
+            <td>
+              {{pool.mappedLandownerName}} <br>
+              {{pool.mappedLandownerAddress}} <br>
+              {{pool.mappedLandownerTown}}
+              {{pool.mappedLandownerStateAbbrev}}
+              {{pool.mappedLandownerZip5}} <br>
+              {{pool.mappedLandownerPhone}}
+              {{pool.mappedLandownerEmail}}
+            </td>
+        </tr>
+        <tr>
+            <td>Landowner Additional Info</td>
             <td>{{pool.mappedLandownerInfo}}</td>
         </tr>
         <tr>
@@ -90,7 +115,7 @@ mappedPhotoNumber
 
     </table>
   </div>
-  <div class="col-sm-8">
+  <div class="col-9">
     <div *ngIf="!dataLoading">
       <app-map [mapPools]="vpmap"></app-map>
     </div>

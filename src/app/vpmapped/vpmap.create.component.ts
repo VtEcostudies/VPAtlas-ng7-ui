@@ -1,25 +1,34 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vtInfoService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import * as L from "leaflet";
+import { vpMapped } from '@app/_models';
 import { vtTown } from '@app/_models';
 
 @Component({templateUrl: 'vpmap.create.component.html'})
 export class vpMapCreateComponent implements OnInit {
     update = false; //flag for html config that this is create (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
     userIsAdmin = false;
+    vpLandOwnForm: FormGroup;
     vpMappedForm: FormGroup;
-    locUncs = [50, 100, '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
+    locUncs = ['50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
     towns = [];
     townCount = 0;
     dataLoading = false;
     submitted = false;
+    permission = false;
+    poolId = null;
+    pool: vpMapped = new vpMapped();
+    poolUpdateLocation = new L.LatLng(43.6962, -72.3197);
+    mapMarker = true;
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
+        private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
         private vpMappedService: vpMappedService,
@@ -27,7 +36,7 @@ export class vpMapCreateComponent implements OnInit {
     ) {
       if (this.authenticationService.currentUserValue) {
         let currentUser = this.authenticationService.currentUserValue.user;
-        console.log('vpmap.view.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
+        console.log('vpmap.create.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
         this.userIsAdmin = currentUser.userrole == 'admin';
       } else {
         this.userIsAdmin = false;
@@ -38,26 +47,133 @@ export class vpMapCreateComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.vpMappedForm = this.formBuilder.group({
 
-            mappedPoolId: [`${this.authenticationService.currentUserValue.user.username}1`, Validators.required],
-            //mappedByUser: [{value: this.authenticationService.currentUserValue.user.username, disabled: true}, Validators.required],
-            mappedByUser: [this.authenticationService.currentUserValue.user.username, Validators.required],
-            mappedDateText: [Moment().format('MM/DD/YYYY'), Validators.required],
-            mappedLatitude: ['43.5', Validators.required],
-            mappedLongitude: ['-72', Validators.required],
+      //get mappedPoolId from route params and load pool data from db
+      console.log('vpmap.create.ngOnInit route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
+      this.poolId = this.route.snapshot.params.mappedPoolId;
 
-            mappedTown: [{townId: 0, townName: 'Unknown'}, new FormControl(this.towns[this.townCount])],
-            mappedTownId: [],
-            mappedLandownerKnown: [false, Validators.nullValidator],
-            mappedLandownerInfo: ['', Validators.nullValidator],
-            mappedLocationUncertainty: [50, new FormControl(this.locUncs[3], Validators.required)],
-            mappedComments: ['', Validators.nullValidator],
-        });
+      if (this.poolId) {
+        this.update = true;
+        this.loadPage(this.poolId);
+      } else {
+        this.update = false;
+        this.pool.mappedPoolId = `${this.authenticationService.currentUserValue.user.username}1`;
+        this.pool.mappedByUser = this.authenticationService.currentUserValue.user.username;
+        this.pool.mappedDateText = Moment().format('MM/DD/YYYY');
+        this.pool.mappedLatitude = 44.5;
+        this.pool.mappedLongitude = -73;
+      }
+
+      //create a separate form for landowner data, to be nested within vpMappedForm
+      this.vpLandOwnForm = this.formBuilder.group({
+        mappedLandownerName: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+        mappedLandownerAddress: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+        mappedLandownerTown: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+        mappedLandownerStateAbbrev: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+        mappedLandownerZip5: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+        mappedLandownerPhone: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+        mappedLandownerEmail: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+      });
+
+      this.vpMappedForm = this.formBuilder.group({
+
+        mappedPoolId: [this.pool.mappedPoolId, Validators.required],
+        mappedByUser: [this.pool.mappedByUser, Validators.required],
+        mappedDateText: [this.pool.mappedDateText, Validators.required],
+        mappedLatitude: [this.pool.mappedLatitude, Validators.required],
+        mappedLongitude: [this.pool.mappedLongitude, Validators.required],
+        mappedTown: [this.pool.mappedTown, new FormControl(this.towns[this.townCount])],
+        mappedTownId: [this.pool.mappedTownId], //non-display field set when the form is submitted
+        mappedLandownerPermission: [this.pool.mappedLandownerPermission, Validators.nullValidator],
+
+        mappedLandowner: [{disabled: true}, this.vpLandOwnForm],
+
+        mappedLandownerInfo: ['', Validators.nullValidator],
+        mappedLocationUncertainty: ['50', new FormControl(this.locUncs[3], Validators.required)],
+        mappedComments: ['', Validators.nullValidator],
+      });
+
+      //how to handle UI changes from checkbox input:
+      //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-method-in-angular-reactive-forms-
+      this.formControlValueChanged();
+    }
+
+    poolMapUpdate(poolLoc: L.LatLng) {
+      this.poolUpdateLocation = poolLoc;
+      this.vpMappedForm.controls['mappedLatitude'].setValue(poolLoc.lat);
+      this.vpMappedForm.controls['mappedLongitude'].setValue(poolLoc.lng);
     }
 
     // convenience getter for easy access to form fields
     get f() { return this.vpMappedForm.controls; }
+
+    // convenience getter for easy access to form fields
+    get l() { return this.vpLandOwnForm.controls; }
+
+    /*
+      Update form fields with values loaded from db.
+    */
+    afterLoad() {
+      this.vpMappedForm.controls['mappedPoolId'].setValue(this.pool.mappedPoolId);
+      this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
+      this.vpMappedForm.controls['mappedDateText'].setValue(this.pool.mappedDateText);
+      this.vpMappedForm.controls['mappedLatitude'].setValue(this.pool.mappedLatitude);
+      this.vpMappedForm.controls['mappedLongitude'].setValue(this.pool.mappedLongitude);
+
+      //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
+      //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
+      this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
+      this.vpMappedForm.controls['mappedLandownerPermission'].setValue(this.pool.mappedLandownerPermission);
+
+      this.vpLandOwnForm.controls['mappedLandownerName'].setValue(this.pool.mappedLandownerName);
+      this.vpLandOwnForm.controls['mappedLandownerAddress'].setValue(this.pool.mappedLandownerAddress);
+      this.vpLandOwnForm.controls['mappedLandownerTown'].setValue(this.pool.mappedLandownerTown);
+      this.vpLandOwnForm.controls['mappedLandownerStateAbbrev'].setValue(this.pool.mappedLandownerStateAbbrev);
+      this.vpLandOwnForm.controls['mappedLandownerZip5'].setValue(this.pool.mappedLandownerZip5);
+      this.vpLandOwnForm.controls['mappedLandownerPhone'].setValue(this.pool.mappedLandownerPhone);
+      this.vpLandOwnForm.controls['mappedLandownerEmail'].setValue(this.pool.mappedLandownerEmail);
+
+      this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
+      this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
+      this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
+      /* these fields are not displayed on new pool entry
+      this.vpMappedForm.controls['mappedSource'].setValue(this.pool.mappedSource);
+      this.vpMappedForm.controls['mappedSource2'].setValue(this.pool.mappedSource2);
+      this.vpMappedForm.controls['mappedPhotoNumber'].setValue(this.pool.mappedPhotoNumber);
+      this.vpMappedForm.controls['mappedShape'].setValue(this.pool.mappedShape);
+      */
+
+      //On update, disable mappedByUser, which will prevent its being altered and exclude
+      //it from the formGroup values.
+      if (this.update) {
+        this.vpMappedForm.get('mappedByUser').disable();
+      }
+
+      console.dir(this.vpMappedForm.value);
+      console.dir(this.vpMappedForm.value);
+    }
+
+    /*
+      On update, load an existing pool and populate the fields
+    */
+    loadPage(mappedPoolId) {
+      this.dataLoading = true;
+      console.log('vpmpap.create.component.loadPage:', mappedPoolId);
+      this.vpMappedService.getById(mappedPoolId)
+          .pipe(first())
+          .subscribe(
+              data => {
+                console.log('vpmap.create.component.loadPage result:', data);
+                this.pool = data.rows[0];
+                this.dataLoading = false; //this forces a map update, which plots a point
+                this.afterLoad(); //update form fields with values loaded from db
+              },
+              error => {
+                  this.alertService.error(error);
+                  this.dataLoading = false;
+              });
+
+    }
 
     onSubmit() {
 
@@ -67,7 +183,7 @@ export class vpMapCreateComponent implements OnInit {
 
         //kluge to get around disabled fields not being included in form values
         //and not having an easy validator for requiring mappedByUser = logon user
-        if (this.vpMappedForm.value.mappedByUser != this.authenticationService.currentUserValue.user.username) {
+        if (!this.update && this.vpMappedForm.value.mappedByUser != this.authenticationService.currentUserValue.user.username) {
           this.alertService.error("Mapped By User must be your username.");
           return;
         }
@@ -82,16 +198,12 @@ export class vpMapCreateComponent implements OnInit {
           return;
         }
 
-        if (this.vpMappedForm.value.mappedLocationUncertainty == '>100') {
-          this.vpMappedForm.value.mappedLocationUncertainty = 500;
-        }
-
-        if (Number(this.vpMappedForm.value.mappedLocationUncertainty) < 50) {
+        if (this.vpMappedForm.value.mappedLocationUncertainty === null) {
           this.alertService.error("Please enter Location Uncertainty.");
           return;
         }
 
-        console.log('vpmap.create.component.onSubmit | mappedTown',this.vpMappedForm.value.mappedTown);
+        //console.log('vpmap.create.component.onSubmit | mappedTown',this.vpMappedForm.value.mappedTown);
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
@@ -100,24 +212,56 @@ export class vpMapCreateComponent implements OnInit {
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {
           console.log(`vpMappedForm.invalid`);
-            return;
+          return;
+        }
+        // stop here if form is invalid
+        if (this.permission && this.vpLandOwnForm.invalid) {
+          console.log(`vpLandOwnForm.invalid`);
+          return;
+        }
+
+        //flatten the object before posting. the mappedLandowner nested form
+        //is passed, but the API can't parse it. (to-do: handle that?)
+        if (this.vpMappedForm.value.mappedLandownerPermission) {
+          Object.assign(this.vpMappedForm.value, this.vpLandOwnForm.value);
+          delete this.vpMappedForm.value.mappedLandowner;
         }
 
         this.dataLoading = true;
-        this.vpMappedService.create(this.vpMappedForm.value)
+        this.vpMappedService.createOrUpdate(this.update, this.poolId, this.vpMappedForm.value)
             .pipe(first())
             .subscribe(
                 data => {
                     console.log(`vpmap.create=>data:`, data);
                     this.alertService.success('Successfully mapped vernal pool.', true);
                     this.dataLoading = false;
-                    this.router.navigate([`/pools/mapped/view/${data.rows[0].mappedPoolId}`]);
+                    if (data.rows[0]) {this.poolId = data.rows[0].mappedPoolId;}
+                    else {this.poolId = this.vpMappedForm.value.mappedPoolId}
+                    this.router.navigate([`/pools/mapped/view/${this.poolId}`]);
                 },
                 error => {
                     console.log(`vpmap.create=>error: ${error}`);
                     this.alertService.error(error);
                     this.dataLoading = false;
                 });
+    }
+
+    deletePool() {
+      if (confirm(`Are you sure you want to delete pool ${this.pool.mappedPoolId}?`)) {
+        this.vpMappedService.delete(this.pool.mappedPoolId)
+          .pipe(first())
+          .subscribe(
+              data => {
+                  console.log(`vpmap.create.deletePool=>data:`, data);
+                  this.alertService.success('Successfully deleted vernal pool.', true);
+                  this.router.navigate([`/pools/mapped/list`]);
+              },
+              error => {
+                  console.log(`vpmap.create.deletePool=>error: `, error);
+                  this.alertService.error(error);
+                  this.dataLoading = false;
+              });
+      }
     }
 
   private loadTowns() {
@@ -142,6 +286,24 @@ export class vpMapCreateComponent implements OnInit {
   compareTownFn(t1: vtTown, t2: vtTown) {
     //console.log('compareTownFn t1:', t1, ' t2:', t2);
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
+  }
+
+  //how to handle UI changes from checkbox input:
+  //https://blog.grossman.io/real-world-angular-reactive-forms/
+  //https://netbasal.com/angular-custom-form-controls-made-easy-4f963341c8e2
+  //https://www.technouz.com/4725/disable-angular-reactiveform-input-based-selection/
+  //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-method-in-angular-reactive-forms-
+  formControlValueChanged() {
+    this.vpMappedForm.get('mappedLandownerPermission').valueChanges.subscribe(
+      (mode: boolean) => {
+      this.permission = mode;
+
+      if (this.permission) {
+        this.vpMappedForm.get('mappedLandowner').enable();
+      } else {
+        this.vpMappedForm.get('mappedLandowner').disable();
+      }
+    });
   }
 
 }

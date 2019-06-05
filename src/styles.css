@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 /*
-  alter font size in table-condensed
+  alter font size in bootstrap tables
 */
 .table-condensed{
   font-size: 18px;
@@ -9,6 +9,13 @@
 .table-sm{
   font-size: 14px;
 }
+
+.jumbotron {
+  padding-top: 30px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
 
 /*
   make an item topmost in the display.

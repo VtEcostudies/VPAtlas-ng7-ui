@@ -20,7 +20,7 @@ const appRoutes: Routes = [
     { path: 'pools/mapped/list', component: vpMapListComponent },
     { path: 'pools/mapped/view/:mappedPoolId', component: vpMapViewComponent },
     { path: 'pools/mapped/create', component: vpMapCreateComponent, canActivate: [AuthGuard] },
-    { path: 'pools/mapped/update/:mappedPoolId', component: vpMapUpdateComponent, canActivate: [AuthGuard] },
+    { path: 'pools/mapped/update/:mappedPoolId', component: vpMapCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/mapped/leaflet', component: vpMapLeafletComponent },
 
     // otherwise redirect to home

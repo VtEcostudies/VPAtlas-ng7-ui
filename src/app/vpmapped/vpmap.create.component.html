@@ -6,9 +6,15 @@
   <h2>Edit Vernal Pool '{{poolId}}'</h2>
 </div>
 
+<!-- test field for leaflet map event emitter
+<div>
+  poolUpdateLocation: {{poolUpdateLocation}}
+</div>
+-->
+
 <form [formGroup]="vpMappedForm">
   <div class="row">
-    <div class="col-6">
+    <div class="col-3">
       <!--
           mappedPoolId
       -->
@@ -61,9 +67,6 @@
           </div>
       </div>
 
-    </div> <!-- col -->
-    <div class="col-6">
-
       <!--
         mappedTown
       -->
@@ -87,19 +90,6 @@
           </select>
       </div>
       <!--
-        mappedLandownerKnown
-      -->
-      <div class="form-group">
-        <label for="mappedLandownerInfo">Please add Landowner Details Below.</label>&nbsp;&nbsp;
-          <label for="mappedLandownerKnown">Is the Landowner Known?</label>&nbsp;
-          <input type="checkbox" formControlName="mappedLandownerKnown" />
-      <!--
-          mappedLandownerInfo
-          <textarea name="name" rows="8" cols="80"></textarea>
-      -->
-          <textarea rows="2" formControlName="mappedLandownerInfo" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLandownerInfo.errors }"> </textarea>
-      </div>
-      <!--
         mappedComments
       -->
       <div class="form-group">
@@ -108,6 +98,81 @@
           <div *ngIf="submitted && f.mappedComments.errors" class="invalid-feedback">
               <div *ngIf="f.mappedComments.errors.required">Mapped Comments is required</div>
           </div>
+      </div>
+
+    </div> <!-- col -->
+    <div class="col-3">
+
+      <!--
+        mappedLandownerPermission
+      -->
+      <div class="form-group">
+          <label for="mappedLandownerPermission">Do you have Landowner Permission to map this pool?</label>&nbsp;
+          <input type="checkbox" formControlName="mappedLandownerPermission" />&nbsp;
+          <label>Yes</label>
+          <!--
+          <label *ngIf="permission">Yes</label>
+          <label *ngIf="!permission">No</label>
+          -->
+      </div>
+        <!-- mappedLandownerData if they have permission -->
+        <form *ngIf="permission" [formGroup]="vpLandOwnForm">
+        <div class="form-group">
+            <label for="mappedLandownerName">Landowner Name</label>
+            <input type="text" formControlName="mappedLandownerName" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerName.errors }" />
+            <div *ngIf="submitted && l.mappedLandownerName.errors" class="invalid-feedback">
+                <div *ngIf="l.mappedLandownerName.errors.required">Landowner Name is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mappedLandownerAddress">Landowner Address</label>
+            <input type="text" formControlName="mappedLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerAddress.errors }" />
+            <div *ngIf="submitted && l.mappedLandownerAddress.errors" class="invalid-feedback">
+                <div *ngIf="l.mappedLandownerAddress.errors.required">Landowner Address is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mappedLandownerTown">Landowner Town</label>
+            <input type="text" formControlName="mappedLandownerTown" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerTown.errors }" />
+            <div *ngIf="submitted && l.mappedLandownerTown.errors" class="invalid-feedback">
+                <div *ngIf="l.mappedLandownerTown.errors.required">Landowner Town is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mappedLandownerStateAbbrev">Landowner State Abbreviation</label>
+            <input type="text" formControlName="mappedLandownerStateAbbrev" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerStateAbbrev.errors }" />
+            <div *ngIf="submitted && l.mappedLandownerStateAbbrev.errors" class="invalid-feedback">
+                <div *ngIf="l.mappedLandownerStateAbbrev.errors.required">Landowner StateAbbrev is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mappedLandownerZip5">Landowner Zip5</label>
+            <input type="text" formControlName="mappedLandownerZip5" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerZip5.errors }" />
+            <div *ngIf="submitted && l.mappedLandownerZip5.errors" class="invalid-feedback">
+                <div *ngIf="l.mappedLandownerZip5.errors.required">Landowner Zip5 is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mappedLandownerPhone">Landowner Phone</label>
+            <input type="text" formControlName="mappedLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerPhone.errors }" />
+            <div *ngIf="submitted && l.mappedLandownerPhone.errors" class="invalid-feedback">
+                <div *ngIf="l.mappedLandownerPhone.errors.required">Landowner Phone is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mappedLandownerEmail">Landowner Email</label>
+            <input type="text" formControlName="mappedLandownerEmail" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerEmail.errors }" />
+            <div *ngIf="submitted && l.mappedLandownerEmail.errors" class="invalid-feedback">
+                <div *ngIf="l.mappedLandownerEmail.errors.required">Landowner Email is required</div>
+            </div>
+        </div>
+      </form> <!-- vpLandOwnForm, if permission -->
+      <!--
+          mappedLandownerInfo
+      -->
+      <div class="form-group">
+          <label for="mappedLandownerInfo">Please add any relevant Landowner Details Below.</label>
+          <textarea rows="2" formControlName="mappedLandownerInfo" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLandownerInfo.errors }"> </textarea>
       </div>
 
       <!--
@@ -122,6 +187,18 @@
       </div>
 
     </div> <!-- col -->
+    <div class="col-6">
+      <div *ngIf="!dataLoading">
+        <app-map [mapPools]="pool"
+          [update]="mapMarker"
+          (poolUpdate)="poolMapUpdate($event)"
+          >
+        </app-map>
+      </div>
+      <div *ngIf="dataLoading">
+        ...Loading
+      </div>
+    </div>
   </div> <!-- row -->
 
 </form>
