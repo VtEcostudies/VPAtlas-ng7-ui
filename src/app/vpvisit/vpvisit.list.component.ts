@@ -2,14 +2,11 @@
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, UserService, AuthenticationService, vpMappedService } from '@app/_services';
-
-//import { vpMapped } from '@app/_models';
-//import { pgFields, pgVpMappedApi  } from '@app/_models';
+import { AlertService, UserService, AuthenticationService, vpVisitService } from '@app/_services';
 
 //@add_component_here
-@Component({templateUrl: 'vpmap.list.component.html'})
-export class vpMapListComponent implements OnInit {
+@Component({templateUrl: 'vpvisit.list.component.html'})
+export class vpVisitListComponent implements OnInit {
     filterForm: FormGroup;
     loading = false;
     page = 1;
@@ -18,9 +15,7 @@ export class vpMapListComponent implements OnInit {
     last = 1;
     count: number = 1;
     filter = '';
-    vpmap = []; //data array from db
-    //vpmap: vpMapped = [];
-    //pgApi: pgVpMappedApi;
+    vpvisit = []; //data array from db
     mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
@@ -28,7 +23,7 @@ export class vpMapListComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
-        private vpMappedService: vpMappedService
+        private vpVisitService: vpVisitService
     ) {
         // redirect to home if user not logged in - the API can't handle no-token access (yet)
         if (!this.authenticationService.currentUserValue) {
@@ -40,14 +35,12 @@ export class vpMapListComponent implements OnInit {
     get f() { return this.filterForm.controls; }
 
     ngOnInit() {
-      console.log('vpmap.list.ngOnInit');
       //these are the pool search filter fields
       this.filterForm = this.formBuilder.group({
-          mappedPoolId: [''],
-          mappedByUser: [''],
-          mappedTown: [''],
-          mappedConfidence: [''],
-          //mappedTown: [{value: '', disabled: true}]
+          visitId: [''],
+          visitPoolId: [''],
+          visitUser: [''],
+          visitTown: [''],
       });
       //and load page 1
       this.firstPage();
@@ -72,39 +65,39 @@ export class vpMapListComponent implements OnInit {
     }
 
     /*
-      Construct an SQL WHERE clause search filter to be passed to vpmapped.services
+      Construct an SQL WHERE clause search filter to be passed to vpvisit.services
       to filter db query results.
       Put the value of that fileter into the class variable.
     */
     getFilter() {
       this.filter = ''; //must clear first to undo filters
 
-      if (this.f.mappedPoolId.value) {
-        this.filter += `mappedPoolId|LIKE=%${this.f.mappedPoolId.value}%`;
+      if (this.f.visitId.value) {
+        this.filter += `visitId=${this.f.visitId.value}`;
       }
 
-      if (this.f.mappedByUser.value) {
+      if (this.f.visitPoolId.value) {
         if (this.filter) {
           this.filter += '&';
         }
-        this.filter += `mappedByUser|LIKE=%${this.f.mappedByUser.value}%`;
+        this.filter += `visitPoolId|LIKE=%${this.f.visitPoolId.value}%`;
       }
 
-      if (this.f.mappedTown.value) {
+      if (this.f.visitUser.value) {
         if (this.filter) {
           this.filter += '&';
         }
-        this.filter += `vptown."townName"|LIKE=%${this.f.mappedTown.value}%`;
+        this.filter += `visitUser|LIKE=%${this.f.visitUser.value}%`;
       }
 
-      if (this.f.mappedConfidence.value) {
+      if (this.f.visitTown.value) {
         if (this.filter) {
           this.filter += '&';
         }
-        this.filter += `mappedConfidence=${this.f.mappedConfidence.value}`;
+        this.filter += `vptown."townName"|LIKE=%${this.f.visitTown.value}%`;
       }
 
-      console.log('vpmap.list.components.ts::getfilter()', this.filter);
+      console.log('vpvisit.list.components.ts::getfilter()', this.filter);
     }
 
     firstPage() {
@@ -141,11 +134,11 @@ export class vpMapListComponent implements OnInit {
       this.getFilter();
       if (this.page < 1) this.page = 1;
       if (this.page > this.last) this.page = this.last;
-      this.vpMappedService.getPage(this.page, this.filter)
+      this.vpVisitService.getPage(this.page, this.filter)
           .pipe(first())
           .subscribe(
               data => {
-                this.vpmap = data.rows;
+                this.vpvisit = data.rows;
                 this.count = data.rows[0] ? data.rows[0].count : data.rowCount;
                 this.setLast();
                 this.loading = false;
@@ -160,11 +153,11 @@ export class vpMapListComponent implements OnInit {
       this.loadAllRec = true;
       this.loading = true;
       this.getFilter();
-      this.vpMappedService.getAll(this.filter)
+      this.vpVisitService.getAll(this.filter)
           .pipe(first())
           .subscribe(
               data => {
-                this.vpmap = data.rows;
+                this.vpvisit = data.rows;
                 this.count = data.rowCount;
                 this.setLast();
                 this.loading = false;
@@ -176,8 +169,8 @@ export class vpMapListComponent implements OnInit {
 
     }
 
-    viewPool (mappedPoolId) {
-      this.router.navigate([`/pools/mapped/view/${mappedPoolId}`]);
+    viewVisit (visitId) {
+      this.router.navigate([`/pools/visit/view/${visitId}`]);
     }
 
     showMap() {

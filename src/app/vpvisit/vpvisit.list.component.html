@@ -1,30 +1,30 @@
 
 <div class="row">
   <div class="col-2">
-    <h3><u>Search Pools</u></h3>
+    <h3><u>Search Visits</u></h3>
     <form [formGroup]="filterForm" class="">
         <div class="form-group row">
-          <label for="mappedPoolId">Pool ID</label>
+          <label for="visitId">Visit ID</label>
           <!--
           consider using keyup.enter and keyup.tab instead of keyup?
           need to see db performance on cloud server to decide...
           -->
-          <input (keyup)="loadPools()" type="text" formControlName="mappedPoolId" class="form-control"/>
+          <input (keyup)="firstPage()" type="text" formControlName="visitId" class="form-control"/>
         </div>
         <div class="form-group row">
-          <label for="mappedByUser">Mapped By User</label>
-          <input (keyup)="loadPools()" type="text"  formControlName="mappedByUser" class="form-control"/>
+          <label for="visitPoolId">Pool ID</label>
+          <input (keyup)="firstPage()" type="text"  formControlName="visitPoolId" class="form-control"/>
         </div>
         <div class="form-group row">
-          <label for="mappedTown">Town</label>
-          <input (keyup)="loadPools()" type="text"  formControlName="mappedTown" class="form-control"/>
+          <label for="visitUser">Visit User</label>
+          <input (keyup)="firstPage()" type="text"  formControlName="visitUser" class="form-control"/>
         </div>
         <div class="form-group row">
-          <label for="mappedConfidence">Confidence</label>
-          <input (keyup)="loadPools()" type="text"  formControlName="mappedConfidence" class="form-control"/>
+          <label for="visitTown">Town</label>
+          <input (keyup)="firstPage()" type="text"  formControlName="visitTown" class="form-control"/>
         </div>
     </form>
-  </div> <!-- col-sm-3 -->
+  </div> <!-- col-2 -->
 
   <div class="col-10">
     <div *ngIf="!loading">
@@ -49,36 +49,36 @@
       <div *ngIf="!mapView">
         <table class="table table-striped table-sm table-responsive">
             <tr>
-                <th>Pool ID</th>
+                <th>Visit</th>
+                <th>Pool</th>
                 <th>User</th>
-                <th>Method</th>
-                <th>Status</th>
+                <th>Date</th>
                 <th>Town</th>
-                <th>Confidence</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
+                <th>Mapped Lat</th>
+                <th>Mapped Lng</th>
+                <th>Vernal Pool</th>
+                <th>Visit Lat</th>
+                <th>Visit Lng</th>
                 <th>Permission</th>
-                <th>Source</th>
-                <th>Source2</th>
             </tr>
-            <tr *ngFor="let pool of vpmap">
-                <td><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
-                <td>{{pool.mappedByUser}}</td>
-                <td>{{pool.mappedMethod}}</td>
-                <td>{{pool.mappedPoolStatus}}</td>
-                <td>{{pool.mappedTown.townName}}</td>
-                <td>{{pool.mappedConfidence}}</td>
-                <td>{{pool.mappedLatitude}}</td>
-                <td>{{pool.mappedLongitude}}</td>
-                <td>{{pool.mappedLandownerPermission}}</td>
-                <td>{{pool.mappedSource}}</td>
-                <td>{{pool.mappedSource2}}</td>
+            <tr *ngFor="let visit of vpvisit">
+                <td><a [routerLink]="['/pools/visit/view/', visit.visitId]" class="btn btn-link">{{visit.visitId}}</a></td>
+                <td>{{visit.visitPoolId}}</td>
+                <td>{{visit.visitUser}}</td>
+                <td>{{visit.visitDate}}</td>
+                <td>{{visit.visitTown.townName}}</td>
+                <td>{{visit.mappedLatitude}}</td>
+                <td>{{visit.mappedLongitude}}</td>
+                <td>{{visit.visitVernalPool}}</td>
+                <td>{{visit.visitLatitude}}</td>
+                <td>{{visit.visitLongitude}}</td>
+                <td>{{visit.visitLandownerPermission}}</td>
             </tr>
         </table>
       </div>
 
       <div *ngIf="mapView">
-        <app-map [mapPools]="vpmap"></app-map>
+        <app-map-comp [mapValues]="vpvisit"></app-map-comp>
       </div>
 
     </div> <!-- loading -->
@@ -87,6 +87,6 @@
       ...Loading
     </div>
 
-  </div><!-- col-sm-9 -->
+  </div><!-- col-10 -->
 
 </div><!-- row -->

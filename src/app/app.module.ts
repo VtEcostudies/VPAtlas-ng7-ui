@@ -15,10 +15,17 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { AdminComponent } from './admin';
+
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
 import { vpMapLeafletComponent } from './vpmapped';
+
+import { LeafletComponent } from './_components'; //hope to replace vpMapLeafletComponent later
+
+import { vpVisitListComponent } from './vpvisit';
+import { vpVisitViewComponent } from './vpvisit';
+import { vpVisitCreateComponent } from './vpvisit';
 
 @NgModule({
     imports: [
@@ -35,10 +42,16 @@ import { vpMapLeafletComponent } from './vpmapped';
         LoginComponent,
         RegisterComponent,
         AdminComponent,
+
         vpMapListComponent,
         vpMapViewComponent,
         vpMapCreateComponent,
-        vpMapLeafletComponent
+        vpMapLeafletComponent,
+
+        LeafletComponent,
+        vpVisitListComponent,
+        vpVisitViewComponent,
+        vpVisitCreateComponent,
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

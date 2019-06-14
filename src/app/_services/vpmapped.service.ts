@@ -5,29 +5,33 @@ import { environment } from '@environments/environment';
 
 import { vpMapped } from '@app/_models';
 import { pgFields } from '@app/_models';
-import { pgVpMappedApi  } from '@app/_models';
+import { pgApiResults } from '@app/_models';
 
 @Injectable({ providedIn: 'root' })
 export class vpMappedService {
     constructor(private http: HttpClient) { }
 
     getAll(filter: string) {
-        return this.http.get<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped?${filter}`);
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped?${filter}`);
     }
 
     getPage(page: number, filter: string) {
-        //return value is pgVpMappedApi - the format of node-postgres query result from nodejs server
+        //return value is pgApiResults - the format of node-postgres query result from nodejs server
         const url = `${environment.apiUrl}/pools/mapped/page/${page}?${filter}`;
         console.log(`vpmapped.service.getPage | url:`, url);
-        return this.http.get<pgVpMappedApi>(url);
+        return this.http.get<pgApiResults>(url);
     }
 
     getById(id: number) {
-        return this.http.get<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/${id}`);
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/${id}`);
     }
 
     getCount(filter: string) {
-        return this.http.get<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/count?${filter}`);
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/count?${filter}`);
+    }
+
+    getStats() {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/stats`);
     }
 
     createOrUpdate(update: boolean, poolId: string, vpmap: vpMapped) {
@@ -36,14 +40,14 @@ export class vpMappedService {
     }
 
     create(vpmap: vpMapped) {
-        return this.http.post<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped`, vpmap);
+        return this.http.post<pgApiResults>(`${environment.apiUrl}/pools/mapped`, vpmap);
     }
 
     update(mappedPoolId: string, vpmap: vpMapped) {
-        return this.http.put<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/${mappedPoolId}`, vpmap);
+        return this.http.put<pgApiResults>(`${environment.apiUrl}/pools/mapped/${mappedPoolId}`, vpmap);
     }
 
     delete(mappedPoolId: string) {
-        return this.http.delete<pgVpMappedApi>(`${environment.apiUrl}/pools/mapped/${mappedPoolId}`);
+        return this.http.delete<pgApiResults>(`${environment.apiUrl}/pools/mapped/${mappedPoolId}`);
     }
 }

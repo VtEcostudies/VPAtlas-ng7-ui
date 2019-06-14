@@ -12,7 +12,7 @@
 </div>
 -->
 
-<form [formGroup]="vpMappedForm">
+<form [formGroup]="vpVisitForm">
   <div class="row">
     <div class="col-3">
       <!--
@@ -189,11 +189,11 @@
     </div> <!-- col -->
     <div class="col-6">
       <div *ngIf="!dataLoading">
-        <app-map [mapPools]="pool"
+        <app-map-comp [mapValues]="pool"
           [update]="mapMarker"
           (poolUpdate)="poolMapUpdate($event)"
           >
-        </app-map>
+        </app-map-comp>
       </div>
       <div *ngIf="dataLoading">
         ...Loading

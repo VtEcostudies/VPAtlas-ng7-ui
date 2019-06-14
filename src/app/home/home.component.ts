@@ -12,8 +12,8 @@ import { AlertService, AuthenticationService, vpMappedService } from '@app/_serv
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit, OnDestroy {
   loading = false;
-  count = { mapped:0, visited:0, monitored:0 };
-  vpmap = [];
+  stats = [{ potential:0, probable:0, confirmed:0, eliminated:0, monitored:0 }];
+  //vpmap = [];
   //vpmap: vpMapped = [];
   //pgApi: pgVpMappedApi;
 
@@ -38,17 +38,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-      delete this.vpmap;
+      delete this.stats;
     }
 
     private loadAllPools() {
       this.loading = true;
-      this.vpMappedService.getAll('')
+      this.vpMappedService.getStats()
           .pipe(first())
           .subscribe(
               data => {
-                this.vpmap = data.rows;
-                this.count.mapped = data.rowCount;
+                this.stats = data.rows[0];
                 this.loading = false;
               },
               error => {

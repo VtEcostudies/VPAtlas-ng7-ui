@@ -6,22 +6,22 @@ import { AuthenticationService, uxValuesService } from '@app/_services';
 
 
 @Component({
-  selector: 'app-map',
-  templateUrl: 'vpmap.leaflet.component.html',
-  styleUrls: ['vpmap.leaflet.component.css']
+  selector: 'app-map-comp',
+  templateUrl: 'leaflet.component.html',
+  styleUrls: ['leaflet.component.css']
 })
 
 @Injectable({providedIn: 'root'}) //this makes a component single-instance, which applies to services, as well.
 
-export class vpMapLeafletComponent implements OnInit, OnChanges {
+export class LeafletComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vceCenter = new L.LatLng(43.6962, -72.3197); //VCE coordinates
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
   vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
-  @Input() mapPools; //single pool or array of pools to plot, set by the parent
+  @Input() mapValues; //single value or array of values to plot, set by the parent
   @Input() update = false; //external flag to invoke the map with a moveable marker
-  @Output() poolUpdate = new EventEmitter<L.LatLng>(); //
+  @Output() poolUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
   poolLoc: L.LatLng;
   public map;
   marker = L.marker(this.vtCenter, {
@@ -154,7 +154,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   ngOnInit() {
     if (this.authenticationService.currentUserValue) {
       this.currentUser = this.authenticationService.currentUserValue.user;
-      console.log('vpmap.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+      console.log('vpvisit.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
 
@@ -214,9 +214,9 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     //console.log('ngOnChanges(changes), changes:', changes);
     this.clearPools();
     if (this.update) {
-      this.plotPoolMarker(this.mapPools);
+      this.plotPoolMarker(this.mapValues);
     } else {
-      this.plotPoolCircles(this.mapPools);
+      this.plotPoolCircles(this.mapValues);
     }
   }
 
@@ -270,8 +270,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
     this.poolUpdate.emit(this.poolLoc);
     //this.map.panTo(this.poolLoc);
     //this.map.setView(this.poolLoc, 18);
-    console.log("vpmap.leaflet.onMapClick | poolLoc: ", this.poolLoc);
-    this.marker.bindTooltip(`Pool ID: ${this.mapPools.mappedPoolId}<br>
+    console.log("vpvisit.leaflet.onMapClick | poolLoc: ", this.poolLoc);
+    this.marker.bindTooltip(`Pool ID: ${this.mapValues.mappedPoolId}<br>
                              Lat: ${this.poolLoc.lat}<br>
                              Lng: ${this.poolLoc.lng}
                             `);
@@ -280,8 +280,8 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
   onMarkerMoveEnd(e) {
     this.poolLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
     this.poolUpdate.emit(this.poolLoc);
-    console.log("vpmap.leaflet.onMarkerMoveEnd | poolLoc: ", this.poolLoc);
-    this.marker.bindTooltip(`Pool ID: ${this.mapPools.mappedPoolId}<br>
+    console.log("vpvisit.leaflet.onMarkerMoveEnd | poolLoc: ", this.poolLoc);
+    this.marker.bindTooltip(`Pool ID: ${this.mapValues.mappedPoolId}<br>
                              Lat: ${this.poolLoc.lat}<br>
                              Lng: ${this.poolLoc.lng}
                             `);
@@ -294,7 +294,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
   plotPoolMarker(vpool) {
 
-    console.log('vpmap.leaflet.plotPoolMarker(',vpool,')');
+    console.log('vpvisit.leaflet.plotPoolMarker(',vpool,')');
 
     if (!vpool) return;
 
@@ -310,7 +310,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
   plotPoolCircles(vpools) {
 
-    console.log('vpmap.leaflet.plotPoolCircles(',vpools,')');
+    console.log('vpvisit.leaflet.plotPoolCircles(',vpools,')');
 
     if (!vpools) return;
 

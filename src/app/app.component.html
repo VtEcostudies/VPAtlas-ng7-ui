@@ -2,8 +2,12 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark"> <!-- *ngIf="currentUser"> -->
     <div class="navbar-nav">
         <a class="nav-item nav-link" routerLink="/">Home</a>
+        
         <a class="nav-item nav-link" routerLink="/pools/mapped/list" >Search Pools</a>
         <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="currentUser" >Add Pool</a>
+
+        <a class="nav-item nav-link" routerLink="/pools/visit/list" *ngIf="currentUser" >Search Visits</a>
+        <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Visit</a>
         <!--
         <a class="nav-item nav-link" routerLink="/pools/mapped/import" >Import Pools</a>
         -->

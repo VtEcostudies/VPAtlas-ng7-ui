@@ -143,9 +143,10 @@ export class vpMapCreateComponent implements OnInit {
       this.vpMappedForm.controls['mappedShape'].setValue(this.pool.mappedShape);
       */
 
-      //On update, disable mappedByUser, which will prevent its being altered and exclude
-      //it from the formGroup values.
+      //On update, disable mappedPoolId and mappedByUser, which will prevent their being altered and exclude
+      //them from the formGroup values.
       if (this.update) {
+        this.vpMappedForm.get('mappedPoolId').disable();
         this.vpMappedForm.get('mappedByUser').disable();
       }
 

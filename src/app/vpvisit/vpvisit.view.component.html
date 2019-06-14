@@ -1,0 +1,78 @@
+<!--
+-->
+<div class="row">
+  <div class="col-3">
+    <h4><u>Pool Visit Detail</u><a *ngIf="userIsAdmin" href="/pools/visit/update/{{visit.visitId}}">  (Edit)</a></h4>
+    <table class="table table-striped table-sm">
+      <tr>
+          <td>Visit ID</td>
+          <td>{{visit.visitId}}</td>
+      </tr>
+        <tr>
+            <td>Pool ID</td>
+            <td>{{visit.visitPoolId}}</td>
+        </tr>
+        <tr>
+            <td>Visited By</td>
+            <td>{{visit.visitUserName}}</td>
+        </tr>
+        <tr>
+            <td>Date</td>
+            <td>{{visit.visitDate}}</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>{{visit.mappedPoolStatus}}</td>
+        </tr>
+        <tr>
+            <td>Town</td>
+            <td>{{visit.visitTown.townName}}</td>
+        </tr>
+        <tr>
+            <td>Location Uncertainty</td>
+            <td>{{visit.visitLocationUncertainty}}</td>
+        </tr>
+        <tr>
+            <td>Landowner Permission?</td>
+            <td>{{visit.visitLandownerPermission}}</td>
+        </tr>
+        <tr>
+            <td>Landowner Conact Info</td>
+            <td>
+              {{visit.visitLandownerName}} <br>
+              {{visit.visitLandownerAddress}} <br>
+              {{visit.visitLandownerTown}}
+              {{visit.visitLandownerStateAbbrev}}
+              {{visit.visitLandownerZip5}} <br>
+              {{visit.visitLandownerPhone}}
+              {{visit.visitLandownerEmail}}
+            </td>
+        </tr>
+        <tr>
+            <td>Landowner Additional Info</td>
+            <td>{{visit.visitLandownerInfo}}</td>
+        </tr>
+        <tr>
+            <td>Latitude</td>
+            <td>{{visit.visitLatitude}}</td>
+        </tr>
+        <tr>
+            <td>Longitude</td>
+            <td>{{visit.visitLongitude}}</td>
+        </tr>
+        <tr>
+            <td>Comments</td>
+            <td>{{visit.visitComments}}</td>
+        </tr>
+
+    </table>
+  </div>
+  <div class="col-9">
+    <div *ngIf="!dataLoading">
+      <app-map-comp [mapValues]="visit"></app-map-comp>
+    </div>
+    <div *ngIf="dataLoading">
+      ...Loading
+    </div>
+  </div>
+</div>
