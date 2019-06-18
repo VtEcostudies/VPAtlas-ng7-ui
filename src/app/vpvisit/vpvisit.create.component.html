@@ -41,9 +41,9 @@
       -->
       <div *ngIf="update" class="form-group">
           <label for="visitId">Visit ID</label>
-          <input type="text" formControlName="visitId" class="form-control" [ngClass]="{ 'is-invalid': submitted && a.visitId.errors }" />
-          <div *ngIf="submitted && a.visitId.errors" class="invalid-feedback">
-              <div *ngIf="a.visitId.errors.required">Visit ID is required</div>
+          <input type="text" formControlName="visitId" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitId.errors }" />
+          <div *ngIf="submitted && observ.visitId.errors" class="invalid-feedback">
+              <div *ngIf="observ.visitId.errors.required">Visit ID is required</div>
           </div>
       </div>
     </div>
@@ -53,19 +53,19 @@
       -->
       <div class="form-group">
           <label for="visitUserName">Visit User</label>
-          <input type="text" formControlName="visitUserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && a.visitUserName.errors }" />
-          <div *ngIf="submitted && a.visitUserName.errors" class="invalid-feedback">
-              <div *ngIf="a.visitUserName.errors.required">Visit User is required</div>
+          <input type="text" formControlName="visitUserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitUserName.errors }" />
+          <div *ngIf="submitted && observ.visitUserName.errors" class="invalid-feedback">
+              <div *ngIf="observ.visitUserName.errors.required">Visit User is required</div>
           </div>
       </div>
     </div> <!-- col -->
     <div class="col-3">
       <label>Pool ID</label>
-      <input type="text" class="form-control" disabled="true" value="{{f.visitPoolId.value}}" />
+      <input type="text" class="form-control" disabled="true" value="{{locate.visitPoolId.value}}" />
     </div> <!-- col -->
     <div class="col-3">
       <label>Visit Date</label>
-      <input type="text" class="form-control" disabled="true" value="{{f.visitDate.value}}" />
+      <input type="text" class="form-control" disabled="true" value="{{locate.visitDate.value}}" />
     </div> <!-- col -->
   </div> <!-- row -->
 </form> <!-- visitObserverForm -->
@@ -79,9 +79,9 @@
       -->
       <div class="form-group">
           <label for="visitPoolId">Pool ID</label>
-          <input type="text" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.visitPoolId.errors }" />
-          <div *ngIf="submitted && a.visitPoolId.errors" class="invalid-feedback">
-              <div *ngIf="f.visitPoolId.errors.required">Visit Pool ID is required</div>
+          <input type="text" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
+          <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
+              <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
           </div>
       </div>
     </div>
@@ -92,12 +92,12 @@
       <div class="form-group">
           <label for="visitDate">Visit Date</label>
           <!-- Can't figure out how to set the value of input type="date"
-          <input type="date" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.visitDate.errors }" />
+          <input type="date" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
           -->
-          <input type="text" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.visitDate.errors }" />
-          <div *ngIf="submitted && f.visitDate.errors" class="invalid-feedback">
-              <div *ngIf="f.visitDate.errors.required">Visit Date is required</div>
-              <div *ngIf="f.visitDate.errors.date">Visit Date must be a valid date in the format MM/DD/YYYY</div>
+          <input type="text" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
+          <div *ngIf="submitted && locate.visitDate.errors" class="invalid-feedback">
+              <div *ngIf="locate.visitDate.errors.required">Visit Date is required</div>
+              <div *ngIf="locate.visitDate.errors.date">Visit Date must be a valid date in the format MM/DD/YYYY</div>
           </div>
       </div>
     </div> <!-- col -->
@@ -107,29 +107,34 @@
       <!--
           visitPoolMapped - radio button
           https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
+          https://angular.io/api/forms/RadioControlValueAccessor
       -->
+      <div>
+        <label><u>2a) Vernal Pool Location Information</u></label>
+      </div>
       <div class="form-group">
            <label>
-             <input type="radio" value="True" formControlName="visitPoolMapped" class="radio-button-vert" />
+             <input type="radio" value="true" formControlName="visitPoolMapped" class="radio-button-vert" />
                <span>This pool was mapped as a "potential" pool</span>
            </label>
            <label>
-             <input type="radio" value="False" formControlName="visitPoolMapped" class="radio-button-vert" />
+             <input type="radio" value="false" formControlName="visitPoolMapped" class="radio-button-vert" />
                <span>This pool was unmapped</span>
            </label>
       </div>
       <!--
           visitPoolMapped - radio button
           https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
+          NOTE: radio button values are type string. it does not handle boolean by default.
       -->
-      <div *ngIf="visitPoolMapped" class="form-group">
+      <div *ngIf="locate.visitPoolMapped.value=='true'" class="form-group">
         <label for="visitLocatePool">Was the pool located?</label>
         <label>
-         <input type="radio" value="True" formControlName="visitLocatePool" class="radio-button-horiz" />
+         <input type="radio" value="true" formControlName="visitLocatePool" class="radio-button-horiz" />
            <span>Yes</span>
         </label>
         <label>
-         <input type="radio" value="False" formControlName="visitLocatePool" class="radio-button-horiz" />
+         <input type="radio" value="false" formControlName="visitLocatePool" class="radio-button-horiz" />
            <span>No</span>
         </label>
       </div>
@@ -137,8 +142,10 @@
       <!--
         visitCertainty - radio button
       -->
+      <div>
+        <label><u>How certain are you that you were in the correct Location?</u></label>
+      </div>
       <div class="form-group">
-          <label for="visitCertainty">How certain are you that you were in the correct Location?</label>
           <label>
             <input type="radio" value="Certain" formControlName="visitCertainty" class="radio-button-horiz" />
             <span>Certain</span>
@@ -156,8 +163,10 @@
       <!--
         visitNavMethod - radio button
       -->
+      <div>
+        <label><u>What navigation method was used?</u></label>
+      </div>
       <div class="form-group">
-          <label for="visitNavMethod">What navigation method was used?</label>
           <label>
             <input type="radio" value="GPS" formControlName="visitNavMethod" class="radio-button-vert" />
             <span>GPS</span>
@@ -172,29 +181,31 @@
           </label>
           <label>
             <input type="radio" value="Other" formControlName="visitNavMethod" class="radio-button-vert" />
-            <span>Other</span>
-            <input type="text" formcontrolName="visitNavMethodOther" class="form-control"/>
+            <span class="leading-label">Other:</span>
+            <input type="text" formcontrolName="visitNavMethodOther" class="text-input-block"/>
           </label>
       </div>
-<!-- 2b Location of Pool -->
+      <div>
+        <label><u>2b) Location of Pool</u></label>
+      </div>
       <!--
         visitLatitude
       -->
       <div class="form-group">
-          <label for="visitLatitude">Latitude</label>
-          <input type="text" formControlName="visitLatitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.visitLatitude.errors }" />
-          <div *ngIf="submitted && f.visitLatitude.errors" class="invalid-feedback">
-              <div *ngIf="f.visitLatitude.errors.required">Visit Latitude is required</div>
+          <label for="visitLatitude" class="leading-label">Latitude</label>
+          <input type="text" formControlName="visitLatitude" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLatitude.errors }" />
+          <div *ngIf="submitted && locate.visitLatitude.errors" class="invalid-feedback">
+              <div *ngIf="locate.visitLatitude.errors.required">Visit Latitude is required</div>
           </div>
-      </div>
+      <!-- </div> -->
       <!--
         visitLongitude
       -->
-      <div class="form-group">
-          <label for="visitLongitude">Longitude</label>
-          <input type="text" formControlName="visitLongitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.visitLongitude.errors }" />
-          <div *ngIf="submitted && f.visitLongitude.errors" class="invalid-feedback">
-              <div *ngIf="f.visitLongitude.errors.required">Visit Longitude is required</div>
+      <!-- <div class="form-group"> -->
+          <label for="visitLongitude" class="leading-label" >Longitude</label>
+          <input type="text" formControlName="visitLongitude" size="15" class="text-input-block" style="float:right;" [ngClass]="{ 'is-invalid': submitted && locate.visitLongitude.errors }" />
+          <div *ngIf="submitted && locate.visitLongitude.errors" class="invalid-feedback">
+              <div *ngIf="locate.visitLongitude.errors.required">Visit Longitude is required</div>
           </div>
       </div>
 
@@ -214,15 +225,23 @@
       -->
       <div class="form-group">
           <label for="visitLocationComments">Location Comments</label>
-          <textarea rows="2" formControlName="visitLocationComments" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.visitLocationComments.errors }"> </textarea>
-          <div *ngIf="submitted && f.visitLocationComments.errors" class="invalid-feedback">
-              <div *ngIf="f.visitLocationComments.errors.required">Visit Comments is required</div>
+          <textarea rows="2" formControlName="visitLocationComments" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitLocationComments.errors }"> </textarea>
+          <div *ngIf="submitted && locate.visitLocationComments.errors" class="invalid-feedback">
+              <div *ngIf="locate.visitLocationComments.errors.required">Visit Comments is required</div>
           </div>
       </div>
 
-      <!--
-        visitLandownerPermission
-      -->
+      <div>
+        <label><u>2c) Landowner Contact Information</u></label>
+      </div>
+      <!-- visitUserIsLandowner -->
+      <div class="form-group">
+          <label for="visitUserIsLandowner">Are you the landowner?</label>&nbsp;
+          <input type="checkbox" formControlName="visitUserIsLandowner" />&nbsp;
+          <label>Yes</label>
+      </div>
+
+      <!-- visitLandownerPermission -->
       <div class="form-group">
           <label for="visitLandownerPermission">Do you have Landowner Permission to map this pool?</label>&nbsp;
           <input type="checkbox" formControlName="visitLandownerPermission" />&nbsp;
@@ -233,54 +252,70 @@
         <form *ngIf="permission" [formGroup]="visitLandOwnForm">
         <div class="form-group">
             <label for="visitLandownerName">Landowner Name</label>
-            <input type="text" formControlName="visitLandownerName" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.visitLandownerName.errors }" />
-            <div *ngIf="submitted && l.visitLandownerName.errors" class="invalid-feedback">
-                <div *ngIf="l.visitLandownerName.errors.required">Landowner Name is required</div>
+            <input type="text" formControlName="visitLandownerName" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerName.errors }" />
+            <div *ngIf="submitted && landown.visitLandownerName.errors" class="invalid-feedback">
+                <div *ngIf="landown.visitLandownerName.errors.required">Landowner Name is required</div>
             </div>
         </div>
         <div class="form-group">
             <label for="visitLandownerAddress">Landowner Address</label>
-            <input type="text" formControlName="visitLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.visitLandownerAddress.errors }" />
-            <div *ngIf="submitted && l.visitLandownerAddress.errors" class="invalid-feedback">
-                <div *ngIf="l.visitLandownerAddress.errors.required">Landowner Address is required</div>
+            <input type="text" formControlName="visitLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerAddress.errors }" />
+            <div *ngIf="submitted && landown.visitLandownerAddress.errors" class="invalid-feedback">
+                <div *ngIf="landown.visitLandownerAddress.errors.required">Landowner Address is required</div>
             </div>
         </div>
         <div class="form-group">
             <label for="visitLandownerTown">Landowner Town</label>
-            <input type="text" formControlName="visitLandownerTown" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.visitLandownerTown.errors }" />
-            <div *ngIf="submitted && l.visitLandownerTown.errors" class="invalid-feedback">
-                <div *ngIf="l.visitLandownerTown.errors.required">Landowner Town is required</div>
+            <input type="text" formControlName="visitLandownerTown" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerTown.errors }" />
+            <div *ngIf="submitted && landown.visitLandownerTown.errors" class="invalid-feedback">
+                <div *ngIf="landown.visitLandownerTown.errors.required">Landowner Town is required</div>
             </div>
         </div>
         <div class="form-group">
             <label for="visitLandownerStateAbbrev">Landowner State Abbreviation</label>
-            <input type="text" formControlName="visitLandownerStateAbbrev" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.visitLandownerStateAbbrev.errors }" />
-            <div *ngIf="submitted && l.visitLandownerStateAbbrev.errors" class="invalid-feedback">
-                <div *ngIf="l.visitLandownerStateAbbrev.errors.required">Landowner StateAbbrev is required</div>
+            <input type="text" formControlName="visitLandownerStateAbbrev" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerStateAbbrev.errors }" />
+            <div *ngIf="submitted && landown.visitLandownerStateAbbrev.errors" class="invalid-feedback">
+                <div *ngIf="landown.visitLandownerStateAbbrev.errors.required">Landowner StateAbbrev is required</div>
             </div>
         </div>
         <div class="form-group">
             <label for="visitLandownerZip5">Landowner Zip5</label>
-            <input type="text" formControlName="visitLandownerZip5" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.visitLandownerZip5.errors }" />
-            <div *ngIf="submitted && l.visitLandownerZip5.errors" class="invalid-feedback">
-                <div *ngIf="l.visitLandownerZip5.errors.required">Landowner Zip5 is required</div>
+            <input type="text" formControlName="visitLandownerZip5" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerZip5.errors }" />
+            <div *ngIf="submitted && landown.visitLandownerZip5.errors" class="invalid-feedback">
+                <div *ngIf="landown.visitLandownerZip5.errors.required">Landowner Zip5 is required</div>
             </div>
         </div>
         <div class="form-group">
             <label for="visitLandownerPhone">Landowner Phone</label>
-            <input type="text" formControlName="visitLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.visitLandownerPhone.errors }" />
-            <div *ngIf="submitted && l.visitLandownerPhone.errors" class="invalid-feedback">
-                <div *ngIf="l.visitLandownerPhone.errors.required">Landowner Phone is required</div>
+            <input type="text" formControlName="visitLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerPhone.errors }" />
+            <div *ngIf="submitted && landown.visitLandownerPhone.errors" class="invalid-feedback">
+                <div *ngIf="landown.visitLandownerPhone.errors.required">Landowner Phone is required</div>
             </div>
         </div>
         <div class="form-group">
             <label for="visitLandownerEmail">Landowner Email</label>
-            <input type="text" formControlName="visitLandownerEmail" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.visitLandownerEmail.errors }" />
-            <div *ngIf="submitted && l.visitLandownerEmail.errors" class="invalid-feedback">
-                <div *ngIf="l.visitLandownerEmail.errors.required">Landowner Email is required</div>
+            <input type="text" formControlName="visitLandownerEmail" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerEmail.errors }" />
+            <div *ngIf="submitted && landown.visitLandownerEmail.errors" class="invalid-feedback">
+                <div *ngIf="landown.visitLandownerEmail.errors.required">Landowner Email is required</div>
             </div>
         </div>
       </form> <!-- visitLandOwnForm, if permission -->
+    </div> <!-- col -->
+
+    <div class="col-6">
+      <div *ngIf="!dataLoading">
+        <!--
+        <app-map-comp [mapValues]="visit"
+          [update]="mapMarker"
+          (markerUpdate)="markerLocationUpdate($event)"
+          >
+        </app-map-comp>
+        -->
+        ...map goes here
+      </div>
+      <div *ngIf="dataLoading">
+        ...Loading
+      </div>
     </div> <!-- col -->
   </div> <!-- row -->
 </form> <!-- visitLocationForm -->
@@ -336,7 +371,7 @@
         <input type="radio" value="Other" formControlName="visitPoolType" class="radio-button-horiz" />
         <span>Other (describe):</span>
       </label>
-      <input type="text" formControlName="visitPoolType" class="form-control" />
+      <input type="text" value="" formControlName="visitPoolType" class="form-control" />
 
   </div>
   <div>
@@ -367,15 +402,15 @@
         <label for="visitOutletType">Type of Outlet (an outlet is a seasonal or permanent channel draining water from pool)</label>
         <label>
           <input type="radio" value="No Outlet" formControlName="visitOutletType" class="radio-button-horiz" />
-          <span>No Inlet</span>
+          <span>No Outlet</span>
         </label>
         <label>
           <input type="radio" value="Ephemeral Outlet" formControlName="visitOutletType" class="radio-button-horiz" />
-          <span>Ephemeral Inlet</span>
+          <span>Ephemeral Outlet</span>
         </label>
         <label>
           <input type="radio" value="Permanent Outlet" formControlName="visitOutletType" class="radio-button-horiz" />
-          <span>Permanent Inlet</span>
+          <span>Permanent Outlet</span>
         </label>
     </div>
 
@@ -464,9 +499,11 @@
   <div>
     <label><u>Hydrology</u></label>
   </div>
+  <div>
+    <label><u>4a) Approximate Maximum Pool Depth:</u></label>
+  </div>
   <!-- visitMaxDepth - radio button -->
   <div class="form-group">
-      <label><u>4a) Approximate Maximum Pool Depth</u></label>
       <label>
         <input type="radio" value="Ankle-deep" formControlName="visitMaxDepth" class="radio-button-horiz" />
         <span>Ankle-deep (<6")</span>
@@ -494,7 +531,7 @@
   </div>
   <!-- visitWaterLevelObs - radio button -->
   <div class="form-group">
-      <label><u>4b) Water Level at Time of Survey</u></label>
+      <label><u>4b) Water Level at Time of Survey:</u></label>
       <label>
         <input type="radio" value="Full" formControlName="visitWaterLevelObs" class="radio-button-horiz" />
         <span>Full</span>
@@ -530,38 +567,91 @@
         <span>Ephemeral (drying out completely during the growing searson in most years)</span>
       </label>
     </div>
-    <div>
-      <label><u>4d) Approximate size of pool (at maximum capacity)</u></label>
-    </div>
     <!-- visitMaxWidth -->
     <div class="form-group">
-        <label for="visitMaxWidth">Width:</label>
-        <input type="text" formControlName="visitMaxWidth" />
-        <label for="visitMaxWidth">(ft)</label>
-    <!-- </div>
-    <!-- visitMaxLength
-    <div class="form-group"> -->
-        <label for="visitMaxLength">Length:</label>
-        <input type="text" formControlName="visitMaxLength" />
-        <label for="visitMaxLength">(ft)</label>
+      <label><u>4d) Approximate size of pool (at maximum capacity):</u></label>
+        <label for="visitMaxWidth" class="leading-label">Width:</label>
+        <input type="text" size="3" formControlName="visitMaxWidth" class="text-input-block" />
+        <label for="visitMaxWidth" class="trailing-label">(ft)</label>
+    <!-- visitMaxLength -->
+        <label for="visitMaxLength" class="leading-label">Length:</label>
+        <input type="text" size="3" formControlName="visitMaxLength" class="text-input-block" />
+        <label for="visitMaxLength" class="trailing-label">(ft)</label>
     </div>
-<!--
-  //4e % values - use REAL or NUMERIC
-  visitPoolTrees: [],
-  visitPoolShrubs: [],
-  visitPoolEmergents: [],
-  visitPoolFloatingVeg: [],
-  //4f ENUM Type w/ other
-  visitSubstrate: [],
-  //4g ENUM Type w/ other
-  visitDisturbDumping: [],
-  visitDisturbSiltation: [],
-  visitDisturbVehicleRuts: [],
-  visitDisturbRunoff: [],
-  visitDisturbDitching: [],
-  visitDisturbOther: [],
--->
-</form>
+    <div class="form-group">
+      <label><u>4e) Vegetation:</u></label>
+        <!-- visitPoolTrees -->
+        <label for="visitPoolTrees" class="leading-label">Trees:</label>
+        <input type="text" size="1" formControlName="visitPoolTrees" class="text-input-block" />
+        <label for="visitPoolTrees" class="trailing-label">%</label>
+        <!-- visitPoolShrubs -->
+        <label for="visitPoolShrubs" class="leading-label">Shrubs:</label>
+        <input type="text" size="1" formControlName="visitPoolShrubs" class="text-input-block" />
+        <label for="visitPoolShrubs" class="trailing-label">%</label>
+        <!-- visitPoolEmergents -->
+        <label for="visitPoolEmergents" class="leading-label">Emergent:</label>
+        <input type="text" size="1" formControlName="visitPoolEmergents" class="text-input-block" />
+        <label for="visitPoolEmergents" class="trailing-label">%</label>
+        <!-- visitPoolFloatingVeg -->
+        <label for="visitPoolFloatingVeg" class="leading-label">Floating:</label>
+        <input type="text" size="1" formControlName="visitPoolFloatingVeg" class="text-input-block" />
+        <label for="visitPoolFloatingVeg" class="trailing-label">%</label>
+    </div>
+    <!-- visitSubstrate: radio button -->
+    <div class="form-group">
+      <label><u>4f) Substrate:</u></label>
+        <label>
+          <input type="radio" value="Leaf litter" formControlName="visitSubstrate" class="radio-button-horiz" />
+          <span>Leaf litter</span>
+        </label>
+        <label>
+          <input type="radio" value="Bedrock" formControlName="visitSubstrate" class="radio-button-horiz" />
+          <span>Bedrock</span>
+        </label>
+        <label>
+          <input type="radio" value="Sand/Gravel" formControlName="visitSubstrate" class="radio-button-horiz" />
+          <span>Sand/Gravel</span>
+        </label>
+        <label>
+          <input type="radio" value="Mud" formControlName="visitSubstrate" class="radio-button-horiz" />
+          <span>Mud</span>
+        </label>
+        <label>
+          <input type="radio" value="Other" formControlName="visitSubstrate" class="radio-button-horiz" />
+          <span>Other:</span>
+          <input type="text" value="" formControlName="visitSubstrate" class="radio-button-horiz" />
+        </label>
+      </div>
+      <!-- Pool Disturbance -->
+      <div>
+        <label><u>4g) Pool Disturbance (check all that apply)</u></label>
+      </div>
+      <div class="form-group">
+          <label>
+            <input type="checkbox" formControlName="visitDisturbDumping" class="radio-button-horiz"  />
+            <span>Dumping</span>
+          </label>
+          <label>
+            <input type="checkbox" formControlName="visitDisturbSiltation" class="radio-button-horiz"  />
+            <span>Siltation</span>
+          </label>
+          <label>
+            <input type="checkbox" formControlName="visitDisturbVehicleRuts" class="radio-button-horiz"  />
+            <span>Vehicle ruts</span>
+          </label>
+          <label>
+            <input type="checkbox" formControlName="visitDisturbRunoff" class="radio-button-horiz"  />
+            <span>Agricultural runoff</span>
+          </label>
+          <label>
+            <input type="checkbox" formControlName="visitDisturbDitching" class="radio-button-horiz"  />
+            <span>Ditching/draining</span>
+          </label>
+            <label for="visitDisturbOther" class="leading-label">Other:</label>
+            <input type="text" formControlName="visitDisturbOther" class="text-input-block" />
+      </div>
+
+</form> <!-- visitFieldVerificationForm -->
 
 <form *ngIf="visitPage.index===3" [formGroup]="visitIndicatorSpeciesForm">
 </form>
@@ -578,21 +668,3 @@
     <a *ngIf="update" routerLink="/pools/visit/view/{{visitId}}" class="btn btn-link">Cancel</a>
     <button *ngIf="update" (click)="deleteVisit()" [disabled]="dataLoading" class="btn">Delete</button>
 </div>
-
-<div class="row">
-  <div class="col-6">
-    <div *ngIf="!dataLoading">
-      <!--
-      <app-map-comp [mapValues]="visit"
-        [update]="mapMarker"
-        (markerUpdate)="markerLocationUpdate($event)"
-        >
-      </app-map-comp>
-      -->
-      ...map goes here
-    </div>
-    <div *ngIf="dataLoading">
-      ...Loading
-    </div>
-  </div> <!-- col -->
-</div> <!-- row -->

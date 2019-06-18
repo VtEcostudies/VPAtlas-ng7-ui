@@ -29,7 +29,6 @@ export class vpVisitCreateComponent implements OnInit {
     dataLoading = false;
     submitted = false;
     permission = false; //flag: landowner permission obtained
-    visitPoolMapped = false;
     visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
     visit: vpVisit = new vpVisit();
@@ -192,14 +191,13 @@ export class vpVisitCreateComponent implements OnInit {
       });
 
       this.visitLocationForm.get('visitPoolMapped').valueChanges.subscribe(
-        (mode: boolean) => {
-          console.log(mode);
-        this.visitPoolMapped = mode;
-        if (this.visitPoolMapped) {
-          this.visitLocationForm.get('visitLocatePool').enable();
-        } else {
-          this.visitLocationForm.get('visitLocatePool').disable();
-        }
+        (mode: string) => {
+          console.log('vpvisit.create.formControlValueChanged.visitPoolMapped', mode);
+          if (mode == 'true') { //enable/disable to conditionally include this field in POST
+            this.visitLocationForm.get('visitLocatePool').enable();
+          } else {
+            this.visitLocationForm.get('visitLocatePool').disable();
+          }
       });
     }
 
@@ -210,8 +208,9 @@ export class vpVisitCreateComponent implements OnInit {
       //2a Vernal Pool Location Information
       this.visitLocationForm.controls['visitPoolId'].setValue(this.visit.visitPoolId);
       this.visitLocationForm.controls['visitDate'].setValue(this.visit.visitDate);
-      this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visitPoolMapped);
-      this.visitLocationForm.controls['visitLocatePool'].setValue(this.visit.visitLocatePool);
+      this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
+      const locatePool = this.visit.visitLocatePool ? this.visit.visitLocatePool.toString() : false; //radio button bool=>string
+      this.visitLocationForm.controls['visitLocatePool'].setValue(locatePool);
       this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
       this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
@@ -285,10 +284,12 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitLocationForm.controls['visitLongitude'].setValue(visitLoc.lng);
     }
 
-    // convenience getter for easy access to form fields
-    get a() { return this.visitObserverForm.controls; }
-    get f() { return this.visitLocationForm.controls; }
-    get l() { return this.visitLandOwnForm.controls; }
+    // convenience getters for easy access to form fields
+    get observ() { return this.visitObserverForm.controls; }
+    get locate() { return this.visitLocationForm.controls; }
+    get landown() { return this.visitLandOwnForm.controls; }
+    get fldVer() { return this.visitFieldVerificationForm.controls; }
+    get indSpc() { return this.visitIndicatorSpeciesForm.controls; }
 
     /*
       On update, load an existing visit and populate the fields
@@ -354,6 +355,9 @@ export class vpVisitCreateComponent implements OnInit {
           Object.assign(this.visitLocationForm.value, this.visitLandOwnForm.value);
           delete this.visitLocationForm.value.visitLandowner;
         }
+        //have to convert true/false radio buttons from string to boolean
+        this.visitLocationForm.value.visitPoolMapped = this.visitLocationForm.value.visitPoolMapped == 'true';
+        this.visitLocationForm.value.visitLocatePool = this.visitLocationForm.value.visitLocatePool == 'true';
 
         //visitFieldVerificationForm
         Object.assign(this.visitLocationForm.value, this.visitFieldVerificationForm.value);

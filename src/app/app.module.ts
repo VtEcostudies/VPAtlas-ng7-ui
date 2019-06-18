@@ -1,9 +1,10 @@
 ﻿import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDatepickerModule, MatInputModule, MatNativeDateModule } from '@angular/material';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
+//import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+//import { MatDatepickerModule, MatInputModule, MatNativeDateModule } from '@angular/material';
 
 // used to create fake backend
 import { fakeBackendProvider } from './_helpers';
@@ -32,10 +33,10 @@ import { vpVisitCreateComponent } from './vpvisit';
 @NgModule({
     imports: [
         BrowserModule,
-        BrowserAnimationsModule,
+        //BrowserAnimationsModule,
         ReactiveFormsModule,
         FormsModule,
-        MatDatepickerModule, MatInputModule,MatNativeDateModule,
+        //MatDatepickerModule, MatInputModule,MatNativeDateModule,
         HttpClientModule,
         routing
     ],

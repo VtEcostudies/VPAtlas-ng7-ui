@@ -32,7 +32,7 @@
 .radio-button-horiz {
   display: inline-block;
   margin-right:5px;
-  margin-left:5px;
+  margin-left:15px;
 }
 .radio-button-vert {
   margin-right:5px;
@@ -43,5 +43,24 @@
   add padding to buttons
 */
 .btn {
-  margin-right: 10px;
+  margin-right: 20px;
+}
+
+/*
+  handle a row of text-input with leading and trailing labels
+*/
+.text-input-block {
+  display: inline-block;
+  margin-right:5px;
+  margin-left:5px;
+}
+.leading-label {
+  display: inline-block;
+  margin-right:0px;
+  margin-left:5px;
+}
+.trailing-label {
+  display: inline-block;
+  margin-right:5px;
+  margin-left:0px;
 }
