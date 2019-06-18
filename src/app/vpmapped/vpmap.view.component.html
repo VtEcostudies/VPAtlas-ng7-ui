@@ -29,8 +29,14 @@ mappedPhotoNumber
 
 -->
 <div class="row">
-  <div class="col-3">
-    <h4><u>Mapped Pool Detail</u><a *ngIf="userIsAdmin" href="/pools/mapped/update/{{pool.mappedPoolId}}">  (Edit)</a></h4>
+  <div class="col-2">
+    <h4>
+      <u>Mapped Pool Detail</u>
+      &nbsp;
+      <a *ngIf="userIsAdmin" href="/pools/mapped/update/{{pool.mappedPoolId}}">(Edit)</a>
+      &nbsp;
+      <a *ngIf="userIsAdmin" href="/pools/visit/create/{{pool.mappedPoolId}}">(Add Visit)</a>
+    </h4>
     <table class="table table-striped table-sm">
         <tr>
             <td>Pool ID</td>
@@ -41,8 +47,12 @@ mappedPhotoNumber
             <td>{{pool.mappedByUser}}</td>
         </tr>
         <tr>
-            <td>Date</td>
+            <td>Mapped Date</td>
             <td>{{pool.mappedDateText}}</td>
+        </tr>
+        <tr>
+            <td>Updated Date</td>
+            <td>{{pool.updatedAt}}</td>
         </tr>
         <tr>
             <td>Status</td>
@@ -115,7 +125,7 @@ mappedPhotoNumber
 
     </table>
   </div>
-  <div class="col-9">
+  <div class="col-10">
     <div *ngIf="!dataLoading">
       <app-map [mapPools]="vpmap"></app-map>
     </div>

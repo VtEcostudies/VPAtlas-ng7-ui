@@ -9,19 +9,19 @@
           consider using keyup.enter and keyup.tab instead of keyup?
           need to see db performance on cloud server to decide...
           -->
-          <input (keyup)="loadPools()" type="text" formControlName="mappedPoolId" class="form-control"/>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="mappedPoolId" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="mappedByUser">Mapped By User</label>
-          <input (keyup)="loadPools()" type="text"  formControlName="mappedByUser" class="form-control"/>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="mappedByUser" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="mappedTown">Town</label>
-          <input (keyup)="loadPools()" type="text"  formControlName="mappedTown" class="form-control"/>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="mappedTown" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="mappedConfidence">Confidence</label>
-          <input (keyup)="loadPools()" type="text"  formControlName="mappedConfidence" class="form-control"/>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="mappedConfidence" class="form-control"/>
         </div>
     </form>
   </div> <!-- col-sm-3 -->

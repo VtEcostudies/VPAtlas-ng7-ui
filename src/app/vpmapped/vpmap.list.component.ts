@@ -5,7 +5,7 @@ import { first } from 'rxjs/operators';
 import { AlertService, UserService, AuthenticationService, vpMappedService } from '@app/_services';
 
 //import { vpMapped } from '@app/_models';
-//import { pgFields, pgVpMappedApi  } from '@app/_models';
+//import { pgFields, pgApiResults  } from '@app/_models';
 
 //@add_component_here
 @Component({templateUrl: 'vpmap.list.component.html'})
@@ -20,7 +20,7 @@ export class vpMapListComponent implements OnInit {
     filter = '';
     vpmap = []; //data array from db
     //vpmap: vpMapped = [];
-    //pgApi: pgVpMappedApi;
+    //pgApi: pgApiResults;
     mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
@@ -63,10 +63,11 @@ export class vpMapListComponent implements OnInit {
         this.loadPools();
     }
 
-    loadPools() {
+    loadPools(page=0) {
       if (this.loadAllRec) {
         this.loadAll();
       } else {
+        if (page) {this.page = page;}
         this.loadPage(this.page);
       }
     }

@@ -310,7 +310,7 @@ export class vpMapLeafletComponent implements OnInit, OnChanges {
 
   plotPoolCircles(vpools) {
 
-    console.log('vpmap.leaflet.plotPoolCircles(',vpools,')');
+    //console.log('vpmap.leaflet.plotPoolCircles(',vpools,')');
 
     if (!vpools) return;
 

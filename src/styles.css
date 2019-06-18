@@ -25,3 +25,23 @@
   position: relative;
   z-index: 999;
 }
+
+/*
+  simple spacing for radio buttons
+*/
+.radio-button-horiz {
+  display: inline-block;
+  margin-right:5px;
+  margin-left:5px;
+}
+.radio-button-vert {
+  margin-right:5px;
+  margin-left:5px;
+}
+
+/*
+  add padding to buttons
+*/
+.btn {
+  margin-right: 10px;
+}

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { vpMapped, vpVisit } from '@app/_models';
 import { AlertService, AuthenticationService, vpVisitService } from '@app/_services';
+import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import { LeafletComponent } from '@app/_components/leaflet.component';
 
 @Component({templateUrl: 'vpvisit.view.component.html'})
@@ -12,8 +13,8 @@ export class vpVisitViewComponent implements OnInit {
     userIsAdmin = false;
     vpVisitForm: FormGroup;
     dataLoading = false;
-    //vpmap: vpMapped;
-    visit: vpVisit;
+    //visit: vpVisit;
+    visit;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -42,8 +43,9 @@ export class vpVisitViewComponent implements OnInit {
           .subscribe(
               data => {
                 console.log('visit.view.componenent.loadPage result:', data);
-                //this.vpmap = data.rows[0].vpmapped; //a json sub-object holding mapped data
                 this.visit = data.rows[0]; //one-element array of pools used by mapView
+                this.visit.mappedDateText = Moment(this.visit.mappedDateText);
+                this.visit.visitUpdatedAt = Moment(this.visit.visitUpdatedAt);
                 this.dataLoading = false; //this forces a map update, which plots a point
               },
               error => {

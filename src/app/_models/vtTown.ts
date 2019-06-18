@@ -1,15 +1,7 @@
 export class vtTown {
-  townId: number;
-  townName: string;
-  townCountyId: number;
-  townCentroid: object;
-  townBorder: object;
-
-  constructor () {
-    this.townId = 0;
-    this.townName = 'Unknown';
-    this.townCountyId = 0;
-    this.townCentroid = {};
-    this.townBorder = {};
-  }
+  townId: number = 0;
+  townName: string = 'Unknown';
+  townCountyId: number = 0;
+  townCentroid: object = {};
+  townBorder: object = {};
 }

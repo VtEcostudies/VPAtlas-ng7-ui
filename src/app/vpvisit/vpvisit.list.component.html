@@ -6,22 +6,24 @@
         <div class="form-group row">
           <label for="visitId">Visit ID</label>
           <!--
-          consider using keyup.enter and keyup.tab instead of keyup?
-          need to see db performance on cloud server to decide...
+          There's a performance issue here with search filters:
+          - use keyup if the result set is small (<100)
+          - use keyup.enter and keyup.tab otherwise
+          - to be safe, do the latter
           -->
-          <input (keyup)="firstPage()" type="text" formControlName="visitId" class="form-control"/>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="visitPoolId">Pool ID</label>
-          <input (keyup)="firstPage()" type="text"  formControlName="visitPoolId" class="form-control"/>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
         </div>
         <div class="form-group row">
-          <label for="visitUser">Visit User</label>
-          <input (keyup)="firstPage()" type="text"  formControlName="visitUser" class="form-control"/>
+          <label for="visitUserName">Visit User</label>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
         </div>
         <div class="form-group row">
           <label for="visitTown">Town</label>
-          <input (keyup)="firstPage()" type="text"  formControlName="visitTown" class="form-control"/>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitTown" class="form-control"/>
         </div>
     </form>
   </div> <!-- col-2 -->
@@ -53,26 +55,26 @@
                 <th>Pool</th>
                 <th>User</th>
                 <th>Date</th>
-                <th>Town</th>
+                <th>Mapped Town</th>
                 <th>Mapped Lat</th>
                 <th>Mapped Lng</th>
-                <th>Vernal Pool</th>
+                <th>Vernal Pool?</th>
                 <th>Visit Lat</th>
                 <th>Visit Lng</th>
-                <th>Permission</th>
+                <th>Mapped Permission</th>
             </tr>
             <tr *ngFor="let visit of vpvisit">
                 <td><a [routerLink]="['/pools/visit/view/', visit.visitId]" class="btn btn-link">{{visit.visitId}}</a></td>
                 <td>{{visit.visitPoolId}}</td>
-                <td>{{visit.visitUser}}</td>
+                <td>{{visit.visitUserName}}</td>
                 <td>{{visit.visitDate}}</td>
-                <td>{{visit.visitTown.townName}}</td>
+                <td>{{visit.mappedTown.townName}}</td>
                 <td>{{visit.mappedLatitude}}</td>
                 <td>{{visit.mappedLongitude}}</td>
                 <td>{{visit.visitVernalPool}}</td>
                 <td>{{visit.visitLatitude}}</td>
                 <td>{{visit.visitLongitude}}</td>
-                <td>{{visit.visitLandownerPermission}}</td>
+                <td>{{visit.mappedLandownerPermission}}</td>
             </tr>
         </table>
       </div>

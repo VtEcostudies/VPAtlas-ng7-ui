@@ -21,8 +21,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   vtAltCtr = new L.LatLng(43.858297, -72.446594); //VT border center for the speciespage view, where px bounds are small and map is zoomed to fit
   @Input() mapValues; //single value or array of values to plot, set by the parent
   @Input() update = false; //external flag to invoke the map with a moveable marker
-  @Output() poolUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
-  poolLoc: L.LatLng;
+  @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
+  itemLoc: L.LatLng; //store the location of the marker on the screen, passed with events to listeners, etc.
   public map;
   marker = L.marker(this.vtCenter, {
               draggable: true,
@@ -265,25 +265,27 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   onMapClick(e) {
-    this.poolLoc = L.latLng(e.latlng.lat, e.latlng.lng);
-    this.marker.setLatLng(this.poolLoc);
-    this.poolUpdate.emit(this.poolLoc);
-    //this.map.panTo(this.poolLoc);
-    //this.map.setView(this.poolLoc, 18);
-    console.log("vpvisit.leaflet.onMapClick | poolLoc: ", this.poolLoc);
+    console.log("leaflet.onMapClick | event: ", e);
+    this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
+    this.marker.setLatLng(this.itemLoc);
+    this.markerUpdate.emit(this.itemLoc);
+    //this.map.panTo(this.itemLoc);
+    //this.map.setView(this.itemLoc, 18);
+    console.log("leaflet.onMapClick | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.mappedPoolId}<br>
-                             Lat: ${this.poolLoc.lat}<br>
-                             Lng: ${this.poolLoc.lng}
+                             Lat: ${this.itemLoc.lat}<br>
+                             Lng: ${this.itemLoc.lng}
                             `);
   }
 
   onMarkerMoveEnd(e) {
-    this.poolLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
-    this.poolUpdate.emit(this.poolLoc);
-    console.log("vpvisit.leaflet.onMarkerMoveEnd | poolLoc: ", this.poolLoc);
+    console.log("leaflet.onMarkerMoveEnd | event: ", e);
+    this.itemLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
+    this.markerUpdate.emit(this.itemLoc);
+    console.log("leaflet.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.mappedPoolId}<br>
-                             Lat: ${this.poolLoc.lat}<br>
-                             Lng: ${this.poolLoc.lng}
+                             Lat: ${this.itemLoc.lat}<br>
+                             Lng: ${this.itemLoc.lng}
                             `);
   }
 
@@ -310,7 +312,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   plotPoolCircles(vpools) {
 
-    console.log('vpvisit.leaflet.plotPoolCircles(',vpools,')');
+    //console.log('vpvisit.leaflet.plotPoolCircles(',vpools,')');
 
     if (!vpools) return;
 

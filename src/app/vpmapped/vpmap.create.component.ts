@@ -62,6 +62,7 @@ export class vpMapCreateComponent implements OnInit {
         this.pool.mappedDateText = Moment().format('MM/DD/YYYY');
         this.pool.mappedLatitude = 43.916944;
         this.pool.mappedLongitude = -72.668056;
+        this.pool.mappedTown = new vtTown(); //instantiates town object to enable default value for town drop-down
       }
 
       //create a separate form for landowner data, to be nested within vpMappedForm
@@ -116,7 +117,7 @@ export class vpMapCreateComponent implements OnInit {
     afterLoad() {
       this.vpMappedForm.controls['mappedPoolId'].setValue(this.pool.mappedPoolId);
       this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
-      this.vpMappedForm.controls['mappedDateText'].setValue(this.pool.mappedDateText);
+      this.vpMappedForm.controls['mappedDateText'].setValue(Moment(this.pool.mappedDateText).format('MM/DD/YYYY'));
       this.vpMappedForm.controls['mappedLatitude'].setValue(this.pool.mappedLatitude);
       this.vpMappedForm.controls['mappedLongitude'].setValue(this.pool.mappedLongitude);
 
@@ -234,10 +235,14 @@ export class vpMapCreateComponent implements OnInit {
             .subscribe(
                 data => {
                     console.log(`vpmap.create=>data:`, data);
-                    this.alertService.success('Successfully mapped vernal pool.', true);
+                    if (this.update) {
+                      this.alertService.success(`Successfully updated vernal pool ${this.poolId}.`, true);
+                    } else {
+                      this.alertService.success('Successfully mapped vernal pool.', true);
+                    }
                     this.dataLoading = false;
                     if (data.rows[0]) {this.poolId = data.rows[0].mappedPoolId;}
-                    else {this.poolId = this.vpMappedForm.value.mappedPoolId}
+                    //else {this.poolId = this.vpMappedForm.value.mappedPoolId}
                     this.router.navigate([`/pools/mapped/view/${this.poolId}`]);
                 },
                 error => {

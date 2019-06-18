@@ -12,13 +12,26 @@ import { vtTown } from '@app/_models';
 export class vpVisitCreateComponent implements OnInit {
     update = false; //flag for html config that this is create (vpvisit.create.component.html is used by vpvisit.create..ts and vpvisit.update..ts)
     userIsAdmin = false;
-    vpLandOwnForm: FormGroup;
-    vpVisitForm: FormGroup;
+    visitObserverForm: FormGroup = this.formBuilder.group({});
+    visitLocationForm: FormGroup = this.formBuilder.group({});
+    visitLandOwnForm: FormGroup = this.formBuilder.group({});
+    visitFieldVerificationForm: FormGroup = this.formBuilder.group({});
+    visitPoolCharacteristicsForm: FormGroup = this.formBuilder.group({});
+    visitIndicatorSpeciesForm:FormGroup = this.formBuilder.group({});
+    visitPage = {index: 0, values: [
+                  {name:"Pool-Location"},
+                  {name:"Field-Verification"},
+                  {name:"Pool-Characteristics"},
+                  {name:"Indicator-Species"}
+                ]};
     towns = [];
     townCount = 0;
     dataLoading = false;
     submitted = false;
-    visitId = null;
+    permission = false; //flag: landowner permission obtained
+    visitPoolMapped = false;
+    visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
+    poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
     visit: vpVisit = new vpVisit();
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = true;
@@ -44,114 +57,243 @@ export class vpVisitCreateComponent implements OnInit {
       this.loadTowns();
     }
 
-    ngOnInit() {
-
-      //get visitId from route params and load visit data from db
-      console.log('vpvisit.create.ngOnInit route.snapshot params: ', this.route.snapshot.params.visitId);
+    async ngOnInit() {
+      //get poolId or visitId or from route params and load visit data from db
       this.visitId = this.route.snapshot.params.visitId;
+      this.poolId = this.route.snapshot.params.poolId;
+      console.log('vpvisit.create.ngOnInit route.snapshot params: visitId:', this.visitId, 'poolId:', this.poolId);
 
-      if (this.visitId) {
+      if (this.visitId) { //update an existing visit - set all initial values in afterLoad()
         this.update = true;
-        this.loadPage(this.visitId);
-      } else {
+        //this.loadPage(this.visitId); //calls createFormControls() after loading data
+        await this.createFormControls();
+        await this.loadPage(this.visitId);
+      } else { //create a new visit - set a few necessary initial values
         this.update = false;
+        this.visit.visitId = 0;
+        this.visit.visitPoolId = this.poolId;
         this.visit.visitUserName = this.authenticationService.currentUserValue.user.username;
         this.visit.visitDate = Moment().format('MM/DD/YYYY');
         this.visit.visitLatitude = 43.916944;
         this.visit.visitLongitude = -72.668056;
+        this.visit.visitTown = new vtTown(); //instantiates town object to enable default value for town drop-down
+        this.createFormControls();
       }
+    } //end ngOnInit
 
-      //create a separate form for landowner data, to be nested within vpVisitForm
-      this.vpLandOwnForm = this.formBuilder.group({
-        visitLandownerName: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        visitLandownerAddress: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        visitLandownerTown: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        visitLandownerStateAbbrev: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        visitLandownerZip5: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        visitLandownerPhone: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        visitLandownerEmail: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+    async createFormControls() { //Create formcontrols within formgroups
+
+      this.visitObserverForm = this.formBuilder.group({
+        //these values always set from the context, so they're disabled by default
+        visitId: [{value: '', disabled: true}, Validators.nullValidator],
+        visitUserName: [{value: '', disabled: true}, Validators.required],
       });
 
-      this.vpVisitForm = this.formBuilder.group({
-
-        visitId: [this.visit.visitId, Validators.required],
-        visitUserName: [this.visit.visitUserName, Validators.required],
-        visitDate: [this.visit.visitDate, Validators.required],
+      this.visitLocationForm = this.formBuilder.group({
+        //2a Vernal Pool Location Information
+        visitPoolId: [this.visit.visitPoolId, Validators.required], //conditionally disabled in afterLoad
+        visitDate: [Moment(this.visit.visitDate).format('MM/DD/YYYY'), Validators.required],
+        visitPoolMapped: [this.visit.visitPoolMapped, Validators.nullValidator],
+        visitLocatePool: [this.visit.visitLocatePool, Validators.nullValidator],
+        visitCertainty: [this.visit.visitCertainty, Validators.nullValidator],
+        visitNavMethod: [this.visit.visitNavMethod, Validators.nullValidator],
+        visitDirections: [this.visit.visitDirections, Validators.nullValidator],
+        visitTown: [this.visit.visitTown, new FormControl(this.towns[this.townCount])], //displayed form-only value - a selectable list of towns
+        visitTownId: [this.visit.visitTownId], //non-display db-only value set when the form is submitted
+        visitLocationComments: [this.visit.visitLocationComments, Validators.nullValidator],
+        //2b Location of Pool
+        visitCoordSource: [this.visit.visitCoordSource, Validators.nullValidator],
         visitLatitude: [this.visit.visitLatitude, Validators.required],
         visitLongitude: [this.visit.visitLongitude, Validators.required],
-        visitTown: [this.visit.visitTown, new FormControl(this.towns[this.townCount])],
-/*
-        visitTownId: [this.visit.visitTownId], //non-display field set when the form is submitted
+        //2c Landowner Contact Information
+        visitUserIsLandowner: [this.visit.visitUserIsLandowner, Validators.nullValidator],
         visitLandownerPermission: [this.visit.visitLandownerPermission, Validators.nullValidator],
-
-        visitLandowner: [{disabled: true}, this.vpLandOwnForm],
-
-        visitLandownerInfo: ['', Validators.nullValidator],
-        visitLocationUncertainty: ['50', new FormControl(this.locUncs[3], Validators.required)],
-        visitComments: ['', Validators.nullValidator],
-*/
+        //// TODO: set the landOwnForm from JSON object
+        visitLandowner: [{disabled: true}, this.visitLandOwnForm], //non-display db-only value (JSON column) set when the form is submitted
+        //see below separate formGroup for landowner contact info
       });
 
-      //how to handle UI changes from checkbox input:
-      //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-method-in-angular-reactive-forms-
+      //create a separate form for landowner data, to be nested within visitLocationForm
+      //NOTE: these formdata to be rolled into a JSON oject and stored in a single field: visitLandowner
+      this.visitLandOwnForm = this.formBuilder.group({
+        visitLandownerName: ['', Validators.required], //flip to enabled if Permission
+        visitLandownerAddress: ['', Validators.required], //flip to enabled if Permission
+        visitLandownerTown: ['', Validators.required], //flip to enabled if Permission
+        visitLandownerStateAbbrev: ['', Validators.required], //flip to enabled if Permission
+        visitLandownerZip5: ['', Validators.required], //flip to enabled if Permission
+        visitLandownerPhone: ['', Validators.required], //flip to enabled if Permission
+        visitLandownerEmail: ['', Validators.required], //flip to enabled if Permission
+      });
+
+      this.visitFieldVerificationForm = this.formBuilder.group({
+        visitVernalPool: [],
+        visitPoolType: [],
+        visitInletType: [],
+        visitOutletType: [],
+        visitForestUpland: [],
+        visitForestCondition: [],
+        visitHabitatAgriculture: [],
+        visitHabitatLightDev: [],
+        visitHabitatHeavyDev: [],
+        visitHabitatPavedRd: [],
+        visitHabitatDirtRd: [],
+        visitHabitatPowerline: [],
+        visitHabitatOther: [],
+        visitHabitatComment: [],
+      });
+
+      this.visitPoolCharacteristicsForm = this.formBuilder.group({
+        //4a ENUM Type
+        visitMaxDepth: [],
+        //4b ENUM Type Water Level at Time of Survey
+        visitWaterLevelObs: [],
+        //4c ENUM Type
+        visitHydroPeriod: [],
+        //4d INTEGER feet
+        visitMaxWidth: [],
+        visitMaxLength: [],
+        //4e % values - use REAL or NUMERIC
+        visitPoolTrees: [],
+        visitPoolShrubs: [],
+        visitPoolEmergents: [],
+        visitPoolFloatingVeg: [],
+        //4f ENUM Type w/ other
+        visitSubstrate: [],
+        //4g ENUM Type w/ other
+        visitDisturbDumping: [],
+        visitDisturbSiltation: [],
+        visitDisturbVehicleRuts: [],
+        visitDisturbRunoff: [],
+        visitDisturbDitching: [],
+        visitDisturbOther: [],
+      });
+
+      this.visitIndicatorSpeciesForm = this.formBuilder.group({
+
+      });
+
       this.formControlValueChanged();
+    } //end createFormControls()
+
+    //how to handle UI changes from checkbox input:
+    //https://blog.grossman.io/real-world-angular-reactive-forms/
+    //https://netbasal.com/angular-custom-form-controls-made-easy-4f963341c8e2
+    //https://www.technouz.com/4725/disable-angular-reactiveform-input-based-selection/
+    //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-method-in-angular-reactive-forms-
+    formControlValueChanged() {
+      this.visitLocationForm.get('visitLandownerPermission').valueChanges.subscribe(
+        (mode: boolean) => {
+        this.permission = mode;
+        if (this.permission) {
+          this.visitLocationForm.get('visitLandowner').enable();
+        } else {
+          this.visitLocationForm.get('visitLandowner').disable();
+        }
+      });
+
+      this.visitLocationForm.get('visitPoolMapped').valueChanges.subscribe(
+        (mode: boolean) => {
+          console.log(mode);
+        this.visitPoolMapped = mode;
+        if (this.visitPoolMapped) {
+          this.visitLocationForm.get('visitLocatePool').enable();
+        } else {
+          this.visitLocationForm.get('visitLocatePool').disable();
+        }
+      });
     }
 
-    visitMapUpdate(visitLoc: L.LatLng) {
-      this.visitUpdateLocation = visitLoc;
-      this.vpVisitForm.controls['visitLatitude'].setValue(visitLoc.lat);
-      this.vpVisitForm.controls['visitLongitude'].setValue(visitLoc.lng);
-    }
+    async setFormValues() {
+      //1a Observer Information
+      this.visitObserverForm.controls['visitId'].setValue(this.visit.visitId);
+      this.visitObserverForm.controls['visitUserName'].setValue(this.visit.visitUserName);
+      //2a Vernal Pool Location Information
+      this.visitLocationForm.controls['visitPoolId'].setValue(this.visit.visitPoolId);
+      this.visitLocationForm.controls['visitDate'].setValue(this.visit.visitDate);
+      this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visitPoolMapped);
+      this.visitLocationForm.controls['visitLocatePool'].setValue(this.visit.visitLocatePool);
+      this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
+      this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
+      this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
+      this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown  );
+      this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
+      //2b Location of Pool
+      this.visitLocationForm.controls['visitCoordSource'].setValue(this.visit.visitCoordSource);
+      this.visitLocationForm.controls['visitLatitude'].setValue(this.visit.visitLatitude);
+      this.visitLocationForm.controls['visitLongitude'].setValue(this.visit.visitLongitude);
+      //2c Landowner Contact Information - add in vpvisit.alter.sql
+      this.visitLocationForm.controls['visitUserIsLandowner'].setValue(this.visit.visitUserIsLandowner);
+      this.visitLocationForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
+      this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
+      //3 Vernal Pool Field-Verification Informtion
+      //3a Pool Type
+      this.visitFieldVerificationForm.controls['visitVernalPool'].setValue(this.visit.visitVernalPool);
+      this.visitFieldVerificationForm.controls['visitPoolType'].setValue(this.visit.visitPoolType);
+      //3b Presence of Inlet and/or Outlet
+      this.visitFieldVerificationForm.controls['visitInletType'].setValue(this.visit.visitInletType);
+      this.visitFieldVerificationForm.controls['visitOutletType'].setValue(this.visit.visitOutletType);
+      //3c Surrounding Habitat
+      this.visitFieldVerificationForm.controls['visitForestUpland'].setValue(this.visit.visitForestUpland);
+      this.visitFieldVerificationForm.controls['visitForestCondition'].setValue(this.visit.visitForestCondition);
+      this.visitFieldVerificationForm.controls['visitHabitatAgriculture'].setValue(this.visit.visitHabitatAgriculture);
+      this.visitFieldVerificationForm.controls['visitHabitatLightDev'].setValue(this.visit.visitHabitatLightDev);
+      this.visitFieldVerificationForm.controls['visitHabitatHeavyDev'].setValue(this.visit.visitHabitatHeavyDev);
+      this.visitFieldVerificationForm.controls['visitHabitatPavedRd'].setValue(this.visit.visitHabitatPavedRd);
+      this.visitFieldVerificationForm.controls['visitHabitatDirtRd'].setValue(this.visit.visitHabitatDirtRd);
+      this.visitFieldVerificationForm.controls['visitHabitatPowerline'].setValue(this.visit.visitHabitatPowerline);
+      this.visitFieldVerificationForm.controls['visitHabitatOther'].setValue(this.visit.visitHabitatOther);
+      this.visitFieldVerificationForm.controls['visitHabitatComment'].setValue(this.visit.visitHabitatComment);
+      //4 Pool Characteristics
+      //4a Approximate Maximum Pool Depth
+      this.visitPoolCharacteristicsForm.controls['visitMaxDepth'].setValue(this.visit.visitMaxDepth);
+      this.visitPoolCharacteristicsForm.controls['visitWaterLevelObs'].setValue(this.visit.visitWaterLevelObs);
+      this.visitPoolCharacteristicsForm.controls['visitHydroPeriod'].setValue(this.visit.visitHydroPeriod);
+      this.visitPoolCharacteristicsForm.controls['visitMaxWidth'].setValue(this.visit.visitMaxWidth);
+      this.visitPoolCharacteristicsForm.controls['visitMaxLength'].setValue(this.visit.visitMaxLength);
+      //4e
+      this.visitPoolCharacteristicsForm.controls['visitPoolTrees'].setValue(this.visit.visitPoolTrees);
+      this.visitPoolCharacteristicsForm.controls['visitPoolShrubs'].setValue(this.visit.visitPoolShrubs);
+      this.visitPoolCharacteristicsForm.controls['visitPoolEmergents'].setValue(this.visit.visitPoolEmergents);
+      this.visitPoolCharacteristicsForm.controls['visitPoolFloatingVeg'].setValue(this.visit.visitPoolFloatingVeg);
+      //4f - ENUM TYPE w/other
+      this.visitPoolCharacteristicsForm.controls['visitSubstrate'].setValue(this.visit.visitSubstrate);
+      this.visitPoolCharacteristicsForm.controls['visitDisturbDumping'].setValue(this.visit.visitDisturbDumping);
+      this.visitPoolCharacteristicsForm.controls['visitDisturbSiltation'].setValue(this.visit.visitDisturbSiltation);
+      this.visitPoolCharacteristicsForm.controls['visitDisturbVehicleRuts'].setValue(this.visit.visitDisturbVehicleRuts);
+      this.visitPoolCharacteristicsForm.controls['visitDisturbRunoff'].setValue(this.visit.visitDisturbRunoff);
+      this.visitPoolCharacteristicsForm.controls['visitDisturbDitching'].setValue(this.visit.visitDisturbDitching);
+      this.visitPoolCharacteristicsForm.controls['visitDisturbOther'].setValue(this.visit.visitDisturbOther);
 
-    // convenience getter for easy access to form fields
-    get f() { return this.vpVisitForm.controls; }
+      //5 Indicator Species
+      //this.visitIndicatorSpeciesForm.controls['visit'].setValue(this.visit.visit);
 
-    // convenience getter for easy access to form fields
-    get l() { return this.vpLandOwnForm.controls; }
-
-    /*
-      Update form fields with values loaded from db.
-      // TODO: make this work in one line of code with an object
-    */
-    afterLoad() {
-      this.vpVisitForm.controls['visitId'].setValue(this.visit.visitId);
-      this.vpVisitForm.controls['visitUserName'].setValue(this.visit.visitUserName);
-      this.vpVisitForm.controls['visitDate'].setValue(this.visit.visitDate);
-      this.vpVisitForm.controls['visitLatitude'].setValue(this.visit.visitLatitude);
-      this.vpVisitForm.controls['visitLongitude'].setValue(this.visit.visitLongitude);
-
-      //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
-      //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
-      this.vpVisitForm.controls['visitTown'].setValue(this.visit.visitTown);
-/*
-      this.vpVisitForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
-
-      this.vpLandOwnForm.controls['visitLandownerName'].setValue(this.visit.visitLandownerName);
-      this.vpLandOwnForm.controls['visitLandownerAddress'].setValue(this.visit.visitLandownerAddress);
-      this.vpLandOwnForm.controls['visitLandownerTown'].setValue(this.visit.visitLandownerTown);
-      this.vpLandOwnForm.controls['visitLandownerStateAbbrev'].setValue(this.visit.visitLandownerStateAbbrev);
-      this.vpLandOwnForm.controls['visitLandownerZip5'].setValue(this.visit.visitLandownerZip5);
-      this.vpLandOwnForm.controls['visitLandownerPhone'].setValue(this.visit.visitLandownerPhone);
-      this.vpLandOwnForm.controls['visitLandownerEmail'].setValue(this.visit.visitLandownerEmail);
-
-      this.vpVisitForm.controls['visitLandownerInfo'].setValue(this.visit.visitLandownerInfo);
-      this.vpVisitForm.controls['visitLocationUncertainty'].setValue(this.visit.visitLocationUncertainty);
-      this.vpVisitForm.controls['visitComments'].setValue(this.visit.visitComments);
-*/
-      //On update, disable visitUser, which will prevent its being altered and exclude
-      //it from the formGroup values.
-      if (this.update) {
-        this.vpVisitForm.get('visitId').disable();
-        this.vpVisitForm.get('visitUser').disable();
+      // TODO: move this to set boolean value within formControl creation statement above
+      if (this.update || this.poolId) {
+        //this.visitLocationForm.get('visitPoolId').disable();
+        //this.visitLocationForm.get('visitUserName').disable();
       }
-
-      console.dir(this.vpVisitForm.value);
     }
+
+    onVisitPageSelect(visitPageIndex) {
+      this.visitPage.index = visitPageIndex;
+      //console.log('onVisitPageSelect', this.visitPage);
+    }
+
+    markerLocationUpdate(visitLoc: L.LatLng) {
+      this.visitUpdateLocation = visitLoc;
+      this.visitLocationForm.controls['visitLatitude'].setValue(visitLoc.lat);
+      this.visitLocationForm.controls['visitLongitude'].setValue(visitLoc.lng);
+    }
+
+    // convenience getter for easy access to form fields
+    get a() { return this.visitObserverForm.controls; }
+    get f() { return this.visitLocationForm.controls; }
+    get l() { return this.visitLandOwnForm.controls; }
 
     /*
       On update, load an existing visit and populate the fields
     */
-    loadPage(visitId) {
+    async loadPage(visitId) {
       this.dataLoading = true;
       console.log('vpvisit.create.component.loadPage:', visitId);
       this.vpVisitService.getById(visitId)
@@ -160,14 +302,14 @@ export class vpVisitCreateComponent implements OnInit {
               data => {
                 console.log('vpvisit.create.component.loadPage result:', data);
                 this.visit = data.rows[0];
+                //await this.createFormControls(); //create form fields after data is loaded to initialize with values
+                this.setFormValues();
                 this.dataLoading = false; //this forces a map update, which plots a point
-                this.afterLoad(); //update form fields with values loaded from db
               },
               error => {
                   this.alertService.error(error);
                   this.dataLoading = false;
               });
-
     }
 
     onSubmit() {
@@ -178,57 +320,79 @@ export class vpVisitCreateComponent implements OnInit {
 
         //kluge to get around disabled fields not being included in form values
         //and not having an easy validator for requiring visitUser = logon user
-        if (!this.update && this.vpVisitForm.value.visitUser != this.authenticationService.currentUserValue.user.username) {
+        if (!this.update && this.visitLocationForm.value.visitUserName != this.authenticationService.currentUserValue.user.username) {
           this.alertService.error("Visit User must be your username.");
           return;
         }
 
-        if (Number(this.vpVisitForm.value.visitLatitude) < 42.3 || Number(this.vpVisitForm.value.visitLatitude) > 45.1) {
+        if (Number(this.visitLocationForm.value.visitLatitude) < 42.3 || Number(this.visitLocationForm.value.visitLatitude) > 45.1) {
           this.alertService.error("Latitude must be between 42.3 and 45.1 to be in Vermont.");
           return;
         }
 
-        if (Number(this.vpVisitForm.value.visitLongitude) > -71.5 || Number(this.vpVisitForm.value.visitLongitude) < -73.5) {
+        if (Number(this.visitLocationForm.value.visitLongitude) > -71.5 || Number(this.visitLocationForm.value.visitLongitude) < -73.5) {
           this.alertService.error("Longitude must be between 71.5 and 73.5 to be in Vermont.");
           return;
         }
 
-        //console.log('vpvisit.create.component.onSubmit | visitTown',this.vpVisitForm.value.visitTown);
+        //console.log('vpvisit.create.component.onSubmit | visitTown',this.visitLocationForm.value.visitTown);
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
-        this.vpVisitForm.value.visitTownId = this.vpVisitForm.value.visitTown.townId;
+        this.visitLocationForm.value.visitTownId = this.visitLocationForm.value.visitTown.townId;
 
         // stop here if form is invalid
-        if (this.vpVisitForm.invalid) {
-          console.log(`vpVisitForm.invalid`);
+        if (this.visitLocationForm.invalid) {
+          console.log(`visitLocationForm.invalid`);
           return;
         }
 
-        //flatten the object before posting. the visitLandowner nested form
+        //flatten the POSTed object before posting. the visitLandowner nested form
         //is passed, but the API can't parse it. (to-do: handle that?)
-        if (this.vpVisitForm.value.visitLandownerPermission) {
-          Object.assign(this.vpVisitForm.value, this.vpLandOwnForm.value);
-          delete this.vpVisitForm.value.visitLandowner;
+        // TODO: roll landowner data into json object for db JSONB column
+        if (this.visitLocationForm.value.visitLandownerPermission) {
+          Object.assign(this.visitLocationForm.value, this.visitLandOwnForm.value);
+          delete this.visitLocationForm.value.visitLandowner;
         }
 
+        //visitFieldVerificationForm
+        Object.assign(this.visitLocationForm.value, this.visitFieldVerificationForm.value);
+
+        //visitPoolCharacteristicsForm
+        Object.assign(this.visitLocationForm.value, this.visitPoolCharacteristicsForm.value);
+
+        //visitIndicatorSpeciesForm
+        Object.assign(this.visitLocationForm.value, this.visitIndicatorSpeciesForm.value);
+
         this.dataLoading = true;
-        this.vpVisitService.createOrUpdate(this.update, this.visitId, this.vpVisitForm.value)
+        this.vpVisitService.createOrUpdate(this.update, this.visitId, this.visitLocationForm.value)
             .pipe(first())
             .subscribe(
                 data => {
                     console.log(`vpvisit.create=>data:`, data);
-                    this.alertService.success('Successfully visit vernal visit.', true);
+                    if (this.update) {
+                      this.alertService.success('Successfully added Vernal Pool Visit.', true);
+                    } else {
+                      this.alertService.success(`Successfully updated Vernal Pool Visit ${this.visitId}.`, true);
+                    }
                     this.dataLoading = false;
                     if (data.rows[0]) {this.visitId = data.rows[0].visitId;}
-                    else {this.visitId = this.vpVisitForm.value.visitId}
-                    this.router.navigate([`/visits/visit/view/${this.visitId}`]);
+                    else {this.visitId = this.visitLocationForm.value.visitId}
+                    this.router.navigate([`/pools/visit/view/${this.visitId}`]);
                 },
                 error => {
                     console.log(`vpvisit.create=>error: ${error}`);
                     this.alertService.error(error);
                     this.dataLoading = false;
                 });
+    }
+
+    nextPage(direction) {
+      //this.visitPage.index = (this.visitPage.index > 3) ? this.visitPage.index++ : 0;
+      this.visitPage.index += direction;
+      if (this.visitPage.index < 0) this.visitPage.index = 0;
+      if (this.visitPage.index > 3) this.visitPage.index = 3;
+      //console.log('vpvisit.create.nextPage() | visitPage:', this.visitPage);
     }
 
     deleteVisit() {
@@ -238,7 +402,7 @@ export class vpVisitCreateComponent implements OnInit {
           .subscribe(
               data => {
                   console.log(`vpvisit.create.deleteVisit=>data:`, data);
-                  this.alertService.success('Successfully deleted vernal visit.', true);
+                  this.alertService.success('Successfully deleted Vernal Pool Visit.', true);
                   this.router.navigate([`/visits/visit/list`]);
               },
               error => {
@@ -271,27 +435,6 @@ export class vpVisitCreateComponent implements OnInit {
   compareTownFn(t1: vtTown, t2: vtTown) {
     //console.log('compareTownFn t1:', t1, ' t2:', t2);
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
-  }
-
-  //how to handle UI changes from checkbox input:
-  //https://blog.grossman.io/real-world-angular-reactive-forms/
-  //https://netbasal.com/angular-custom-form-controls-made-easy-4f963341c8e2
-  //https://www.technouz.com/4725/disable-angular-reactiveform-input-based-selection/
-  //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-method-in-angular-reactive-forms-
-
-  formControlValueChanged() {
-/*
-    this.vpVisitForm.get('visitLandownerPermission').valueChanges.subscribe(
-      (mode: boolean) => {
-      this.permission = mode;
-
-      if (this.permission) {
-        this.vpVisitForm.get('visitLandowner').enable();
-      } else {
-        this.vpVisitForm.get('visitLandowner').disable();
-      }
-    });
-*/
   }
 
 }

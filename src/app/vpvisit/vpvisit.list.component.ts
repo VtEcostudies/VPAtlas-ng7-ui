@@ -39,7 +39,7 @@ export class vpVisitListComponent implements OnInit {
       this.filterForm = this.formBuilder.group({
           visitId: [''],
           visitPoolId: [''],
-          visitUser: [''],
+          visitUserName: [''],
           visitTown: [''],
       });
       //and load page 1
@@ -56,10 +56,11 @@ export class vpVisitListComponent implements OnInit {
         this.loadPools();
     }
 
-    loadPools() {
+    loadPools(page=0) {
       if (this.loadAllRec) {
         this.loadAll();
       } else {
+        if (page) {this.page = page;}
         this.loadPage(this.page);
       }
     }
@@ -83,11 +84,11 @@ export class vpVisitListComponent implements OnInit {
         this.filter += `visitPoolId|LIKE=%${this.f.visitPoolId.value}%`;
       }
 
-      if (this.f.visitUser.value) {
+      if (this.f.visitUserName.value) {
         if (this.filter) {
           this.filter += '&';
         }
-        this.filter += `visitUser|LIKE=%${this.f.visitUser.value}%`;
+        this.filter += `visitUserName|LIKE=%${this.f.visitUserName.value}%`;
       }
 
       if (this.f.visitTown.value) {

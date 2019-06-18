@@ -7,6 +7,7 @@ import { vpVisit } from '@app/_models';
 import { pgFields } from '@app/_models';
 import { pgApiResults  } from '@app/_models';
 
+//return values are pgApiResults - the format of node-postgres query result from nodejs server
 @Injectable({ providedIn: 'root' })
 export class vpVisitService {
     constructor(private http: HttpClient) { }
@@ -16,9 +17,7 @@ export class vpVisitService {
     }
 
     getPage(page: number, filter: string) {
-        //return value is pgApiResults - the format of node-postgres query result from nodejs server
         const url = `${environment.apiUrl}/pools/visit/page/${page}?${filter}`;
-        console.log(`vpvisit.service.getPage | url:`, url);
         return this.http.get<pgApiResults>(url);
     }
 

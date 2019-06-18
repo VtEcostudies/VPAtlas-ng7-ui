@@ -1,7 +1,7 @@
 <!--
 -->
 <div class="row">
-  <div class="col-3">
+  <div class="col-2">
     <h4><u>Pool Visit Detail</u><a *ngIf="userIsAdmin" href="/pools/visit/update/{{visit.visitId}}">  (Edit)</a></h4>
     <table class="table table-striped table-sm">
       <tr>
@@ -21,6 +21,10 @@
             <td>{{visit.visitDate}}</td>
         </tr>
         <tr>
+            <td>Visit Updated</td>
+            <td>{{visit.visitUpdatedAt}}</td>
+        </tr>
+        <tr>
             <td>Status</td>
             <td>{{visit.mappedPoolStatus}}</td>
         </tr>
@@ -29,12 +33,12 @@
             <td>{{visit.visitTown.townName}}</td>
         </tr>
         <tr>
-            <td>Location Uncertainty</td>
-            <td>{{visit.visitLocationUncertainty}}</td>
+            <td>Mapped Location Uncertainty</td>
+            <td>{{visit.mappedLocationUncertainty}}</td>
         </tr>
         <tr>
-            <td>Landowner Permission?</td>
-            <td>{{visit.visitLandownerPermission}}</td>
+            <td>Mapped Landowner Permission?</td>
+            <td>{{visit.mappedLandownerPermission}}</td>
         </tr>
         <tr>
             <td>Landowner Conact Info</td>
@@ -50,24 +54,24 @@
         </tr>
         <tr>
             <td>Landowner Additional Info</td>
-            <td>{{visit.visitLandownerInfo}}</td>
+            <td>{{visit.mappedLandownerInfo}}</td>
         </tr>
         <tr>
-            <td>Latitude</td>
+            <td>Visit Latitude</td>
             <td>{{visit.visitLatitude}}</td>
         </tr>
         <tr>
-            <td>Longitude</td>
+            <td>Visit Longitude</td>
             <td>{{visit.visitLongitude}}</td>
         </tr>
         <tr>
-            <td>Comments</td>
-            <td>{{visit.visitComments}}</td>
+            <td>Visit Location Comments</td>
+            <td>{{visit.visitLocationComments}}</td>
         </tr>
 
     </table>
   </div>
-  <div class="col-9">
+  <div class="col-10">
     <div *ngIf="!dataLoading">
       <app-map-comp [mapValues]="visit"></app-map-comp>
     </div>

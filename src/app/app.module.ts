@@ -1,13 +1,15 @@
 ﻿import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDatepickerModule, MatInputModule, MatNativeDateModule } from '@angular/material';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // used to create fake backend
 import { fakeBackendProvider } from './_helpers';
 
-import { AppComponent }  from './app.component';
-import { routing }        from './app.routing';
+import { AppComponent } from './app.component';
+import { routing } from './app.routing';
 //@add_component_here
 import { AlertComponent } from './_components';
 import { JwtInterceptor, ErrorInterceptor } from './_helpers';
@@ -30,7 +32,10 @@ import { vpVisitCreateComponent } from './vpvisit';
 @NgModule({
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         ReactiveFormsModule,
+        FormsModule,
+        MatDatepickerModule, MatInputModule,MatNativeDateModule,
         HttpClientModule,
         routing
     ],

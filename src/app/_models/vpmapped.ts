@@ -35,5 +35,5 @@ export class vpMapped {
     mappedLocationUncertainty: number = null;
 
     mappedTownId: number = 0;
-    mappedTown: vtTown = new vtTown();
+    mappedTown: vtTown = null; //new vtTown(); //instantiating town causes circular dependency warning. set this on form load instead.
 }

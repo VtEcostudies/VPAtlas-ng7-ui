@@ -33,6 +33,7 @@ const appRoutes: Routes = [
     { path: 'pools/visit/list', component: vpVisitListComponent },
     { path: 'pools/visit/view/:visitId', component: vpVisitViewComponent },
     { path: 'pools/visit/create', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
+    { path: 'pools/visit/create/:poolId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/visit/update/:visitId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home
