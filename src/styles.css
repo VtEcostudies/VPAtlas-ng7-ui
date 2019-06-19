@@ -64,3 +64,15 @@
   margin-right:5px;
   margin-left:0px;
 }
+
+.overlay-input {
+  float: left;
+  flex-grow: 2;
+}
+.overlay-button {
+  float: left;
+}
+.overlay-wrapper {
+    display: flex;
+    width: 75%;
+}

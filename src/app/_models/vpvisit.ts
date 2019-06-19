@@ -52,7 +52,7 @@ export class vpVisit {
     visitDisturbRunoff: number = 0.0;
     visitDisturbDitching: number = 0.0;
     visitDisturbOther: string = '';
-    visitWoodFrogsAdults: number = 0.0;
+    visitWoodFrogAdults: number = 0.0;
     visitWoodFrogLarvae: number = 0.0;
     visitWoodFrogEgg: number = 0.0;
     visitWoodFrogEggHow: string = '';
@@ -81,4 +81,17 @@ export class vpVisit {
     visitPoolPhoto: string = '';
     createdAt: number = 0;
     updatedAt: number = 0;
+    visitFishSize: string = '';
+    visitWoodFrogPhoto: string = '';
+    visitWoodFrogNotes: string = '';
+    visitSpsPhoto: string = '';
+    visitSpsNotes: string = '';
+    visitJesaPhoto: string = '';
+    visitJesaNotes: string = '';
+    visitBssaPhoto: string = '';
+    visitBssaNotes: string = '';
+    visitFairyShrimpPhoto: string = '';
+    visitFairyShrimpNotes: string = '';
+    visitFingerNailClamsPhoto: string = '';
+    visitFingerNailClamsNotes: string = '';
 }

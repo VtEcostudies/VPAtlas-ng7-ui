@@ -31,7 +31,8 @@ export class vpVisitCreateComponent implements OnInit {
     permission = false; //flag: landowner permission obtained
     visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
-    visit: vpVisit = new vpVisit();
+    //visit: vpVisit = new vpVisit();
+    visit = new vpVisit();
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = true;
 
@@ -84,8 +85,8 @@ export class vpVisitCreateComponent implements OnInit {
 
       this.visitObserverForm = this.formBuilder.group({
         //these values always set from the context, so they're disabled by default
-        visitId: [{value: '', disabled: true}, Validators.nullValidator],
-        visitUserName: [{value: '', disabled: true}, Validators.required],
+        visitId: [{value: '(New)', disabled: true}, Validators.nullValidator],
+        visitUserName: [{value: this.visit.visitUserName, disabled: true}, Validators.required],
       });
 
       this.visitLocationForm = this.formBuilder.group({
@@ -168,7 +169,52 @@ export class vpVisitCreateComponent implements OnInit {
       });
 
       this.visitIndicatorSpeciesForm = this.formBuilder.group({
+        visitWoodFrogAdults: [],
+        visitWoodFrogLarvae: [],
+        visitWoodFrogEgg: [],
+        visitWoodFrogEggHow: [],
+        visitWoodFrogPhoto: [],
+        visitWoodFrogNotes: [],
 
+        visitSpsAdults: [],
+        visitSpsLarvae: [],
+        visitSpsEgg: [],
+        visitSpsEggHow: [],
+        visitSpsPhoto: [],
+        visitSpsNotes: [],
+
+        visitJesaAdults: [],
+        visitJesaLarvae: [],
+        visitJesaEgg: [],
+        visitJesaEggHow: [],
+        visitJesaPhoto: [],
+        visitJesaNotes: [],
+
+        visitBssaAdults: [],
+        visitBssaLarvae: [],
+        visitBssaEgg: [],
+        visitBssaEggHow: [],
+        visitBssaPhoto: [],
+        visitBssaNotes: [],
+
+        visitFairyShrimp: [],
+        visitFairyShrimpPhoto: [],
+        visitFairyShrimpNotes: [],
+
+        visitFingerNailClams: [],
+        visitFingerNailClamsPhoto: [],
+        visitFingerNailClamsNotes: [],
+
+        visitSpeciesOther1: [],
+        visitSpeciesOther2: [],
+
+        visitSpeciesComments: [],
+
+        visitFish:[],
+        visitFishCount: [],
+        visitFishSize:[],
+
+        visitPoolPhoto: [],
       });
 
       this.formControlValueChanged();
@@ -264,8 +310,46 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitPoolCharacteristicsForm.controls['visitDisturbOther'].setValue(this.visit.visitDisturbOther);
 
       //5 Indicator Species
-      //this.visitIndicatorSpeciesForm.controls['visit'].setValue(this.visit.visit);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogAdults'].setValue(this.visit.visitWoodFrogAdults);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogLarvae'].setValue(this.visit.visitWoodFrogLarvae);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogEgg'].setValue(this.visit.visitWoodFrogEgg);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogEggHow'].setValue(this.visit.visitWoodFrogEggHow);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogPhoto'].setValue(this.visit.visitWoodFrogPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogNotes'].setValue(this.visit.visitWoodFrogNotes);
 
+      this.visitIndicatorSpeciesForm.controls['visitSpsAdults'].setValue(this.visit.visitSpsAdults);
+      this.visitIndicatorSpeciesForm.controls['visitSpsLarvae'].setValue(this.visit.visitSpsLarvae);
+      this.visitIndicatorSpeciesForm.controls['visitSpsEgg'].setValue(this.visit.visitSpsEgg);
+      this.visitIndicatorSpeciesForm.controls['visitSpsEggHow'].setValue(this.visit.visitSpsEggHow);
+      this.visitIndicatorSpeciesForm.controls['visitSpsPhoto'].setValue(this.visit.visitSpsPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitSpsNotes'].setValue(this.visit.visitSpsNotes);
+
+      this.visitIndicatorSpeciesForm.controls['visitJesaAdults'].setValue(this.visit.visitJesaAdults);
+      this.visitIndicatorSpeciesForm.controls['visitJesaLarvae'].setValue(this.visit.visitJesaLarvae);
+      this.visitIndicatorSpeciesForm.controls['visitJesaEgg'].setValue(this.visit.visitJesaEgg);
+      this.visitIndicatorSpeciesForm.controls['visitJesaEggHow'].setValue(this.visit.visitJesaEggHow);
+      this.visitIndicatorSpeciesForm.controls['visitJesaPhoto'].setValue(this.visit.visitJesaPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitJesaNotes'].setValue(this.visit.visitJesaNotes);
+
+      this.visitIndicatorSpeciesForm.controls['visitBssaAdults'].setValue(this.visit.visitBssaAdults);
+      this.visitIndicatorSpeciesForm.controls['visitBssaLarvae'].setValue(this.visit.visitBssaLarvae);
+      this.visitIndicatorSpeciesForm.controls['visitBssaEgg'].setValue(this.visit.visitBssaEgg);
+      this.visitIndicatorSpeciesForm.controls['visitBssaEggHow'].setValue(this.visit.visitBssaEggHow);
+      this.visitIndicatorSpeciesForm.controls['visitBssaPhoto'].setValue(this.visit.visitBssaPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitBssaNotes'].setValue(this.visit.visitBssaNotes);
+
+      this.visitIndicatorSpeciesForm.controls['visitFairyShrimp'].setValue(this.visit.visitFairyShrimp);
+      this.visitIndicatorSpeciesForm.controls['visitFairyShrimpPhoto'].setValue(this.visit.visitFairyShrimpPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitFairyShrimpNotes'].setValue(this.visit.visitFairyShrimpNotes);
+
+      this.visitIndicatorSpeciesForm.controls['visitFingerNailClams'].setValue(this.visit.visitFingerNailClams);
+      this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsPhoto'].setValue(this.visit.visitFingerNailClamsPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsNotes'].setValue(this.visit.visitFingerNailClamsNotes);
+
+/*
+      visitSpeciesOther1: [],
+      visitSpeciesOther2: [],
+*/
       // TODO: move this to set boolean value within formControl creation statement above
       if (this.update || this.poolId) {
         //this.visitLocationForm.get('visitPoolId').disable();
@@ -321,7 +405,7 @@ export class vpVisitCreateComponent implements OnInit {
 
         //kluge to get around disabled fields not being included in form values
         //and not having an easy validator for requiring visitUser = logon user
-        if (!this.update && this.visitLocationForm.value.visitUserName != this.authenticationService.currentUserValue.user.username) {
+        if (!this.update && this.visitObserverForm.value.visitUserName != this.authenticationService.currentUserValue.user.username) {
           this.alertService.error("Visit User must be your username.");
           return;
         }
@@ -342,9 +426,30 @@ export class vpVisitCreateComponent implements OnInit {
         //choose to add that complexity here rather than parse requests in API code.
         this.visitLocationForm.value.visitTownId = this.visitLocationForm.value.visitTown.townId;
 
-        // stop here if form is invalid
+        // stop here if form is invalid - navigate to the earliest page missing data
+        if (this.visitObserverForm.invalid) {
+          console.log(`visitObserverForm.invalid`);
+          this.setPage(0);
+          return;
+        }
         if (this.visitLocationForm.invalid) {
           console.log(`visitLocationForm.invalid`);
+          this.setPage(0);
+          return;
+        }
+        if (this.visitLocationForm.invalid) {
+          console.log(`visitFieldVerificationForm.invalid`);
+          this.setPage(1);
+          return;
+        }
+        if (this.visitPoolCharacteristicsForm.invalid) {
+          console.log(`visitPoolCharacteristicsForm.invalid`);
+          this.setPage(2);
+          return;
+        }
+        if (this.visitIndicatorSpeciesForm.invalid) {
+          console.log(`visitIndicatorSpeciesForm.invalid`);
+          this.setPage(3);
           return;
         }
 
@@ -358,6 +463,9 @@ export class vpVisitCreateComponent implements OnInit {
         //have to convert true/false radio buttons from string to boolean
         this.visitLocationForm.value.visitPoolMapped = this.visitLocationForm.value.visitPoolMapped == 'true';
         this.visitLocationForm.value.visitLocatePool = this.visitLocationForm.value.visitLocatePool == 'true';
+
+        //visitObserverForm
+        Object.assign(this.visitLocationForm.value, this.visitObserverForm.value);
 
         //visitFieldVerificationForm
         Object.assign(this.visitLocationForm.value, this.visitFieldVerificationForm.value);
@@ -375,9 +483,9 @@ export class vpVisitCreateComponent implements OnInit {
                 data => {
                     console.log(`vpvisit.create=>data:`, data);
                     if (this.update) {
-                      this.alertService.success('Successfully added Vernal Pool Visit.', true);
-                    } else {
                       this.alertService.success(`Successfully updated Vernal Pool Visit ${this.visitId}.`, true);
+                    } else {
+                      this.alertService.success('Successfully added Vernal Pool Visit.', true);
                     }
                     this.dataLoading = false;
                     if (data.rows[0]) {this.visitId = data.rows[0].visitId;}
@@ -397,6 +505,10 @@ export class vpVisitCreateComponent implements OnInit {
       if (this.visitPage.index < 0) this.visitPage.index = 0;
       if (this.visitPage.index > 3) this.visitPage.index = 3;
       //console.log('vpvisit.create.nextPage() | visitPage:', this.visitPage);
+    }
+
+    setPage(page) {
+      this.visitPage.index = page;
     }
 
     deleteVisit() {

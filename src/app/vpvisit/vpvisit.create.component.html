@@ -1,31 +1,38 @@
-<div *ngIf="!update" style="display:inline-block;">
-  <h2>New Vernal Pool Visit</h2>
-</div>
+<div class="row">
 
-<div *ngIf="update" style="display:inline-block;">
-  <h2>Edit Vernal Pool Visit '{{visitId}}'</h2>
-</div>
+  <div class="col-4">
+    <div *ngIf="!update" style="display:inline-block;">
+      <h3><u>New Vernal Pool Visit</u></h3>
+    </div>
 
-<div style="display:inline-block;float:right;">
-  <label>Page:</label>
-  <!-- https://juristr.com/blog/2016/11/ng2-binding-radiobutton-lists/ -->
-  <label>
-   <input type="radio" [checked]="visitPage.index===0" name="visitPage" (change)="onVisitPageSelect(0)" class="radio-button-horiz" />
-     <span>{{visitPage.values[0].name}}</span>
-  </label>
-  <label>
-   <input type="radio" [checked]="visitPage.index===1" name="visitPage" (change)="onVisitPageSelect(1)" class="radio-button-horiz" />
-   <span>{{visitPage.values[1].name}}</span>
-  </label>
-  <label>
-   <input type="radio" [checked]="visitPage.index===2" name="visitPage" (change)="onVisitPageSelect(2)" class="radio-button-horiz" />
-   <span>{{visitPage.values[2].name}}</span>
-  </label>
-  <label>
-   <input type="radio" [checked]="visitPage.index===3" name="visitPage" (change)="onVisitPageSelect(3)" class="radio-button-horiz" />
-   <span>{{visitPage.values[3].name}}</span>
-  </label>
-</div>
+    <div *ngIf="update" style="display:inline-block;">
+      <h3><u>Edit Vernal Pool Visit '{{visitId}}'</u></h3>
+    </div>
+  </div> <!-- col -->
+
+  <div class="col-8">
+    <div style="display:inline-block;float:right;">
+      <label>Page:</label>
+      <!-- https://juristr.com/blog/2016/11/ng2-binding-radiobutton-lists/ -->
+      <label>
+       <input type="radio" [checked]="visitPage.index===0" name="visitPage" (change)="onVisitPageSelect(0)" class="radio-button-horiz" />
+         <span>{{visitPage.values[0].name}}</span>
+      </label>
+      <label>
+       <input type="radio" [checked]="visitPage.index===1" name="visitPage" (change)="onVisitPageSelect(1)" class="radio-button-horiz" />
+       <span>{{visitPage.values[1].name}}</span>
+      </label>
+      <label>
+       <input type="radio" [checked]="visitPage.index===2" name="visitPage" (change)="onVisitPageSelect(2)" class="radio-button-horiz" />
+       <span>{{visitPage.values[2].name}}</span>
+      </label>
+      <label>
+       <input type="radio" [checked]="visitPage.index===3" name="visitPage" (change)="onVisitPageSelect(3)" class="radio-button-horiz" />
+       <span>{{visitPage.values[3].name}}</span>
+      </label>
+    </div>
+  </div> <!-- col -->
+</div> <!-- row -->
 
 <!-- test field for leaflet map event emitter
 <div>
@@ -36,10 +43,8 @@
 <form [formGroup]="visitObserverForm">
   <div class="row">
     <div class="col-3">
-      <!--
-          visitId
-      -->
-      <div *ngIf="update" class="form-group">
+      <!-- visitId -->
+      <div class="form-group">
           <label for="visitId">Visit ID</label>
           <input type="text" formControlName="visitId" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitId.errors }" />
           <div *ngIf="submitted && observ.visitId.errors" class="invalid-feedback">
@@ -60,7 +65,7 @@
       </div>
     </div> <!-- col -->
     <div class="col-3">
-      <label>Pool ID</label>
+      <label>Visit Pool ID</label>
       <input type="text" class="form-control" disabled="true" value="{{locate.visitPoolId.value}}" />
     </div> <!-- col -->
     <div class="col-3">
@@ -203,7 +208,7 @@
       -->
       <!-- <div class="form-group"> -->
           <label for="visitLongitude" class="leading-label" >Longitude</label>
-          <input type="text" formControlName="visitLongitude" size="15" class="text-input-block" style="float:right;" [ngClass]="{ 'is-invalid': submitted && locate.visitLongitude.errors }" />
+          <input type="text" formControlName="visitLongitude" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLongitude.errors }" />
           <div *ngIf="submitted && locate.visitLongitude.errors" class="invalid-feedback">
               <div *ngIf="locate.visitLongitude.errors.required">Visit Longitude is required</div>
           </div>
@@ -371,7 +376,7 @@
         <input type="radio" value="Other" formControlName="visitPoolType" class="radio-button-horiz" />
         <span>Other (describe):</span>
       </label>
-      <input type="text" value="" formControlName="visitPoolType" class="form-control" />
+      <input type="text" value="" formControlName="visitPoolType" class="text-input-block" />
 
   </div>
   <div>
@@ -458,33 +463,33 @@
     -->
     <div class="form-group">
         <label>
-          <input type="checkbox" formControlName="visitHabitatAgriculture" />
+          <input type="checkbox" formControlName="visitHabitatAgriculture" class="radio-button-horiz" />
           <span>Agriculture/grassland</span>
         </label>
         <label>
-          <input type="checkbox" formControlName="visitHabitatLightDev" />
+          <input type="checkbox" formControlName="visitHabitatLightDev" class="radio-button-horiz" />
           <span>Light development (<25% developed)</span>
         </label>
         <label>
-          <input type="checkbox" formControlName="visitHabitatHeavyDev" />
+          <input type="checkbox" formControlName="visitHabitatHeavyDev" class="radio-button-horiz" />
           <span>Intensive development (>25% developed)</span>
         </label>
     </div>
     <div class="form-group">
         <label>
-          <input type="checkbox" formControlName="visitHabitatPavedRd" />
+          <input type="checkbox" formControlName="visitHabitatPavedRd" class="radio-button-horiz" />
           <span>Road/driveway (paved)</span>
         </label>
         <label>
-          <input type="checkbox" formControlName="visitHabitatDirtRd" />
+          <input type="checkbox" formControlName="visitHabitatDirtRd" class="radio-button-horiz" />
           <span>Road/driveway (dirt/gravel)</span>
         </label>
         <label>
-          <input type="checkbox" formControlName="visitHabitatPowerline" />
+          <input type="checkbox" formControlName="visitHabitatPowerline" class="radio-button-horiz" />
           <span>Powerline right-of-way</span>
         </label>
-        <label for="visitHabitatOther">Other:</label>
-        <input type="text" formControlName="visitHabitatOther" />
+        <label for="visitHabitatOther" class="leading-label">Other:</label>
+        <input type="text" formControlName="visitHabitatOther"  class="text-input-block" />
     </div>
     <!-- visitHabitatComment -->
     <div class="form-group">
@@ -619,7 +624,7 @@
         <label>
           <input type="radio" value="Other" formControlName="visitSubstrate" class="radio-button-horiz" />
           <span>Other:</span>
-          <input type="text" value="" formControlName="visitSubstrate" class="radio-button-horiz" />
+          <input type="text" value="" formControlName="visitSubstrate" class="text-input-block" />
         </label>
       </div>
       <!-- Pool Disturbance -->
@@ -654,6 +659,123 @@
 </form> <!-- visitFieldVerificationForm -->
 
 <form *ngIf="visitPage.index===3" [formGroup]="visitIndicatorSpeciesForm">
+  <div>
+    <label><u>5. Indicator Species | Provide a photograph of the pool & each indicator species (or egg masses) observed.</u></label>
+  </div>
+  <table class="table table-striped table-sm table-responsive">
+    <tr>
+      <th>Species Obseserved</th>
+      <th>Adults</th>
+      <th>Tadpoles / Larvae</th>
+      <th>Egg Mass Number</th>
+      <th>Egg Mass Method</th>
+      <th>Photo Upload</th>
+      <th>Notes</th>
+    </tr>
+
+    <tr class="form-group">
+      <td>Wood Frog</td>
+      <td><input type="text" formControlName="visitWoodFrogAdults" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitWoodFrogLarvae" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitWoodFrogEgg" size="1" class="form-control" /></td>
+      <td>
+        <select formControlName="visitWoodFrogEggHow" width="10" class="form-control">
+         <option value="Estimated">Estimated</option>
+         <option value="Counted">Counted</option>
+        </select>
+      </td>
+      <td class="overlay-wrapper">
+        <button class="overlay-button">Select</button>
+        <input type="text" disabled="true" formControlName="visitWoodFrogPhoto" size="15" class="form-control overlay-text" />
+      </td>
+      <td><input type="text" formControlName="visitWoodFrogNotes" size="30" class="form-control" /></td>
+    </tr>
+
+    <tr class="form-group">
+      <td>Spotted Salamander</td>
+      <td><input type="text" formControlName="visitSpsAdults" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitSpsLarvae" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitSpsEgg" size="1" class="form-control" /></td>
+      <td>
+        <select formControlName="visitSpsEggHow" width="10" class="form-control">
+         <option value="Estimated">Estimated</option>
+         <option value="Counted">Counted</option>
+        </select>
+      </td>
+      <td class="overlay-wrapper">
+        <button class="overlay-button">Select</button>
+        <input type="text" disabled="true" formControlName="visitSpsPhoto" size="15" class="form-control overlay-text" />
+      </td>
+      <td><input type="text" formControlName="visitSpsNotes" size="30" class="form-control" /></td>
+    </tr>
+
+    <tr class="form-group">
+      <td>Jefferson Salamander</td>
+      <td><input type="text" formControlName="visitJesaAdults" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitJesaLarvae" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitJesaEgg" size="1" class="form-control" /></td>
+      <td>
+        <select formControlName="visitJesaEggHow" width="10" class="form-control">
+         <option value="Estimated">Estimated</option>
+         <option value="Counted">Counted</option>
+        </select>
+      </td>
+      <td class="overlay-wrapper">
+        <button class="overlay-button">Select</button>
+        <input type="text" disabled="true" formControlName="visitJesaPhoto" size="15" class="form-control overlay-text" />
+      </td>
+      <td><input type="text" formControlName="visitJesaNotes" size="30" class="form-control" /></td>
+    </tr>
+
+    <tr class="form-group">
+      <td>Blue-spotted Salamander</td>
+      <td><input type="text" formControlName="visitBssaAdults" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitBssaLarvae" size="1" class="form-control" /></td>
+      <td><input type="text" formControlName="visitBssaEgg" size="1" class="form-control" /></td>
+      <td>
+        <select formControlName="visitBssaEggHow" width="10" class="form-control">
+         <option value="Estimated">Estimated</option>
+         <option value="Counted">Counted</option>
+        </select>
+      </td>
+      <td class="overlay-wrapper">
+        <button class="overlay-button">Select</button>
+        <input type="text" disabled="true" formControlName="visitBssaPhoto" size="15" class="form-control overlay-text" />
+      </td>
+      <td><input type="text" formControlName="visitBssaNotes" size="30" class="form-control" /></td>
+    </tr>
+
+    <tr class="form-group">
+      <td>Fairy Shrimp</td>
+      <td><input type="text" formControlName="visitFairyShrimp" size="1" class="form-control" /></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="overlay-wrapper">
+        <button class="overlay-button">Select</button>
+        <input type="text" disabled="true" formControlName="visitFairyShrimpPhoto" size="15" class="form-control overlay-text" />
+      </td>
+      <td><input type="text" formControlName="visitFairyShrimpNotes" size="30" class="form-control" /></td>
+    </tr>
+
+    <tr class="form-group">
+      <td>Fingernail Clams</td>
+      <td><input type="text" formControlName="visitFingerNailClams" size="1" class="form-control" /></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="overlay-wrapper">
+        <button class="overlay-button">Select</button>
+        <input type="text" disabled="true" formControlName="visitFingerNailClamsPhoto" size="15" class="form-control overlay-text" />
+      </td>
+      <td><input type="text" formControlName="visitFingerNailClamsNotes" size="30" class="form-control" /></td>
+    </tr>
+
+    <tr class="form-group">
+      <td>Other:</td>
+    </tr>
+
+  </table>
 </form>
 
 <!--

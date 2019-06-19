@@ -18,13 +18,5 @@ export class vtInfoService {
 
     getTowns() {
         return this.http.get<pgApiResult>(`${environment.apiUrl}/vtinfo/towns`);
-        /*
-        return [
-          {townName: "Strafford"},
-          {townName: "Thetford"},
-          {townName: "Norwich"},
-          {townName: "Burlington"}
-        ];
-        */
     }
 }
