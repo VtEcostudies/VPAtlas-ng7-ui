@@ -192,6 +192,11 @@
       </div>
       <div>
         <label><u>2b) Location of Pool</u></label>
+        <label style="padding-left:10px;">
+          <span>(</span>
+          <input style="padding-left:5px;" [checked]="mapShowing" (change)="mapShowingChange($event)" type="checkbox" />
+          <span style="padding-left:5px;">Show Map)</span>
+        </label>
       </div>
       <!--
         visitLatitude
@@ -306,22 +311,14 @@
         </div>
       </form> <!-- visitLandOwnForm, if permission -->
     </div> <!-- col -->
-
     <div class="col-6">
-      <div *ngIf="!dataLoading">
-        <!--
-        <app-map-comp [mapValues]="visit"
-          [update]="mapMarker"
-          (markerUpdate)="markerLocationUpdate($event)"
-          >
-        </app-map-comp>
-        -->
-        ...map goes here
-      </div>
-      <div *ngIf="dataLoading">
-        ...Loading
-      </div>
-    </div> <!-- col -->
+    <div *ngIf="mapShowing">
+      <!--
+        <app-map-comp [mapValues]="visit" [update]="mapMarker" (markerUpdate)="markerLocationUpdate($event)"></app-map-comp>
+      -->
+      <app-map-comp [mapValues]="visit"></app-map-comp>
+    </div> <!-- ngIf -->
+    </div>
   </div> <!-- row -->
 </form> <!-- visitLocationForm -->
 

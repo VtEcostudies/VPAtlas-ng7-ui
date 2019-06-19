@@ -34,6 +34,7 @@ export class vpVisitCreateComponent implements OnInit {
     //visit: vpVisit = new vpVisit();
     visit = new vpVisit();
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
+    mapShowing = false;
     mapMarker = true;
 
     constructor(
@@ -368,6 +369,11 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitLocationForm.controls['visitLongitude'].setValue(visitLoc.lng);
     }
 
+    mapShowingChange(e) {
+      console.log('mapShowingChange', e);
+      this.mapShowing = e.target.checked;
+    }
+
     // convenience getters for easy access to form fields
     get observ() { return this.visitObserverForm.controls; }
     get locate() { return this.visitLocationForm.controls; }
@@ -475,6 +481,11 @@ export class vpVisitCreateComponent implements OnInit {
 
         //visitIndicatorSpeciesForm
         Object.assign(this.visitLocationForm.value, this.visitIndicatorSpeciesForm.value);
+
+        //remove visitId from the POST data if creating a New pool
+        if (!this.update) {
+          delete this.visitLocationForm.value.visitId;
+        }
 
         this.dataLoading = true;
         this.vpVisitService.createOrUpdate(this.update, this.visitId, this.visitLocationForm.value)
