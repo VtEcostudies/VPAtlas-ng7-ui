@@ -313,10 +313,11 @@
     </div> <!-- col -->
     <div class="col-6">
     <div *ngIf="mapShowing">
-      <!--
-        <app-map-comp [mapValues]="visit" [update]="mapMarker" (markerUpdate)="markerLocationUpdate($event)"></app-map-comp>
-      -->
-      <app-map-comp [mapValues]="visit"></app-map-comp>
+        <app-map-edit
+          [mapValues]="visit"
+          [update]="mapMarker"
+          (markerUpdate)="markerLocationUpdate($event)">
+        </app-map-edit>
     </div> <!-- ngIf -->
     </div>
   </div> <!-- row -->

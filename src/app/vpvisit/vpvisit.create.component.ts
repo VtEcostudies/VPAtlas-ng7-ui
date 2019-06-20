@@ -34,7 +34,7 @@ export class vpVisitCreateComponent implements OnInit {
     //visit: vpVisit = new vpVisit();
     visit = new vpVisit();
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
-    mapShowing = false;
+    mapShowing = true;
     mapMarker = true;
 
     constructor(

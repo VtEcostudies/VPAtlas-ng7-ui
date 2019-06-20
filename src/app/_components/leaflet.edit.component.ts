@@ -1,19 +1,18 @@
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
 import * as L from "leaflet";
-//import * as LP from "leaflet.browser.print";
 import { AuthenticationService, uxValuesService } from '@app/_services';
 
 
 @Component({
-  selector: 'app-map-comp',
+  selector: 'app-map-edit',
   templateUrl: 'leaflet.component.html',
   styleUrls: ['leaflet.component.css']
 })
 
 @Injectable({providedIn: 'root'}) //this makes a component single-instance, which applies to services, as well.
 
-export class LeafletComponent implements OnInit, OnChanges {
+export class LeafletEditComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
@@ -26,65 +25,13 @@ export class LeafletComponent implements OnInit, OnChanges {
   layerControl;
   zoomControl = L.control.zoom();
   scaleControl = L.control.scale();
-/*
-  customControl =  L.Control.Layers.extend({
-
-    onAdd: function () {
-      this._initLayout();
-      this._addButton();
-      this._update();
-      //return this._map._container;
-    },
-    _addButton: function () {
-      console.log('_addButton() | the this: ', this);
-      var elements = this._map._container.getElementsByClassName('leaflet-control-layers-list');
-      var button = L.DomUtil.create('button', 'my-button-class', elements[0]);
-      button.textContent = 'Close control';
-      L.DomEvent.on(button, 'click', function(e){
-        L.DomEvent.stop(e);
-        //this._collapse();
-        console.log('layer button clicked');
-      }, this);
-      return button;
-    }
-  });
-*/
-/*
-  customBox =  L.Control.extend({
-    options: {
-      position: 'topleft'
-    },
-
-    onAdd: function (mod) {
-
-      console.log('customBox mod: ', mod);
-
-      var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-
-      container.style.backgroundColor = 'white';
-      container.style.backgroundImage = "url(https://t1.gstatic.com/images?q=tbn:ANd9GcR6FCUMW5bPn8C4PbKak2BJQQsmC-K9-mbYBeFZm1ZM2w2GRy40Ew)";
-      container.style.backgroundSize = "30px 30px";
-      container.style.width = '30px';
-      container.style.height = '30px';
-
-      L.DomEvent.on(container, 'click', function(e) {
-        L.DomEvent.stop(e);
-        console.log('Custom Container Clicked');
-        mod.zoomExtents(); //doesn't work.
-      }, this);
-      return container;
-    }
-  });
-*/
-
-  //printControl = LP.control.browserPrint();
   myRenderer = L.canvas({ padding: 0.5 });
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
   cmClrCnt = 7; //(this.cmColors).length();
-  cmRadius = 1;
-  cmGroup = L.layerGroup();
-  cmLLArr = [];
+  cmRadius = 1; //default circleMarker radius
+  cmGroup = L.layerGroup(); //a group of layers
+  cmLLArr = []; //an array of circleMarkers
   zoom = 0;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
@@ -136,27 +83,30 @@ export class LeafletComponent implements OnInit, OnChanges {
     private authenticationService: AuthenticationService
     ) {
     /*
-      preserve baseLayer shown across page loads with outside service
-      which holds baseLayers[] array index of last-selected baseLayer.
+      preserve baseLayer and pointColor shown across page loads with outside service
+      which holds baseLayerIndex of last-selected baseLayer and pointColorIndex of
+      last-selected color.
     */
     this.baseLayer = this.uxValuesService.baseLayerIndex;
     this.cmColor = this.uxValuesService.pointColorIndex;
 
     console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
 
+    //create marker instance has to go here, in constructor, or errors.
     this.marker = L.marker(this.vtCenter, {
-                draggable: true,
-                autoPan: true
-              });
+                  draggable: true,
+                  autoPan: true
+                });
   } //constructor
 
   ngOnInit() {
     if (this.authenticationService.currentUserValue) {
       this.currentUser = this.authenticationService.currentUserValue.user;
-      console.log('vpvisit.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+      console.log('vpvisit.leaflet.edit.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
 
+    //creating map instance has to go here in ngOnInit, or errors.
     this.map = new L.Map("map", {
                zoomControl: false,
                maxZoom: 20,
@@ -185,9 +135,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
 
-    //this.printControl.position('topright');
-    //this.printControl.addTo(this.map);
-
     this.baseLayers[this.baseLayer].addTo(this.map);
 
     this.map.on("baselayerchange", e => this.onBaseLayerChange(e));
@@ -197,10 +144,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.map.on("click", e => this.onMapClick(e));
 
     this.marker.on("moveend", e => this.onMarkerMoveEnd(e));
-
-    //this.map.addControl(new this.customControl());
-
-    //this.map.addControl(new this.customBox(this));
   }
 
 
@@ -221,24 +164,24 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   zoomExtents() {
     if (this.map) {
-      if (this.cmLLArr.length > 1) { //can't zoom to a single point - causes an error
+      if (this.cmLLArr.length > 1) { //fitBounds can't zoom to a single point - causes an error
         this.map.fitBounds(this.cmLLArr);
-      } else if (this.cmLLArr.length == 1 ) {
+      } else if (this.cmLLArr.length == 1 ) { //use setView with center and zoom-level
         this.map.setView(this.cmLLArr[0], 12);
-      } else {
-        //no points in array?
+      } else { //no values in cmLLArr. error.
+        console.log('Error in zoomExtents(). No values in point array.');
       }
     }
   }
 
   zoomVermont() {
     if (this.map) {
-      this.map.setView(this.vtCenter, 8 );
+      this.map.setView(this.vtCenter, 8);
     }
   }
 
   onBaseLayerChange(e) {
-    //find the array index of the baseLayer that was chosen from the envent value
+    //find the array index of the baseLayer that was chosen from the event value
     var index = this.baseLayers.findIndex(elm => {
       return elm == e.layer;
     });
@@ -270,7 +213,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.markerUpdate.emit(this.itemLoc);
     //this.map.panTo(this.itemLoc);
     //this.map.setView(this.itemLoc, 18);
-    console.log("leaflet.onMapClick | itemLoc: ", this.itemLoc);
+    console.log("leaflet.edit.onMapClick | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
                              Lat: ${this.itemLoc.lat}<br>
                              Lng: ${this.itemLoc.lng}
@@ -281,7 +224,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     console.log("leaflet.onMarkerMoveEnd | event: ", e);
     this.itemLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
     this.markerUpdate.emit(this.itemLoc);
-    console.log("leaflet.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
+    console.log("leaflet.edit.edit.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
                              Lat: ${this.itemLoc.lat}<br>
                              Lng: ${this.itemLoc.lng}
@@ -316,7 +259,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   plotPoolCircles(vpools) {
 
-    //console.log('vpvisit.leaflet.plotPoolCircles(',vpools,')');
+    //console.log('vpvisit.leaflet.edit.plotPoolCircles(',vpools,')');
 
     if (!vpools) return;
 

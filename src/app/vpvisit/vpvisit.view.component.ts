@@ -13,8 +13,8 @@ export class vpVisitViewComponent implements OnInit {
     userIsAdmin = false;
     vpVisitForm: FormGroup;
     dataLoading = false;
-    //visit: vpVisit;
-    visit;
+    visit: vpVisit = new vpVisit();
+    //  visit;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -28,23 +28,23 @@ export class vpVisitViewComponent implements OnInit {
     ngOnInit() {
       if (this.authenticationService.currentUserValue) {
         this.visitUser = this.authenticationService.currentUserValue.user;
-        console.log('visit.view.component.ngOnInit | currentUser.userrole:', this.visitUser.userrole);
+        console.log('vpvisit.view.ngOnInit() | currentUser.userrole:', this.visitUser.userrole);
         this.userIsAdmin = this.visitUser.userrole == 'admin';
       } else { this.userIsAdmin = false;}
-      console.log('visit.view.compoenent.ngOnInit | route.snapshot params: ', this.route.snapshot.params.visitId);
+      console.log('vpvisit.view.compoenent.ngOnInit | route.snapshot params: ', this.route.snapshot.params.visitId);
       this.loadPage(this.route.snapshot.params.visitId);
     }
 
     loadPage(visitId) {
       this.dataLoading = true; //this forces a map update, which plots a point
-      console.log('vpmpap.view.componenet.ts::loadPage:', visitId);
+      console.log('vpvisit.view.loadPage() | visitId:', visitId);
       this.vpVisitService.getById(visitId)
           .pipe(first())
           .subscribe(
               data => {
-                console.log('visit.view.componenent.loadPage result:', data);
+                console.log('vpvisit.view.loadPage() result:', data);
                 this.visit = data.rows[0]; //one-element array of pools used by mapView
-                this.visit.mappedDateText = Moment(this.visit.mappedDateText);
+                this.visit.visitDate = Moment(this.visit.visitDate);
                 this.visit.visitUpdatedAt = Moment(this.visit.visitUpdatedAt);
                 this.dataLoading = false; //this forces a map update, which plots a point
               },

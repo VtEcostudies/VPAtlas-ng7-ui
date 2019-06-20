@@ -25,6 +25,7 @@ import { vpMapCreateComponent } from './vpmapped';
 import { vpMapLeafletComponent } from './vpmapped';
 
 import { LeafletComponent } from './_components'; //hope to replace vpMapLeafletComponent later
+import { LeafletEditComponent } from './_components'; //hope to replace vpMapLeafletComponent later
 
 import { vpVisitListComponent } from './vpvisit';
 import { vpVisitViewComponent } from './vpvisit';
@@ -55,6 +56,8 @@ import { vpVisitCreateComponent } from './vpvisit';
         vpMapLeafletComponent,
 
         LeafletComponent,
+        LeafletEditComponent,
+        
         vpVisitListComponent,
         vpVisitViewComponent,
         vpVisitCreateComponent,
