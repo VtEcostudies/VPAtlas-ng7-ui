@@ -84,7 +84,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   cmColor = 0; //current color index
   cmClrCnt = 7; //(this.cmColors).length();
   cmRadius = 1;
-  cmGroup = L.layerGroup();
+  cmGroup = L.featureGroup(); //L.layerGroup();
   cmLLArr = [];
   zoom = 0;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
@@ -181,6 +181,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
     } else {
       this.cmGroup.addTo(this.map); //a layerGroup of circleMarkers added in plotPoolCircles
+      this.cmGroup.on("click", e => this.onCircleGroupClick(e));
     }
 
     this.zoomControl.setPosition('topright');
@@ -265,13 +266,13 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   onMapClick(e) {
-    console.log("leaflet.onMapClick | event: ", e);
+    //console.log("leaflet.onMapClick | event: ", e);
     this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     this.marker.setLatLng(this.itemLoc);
     this.markerUpdate.emit(this.itemLoc);
     //this.map.panTo(this.itemLoc);
     //this.map.setView(this.itemLoc, 18);
-    console.log("leaflet.onMapClick | itemLoc: ", this.itemLoc);
+    //console.log("leaflet.onMapClick | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
                              Lat: ${this.itemLoc.lat}<br>
                              Lng: ${this.itemLoc.lng}
@@ -287,6 +288,40 @@ export class LeafletComponent implements OnInit, OnChanges {
                              Lat: ${this.itemLoc.lat}<br>
                              Lng: ${this.itemLoc.lng}
                             `);
+  }
+
+  /*
+    use e.layer.options to reference custom properties set at creation
+    use e.sourceTarget to append functions like bindPopup
+  */
+  onCircleGroupClick(e) {
+    console.log("leaflet.onCircleGroupClick | event: ", e);
+    console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
+    console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
+    var cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
+    const index = e.sourceTarget.options.index;
+    const poolId = e.sourceTarget.options.poolId;
+    const popText = this.buildPopup(index);
+    const popShow = L.popup({
+    	maxHeight: 200,
+      keepInView: true
+    }).setContent(popText);
+
+    e.sourceTarget.bindPopup(popShow).openPopup();
+  }
+
+  buildPopup(index) {
+    var obj = this.mapValues[index];
+    var text = '';
+    var exclude = ['count'];
+
+    Object.keys(obj).forEach(function(key,index) {
+      if (obj[key] && !exclude.includes(key)) { //add non-null values
+        text += `<div>${key}: ${obj[key]}</div>`;
+      }
+    });
+
+    return text;
   }
 
   async clearPools() {
@@ -336,8 +371,11 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     for (var i = 0; i < vpools.length; i++) {
 
+      vpools[i].latitude = vpools[i].latitude || 0;
+      vpools[i].longitude = vpools[i].longitude || 0;
+
       //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
-      if (Number(vpools[i].latitude) == 0 || Number(vpools[i].longitude) == 0) {
+      if (!vpools[i].latitude || !vpools[i].longitude) {
         console.log('leaflet.plotPoolCircles() NO Lat/Lng for pool', vpools[i].poolId);
         continue;
       }
@@ -361,11 +399,13 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       // TODO: set the cmColor based upon mappedPoolStatus
 
-      circle = L.circleMarker(llLoc, {
+      circle = <any> L.circleMarker(llLoc, {
           renderer: this.myRenderer,
           radius: ptRadius,
-          color: this.cmColors[this.cmColor]
-      });
+          color: this.cmColors[this.cmColor],
+          index: i, //event.sourceTarget.options.index
+          poolId: vpools[i].poolId //event.sourceTarget.options.poolId
+      }) as any;
 
       this.cmGroup.addLayer(circle); //add this marker to the current layerGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
 
@@ -381,7 +421,7 @@ export class LeafletComponent implements OnInit, OnChanges {
           urlParts = {base: '', item:vpools[i].poolId, view:`pools/mapped/view/${vpools[i].poolId}`, edit:`pools/mapped/update/${vpools[i].poolId}`};
           break;
       }
-
+/*
       if (this.userIsAdmin) {
         circle.bindPopup(`<a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a><br>
                           <a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a><br>
@@ -394,7 +434,7 @@ export class LeafletComponent implements OnInit, OnChanges {
                           Lon:${vpools[i].longitude}<br>
                           `);
       }
-
+*/
       circle.bindTooltip(`${this.itemType} ${urlParts.item}<br>
                         Lat: ${vpools[i].latitude}<br>
                         Lon:${vpools[i].longitude}<br>`);

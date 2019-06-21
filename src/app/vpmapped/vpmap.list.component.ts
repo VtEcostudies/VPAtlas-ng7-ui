@@ -19,6 +19,7 @@ export class vpMapListComponent implements OnInit {
     count: number = 1;
     filter = '';
     vpmap = []; //data array from db
+    itemType = 'Mapped Pool';
     //vpmap: vpMapped = [];
     //pgApi: pgApiResults;
     mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads

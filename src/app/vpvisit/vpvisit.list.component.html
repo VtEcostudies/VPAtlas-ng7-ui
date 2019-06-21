@@ -80,7 +80,10 @@
       </div>
 
       <div *ngIf="mapView">
-        <app-map-view [mapValues]="visits" [itemType]="itemType"></app-map-view>
+        <app-map-comp
+          [mapValues]="visits"
+          [itemType]="itemType">
+        </app-map-comp>
       </div>
 
     </div> <!-- loading -->

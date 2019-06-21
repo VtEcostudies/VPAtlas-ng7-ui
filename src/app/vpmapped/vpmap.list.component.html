@@ -78,7 +78,13 @@
       </div>
 
       <div *ngIf="mapView">
+        <!--
         <app-map [mapPools]="vpmap"></app-map>
+        -->
+        <app-map-comp
+          [mapValues]="vpmap"
+          [itemType]="itemType">
+        </app-map-comp>
       </div>
 
     </div> <!-- loading -->

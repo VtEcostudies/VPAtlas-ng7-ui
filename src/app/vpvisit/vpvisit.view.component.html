@@ -73,7 +73,10 @@
   </div>
   <div class="col-10">
     <div *ngIf="!dataLoading">
-      <app-map-view [mapValues]="visit" [itemType]="itemType"></app-map-view>
+      <app-map-view
+        [mapValues]="visit"
+        [itemType]="itemType">
+      </app-map-view>
     </div>
     <div *ngIf="dataLoading">
       ...Loading
