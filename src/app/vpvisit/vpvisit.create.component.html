@@ -187,7 +187,7 @@
           <label>
             <input type="radio" value="Other" formControlName="visitNavMethod" class="radio-button-vert" />
             <span class="leading-label">Other:</span>
-            <input type="text" formcontrolName="visitNavMethodOther" class="text-input-block"/>
+            <input type="text" formControlName="visitNavMethodOther" class="text-input-block"/>
           </label>
       </div>
       <div>
@@ -372,9 +372,9 @@
       </label>
       <label>
         <input type="radio" value="Other" formControlName="visitPoolType" class="radio-button-horiz" />
-        <span>Other (describe):</span>
+        <span>Other:</span>
       </label>
-      <input type="text" value="" formControlName="visitPoolType" class="text-input-block" />
+      <input type="text" value="" formControlName="visitPoolTypeOther" class="text-input-block" />
 
   </div>
   <div>
@@ -622,7 +622,7 @@
         <label>
           <input type="radio" value="Other" formControlName="visitSubstrate" class="radio-button-horiz" />
           <span>Other:</span>
-          <input type="text" value="" formControlName="visitSubstrate" class="text-input-block" />
+          <input type="text" value="" formControlName="visitSubstrateOther" class="text-input-block" />
         </label>
       </div>
       <!-- Pool Disturbance -->
@@ -770,7 +770,18 @@
     </tr>
 
     <tr class="form-group">
-      <td>Other:</td>
+      <td>
+        Other:<input type="text" formControlName="visitSpeciesOtherName" size="10" class="text-input-block" />
+      </td>
+      <td><input type="text" formControlName="visitSpeciesOtherCount" size="1" class="form-control" /></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="overlay-wrapper">
+        <button class="overlay-button">Select</button>
+        <input type="text" disabled="true" formControlName="visitSpeciesOtherPhoto" size="15" class="form-control overlay-text" />
+      </td>
+      <td><input type="text" formControlName="visitSpeciesOtherNotes" size="30" class="form-control" /></td>
     </tr>
 
   </table>
@@ -784,7 +795,6 @@
     <button [disabled]="dataLoading" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
     <button [disabled]="dataLoading" *ngIf="visitPage.index===3" class="btn btn-primary" (click)="onSubmit()">Save</button>
     <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-    <a *ngIf="!update" routerLink="/pools/visit/list" class="btn btn-link">Cancel</a>
-    <a *ngIf="update" routerLink="/pools/visit/view/{{visitId}}" class="btn btn-link">Cancel</a>
+    <button (click)="cancelVisit()" class="btn">Cancel</button>
     <button *ngIf="update" (click)="deleteVisit()" [disabled]="dataLoading" class="btn">Delete</button>
 </div>

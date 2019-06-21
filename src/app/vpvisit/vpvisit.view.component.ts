@@ -2,7 +2,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { vpMapped, vpVisit } from '@app/_models';
+import { vpVisit } from '@app/_models';
 import { AlertService, AuthenticationService, vpVisitService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import { LeafletComponent } from '@app/_components/leaflet.component';
@@ -31,7 +31,7 @@ export class vpVisitViewComponent implements OnInit {
         console.log('vpvisit.view.ngOnInit() | currentUser.userrole:', this.visitUser.userrole);
         this.userIsAdmin = this.visitUser.userrole == 'admin';
       } else { this.userIsAdmin = false;}
-      console.log('vpvisit.view.compoenent.ngOnInit | route.snapshot params: ', this.route.snapshot.params.visitId);
+      console.log('vpvisit.view.ngOnInit | route.snapshot params: ', this.route.snapshot.params.visitId);
       this.loadPage(this.route.snapshot.params.visitId);
     }
 

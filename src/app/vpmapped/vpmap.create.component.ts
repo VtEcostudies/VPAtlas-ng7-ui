@@ -252,6 +252,25 @@ export class vpMapCreateComponent implements OnInit {
                 });
     }
 
+    cancelMappedPool() {
+      var navUrl = null;
+      var msgTxt = null;
+
+      if (this.update) {
+        msgTxt = `edits to Pool ${this.poolId}`
+        navUrl = `/pools/mapped/view/${this.poolId}`;
+      } else {
+        msgTxt = `creation of a New Pool`;
+        navUrl = `/pools/mapped/list`;
+      }
+
+      if (confirm(`Are you sure you want to cancel ${msgTxt}?`)) {
+        this.router.navigate([navUrl]);
+      } else {
+        console.log('Mapped Pool NOT cancelled');
+      }
+    }
+
     deletePool() {
       if (confirm(`Are you sure you want to delete pool ${this.pool.mappedPoolId}?`)) {
         this.vpMappedService.delete(this.pool.mappedPoolId)

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, UserService, AuthenticationService, vpVisitService } from '@app/_services';
+import { vpVisit } from '@app/_models';
 
 //@add_component_here
 @Component({templateUrl: 'vpvisit.list.component.html'})
@@ -15,7 +16,7 @@ export class vpVisitListComponent implements OnInit {
     last = 1;
     count: number = 1;
     filter = '';
-    vpvisit = []; //data array from db
+    visits: vpVisit[] = []; //data array from db
     mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
@@ -98,7 +99,7 @@ export class vpVisitListComponent implements OnInit {
         this.filter += `vptown."townName"|LIKE=%${this.f.visitTown.value}%`;
       }
 
-      console.log('vpvisit.list.components.ts::getfilter()', this.filter);
+      console.log('vpvisit.list.getfilter()', this.filter);
     }
 
     firstPage() {
@@ -139,7 +140,7 @@ export class vpVisitListComponent implements OnInit {
           .pipe(first())
           .subscribe(
               data => {
-                this.vpvisit = data.rows;
+                this.visits = data.rows;
                 this.count = data.rows[0] ? data.rows[0].count : data.rowCount;
                 this.setLast();
                 this.loading = false;
@@ -158,7 +159,7 @@ export class vpVisitListComponent implements OnInit {
           .pipe(first())
           .subscribe(
               data => {
-                this.vpvisit = data.rows;
+                this.visits = data.rows;
                 this.count = data.rowCount;
                 this.setLast();
                 this.loading = false;

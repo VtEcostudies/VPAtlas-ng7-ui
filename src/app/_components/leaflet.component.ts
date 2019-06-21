@@ -20,10 +20,10 @@ export class LeafletComponent implements OnInit, OnChanges {
   @Input() mapValues; //single value or array of values to plot, set by the parent
   @Input() update = false; //external flag to invoke the map with a moveable marker
   @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
-  itemLoc: L.LatLng; //store the location of the marker on the screen, passed with events to listeners, etc.
+  itemLoc: L.LatLng = null; //store the location of the marker on the screen, passed with events to listeners, etc.
   public map = null;
   marker = null;
-  layerControl;
+  layerControl = null;
   zoomControl = L.control.zoom();
   scaleControl = L.control.scale();
 /*
@@ -209,13 +209,13 @@ export class LeafletComponent implements OnInit, OnChanges {
     changes. so, when a map is included on a page with <app-map></app-map>, this
     event fires when the page's data changes.
   */
-  ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+  async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     //console.log('ngOnChanges(changes), changes:', changes);
-    this.clearPools();
+    await this.clearPools();
     if (this.update) {
-      this.plotPoolMarker(this.mapValues);
+      await this.plotPoolMarker(this.mapValues);
     } else {
-      this.plotPoolCircles(this.mapValues);
+      await this.plotPoolCircles(this.mapValues);
     }
   }
 
@@ -288,19 +288,25 @@ export class LeafletComponent implements OnInit, OnChanges {
                             `);
   }
 
-  clearPools() {
+  async clearPools() {
     this.cmGroup.clearLayers();
     this.cmLLArr = [];
   }
 
-  plotPoolMarker(vpool) {
+  async plotPoolMarker(vpool) {
     var llLoc = null;
-
-    console.log('leaflet.edit.plotPoolMarker(',vpool.latitude,')');
 
     if (!vpool) return;
 
     if (Array.isArray(vpool)) {vpool = vpool[0];}
+
+    console.log('leaflet.edit.plotPoolMarker(',vpool.poolId,')');
+
+    //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
+    if (Number(vpool.latitude) == 0 || Number(vpool.longitude) == 0) {
+      console.log(`leaflet.edit.plotPoolMarker(${vpool.poolId}) NO Lat/Lng for pool.`);
+      return;
+    }
 
     llLoc = L.latLng(vpool.latitude, vpool.longitude);
 
@@ -314,9 +320,12 @@ export class LeafletComponent implements OnInit, OnChanges {
                             `);
   }
 
-  plotPoolCircles(vpools) {
+  async plotPoolCircles(vpools) {
+    var llLoc = null;
+    var ptRadius = null;
+    var circle = null;
 
-    //console.log('vpvisit.leaflet.plotPoolCircles(',vpools,')');
+    //console.log('leaflet.plotPoolCircles(',vpools,')');
 
     if (!vpools) return;
 
@@ -326,9 +335,15 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     for (var i = 0; i < vpools.length; i++) {
 
-      var llLoc = L.latLng(vpools[i].latitude, vpools[i].longitude);
+      //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
+      if (Number(vpools[i].latitude) == 0 || Number(vpools[i].longitude) == 0) {
+        console.log('leaflet.plotPoolCircles() NO Lat/Lng for pool', vpools[i].poolId);
+        continue;
+      }
 
-      var ptRadius = this.cmRadius;
+      llLoc = L.latLng(vpools[i].latitude, vpools[i].longitude);
+
+      ptRadius = this.cmRadius;
 
       //set the cmRadius based upon mappedLocationUncertainty
       switch (vpools[i].mappedLocationUncertainty) {
@@ -345,7 +360,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       // TODO: set the cmColor based upon mappedPoolStatus
 
-      var circle = L.circleMarker(llLoc, {
+      circle = L.circleMarker(llLoc, {
           renderer: this.myRenderer,
           radius: ptRadius,
           color: this.cmColors[this.cmColor]

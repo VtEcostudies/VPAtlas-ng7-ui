@@ -8,6 +8,7 @@ export class vpVisit {
     visitUserName: string = '';
     visitUserId: number = 0;
     visitNavMethod: string = '';
+    visitNavMethodOther: string = '';
     visitPoolMapped: boolean = false;
     visitLocatePool: boolean = false;
     visitCertainty: string = '';
@@ -24,6 +25,7 @@ export class vpVisit {
     visitLandowner: object = {};
     visitVernalPool: string = '';
     visitPoolType: string = '';
+    visitPoolTypeOther: string = '';
     visitInletType: string = '';
     visitOutletType: string = '';
     visitForestCondition: string = '';
@@ -46,6 +48,7 @@ export class vpVisit {
     visitPoolEmergents: number = 0.0;
     visitPoolFloatingVeg: number = 0.0;
     visitSubstrate: string = '';
+    visitSubstrateOther: string = '';
     visitDisturbDumping: number = 0.0;
     visitDisturbSiltation: number = 0.0;
     visitDisturbVehicleRuts: number = 0.0;
@@ -72,6 +75,10 @@ export class vpVisit {
     visitFingerNailClams: number = 0.0;
     visitSpeciesOther1: string = '';
     visitSpeciesOther2: string = '';
+    visitSpeciesOtherName: string = '';
+    visitSpeciesOtherCount: string = '';
+    visitSpeciesOtherPhoto: string = '';
+    visitSpeciesOtherNotes: string = '';
     visitSpeciesComments: string = '';
     visitFish: number = 0.0;
     visitFishCount: number = 0.0;

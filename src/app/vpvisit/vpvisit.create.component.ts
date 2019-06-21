@@ -31,8 +31,8 @@ export class vpVisitCreateComponent implements OnInit {
     permission = false; //flag: landowner permission obtained
     visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
-    //visit: vpVisit = new vpVisit();
-    visit = new vpVisit();
+    visit: vpVisit = new vpVisit();
+    //visit = new vpVisit();
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapShowing = true;
     mapMarker = true;
@@ -66,7 +66,6 @@ export class vpVisitCreateComponent implements OnInit {
 
       if (this.visitId) { //update an existing visit - set all initial values in afterLoad()
         this.update = true;
-        //this.loadPage(this.visitId); //calls createFormControls() after loading data
         await this.createFormControls();
         await this.loadPage(this.visitId);
       } else { //create a new visit - set a few necessary initial values
@@ -78,7 +77,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.visit.visitLatitude = 43.916944;
         this.visit.visitLongitude = -72.668056;
         this.visit.visitTown = new vtTown(); //instantiates town object to enable default value for town drop-down
-        this.createFormControls();
+        await this.createFormControls();
       }
     } //end ngOnInit
 
@@ -98,6 +97,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitLocatePool: [this.visit.visitLocatePool, Validators.nullValidator],
         visitCertainty: [this.visit.visitCertainty, Validators.nullValidator],
         visitNavMethod: [this.visit.visitNavMethod, Validators.nullValidator],
+        visitNavMethodOther: [this.visit.visitNavMethodOther, Validators.nullValidator],
         visitDirections: [this.visit.visitDirections, Validators.nullValidator],
         visitTown: [this.visit.visitTown, new FormControl(this.towns[this.townCount])], //displayed form-only value - a selectable list of towns
         visitTownId: [this.visit.visitTownId], //non-display db-only value set when the form is submitted
@@ -129,6 +129,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitFieldVerificationForm = this.formBuilder.group({
         visitVernalPool: [],
         visitPoolType: [],
+        visitPoolTypeOther: [],
         visitInletType: [],
         visitOutletType: [],
         visitForestUpland: [],
@@ -160,6 +161,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitPoolFloatingVeg: [],
         //4f ENUM Type w/ other
         visitSubstrate: [],
+        visitSubstrateOther: [],
         //4g ENUM Type w/ other
         visitDisturbDumping: [],
         visitDisturbSiltation: [],
@@ -206,14 +208,18 @@ export class vpVisitCreateComponent implements OnInit {
         visitFingerNailClamsPhoto: [],
         visitFingerNailClamsNotes: [],
 
-        visitSpeciesOther1: [],
-        visitSpeciesOther2: [],
+        //visitSpeciesOther1: [], //legacy data. no longer used
+        //visitSpeciesOther2: [], //legacy data. no longer used
+        visitSpeciesOtherName: [],
+        visitSpeciesOtherCount: [],
+        visitSpeciesOtherPhoto: [],
+        visitSpeciesOtherNotes: [],
 
         visitSpeciesComments: [],
 
         visitFish:[],
         visitFishCount: [],
-        visitFishSize:[],
+        //visitFishSize:[], //legacy data. no longer used.
 
         visitPoolPhoto: [],
       });
@@ -260,6 +266,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitLocationForm.controls['visitLocatePool'].setValue(locatePool);
       this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
       this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
+      this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
       this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown  );
       this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
@@ -275,6 +282,7 @@ export class vpVisitCreateComponent implements OnInit {
       //3a Pool Type
       this.visitFieldVerificationForm.controls['visitVernalPool'].setValue(this.visit.visitVernalPool);
       this.visitFieldVerificationForm.controls['visitPoolType'].setValue(this.visit.visitPoolType);
+      this.visitFieldVerificationForm.controls['visitPoolTypeOther'].setValue(this.visit.visitPoolTypeOther);
       //3b Presence of Inlet and/or Outlet
       this.visitFieldVerificationForm.controls['visitInletType'].setValue(this.visit.visitInletType);
       this.visitFieldVerificationForm.controls['visitOutletType'].setValue(this.visit.visitOutletType);
@@ -303,6 +311,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitPoolCharacteristicsForm.controls['visitPoolFloatingVeg'].setValue(this.visit.visitPoolFloatingVeg);
       //4f - ENUM TYPE w/other
       this.visitPoolCharacteristicsForm.controls['visitSubstrate'].setValue(this.visit.visitSubstrate);
+      this.visitPoolCharacteristicsForm.controls['visitSubstrateOther'].setValue(this.visit.visitSubstrateOther);
       this.visitPoolCharacteristicsForm.controls['visitDisturbDumping'].setValue(this.visit.visitDisturbDumping);
       this.visitPoolCharacteristicsForm.controls['visitDisturbSiltation'].setValue(this.visit.visitDisturbSiltation);
       this.visitPoolCharacteristicsForm.controls['visitDisturbVehicleRuts'].setValue(this.visit.visitDisturbVehicleRuts);
@@ -347,10 +356,22 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsPhoto'].setValue(this.visit.visitFingerNailClamsPhoto);
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsNotes'].setValue(this.visit.visitFingerNailClamsNotes);
 
-/*
-      visitSpeciesOther1: [],
-      visitSpeciesOther2: [],
-*/
+      //this.visitIndicatorSpeciesForm.controls['visitSpeciesOther1'].setValue(this.visit.visitSpeciesOther1);
+      //this.visitIndicatorSpeciesForm.controls['visitSpeciesOther2'].setValue(this.visit.visitSpeciesOther2);
+
+      this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherName'].setValue(this.visit.visitSpeciesOtherName);
+      this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherCount'].setValue(this.visit.visitSpeciesOtherCount);
+      this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherPhoto'].setValue(this.visit.visitSpeciesOtherPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherNotes'].setValue(this.visit.visitSpeciesOtherNotes);
+
+      this.visitIndicatorSpeciesForm.controls['visitSpeciesComments'].setValue(this.visit.visitSpeciesComments);
+
+      this.visitIndicatorSpeciesForm.controls['visitFish'].setValue(this.visit.visitFish);
+      this.visitIndicatorSpeciesForm.controls['visitFishCount'].setValue(this.visit.visitFishCount);
+      //this.visitIndicatorSpeciesForm.controls['visitFishSize'].setValue(this.visit.visitFishSize);
+
+      this.visitIndicatorSpeciesForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
+
       // TODO: move this to set boolean value within formControl creation statement above
       if (this.update || this.poolId) {
         //this.visitLocationForm.get('visitPoolId').disable();
@@ -522,6 +543,28 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitPage.index = page;
     }
 
+    cancelVisit() {
+      var navUrl = null;
+      var msgTxt = null;
+
+      if (this.update) {
+        msgTxt = `to Visit ${this.visitId}`
+        navUrl = `/pools/visit/view/${this.visitId}`;
+      } else if (this.poolId) {
+        msgTxt = `of a New Visit to Pool ID ${this.poolId}`;
+        navUrl = `/pools/mapped/view/${this.poolId}`;
+      } else {
+        msgTxt = `of a New Visit to a New Pool`;
+        navUrl = `/pools/visit/list`;
+      }
+
+      if (confirm(`Are you sure you want to cancel edits ${msgTxt}?`)) {
+        this.router.navigate([navUrl]);
+      } else {
+        console.log('visit NOT cancelled');
+      }
+    }
+
     deleteVisit() {
       if (confirm(`Are you sure you want to delete visit ${this.visit.visitId}?`)) {
         this.vpVisitService.delete(this.visit.visitId)
@@ -530,7 +573,7 @@ export class vpVisitCreateComponent implements OnInit {
               data => {
                   console.log(`vpvisit.create.deleteVisit=>data:`, data);
                   this.alertService.success('Successfully deleted Vernal Pool Visit.', true);
-                  this.router.navigate([`/visits/visit/list`]);
+                  this.router.navigate([`/pools/visit/list`]);
               },
               error => {
                   console.log(`vpvisit.create.deleteVisit=>error: `, error);

@@ -63,7 +63,7 @@
                 <th>Visit Lng</th>
                 <th>Mapped Permission</th>
             </tr>
-            <tr *ngFor="let visit of vpvisit">
+            <tr *ngFor="let visit of visits">
                 <td><a [routerLink]="['/pools/visit/view/', visit.visitId]" class="btn btn-link">{{visit.visitId}}</a></td>
                 <td>{{visit.visitPoolId}}</td>
                 <td>{{visit.visitUserName}}</td>
@@ -80,7 +80,7 @@
       </div>
 
       <div *ngIf="mapView">
-        <app-map-comp [mapValues]="vpvisit"></app-map-comp>
+        <app-map-view [mapValues]="visits"></app-map-view>
       </div>
 
     </div> <!-- loading -->

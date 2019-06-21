@@ -4,33 +4,29 @@ import * as L from "leaflet";
 import { AuthenticationService, uxValuesService } from '@app/_services';
 
 @Component({
-  selector: 'app-map-edit',
+  selector: 'app-map-view',
   templateUrl: 'leaflet.component.html',
   styleUrls: ['leaflet.component.css']
 })
 
 @Injectable({providedIn: 'root'}) //this makes a component single-instance, which applies to services, as well.
 
-export class LeafletEditComponent implements OnInit, OnChanges {
+export class LeafletViewComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
-  @Input() mapValues; //single value or array of values to plot, set by the parent
-  @Input() update = false; //external flag to invoke the map with a moveable marker
-  @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
-  itemLoc: L.LatLng; //store the location of the marker on the screen, passed with events to listeners, etc.
+  @Input() mapValues = []; //single value or array of values to plot, set by the parent
   public map = null;
-  marker = null;
-  layerControl;
+  layerControl = null;
   zoomControl = L.control.zoom();
   scaleControl = L.control.scale();
   myRenderer = L.canvas({ padding: 0.5 });
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
   cmClrCnt = 7; //(this.cmColors).length();
-  cmRadius = 1; //default circleMarker radius
-  cmGroup = L.layerGroup(); //a group of layers
-  cmLLArr = []; //an array of circleMarkers
+  cmRadius = 1;
+  cmGroup = L.layerGroup();
+  cmLLArr = [];
   zoom = 0;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
@@ -82,30 +78,22 @@ export class LeafletEditComponent implements OnInit, OnChanges {
     private authenticationService: AuthenticationService
     ) {
     /*
-      preserve baseLayer and pointColor shown across page loads with outside service
-      which holds baseLayerIndex of last-selected baseLayer and pointColorIndex of
-      last-selected color.
+      preserve baseLayer shown across page loads with outside service
+      which holds baseLayers[] array index of last-selected baseLayer.
     */
     this.baseLayer = this.uxValuesService.baseLayerIndex;
     this.cmColor = this.uxValuesService.pointColorIndex;
 
     console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
-
-    //create marker instance has to go here, in constructor, or errors.
-    this.marker = L.marker(this.vtCenter, {
-                  draggable: true,
-                  autoPan: true
-                });
   } //constructor
 
   ngOnInit() {
     if (this.authenticationService.currentUserValue) {
       this.currentUser = this.authenticationService.currentUserValue.user;
-      console.log('vpvisit.leaflet.edit.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+      console.log('leaflet.view.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
 
-    //creating map instance has to go here in ngOnInit, or errors.
     this.map = new L.Map("map", {
                zoomControl: false,
                maxZoom: 20,
@@ -125,20 +113,18 @@ export class LeafletEditComponent implements OnInit, OnChanges {
       this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
 
-    this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
-
     this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
 
     this.baseLayers[this.baseLayer].addTo(this.map);
+
+    this.cmGroup.addTo(this.map); //a layerGroup of circleMarkers added in plotPoolCircles
 
     this.map.on("baselayerchange", e => this.onBaseLayerChange(e));
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
 
     this.map.on("click", e => this.onMapClick(e));
-
-    this.marker.on("moveend", e => this.onMarkerMoveEnd(e));
   }
 
   /*
@@ -149,29 +135,29 @@ export class LeafletEditComponent implements OnInit, OnChanges {
   async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     //console.log('ngOnChanges(changes), changes:', changes);
     await this.clearPools();
-    await this.plotPoolMarker(this.mapValues);
+    await this.plotPoolCircles(this.mapValues);
   }
 
   zoomExtents() {
     if (this.map) {
-      if (this.cmLLArr.length > 1) { //fitBounds can't zoom to a single point - causes an error
+      if (this.cmLLArr.length > 1) { //can't zoom to a single point - causes an error
         this.map.fitBounds(this.cmLLArr);
-      } else if (this.cmLLArr.length == 1 ) { //use setView with center and zoom-level
+      } else if (this.cmLLArr.length == 1 ) {
         this.map.setView(this.cmLLArr[0], 12);
-      } else { //no values in cmLLArr. error.
-        console.log('Error in zoomExtents(). No values in point array.');
+      } else {
+        //no points in array?
       }
     }
   }
 
   zoomVermont() {
     if (this.map) {
-      this.map.setView(this.vtCenter, 8);
+      this.map.setView(this.vtCenter, 8 );
     }
   }
 
   onBaseLayerChange(e) {
-    //find the array index of the baseLayer that was chosen from the event value
+    //find the array index of the baseLayer that was chosen from the envent value
     var index = this.baseLayers.findIndex(elm => {
       return elm == e.layer;
     });
@@ -197,61 +183,84 @@ export class LeafletEditComponent implements OnInit, OnChanges {
   }
 
   onMapClick(e) {
-    console.log("leaflet.onMapClick | event: ", e);
-    this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
-    this.marker.setLatLng(this.itemLoc);
-    this.markerUpdate.emit(this.itemLoc);
-    //this.map.panTo(this.itemLoc);
-    //this.map.setView(this.itemLoc, 18);
-    console.log("leaflet.edit.onMapClick | itemLoc: ", this.itemLoc);
-    this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
-                             Lat: ${this.itemLoc.lat}<br>
-                             Lng: ${this.itemLoc.lng}
-                            `);
+    console.log("leaflet.view.onMapClick | event: ", e);
   }
 
-  onMarkerMoveEnd(e) {
-    console.log("leaflet.onMarkerMoveEnd | event: ", e);
-    this.itemLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
-    this.markerUpdate.emit(this.itemLoc);
-    console.log("leaflet.edit.edit.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
-    this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
-                             Lat: ${this.itemLoc.lat}<br>
-                             Lng: ${this.itemLoc.lng}
-                            `);
-  }
-
-  clearPools() {
+  async clearPools() {
     this.cmGroup.clearLayers();
     this.cmLLArr = [];
   }
 
-  async plotPoolMarker(vpool) {
+  async plotPoolCircles(vpools) {
     var llLoc = null;
+    var ptRadius = null;
+    var circle = null;
 
-    if (!vpool) return;
+    //console.log('leaflet.view.plotPoolCircles(',vpools,')');
 
-    if (Array.isArray(vpool)) {vpool = vpool[0];}
+    if (!vpools) return;
 
-    console.log('leaflet.edit.plotPoolMarker(',vpool.poolId,')');
+    if (!Array.isArray(vpools)) {vpools = [vpools];}
 
-    //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
-    if (Number(vpool.latitude) == 0 || Number(vpool.longitude) == 0) {
-      console.log(`leaflet.edit.plotPoolMarker(${vpool.poolId}) NO Lat/Lng for pool.`);
-      return;
-    }
+    if (vpools.length < 20) {this.cmRadius = 5;}
 
-    llLoc = L.latLng(vpool.latitude, vpool.longitude);
+    for (var i = 0; i < vpools.length; i++) {
 
-    this.cmLLArr.push(llLoc);
+      //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
+      if (Number(vpools[i].latitude) == 0 || Number(vpools[i].longitude) == 0) {
+        console.log('leaflet.view.plotPoolCircles() NO Lat/Lng for pool', vpools[i].poolId);
+        continue;
+      }
 
-    this.marker.setLatLng(llLoc);
+      llLoc = L.latLng(vpools[i].latitude, vpools[i].longitude);
 
-    this.marker.bindTooltip(`Pool ID: ${vpool.poolId}<br>
-                             Lat: ${llLoc.lat}<br>
-                             Lng: ${llLoc.lng}
-                            `);
-  }
+      ptRadius = this.cmRadius;
+
+      //set the cmRadius based upon mappedLocationUncertainty
+      switch (vpools[i].mappedLocationUncertainty) {
+        case null:
+        case '50':
+          break;
+        case '100':
+          ptRadius = 2 * this.cmRadius;
+          break;
+        case '>100':
+          ptRadius = 4 * this.cmRadius;
+          break;
+      }
+
+      // TODO: set the cmColor based upon mappedPoolStatus
+
+      circle = L.circleMarker(llLoc, {
+          renderer: this.myRenderer,
+          radius: ptRadius,
+          color: this.cmColors[this.cmColor]
+      });
+
+      this.cmGroup.addLayer(circle); //add this marker to the current layerGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
+
+      this.cmLLArr.push(llLoc);
+
+      if (this.userIsAdmin) {
+        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].poolId}">View ${vpools[i].poolId}</a><br>
+                          <a href="pools/mapped/update/${vpools[i].poolId}">Edit ${vpools[i].poolId}</a><br>
+                          Lat: ${vpools[i].latitude}<br>
+                          Lon:${vpools[i].longitude}<br>
+                          `
+                        );
+      } else {
+        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].poolId}">View ${vpools[i].poolId}</a><br>
+                          Lat: ${vpools[i].latitude}<br>
+                          Lon:${vpools[i].longitude}<br>
+                          `
+                        );
+      }
+
+      circle.bindTooltip(`${vpools[i].poolId}<br>
+                        Lat: ${vpools[i].latitude}<br>
+                        Lon:${vpools[i].longitude}<br>`);
+    } // else userIsAdmin
+  } // plotPoolCircles()
 
   changeColor(index=null) {
 
