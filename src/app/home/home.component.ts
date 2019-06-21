@@ -11,6 +11,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   loading = false;
   stats = [{ potential:0, probable:0, confirmed:0, eliminated:0, monitored:0 }];
   pools = [];
+  itemType = "Mapped Pool";
 
     constructor(
         private router: Router,

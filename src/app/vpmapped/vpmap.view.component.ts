@@ -5,7 +5,6 @@ import { first } from 'rxjs/operators';
 import { vpMapped } from '@app/_models';
 import { AlertService, AuthenticationService, vpMappedService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
-import { vpMapLeafletComponent } from './vpmap.leaflet.component';
 
 @Component({templateUrl: 'vpmap.view.component.html'})
 export class vpMapViewComponent implements OnInit {
@@ -13,8 +12,8 @@ export class vpMapViewComponent implements OnInit {
     userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
-    pool: any;
-    vpmap: vpMapped[];
+    pool: vpMapped = new vpMapped();
+    itemType = "Mapped Pool";
 
     constructor(
         private formBuilder: FormBuilder,
@@ -44,9 +43,8 @@ export class vpMapViewComponent implements OnInit {
               data => {
                 console.log('vpmap.view.componenent.loadPage result:', data);
                 this.pool = data.rows[0];
-                this.pool.mappedDateText = Moment(this.pool.mappedDateText);
-                this.pool.updatedAt = Moment(this.pool.updatedAt);
-                this.vpmap = data.rows; //one-element array of pools used by mapView
+                this.pool.mappedDateText = Moment(this.pool.mappedDateText) as any;
+                this.pool.updatedAt = Moment(this.pool.updatedAt) as any;
                 this.dataLoading = false; //this forces a map update, which plots a point
               },
               error => {

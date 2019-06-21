@@ -30,31 +30,30 @@
         </tr>
         <tr>
             <td>Town</td>
-            <td>{{visit.visitTown.townName}}</td>
+            <td>{{visit.visitTown}}</td>
         </tr>
         <tr>
-            <td>Mapped Location Uncertainty</td>
-            <td>{{visit.mappedLocationUncertainty}}</td>
+            <td>Visit Location Uncertainty</td>
+            <td>{{visit.visitLocationUncertainty}}</td>
         </tr>
         <tr>
-            <td>Mapped Landowner Permission?</td>
-            <td>{{visit.mappedLandownerPermission}}</td>
+            <td>Visit Landowner Permission?</td>
+            <td>{{visit.visitLandownerPermission}}</td>
         </tr>
         <tr>
             <td>Landowner Conact Info</td>
             <td>
-              {{visit.visitLandownerName}} <br>
-              {{visit.visitLandownerAddress}} <br>
-              {{visit.visitLandownerTown}}
-              {{visit.visitLandownerStateAbbrev}}
-              {{visit.visitLandownerZip5}} <br>
-              {{visit.visitLandownerPhone}}
-              {{visit.visitLandownerEmail}}
+              {{visit.visitLandowner}}
+              <!--
+              {{visit.visitLandowner.Name}} <br>
+              {{visit.visitLandowner.Address}} <br>
+              {{visit.visitLandowner.Town}}
+              {{visit.visitLandowner.StateAbbrev}}
+              {{visit.visitLandowner.Zip5}} <br>
+              {{visit.visitLandowner.Phone}}
+              {{visit.visitLandowner.Email}}
+              -->
             </td>
-        </tr>
-        <tr>
-            <td>Landowner Additional Info</td>
-            <td>{{visit.mappedLandownerInfo}}</td>
         </tr>
         <tr>
             <td>Visit Latitude</td>
@@ -73,10 +72,10 @@
   </div>
   <div class="col-10">
     <div *ngIf="!dataLoading">
-      <app-map-view
+      <app-map-comp
         [mapValues]="visit"
         [itemType]="itemType">
-      </app-map-view>
+      </app-map-comp>
     </div>
     <div *ngIf="dataLoading">
       ...Loading

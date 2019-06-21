@@ -13,7 +13,8 @@ export class vpVisitViewComponent implements OnInit {
     userIsAdmin = false;
     vpVisitForm: FormGroup;
     dataLoading = false;
-    visit: vpVisit = new vpVisit();
+    //visit: vpVisit = new vpVisit();
+    visit: any = new vpVisit();
     itemType = 'Visit';
 
     constructor(

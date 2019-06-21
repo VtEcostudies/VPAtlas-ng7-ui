@@ -22,7 +22,14 @@
       </table>
     </div>
     <div class="col-10">
+      <!--
       <app-map [mapPools]="pools"></app-map>
+      -->
+      <app-map-comp
+        [mapValues]="pools"
+        [itemType]="itemType"
+        >
+      </app-map-comp>
     </div>
   </div>
 </div>

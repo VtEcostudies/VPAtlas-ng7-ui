@@ -30,7 +30,7 @@ export class LeafletEditComponent implements OnInit, OnChanges {
   cmColor = 0; //current color index
   cmClrCnt = 7; //(this.cmColors).length();
   cmRadius = 1; //default circleMarker radius
-  cmGroup = L.layerGroup(); //a group of layers
+  cmGroup = L.featureGroup(); //a group of layers
   cmLLArr = []; //an array of circleMarkers
   zoom = 0;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",

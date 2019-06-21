@@ -84,7 +84,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   cmColor = 0; //current color index
   cmClrCnt = 7; //(this.cmColors).length();
   cmRadius = 1;
-  cmGroup = L.featureGroup(); //L.layerGroup();
+  cmGroup = L.featureGroup();
   cmLLArr = [];
   zoom = 0;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
@@ -180,7 +180,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.update) {
       this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
     } else {
-      this.cmGroup.addTo(this.map); //a layerGroup of circleMarkers added in plotPoolCircles
+      this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolCircles
       this.cmGroup.on("click", e => this.onCircleGroupClick(e));
     }
 
@@ -311,9 +311,22 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   buildPopup(index) {
-    var obj = this.mapValues[index];
+    var obj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
     var text = '';
     var exclude = ['count'];
+    var urlParts = {item: null, view: null, edit: null};
+
+    switch (this.itemType) {
+      case 'Visit':
+        urlParts = {item:`${obj.visitId} for Pool ID ${obj.visitPoolId}` , view:`pools/visit/view/${obj.visitId}`, edit:`pools/visit/update/${obj.visitId}`};
+        break;
+      default:
+      case 'Mapped Pool':
+        urlParts = {item:obj.poolId, view:`pools/mapped/view/${obj.poolId}`, edit:`pools/mapped/update/${obj.poolId}`};
+        break;
+    }
+    text += `<div><a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a></div>`;
+    if (this.userIsAdmin) {text += `<div><a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a></div>`;}
 
     Object.keys(obj).forEach(function(key,index) {
       if (obj[key] && !exclude.includes(key)) { //add non-null values
@@ -322,7 +335,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     });
 
     return text;
-  }
+    }
 
   async clearPools() {
     this.cmGroup.clearLayers();
@@ -371,6 +384,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     for (var i = 0; i < vpools.length; i++) {
 
+      //convert null, undefined, NaN, empty, etc to 0
       vpools[i].latitude = vpools[i].latitude || 0;
       vpools[i].longitude = vpools[i].longitude || 0;
 
@@ -399,46 +413,36 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       // TODO: set the cmColor based upon mappedPoolStatus
 
-      circle = <any> L.circleMarker(llLoc, {
+      circle = L.circleMarker(llLoc, <any> {
           renderer: this.myRenderer,
           radius: ptRadius,
           color: this.cmColors[this.cmColor],
           index: i, //event.sourceTarget.options.index
           poolId: vpools[i].poolId //event.sourceTarget.options.poolId
-      }) as any;
+      });
 
-      this.cmGroup.addLayer(circle); //add this marker to the current layerGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
+      this.cmGroup.addLayer(circle); //add this marker to the current featureGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
 
       this.cmLLArr.push(llLoc);
 
-      var urlParts = {base: null, item: null, view: null, edit: null};
+      var urlParts = {item: null, view: null, edit: null};
       switch (this.itemType) {
         case 'Visit':
-          urlParts = {base: '', item:vpools[i].visitId , view:`pools/visit/view/${vpools[i].visitId}`, edit:`pools/visit/update/${vpools[i].visitId}`};
+          urlParts = {item:vpools[i].visitId , view:`pools/visit/view/${vpools[i].visitId}`, edit:`pools/visit/update/${vpools[i].visitId}`};
           break;
         default:
         case 'Mapped Pool':
-          urlParts = {base: '', item:vpools[i].poolId, view:`pools/mapped/view/${vpools[i].poolId}`, edit:`pools/mapped/update/${vpools[i].poolId}`};
+          urlParts = {item:vpools[i].poolId, view:`pools/mapped/view/${vpools[i].poolId}`, edit:`pools/mapped/update/${vpools[i].poolId}`};
           break;
       }
-/*
-      if (this.userIsAdmin) {
-        circle.bindPopup(`<a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a><br>
-                          <a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a><br>
-                          Lat: ${vpools[i].latitude}<br>
-                          Lon:${vpools[i].longitude}<br>
-                          `);
-      } else {
-        circle.bindPopup(`<a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a><br>
-                          Lat: ${vpools[i].latitude}<br>
-                          Lon:${vpools[i].longitude}<br>
-                          `);
-      }
-*/
+
+      //NOTE circle.bindPopup was moved on onCircleGroupClick()
+
       circle.bindTooltip(`${this.itemType} ${urlParts.item}<br>
                         Lat: ${vpools[i].latitude}<br>
                         Lon:${vpools[i].longitude}<br>`);
-    } // else userIsAdmin
+
+    } // for loop over vpools[i]
   } // plotPoolCircles()
 
   changeColor(index=null) {
