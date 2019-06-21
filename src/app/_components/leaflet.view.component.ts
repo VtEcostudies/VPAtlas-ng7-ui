@@ -15,6 +15,7 @@ export class LeafletViewComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
+  @Input() itemType = 'visit';
   @Input() mapValues = []; //single value or array of values to plot, set by the parent
   public map = null;
   layerControl = null;
@@ -133,7 +134,7 @@ export class LeafletViewComponent implements OnInit, OnChanges {
     event fires when the page's data changes.
   */
   async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    //console.log('ngOnChanges(changes), changes:', changes);
+    console.log('ngOnChanges(changes), changes:', changes);
     await this.clearPools();
     await this.plotPoolCircles(this.mapValues);
   }
@@ -241,22 +242,31 @@ export class LeafletViewComponent implements OnInit, OnChanges {
 
       this.cmLLArr.push(llLoc);
 
-      if (this.userIsAdmin) {
-        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].poolId}">View ${vpools[i].poolId}</a><br>
-                          <a href="pools/mapped/update/${vpools[i].poolId}">Edit ${vpools[i].poolId}</a><br>
-                          Lat: ${vpools[i].latitude}<br>
-                          Lon:${vpools[i].longitude}<br>
-                          `
-                        );
-      } else {
-        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].poolId}">View ${vpools[i].poolId}</a><br>
-                          Lat: ${vpools[i].latitude}<br>
-                          Lon:${vpools[i].longitude}<br>
-                          `
-                        );
+      var urlParts = {base: null, item: null, view: null, edit: null};
+      switch (this.itemType) {
+        case 'Visit':
+          urlParts = {base: '', item:vpools[i].visitId , view:`pools/visit/view/${vpools[i].visitId}`, edit:`pools/visit/update/${vpools[i].visitId}`};
+          break;
+        default:
+        case 'Mapped Pool':
+          urlParts = {base: '', item:vpools[i].poolId, view:`pools/mapped/view/${vpools[i].poolId}`, edit:`pools/mapped/update/${vpools[i].poolId}`};
+          break;
       }
 
-      circle.bindTooltip(`${vpools[i].poolId}<br>
+      if (this.userIsAdmin) {
+        circle.bindPopup(`<a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a><br>
+                          <a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a><br>
+                          Lat: ${vpools[i].latitude}<br>
+                          Lon:${vpools[i].longitude}<br>
+                          `);
+      } else {
+        circle.bindPopup(`<a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a><br>
+                          Lat: ${vpools[i].latitude}<br>
+                          Lon:${vpools[i].longitude}<br>
+                          `);
+      }
+
+      circle.bindTooltip(`${this.itemType} ${urlParts.item}<br>
                         Lat: ${vpools[i].latitude}<br>
                         Lon:${vpools[i].longitude}<br>`);
     } // else userIsAdmin

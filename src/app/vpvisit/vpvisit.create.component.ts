@@ -31,8 +31,8 @@ export class vpVisitCreateComponent implements OnInit {
     permission = false; //flag: landowner permission obtained
     visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
-    visit: vpVisit = new vpVisit();
-    //visit = new vpVisit();
+    visit: vpVisit = new vpVisit(); //passed to map via [mapValues]="visit"
+    itemType = 'Visit';
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapShowing = true;
     mapMarker = true;
@@ -414,7 +414,6 @@ export class vpVisitCreateComponent implements OnInit {
               data => {
                 console.log('vpvisit.create.component.loadPage result:', data);
                 this.visit = data.rows[0];
-                //await this.createFormControls(); //create form fields after data is loaded to initialize with values
                 this.setFormValues();
                 this.dataLoading = false; //this forces a map update, which plots a point
               },

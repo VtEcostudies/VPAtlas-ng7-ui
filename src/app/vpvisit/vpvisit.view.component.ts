@@ -14,7 +14,7 @@ export class vpVisitViewComponent implements OnInit {
     vpVisitForm: FormGroup;
     dataLoading = false;
     visit: vpVisit = new vpVisit();
-    //  visit;
+    itemType = 'Visit';
 
     constructor(
         private formBuilder: FormBuilder,

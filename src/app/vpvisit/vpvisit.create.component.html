@@ -316,6 +316,7 @@
         <app-map-edit
           [mapValues]="visit"
           [update]="mapMarker"
+          [itemType]="itemType"
           (markerUpdate)="markerLocationUpdate($event)">
         </app-map-edit>
     </div> <!-- ngIf -->

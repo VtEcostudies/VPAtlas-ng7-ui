@@ -17,6 +17,7 @@ export class vpVisitListComponent implements OnInit {
     count: number = 1;
     filter = '';
     visits: vpVisit[] = []; //data array from db
+    itemType = 'Visit';
     mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(

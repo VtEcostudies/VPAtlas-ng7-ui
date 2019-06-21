@@ -17,6 +17,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
+  @Input() itemType = 'Visit';
   @Input() mapValues; //single value or array of values to plot, set by the parent
   @Input() update = false; //external flag to invoke the map with a moveable marker
   @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
@@ -370,22 +371,31 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       this.cmLLArr.push(llLoc);
 
-      if (this.userIsAdmin) {
-        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].poolId}">View ${vpools[i].poolId}</a><br>
-                          <a href="pools/mapped/update/${vpools[i].poolId}">Edit ${vpools[i].poolId}</a><br>
-                          Lat: ${vpools[i].latitude}<br>
-                          Lon:${vpools[i].longitude}<br>
-                          `
-                        );
-      } else {
-        circle.bindPopup(`<a href="pools/mapped/view/${vpools[i].poolId}">View ${vpools[i].poolId}</a><br>
-                          Lat: ${vpools[i].latitude}<br>
-                          Lon:${vpools[i].longitude}<br>
-                          `
-                        );
+      var urlParts = {base: null, item: null, view: null, edit: null};
+      switch (this.itemType) {
+        case 'Visit':
+          urlParts = {base: '', item:vpools[i].visitId , view:`pools/visit/view/${vpools[i].visitId}`, edit:`pools/visit/update/${vpools[i].visitId}`};
+          break;
+        default:
+        case 'Mapped Pool':
+          urlParts = {base: '', item:vpools[i].poolId, view:`pools/mapped/view/${vpools[i].poolId}`, edit:`pools/mapped/update/${vpools[i].poolId}`};
+          break;
       }
 
-      circle.bindTooltip(`${vpools[i].poolId}<br>
+      if (this.userIsAdmin) {
+        circle.bindPopup(`<a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a><br>
+                          <a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a><br>
+                          Lat: ${vpools[i].latitude}<br>
+                          Lon:${vpools[i].longitude}<br>
+                          `);
+      } else {
+        circle.bindPopup(`<a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a><br>
+                          Lat: ${vpools[i].latitude}<br>
+                          Lon:${vpools[i].longitude}<br>
+                          `);
+      }
+
+      circle.bindTooltip(`${this.itemType} ${urlParts.item}<br>
                         Lat: ${vpools[i].latitude}<br>
                         Lon:${vpools[i].longitude}<br>`);
     } // else userIsAdmin

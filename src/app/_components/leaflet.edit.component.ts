@@ -15,6 +15,7 @@ export class LeafletEditComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
+  @Input() itemType = 'Visit';
   @Input() mapValues; //single value or array of values to plot, set by the parent
   @Input() update = false; //external flag to invoke the map with a moveable marker
   @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
@@ -241,13 +242,24 @@ export class LeafletEditComponent implements OnInit, OnChanges {
       return;
     }
 
+    var urlParts = {base: null, item: null, view: null, edit: null};
+    switch (this.itemType) {
+      case 'Visit':
+        urlParts = {base: '', item:vpool.visitId , view:`pools/visit/view/${vpool.visitId}`, edit:`pools/visit/update/${vpool.visitId}`};
+        break;
+      default:
+      case 'Mapped Pool':
+        urlParts = {base: '', item:vpool.poolId, view:`pools/mapped/view/${vpool.poolId}`, edit:`pools/mapped/update/${vpool.poolId}`};
+        break;
+    }
+
     llLoc = L.latLng(vpool.latitude, vpool.longitude);
 
     this.cmLLArr.push(llLoc);
 
     this.marker.setLatLng(llLoc);
 
-    this.marker.bindTooltip(`Pool ID: ${vpool.poolId}<br>
+    this.marker.bindTooltip(`${this.itemType} ${urlParts.item}<br>
                              Lat: ${llLoc.lat}<br>
                              Lng: ${llLoc.lng}
                             `);
