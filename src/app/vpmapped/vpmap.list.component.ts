@@ -22,7 +22,7 @@ export class vpMapListComponent implements OnInit {
     itemType = 'Mapped Pool';
     //vpmap: vpMapped = [];
     //pgApi: pgApiResults;
-    mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
+    mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
         private formBuilder: FormBuilder,

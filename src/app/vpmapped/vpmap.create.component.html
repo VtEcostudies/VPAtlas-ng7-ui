@@ -94,7 +94,7 @@
       -->
       <div class="form-group">
           <label for="mappedComments">Comments</label>
-          <textarea rows="2" formControlName="mappedComments" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedComments.errors }"> </textarea>
+          <textarea rows="1" formControlName="mappedComments" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedComments.errors }"> </textarea>
           <div *ngIf="submitted && f.mappedComments.errors" class="invalid-feedback">
               <div *ngIf="f.mappedComments.errors.required">Mapped Comments is required</div>
           </div>
@@ -110,11 +110,8 @@
           <label for="mappedLandownerPermission">Do you have Landowner Permission to map this pool?</label>&nbsp;
           <input type="checkbox" formControlName="mappedLandownerPermission" />&nbsp;
           <label>Yes</label>
-          <!--
-          <label *ngIf="permission">Yes</label>
-          <label *ngIf="!permission">No</label>
-          -->
       </div>
+
         <!-- mappedLandownerData if they have permission -->
         <form *ngIf="permission" [formGroup]="vpLandOwnForm">
         <div class="form-group">
@@ -126,11 +123,13 @@
         </div>
         <div class="form-group">
             <label for="mappedLandownerAddress">Landowner Address</label>
-            <input type="text" formControlName="mappedLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerAddress.errors }" />
+            <textarea rows="1" formControlName="mappedLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerAddress.errors }">
+            </textarea>
             <div *ngIf="submitted && l.mappedLandownerAddress.errors" class="invalid-feedback">
                 <div *ngIf="l.mappedLandownerAddress.errors.required">Landowner Address is required</div>
             </div>
         </div>
+<!--
         <div class="form-group">
             <label for="mappedLandownerTown">Landowner Town</label>
             <input type="text" formControlName="mappedLandownerTown" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerTown.errors }" />
@@ -152,6 +151,7 @@
                 <div *ngIf="l.mappedLandownerZip5.errors.required">Landowner Zip5 is required</div>
             </div>
         </div>
+-->
         <div class="form-group">
             <label for="mappedLandownerPhone">Landowner Phone</label>
             <input type="text" formControlName="mappedLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerPhone.errors }" />
@@ -172,7 +172,7 @@
       -->
       <div class="form-group">
           <label for="mappedLandownerInfo">Please add any relevant Landowner Details Below.</label>
-          <textarea rows="2" formControlName="mappedLandownerInfo" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLandownerInfo.errors }"> </textarea>
+          <textarea rows="1" formControlName="mappedLandownerInfo" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLandownerInfo.errors }"> </textarea>
       </div>
 
       <!--

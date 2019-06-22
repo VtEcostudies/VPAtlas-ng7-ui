@@ -14,7 +14,7 @@ export class vpVisitViewComponent implements OnInit {
     vpVisitForm: FormGroup;
     dataLoading = false;
     //visit: vpVisit = new vpVisit();
-    visit: any = new vpVisit();
+    visit: any = new vpVisit(); //cast thype to any to prevent typeScript build errors on fields not in vpVisit
     itemType = 'Visit';
 
     constructor(
