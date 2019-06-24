@@ -2,15 +2,16 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, AuthenticationService, vpVisitService, vtInfoService } from '@app/_services';
+import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vtInfoService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
 import { vpVisit } from '@app/_models';
 import { vtTown } from '@app/_models';
+import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 
 @Component({templateUrl: 'vpvisit.create.component.html'})
 export class vpVisitCreateComponent implements OnInit {
-    update = false; //flag for html config that this is create (vpvisit.create.component.html is used by vpvisit.create..ts and vpvisit.update..ts)
+    update = false; //flag for html config that we are editing an existing visit, not creating a new one
     userIsAdmin = false;
     visitObserverForm: FormGroup = this.formBuilder.group({});
     visitLocationForm: FormGroup = this.formBuilder.group({});
@@ -31,11 +32,13 @@ export class vpVisitCreateComponent implements OnInit {
     permission = false; //flag: landowner permission obtained
     visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
-    visit: vpVisit = new vpVisit(); //passed to map via [mapValues]="visit"
-    itemType = 'Visit';
+    visit: vpVisit = new vpVisit(); //not passed to map
+    pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
+    poolsLoading = false;
+    itemType = 'Visit'; //passed to map via [itemType]="itemType"
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapShowing = true;
-    mapMarker = true;
+    mapMarker = true; //passed to map via [mapMarker]="mapMarker"- marker is NOT plotted from data, it's moved to provide lat/long values via events
 
     constructor(
         private formBuilder: FormBuilder,
@@ -43,6 +46,7 @@ export class vpVisitCreateComponent implements OnInit {
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
+        private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
         private townService: vtInfoService
     ) {
@@ -96,6 +100,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitPoolMapped: [this.visit.visitPoolMapped, Validators.nullValidator],
         visitLocatePool: [this.visit.visitLocatePool, Validators.nullValidator],
         visitCertainty: [this.visit.visitCertainty, Validators.nullValidator],
+        visitLocationUncertainty: [this.visit.visitLocationUncertainty, Validators.nullValidator],
         visitNavMethod: [this.visit.visitNavMethod, Validators.nullValidator],
         visitNavMethodOther: [this.visit.visitNavMethodOther, Validators.nullValidator],
         visitDirections: [this.visit.visitDirections, Validators.nullValidator],
@@ -117,14 +122,19 @@ export class vpVisitCreateComponent implements OnInit {
       //create a separate form for landowner data, to be nested within visitLocationForm
       //NOTE: these formdata to be rolled into a JSON oject and stored in a single field: visitLandowner
       this.visitLandOwnForm = this.formBuilder.group({
-        visitLandownerName: ['', Validators.required], //flip to enabled if Permission
-        visitLandownerAddress: ['', Validators.required], //flip to enabled if Permission
-        visitLandownerTown: ['', Validators.required], //flip to enabled if Permission
-        visitLandownerStateAbbrev: ['', Validators.required], //flip to enabled if Permission
-        visitLandownerZip5: ['', Validators.required], //flip to enabled if Permission
-        visitLandownerPhone: ['', Validators.required], //flip to enabled if Permission
-        visitLandownerEmail: ['', Validators.required], //flip to enabled if Permission
+        visitLandownerName: ['', Validators.required],
+        visitLandownerAddress: ['', Validators.nullValidator],
+        //visitLandownerTown: ['', Validators.nullValidator],
+        //visitLandownerStateAbbrev: ['', Validators.nullValidator],
+        //visitLandownerZip5: ['', Validators.nullValidator],
+        visitLandownerPhone: ['', Validators.nullValidator],
+        visitLandownerEmail: ['', Validators.email],
       });
+      /*
+      , { //this was created but designers decied NOT to use it. leave it here in case it regains favor.
+          validator: EmailOrPhone('visitLandownerPhone', 'visitLandownerEmail')
+      });
+      */
 
       this.visitFieldVerificationForm = this.formBuilder.group({
         visitVernalPool: [],
@@ -277,7 +287,16 @@ export class vpVisitCreateComponent implements OnInit {
       //2c Landowner Contact Information - add in vpvisit.alter.sql
       this.visitLocationForm.controls['visitUserIsLandowner'].setValue(this.visit.visitUserIsLandowner);
       this.visitLocationForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
-      this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
+      //this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
+      if (this.visit.visitLandowner) {
+        this.visitLandOwnForm.controls['visitLandownerName'].setValue(this.visit.visitLandowner.landownerName);
+        this.visitLandOwnForm.controls['visitLandownerAddress'].setValue(this.visit.visitLandowner.landownerAddress);
+        //this.visitLandOwnForm.controls['visitLandownerTown'].setValue(this.visit.visitLandowner.landownerTown);
+        //this.visitLandOwnForm.controls['visitLandownerStateAbbrev'].setValue(this.visit.visitLandowner.landownerStateAbbrev);
+        //this.visitLandOwnForm.controls['visitLandownerZip5'].setValue(this.visit.visitLandowner.landownerZip5);
+        this.visitLandOwnForm.controls['visitLandownerPhone'].setValue(this.visit.visitLandowner.landownerPhone);
+        this.visitLandOwnForm.controls['visitLandownerEmail'].setValue(this.visit.visitLandowner.landownerEmail);
+      }
       //3 Vernal Pool Field-Verification Informtion
       //3a Pool Type
       this.visitFieldVerificationForm.controls['visitVernalPool'].setValue(this.visit.visitVernalPool);
@@ -423,6 +442,28 @@ export class vpVisitCreateComponent implements OnInit {
               });
     }
 
+    visitPoolIdChanged(e) {
+      console.log(this.visitLocationForm.value.visitPoolId);
+    }
+
+    visitModeChanged(e) {
+      console.log(this.visitLocationForm.value.visitPoolMapped);
+      if (this.visitLocationForm.value.visitPoolMapped == 'true') {
+        this.visitLocationForm.controls['visitPoolId'].setValue('');
+        this.visitLocationForm.controls['visitPoolId'].enable();
+        this.loadMappedPools();
+      }
+      if (this.visitLocationForm.value.visitPoolMapped == 'false') {
+        this.visitLocationForm.controls['visitPoolId'].setValue('NEW*');
+        this.visitLocationForm.controls['visitPoolId'].disable();
+      }
+      if (this.visitLocationForm.value.visitPoolMapped == 'null') {
+        this.visitLocationForm.controls['visitPoolId'].setValue('');
+        this.visitLocationForm.controls['visitPoolId'].disable();
+        this.loadMappedPools();
+      }
+    }
+
     onSubmit() {
 
         console.log(`vpvisit.create.onSubmit`);
@@ -484,7 +525,7 @@ export class vpVisitCreateComponent implements OnInit {
         // TODO: roll landowner data into json object for db JSONB column
         if (this.visitLocationForm.value.visitLandownerPermission) {
           Object.assign(this.visitLocationForm.value, this.visitLandOwnForm.value);
-          delete this.visitLocationForm.value.visitLandowner;
+          delete this.visitLocationForm.value.visitLandowner; //JSON object on Location Form...
         }
         //have to convert true/false radio buttons from string to boolean
         this.visitLocationForm.value.visitPoolMapped = this.visitLocationForm.value.visitPoolMapped == 'true';
@@ -581,6 +622,21 @@ export class vpVisitCreateComponent implements OnInit {
               });
       }
     }
+
+  private loadMappedPools() {
+    this.poolsLoading = true;
+    this.vpMappedService.getAll('')
+        .pipe(first())
+        .subscribe(
+            data => {
+              this.pools = data.rows;
+              this.poolsLoading = false;
+            },
+            error => {
+              this.alertService.error(error);
+              this.poolsLoading = false;
+            });
+  }
 
   private loadTowns() {
     this.dataLoading = true;

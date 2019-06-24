@@ -19,7 +19,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
   @Input() itemType = 'Visit';
   @Input() mapValues; //single value or array of values to plot, set by the parent
-  @Input() update = false; //external flag to invoke the map with a moveable marker
+  @Input() mapMarker = false; //external flag to invoke the map with a moveable marker
+  @Input() update = false; //external flag that this is an edit/update, not a create instantition: plot the mapMarker location with mapValues data
   @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
   itemLoc: L.LatLng = null; //store the location of the marker on the screen, passed with events to listeners, etc.
   public map = null;
@@ -177,12 +178,12 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
 
-    if (this.update) {
+    if (this.mapMarker) {
       this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
-    } else {
-      this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolCircles
-      this.cmGroup.on("click", e => this.onCircleGroupClick(e));
     }
+    //always add cmGroup - now we may want both point and moveable marker at the same time
+    this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolCircles
+    this.cmGroup.on("click", e => this.onCircleGroupClick(e));
 
     this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
@@ -212,9 +213,10 @@ export class LeafletComponent implements OnInit, OnChanges {
     event fires when the page's data changes.
   */
   async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    //console.log('ngOnChanges(changes), changes:', changes);
+    console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
+    console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     await this.clearPools();
-    if (this.update) {
+    if (this.mapMarker && this.update) {
       await this.plotPoolMarker(this.mapValues);
     } else {
       await this.plotPoolCircles(this.mapValues);
@@ -345,6 +347,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   async plotPoolMarker(vpool) {
     var llLoc = null;
 
+    if (vpool === undefined) return;
+
     if (!vpool) return;
 
     if (Array.isArray(vpool)) {vpool = vpool[0];}
@@ -374,7 +378,9 @@ export class LeafletComponent implements OnInit, OnChanges {
     var ptRadius = null;
     var circle = null;
 
-    //console.log('leaflet.plotPoolCircles(',vpools,')');
+    console.log('leaflet.plotPoolCircles(',vpools,')');
+
+    //if (typeof vpools == 'undefined') return;
 
     if (!vpools) return;
 

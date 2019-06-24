@@ -7,6 +7,7 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 import * as L from "leaflet";
 import { vpMapped } from '@app/_models';
 import { vtTown } from '@app/_models';
+import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 
 @Component({templateUrl: 'vpmap.create.component.html'})
 export class vpMapCreateComponent implements OnInit {
@@ -67,14 +68,19 @@ export class vpMapCreateComponent implements OnInit {
 
       //create a separate form for landowner data, to be nested within vpMappedForm
       this.vpLandOwnForm = this.formBuilder.group({
-        mappedLandownerName: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        mappedLandownerAddress: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        mappedLandownerTown: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        mappedLandownerStateAbbrev: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        mappedLandownerZip5: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        mappedLandownerPhone: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
-        mappedLandownerEmail: [{value: '', disabled: false}, Validators.required], //flip to enabled if Permission
+        mappedLandownerName: [{value: '', disabled: false}, Validators.required],
+        mappedLandownerAddress: ['', Validators.nullValidator],
+        //mappedLandownerTown: [{value: '', disabled: false}, Validators.nullValidator],
+        //mappedLandownerStateAbbrev: [{value: '', disabled: false}, Validators.nullValidator],
+        //mappedLandownerZip5: [{value: '', disabled: false}, Validators.nullValidator],
+        mappedLandownerPhone: ['', Validators.nullValidator],
+        mappedLandownerEmail: ['', Validators.email], //flip to enabled if Permission
       });
+      /*
+      , { //this was created but the designers decided NOT to use it. leave it here in case it regains favor.
+          validator: EmailOrPhone('mappedLandownerPhone', 'mappedLandownerEmail')
+      });
+      */
 
       this.vpMappedForm = this.formBuilder.group({
 
@@ -128,15 +134,16 @@ export class vpMapCreateComponent implements OnInit {
 
       this.vpLandOwnForm.controls['mappedLandownerName'].setValue(this.pool.mappedLandownerName);
       this.vpLandOwnForm.controls['mappedLandownerAddress'].setValue(this.pool.mappedLandownerAddress);
-      this.vpLandOwnForm.controls['mappedLandownerTown'].setValue(this.pool.mappedLandownerTown);
-      this.vpLandOwnForm.controls['mappedLandownerStateAbbrev'].setValue(this.pool.mappedLandownerStateAbbrev);
-      this.vpLandOwnForm.controls['mappedLandownerZip5'].setValue(this.pool.mappedLandownerZip5);
+      //this.vpLandOwnForm.controls['mappedLandownerTown'].setValue(this.pool.mappedLandownerTown);
+      //this.vpLandOwnForm.controls['mappedLandownerStateAbbrev'].setValue(this.pool.mappedLandownerStateAbbrev);
+      //this.vpLandOwnForm.controls['mappedLandownerZip5'].setValue(this.pool.mappedLandownerZip5);
       this.vpLandOwnForm.controls['mappedLandownerPhone'].setValue(this.pool.mappedLandownerPhone);
       this.vpLandOwnForm.controls['mappedLandownerEmail'].setValue(this.pool.mappedLandownerEmail);
 
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
+
       /* these fields are not displayed on new pool entry
       this.vpMappedForm.controls['mappedSource'].setValue(this.pool.mappedSource);
       this.vpMappedForm.controls['mappedSource2'].setValue(this.pool.mappedSource2);

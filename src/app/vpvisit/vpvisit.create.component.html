@@ -77,37 +77,6 @@
 
 <form *ngIf="visitPage.index===0" [formGroup]="visitLocationForm">
   <div class="row">
-    <div class="col-3">
-      <!-- 2a Vernal Pool Location Information -->
-      <!--
-          visitPoolId - text
-      -->
-      <div class="form-group">
-          <label for="visitPoolId">Pool ID</label>
-          <input type="text" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
-          <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
-              <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
-          </div>
-      </div>
-    </div>
-    <div class="col-3">
-      <!--
-          visitDate
-      -->
-      <div class="form-group">
-          <label for="visitDate">Visit Date</label>
-          <!-- Can't figure out how to set the value of input type="date"
-          <input type="date" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
-          -->
-          <input type="text" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
-          <div *ngIf="submitted && locate.visitDate.errors" class="invalid-feedback">
-              <div *ngIf="locate.visitDate.errors.required">Visit Date is required</div>
-              <div *ngIf="locate.visitDate.errors.date">Visit Date must be a valid date in the format MM/DD/YYYY</div>
-          </div>
-      </div>
-    </div> <!-- col -->
-  </div> <!-- row -->
-  <div class="row">
     <div class="col-6">
       <!--
           visitPoolMapped - radio button
@@ -115,23 +84,56 @@
           https://angular.io/api/forms/RadioControlValueAccessor
       -->
       <div>
-        <label><u>2a) Vernal Pool Location Information</u></label>
+        <label><u>2a) Vernal Pool Identificaion and Location Information.</u></label>
       </div>
       <div class="form-group">
            <label>
-             <input type="radio" value="true" formControlName="visitPoolMapped" class="radio-button-vert" />
-               <span>This pool was mapped as a "potential" pool</span>
+             <input type="radio" value="true" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="radio-button-horiz" />
+               <span>Mapped (Potential) Pool</span>
            </label>
            <label>
-             <input type="radio" value="false" formControlName="visitPoolMapped" class="radio-button-vert" />
-               <span>This pool was unmapped</span>
+             <input type="radio" value="false" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="radio-button-horiz" />
+               <span>New Un-Mapped Pool</span>
            </label>
+           <label>
+             <input type="radio" value="null" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="radio-button-horiz" />
+               <span>I don't know</span>
+           </label>
+           <label *ngIf="locate.visitPoolMapped.value=='true'">Please enter the Pool ID, or select the Pool on the map.</label>
+           <label *ngIf="locate.visitPoolMapped.value=='false'">Please move the marker to the pool's location on the map.</label>
+           <label *ngIf="locate.visitPoolMapped.value=='null'">Please select a pool on the map, or move the marker to the pool's location.</label>
       </div>
+      <!-- 2a Vernal Pool Location Information -->
+          <!--
+              visitPoolId - text
+          -->
+          <div class="form-group">
+              <label for="visitPoolId">Pool ID</label>
+              <input type="text" formControlName="visitPoolId" (change)="visitPoolIdChanged($event)" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
+              <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
+                  <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
+              </div>
+          <!--
+            </div>
+              visitDate
+            <div class="form-group">
+          -->
+              <label for="visitDate">Visit Date</label>
+              <!-- Can't figure out how to set the value of input type="date"
+              <input type="date" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
+              -->
+              <input type="text" formControlName="visitDate" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
+              <div *ngIf="submitted && locate.visitDate.errors" class="invalid-feedback">
+                  <div *ngIf="locate.visitDate.errors.required">Visit Date is required</div>
+                  <div *ngIf="locate.visitDate.errors.date">Visit Date must be a valid date in the format MM/DD/YYYY</div>
+              </div>
+          </div>
       <!--
           visitPoolMapped - radio button
           https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
           NOTE: radio button values are type string. it does not handle boolean by default.
       -->
+<!--
       <div *ngIf="locate.visitPoolMapped.value=='true'" class="form-group">
         <label for="visitLocatePool">Was the pool located?</label>
         <label>
@@ -143,10 +145,11 @@
            <span>No</span>
         </label>
       </div>
-
+-->
       <!--
         visitCertainty - radio button
       -->
+<!--
       <div>
         <label><u>How certain are you that you were in the correct Location?</u></label>
       </div>
@@ -162,6 +165,27 @@
           <label>
             <input type="radio" value="Not Sure" formControlName="visitCertainty" class="radio-button-horiz" />
             <span>Not Sure</span>
+          </label>
+      </div>
+-->
+      <!--
+        visitLocationUncertainty
+      -->
+      <div>
+        <label><u>Please estimate the location uncertainty of this pool in yards:</u></label>
+      </div>
+      <div class="form-group">
+          <label>
+            <input type="radio" value="50" formControlName="visitLocationUncertainty" class="radio-button-horiz" />
+            <span>50 yards</span>
+          </label>
+          <label>
+            <input type="radio" value="100" formControlName="visitLocationUncertainty" class="radio-button-horiz" />
+            <span>100 yards</span>
+          </label>
+          <label>
+            <input type="radio" value=">100" formControlName="visitLocationUncertainty" class="radio-button-horiz" />
+            <span>Greater than 100 yards</span>
           </label>
       </div>
 
@@ -224,18 +248,18 @@
       -->
       <div class="form-group">
           <label for="visitTown">Town</label>
-          <select [compareWith]="compareTownFn" formControlName="visitTown" class="form-control">
+          <select [compareWith]="compareTownFn" formControlName="visitTown" class="text-input-block">
             <option *ngFor="let town of towns" [ngValue]="town">
               {{ town.townName }}
             </option>
           </select>
-      </div>
       <!--
+      </div>
         visitLocationComments
-      -->
       <div class="form-group">
-          <label for="visitLocationComments">Location Comments</label>
-          <textarea rows="2" formControlName="visitLocationComments" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitLocationComments.errors }"> </textarea>
+      -->
+          <label for="visitLocationComments">Comments</label>
+          <textarea rows="1" formControlName="visitLocationComments" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLocationComments.errors }"> </textarea>
           <div *ngIf="submitted && locate.visitLocationComments.errors" class="invalid-feedback">
               <div *ngIf="locate.visitLocationComments.errors.required">Visit Comments is required</div>
           </div>
@@ -302,27 +326,38 @@
             <label for="visitLandownerPhone">Landowner Phone</label>
             <input type="text" formControlName="visitLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerPhone.errors }" />
             <div *ngIf="submitted && landown.visitLandownerPhone.errors" class="invalid-feedback">
-                <div *ngIf="landown.visitLandownerPhone.errors.required">Landowner Phone or Email is required</div>
+              <!--
+              <div *ngIf="landown.visitLandownerPhone.errors.emailOrPhone">Landowner Phone or Email is required</div>
+              -->
+              <div *ngIf="landown.visitLandownerPhone.errors.phone">Please enter a valid phone number: (123) 456-7890.</div>
             </div>
         </div>
         <div class="form-group">
             <label for="visitLandownerEmail">Landowner Email</label>
             <input type="text" formControlName="visitLandownerEmail" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerEmail.errors }" />
             <div *ngIf="submitted && landown.visitLandownerEmail.errors" class="invalid-feedback">
-                <div *ngIf="landown.visitLandownerEmail.errors.required">Landowner Email or Phone is required</div>
+              <!--
+              <div *ngIf="landown.visitLandownerEmail.errors.emailOrPhone">Landowner Email or Phone is required</div>
+              -->
+              <div *ngIf="landown.visitLandownerEmail.errors.email">Please enter a valid email address.</div>
             </div>
         </div>
       </form> <!-- visitLandOwnForm, if permission -->
     </div> <!-- col -->
     <div class="col-6">
     <div *ngIf="mapShowing">
-        <app-map-edit
-          [mapValues]="visit"
-          [update]="mapMarker"
+      <div *ngIf="!poolsLoading">
+        <app-map-comp
+          [mapValues]="pools"
+          [mapMarker]="mapMarker"
           [itemType]="itemType"
           (markerUpdate)="markerLocationUpdate($event)">
-        </app-map-edit>
-    </div> <!-- ngIf -->
+        </app-map-comp>
+      </div> <!-- !poolsLoading -->
+      <div *ngIf="poolsLoading">
+        Loading...
+      </div> <!-- poolsLoading -->
+    </div> <!-- ngIf mapShowing -->
     </div>
   </div> <!-- row -->
 </form> <!-- visitLocationForm -->
