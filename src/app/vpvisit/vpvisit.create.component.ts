@@ -7,6 +7,7 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 import * as L from "leaflet";
 import { vpVisit } from '@app/_models';
 import { vtTown } from '@app/_models';
+import { vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 
 @Component({templateUrl: 'vpvisit.create.component.html'})
@@ -68,7 +69,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.poolId = this.route.snapshot.params.poolId;
       console.log('vpvisit.create.ngOnInit route.snapshot params: visitId:', this.visitId, 'poolId:', this.poolId);
 
-      if (this.visitId) { //update an existing visit - set all initial values in afterLoad()
+      if (this.visitId) { //update an existing visit - set all initial values in setFormValues()
         this.update = true;
         await this.createFormControls();
         await this.loadPage(this.visitId);
@@ -391,11 +392,6 @@ export class vpVisitCreateComponent implements OnInit {
 
       this.visitIndicatorSpeciesForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
 
-      // TODO: move this to set boolean value within formControl creation statement above
-      if (this.update || this.poolId) {
-        //this.visitLocationForm.get('visitPoolId').disable();
-        //this.visitLocationForm.get('visitUserName').disable();
-      }
     }
 
     onVisitPageSelect(visitPageIndex) {
@@ -403,10 +399,23 @@ export class vpVisitCreateComponent implements OnInit {
       //console.log('onVisitPageSelect', this.visitPage);
     }
 
+    /*
+      Receive a markerLocationUpdate event emitted from the map when the map Marker is moved.
+    */
     markerLocationUpdate(visitLoc: L.LatLng) {
       this.visitUpdateLocation = visitLoc;
       this.visitLocationForm.controls['visitLatitude'].setValue(visitLoc.lat);
       this.visitLocationForm.controls['visitLongitude'].setValue(visitLoc.lng);
+    }
+
+    /*
+      Receive a markerSelected event emitted from the map when a mapped pool marker is clicked.
+    */
+    markerSelected(itemInfo: vpMappedEventInfo) {
+      console.log('vpvisit.create.markerSelected()', itemInfo);
+      this.visitLocationForm.controls['visitPoolId'].setValue(itemInfo.poolId);
+      this.visitLocationForm.controls['visitLatitude'].setValue(itemInfo.latLng.lat);
+      this.visitLocationForm.controls['visitLongitude'].setValue(itemInfo.latLng.lng);
     }
 
     mapShowingChange(e) {
@@ -422,7 +431,7 @@ export class vpVisitCreateComponent implements OnInit {
     get indSpc() { return this.visitIndicatorSpeciesForm.controls; }
 
     /*
-      On update, load an existing visit and populate the fields
+      When updating an existing Visit, load an existing visit and populate the fields
     */
     async loadPage(visitId) {
       this.dataLoading = true;
@@ -446,20 +455,31 @@ export class vpVisitCreateComponent implements OnInit {
       console.log(this.visitLocationForm.value.visitPoolId);
     }
 
+    /*
+     This is called in response to a click on one of the radio buttons for the
+     column visitPoolMapped.
+    */
     visitModeChanged(e) {
       console.log(this.visitLocationForm.value.visitPoolMapped);
       if (this.visitLocationForm.value.visitPoolMapped == 'true') {
         this.visitLocationForm.controls['visitPoolId'].setValue('');
         this.visitLocationForm.controls['visitPoolId'].enable();
+        this.itemType = "Visit Mapped Pool";
+        this.mapMarker = false;
         this.loadMappedPools();
       }
       if (this.visitLocationForm.value.visitPoolMapped == 'false') {
         this.visitLocationForm.controls['visitPoolId'].setValue('NEW*');
         this.visitLocationForm.controls['visitPoolId'].disable();
+        this.itemType = "Visit New Pool";
+        this.mapMarker = true;
+        this.loadMappedPools();
       }
       if (this.visitLocationForm.value.visitPoolMapped == 'null') {
         this.visitLocationForm.controls['visitPoolId'].setValue('');
         this.visitLocationForm.controls['visitPoolId'].disable();
+        this.itemType = "Visit Unknown Pool";
+        this.mapMarker = true;
         this.loadMappedPools();
       }
     }

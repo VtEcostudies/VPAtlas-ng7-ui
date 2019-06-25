@@ -84,24 +84,28 @@
           https://angular.io/api/forms/RadioControlValueAccessor
       -->
       <div>
-        <label><u>2a) Vernal Pool Identificaion and Location Information.</u></label>
+        <label><u>2a) Vernal Pool Location Information:</u></label>
       </div>
       <div class="form-group">
            <label>
              <input type="radio" value="true" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="radio-button-horiz" />
-               <span>Mapped (Potential) Pool</span>
+               <span>This pool was mapped.</span>
            </label>
            <label>
              <input type="radio" value="false" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="radio-button-horiz" />
-               <span>New Un-Mapped Pool</span>
+               <span>This pool was unmapped (New).</span>
            </label>
+           <!--
            <label>
              <input type="radio" value="null" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="radio-button-horiz" />
                <span>I don't know</span>
            </label>
-           <label *ngIf="locate.visitPoolMapped.value=='true'">Please enter the Pool ID, or select the Pool on the map.</label>
-           <label *ngIf="locate.visitPoolMapped.value=='false'">Please move the marker to the pool's location on the map.</label>
+           -->
+           <label *ngIf="locate.visitPoolMapped.value=='true'" style="color: blue;">Please enter the Pool ID below, or select a Pool on the map.</label>
+           <label *ngIf="locate.visitPoolMapped.value=='false'" style="color: blue;">Please move the marker to the pool's location on the map.</label>
+           <!--
            <label *ngIf="locate.visitPoolMapped.value=='null'">Please select a pool on the map, or move the marker to the pool's location.</label>
+           -->
       </div>
       <!-- 2a Vernal Pool Location Information -->
           <!--
@@ -214,33 +218,12 @@
             <input type="text" formControlName="visitNavMethodOther" class="text-input-block"/>
           </label>
       </div>
-      <div>
-        <label><u>2b) Location of Pool</u></label>
-        <label style="padding-left:10px;">
-          <span>(</span>
-          <input style="padding-left:5px;" [checked]="mapShowing" (change)="mapShowingChange($event)" type="checkbox" />
-          <span style="padding-left:5px;">Show Map)</span>
-        </label>
-      </div>
       <!--
-        visitLatitude
+        visitDirections
       -->
       <div class="form-group">
-          <label for="visitLatitude" class="leading-label">Latitude</label>
-          <input type="text" formControlName="visitLatitude" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLatitude.errors }" />
-          <div *ngIf="submitted && locate.visitLatitude.errors" class="invalid-feedback">
-              <div *ngIf="locate.visitLatitude.errors.required">Visit Latitude is required</div>
-          </div>
-      <!-- </div> -->
-      <!--
-        visitLongitude
-      -->
-      <!-- <div class="form-group"> -->
-          <label for="visitLongitude" class="leading-label" >Longitude</label>
-          <input type="text" formControlName="visitLongitude" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLongitude.errors }" />
-          <div *ngIf="submitted && locate.visitLongitude.errors" class="invalid-feedback">
-              <div *ngIf="locate.visitLongitude.errors.required">Visit Longitude is required</div>
-          </div>
+          <label for="visitDirections">Brief site directions to pool:</label>
+          <textarea rows="1" formControlName="visitDirections" class="text-input-block"> </textarea>
       </div>
 
       <!--
@@ -262,6 +245,37 @@
           <textarea rows="1" formControlName="visitLocationComments" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLocationComments.errors }"> </textarea>
           <div *ngIf="submitted && locate.visitLocationComments.errors" class="invalid-feedback">
               <div *ngIf="locate.visitLocationComments.errors.required">Visit Comments is required</div>
+          </div>
+      </div>
+
+      <div>
+        <label><u>2b) Location of Pool</u></label>
+        <!--
+        <label style="padding-left:10px;">
+          <span>(</span>
+          <input style="padding-left:5px;" [checked]="mapShowing" (change)="mapShowingChange($event)" type="checkbox" />
+          <span style="padding-left:5px;">Show Map)</span>
+        </label>
+        -->
+      </div>
+      <!--
+        visitLatitude
+      -->
+      <div class="form-group">
+          <label for="visitLatitude" class="leading-label">Latitude</label>
+          <input type="text" formControlName="visitLatitude" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLatitude.errors }" />
+          <div *ngIf="submitted && locate.visitLatitude.errors" class="invalid-feedback">
+              <div *ngIf="locate.visitLatitude.errors.required">Visit Latitude is required</div>
+          </div>
+      <!-- </div> -->
+      <!--
+        visitLongitude
+      -->
+      <!-- <div class="form-group"> -->
+          <label for="visitLongitude" class="leading-label" >Longitude</label>
+          <input type="text" formControlName="visitLongitude" size="15" class="text-input-block" [ngClass]="{ 'is-invalid': submitted && locate.visitLongitude.errors }" />
+          <div *ngIf="submitted && locate.visitLongitude.errors" class="invalid-feedback">
+              <div *ngIf="locate.visitLongitude.errors.required">Visit Longitude is required</div>
           </div>
       </div>
 
@@ -351,7 +365,9 @@
           [mapValues]="pools"
           [mapMarker]="mapMarker"
           [itemType]="itemType"
-          (markerUpdate)="markerLocationUpdate($event)">
+          (markerUpdate)="markerLocationUpdate($event)"
+          (markerSelect)="markerSelected($event)"
+          >
         </app-map-comp>
       </div> <!-- !poolsLoading -->
       <div *ngIf="poolsLoading">

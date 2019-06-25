@@ -1,9 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
 import * as L from "leaflet";
+//import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
 import { AuthenticationService, uxValuesService } from '@app/_services';
-
+import { vpMappedEventInfo } from '@app/_models';
 
 @Component({
   selector: 'app-map-comp',
@@ -22,7 +23,9 @@ export class LeafletComponent implements OnInit, OnChanges {
   @Input() mapMarker = false; //external flag to invoke the map with a moveable marker
   @Input() update = false; //external flag that this is an edit/update, not a create instantition: plot the mapMarker location with mapValues data
   @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
+  @Output() markerSelect = new EventEmitter<vpMappedEventInfo>(); //send mapped pool info events to listeners
   itemLoc: L.LatLng = null; //store the location of the marker on the screen, passed with events to listeners, etc.
+  itemInfo: vpMappedEventInfo = new vpMappedEventInfo();
   public map = null;
   marker = null;
   layerControl = null;
@@ -293,51 +296,74 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   /*
+    A click was received on the leaflet featureGroup of circle markers.
+    From the event values - e.layer.options or e.sourceTarget - we can
+    get data for the specific circleMarker that was clicked.
+
     use e.layer.options to reference custom properties set at creation
     use e.sourceTarget to append functions like bindPopup
   */
   onCircleGroupClick(e) {
-    console.log("leaflet.onCircleGroupClick | event: ", e);
+    //console.log("leaflet.onCircleGroupClick | event: ", e);
     console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
     console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
-    var cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     const index = e.sourceTarget.options.index;
+    const cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     const poolId = e.sourceTarget.options.poolId;
     const popText = this.buildPopup(index);
-    const popShow = L.popup({
-    	maxHeight: 200,
-      keepInView: true
-    }).setContent(popText);
 
-    e.sourceTarget.bindPopup(popShow).openPopup();
+    if (this.itemType == 'Visit Mapped Pool') {
+      this.itemInfo.latLng = cmLoc;
+      this.itemInfo.poolId = poolId;
+      this.markerSelect.emit(this.itemInfo);
+    } else {
+      const popShow = L.popup({
+      	maxHeight: 200,
+        keepInView: true
+      }).setContent(popText);
+
+      e.sourceTarget.bindPopup(popShow).openPopup();
+    }
   }
 
   buildPopup(index) {
     var obj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
     var text = '';
-    var exclude = ['count'];
+    var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
     var urlParts = {item: null, view: null, edit: null};
 
     switch (this.itemType) {
       case 'Visit':
         urlParts = {item:`${obj.visitId} for Pool ID ${obj.visitPoolId}` , view:`pools/visit/view/${obj.visitId}`, edit:`pools/visit/update/${obj.visitId}`};
+        text += `<div><a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a></div>`;
+        if (this.userIsAdmin) {text += `<div><a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a></div>`;}
+        break;
+      case 'Visit New Pool':
+        //don't add links to the top - they just click on the point to get info about it
+        break;
+      case 'Visit Mapped Pool':
+        //don't add links to the top - they just click on the point to select it
         break;
       default:
       case 'Mapped Pool':
         urlParts = {item:obj.poolId, view:`pools/mapped/view/${obj.poolId}`, edit:`pools/mapped/update/${obj.poolId}`};
+        text += `<div><a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a></div>`;
+        if (this.userIsAdmin) {text += `<div><a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a></div>`;}
         break;
     }
-    text += `<div><a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a></div>`;
-    if (this.userIsAdmin) {text += `<div><a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a></div>`;}
 
     Object.keys(obj).forEach(function(key,index) {
-      if (obj[key] && !exclude.includes(key)) { //add non-null values
+      if (obj[key] && !exclude.includes(key)) { //add non-null values not in the exclusion list
         text += `<div>${key}: ${obj[key]}</div>`;
       }
     });
 
     return text;
-    }
+  }
+
+  createVisitForPool(poolId) {
+    console.log('createVisitForPool', poolId);
+  }
 
   async clearPools() {
     this.cmGroup.clearLayers();
@@ -380,7 +406,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     console.log('leaflet.plotPoolCircles(',vpools,')');
 
-    //if (typeof vpools == 'undefined') return;
+    //if (vpools === undefined) return;
 
     if (!vpools) return;
 

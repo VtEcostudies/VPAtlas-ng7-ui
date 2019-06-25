@@ -5,3 +5,4 @@ export * from './pgFields';
 export * from './pgApiResults';
 export * from './vpmapped';
 export * from './vpvisit';
+export * from './vpMappedEventInfo';
