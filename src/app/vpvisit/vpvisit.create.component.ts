@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vtInfoService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
+import { vpMapped } from '@app/_models';
 import { vpVisit } from '@app/_models';
 import { vtTown } from '@app/_models';
 import { vpMappedEventInfo } from '@app/_models';
@@ -484,9 +485,62 @@ export class vpVisitCreateComponent implements OnInit {
       }
     }
 
-    onSubmit() {
+    /*
+      Create a mapped pool from visit data:
+      - copy observer and location data to a newly-instantiated vpMapped Object
+      - call vpMappedService.create with that object
+    */
+    CreateMappedPool() {
+      var mappedPool: vpMapped = new vpMapped();
 
-        console.log(`vpvisit.create.onSubmit`);
+      console.log(`vpvisit.create.CreateMappedPool`);
+
+      mappedPool.mappedByUser = this.visitObserverForm.value.visitUser;
+
+      //mappedPoolId value should be 'NEW*' to indicate to the db server that we need to generate a poolId
+      mappedPool.mappedPoolId = this.visitLocationForm.value.visitPoolId;
+      mappedPool.mappedDateText = this.visitLocationForm.value.visitDate;
+      mappedPool.mappedLocationUncertainty = this.visitLocationForm.value.visitLocationUncertainty;
+      mappedPool.mappedlocationInfoDirections = this.visitLocationForm.value.visitDirections;
+      mappedPool.mappedTownId = this.visitLocationForm.value.visitTownId;
+      mappedPool.mappedComments = this.visitLocationForm.value.visitLocationComments;
+
+      mappedPool.mappedLatitude = this.visitLocationForm.value.visitLatitude;
+      mappedPool.mappedLongitude = this.visitLocationForm.value.visitLongitude;
+      mappedPool.mappedMethod = 'Visit';
+
+      mappedPool.mappedLandownerPermission = this.visitLocationForm.value.visitLandownerPermission;
+      mappedPool.mappedLandownerName = this.visitLocationForm.value.visitLandownerName;
+      mappedPool.mappedLandownerAddress = this.visitLocationForm.value.visitLandownerAddress;
+      mappedPool.mappedLandownerPhone = this.visitLocationForm.value.visitLandownerPhone;
+      mappedPool.mappedLandownerEmail = this.visitLocationForm.value.visitLandownerEmail;
+
+      console.log(`vpvisit.create.CreateMappedPool | mappedPool:`, mappedPool);
+
+      this.submitted = true;
+      this.dataLoading = true;
+      this.vpMappedService.create(mappedPool)
+          .pipe(first())
+          .subscribe(
+              data => {
+                  console.log(`vpvisit.CreateMappedPool=>data:`, data);
+                  this.dataLoading = false;
+                  this.visitLocationForm.value.visitPoolId = this.poolId;
+                  this.poolId = data.rows[0].mappedPoolId;
+                  this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
+                  this.itemType = "Visit Mapped Pool"; //we now have a Mapped Pool and can proceed to Visit data
+              },
+              error => {
+                  console.log(`vpvisit.CreateMappedPool=>error: ${error}`);
+                  this.alertService.error(error);
+                  this.dataLoading = false;
+              });
+    }
+
+    //validate fields and create the visit
+    CreateVisit() {
+
+        console.log(`vpvisit.create.CreateVisit`);
 
         this.submitted = true;
 
@@ -507,7 +561,7 @@ export class vpVisitCreateComponent implements OnInit {
           return;
         }
 
-        //console.log('vpvisit.create.component.onSubmit | visitTown',this.visitLocationForm.value.visitTown);
+        //console.log('vpvisit.create.component.CreateVisit | visitTown',this.visitLocationForm.value.visitTown);
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
@@ -524,7 +578,7 @@ export class vpVisitCreateComponent implements OnInit {
           this.setPage(0);
           return;
         }
-        if (this.visitLocationForm.invalid) {
+        if (this.visitFieldVerificationForm.invalid) {
           console.log(`visitFieldVerificationForm.invalid`);
           this.setPage(1);
           return;

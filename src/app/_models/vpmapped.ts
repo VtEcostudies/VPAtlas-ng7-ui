@@ -31,7 +31,7 @@ export class vpMapped {
     mappedLandownerPhone: string = '';
     mappedLandownerEmail: string = '';
     mappedLandownerInfo: string = '';
-    mappedLocationUncertaintyUnits: string = '';
+    //mappedLocationUncertaintyUnits: string = '';
     mappedLocationUncertainty: number = null;
 
     mappedTownId: number = 0;
