@@ -1,10 +1,34 @@
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
-import * as L from "leaflet";
 //import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
 import { AuthenticationService, uxValuesService } from '@app/_services';
 import { vpMappedEventInfo } from '@app/_models';
+
+//import * as L from "leaflet";
+//how to import leaflet module with extensions:
+//https://stackoverflow.com/questions/51679056/add-beautifymarker-plugin-to-ngx-leaflet-project
+//BUG: map marker not showing
+//https://stackoverflow.com/questions/41144319/leaflet-marker-not-found-production-env
+import "leaflet";
+import "leaflet-svg-shape-markers";
+declare let L;
+
+import { icon, Marker } from 'leaflet';
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
+const iconDefault = icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+Marker.prototype.options.icon = iconDefault;
 
 @Component({
   selector: 'app-map-comp',
@@ -18,14 +42,16 @@ export class LeafletComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
-  @Input() itemType = 'Visit';
-  @Input() mapValues; //single value or array of values to plot, set by the parent
+  @Input() itemType = 'Visit'; //flag what type of item is being mapped (vpMapped, vpVisit-mapped, vpVisit-new, etc.)
+  @Input() mapPoints = false; //external flag plot mapValues as circleMarkers
+  @Input() mapValues = null; //single value or array of values having .latitude and .longitude properties to plot as circleMarkers, set by the parent
   @Input() mapMarker = false; //external flag to invoke the map with a moveable marker
+  @Input() locMarker = null; //single object having .latitude and .longitude properties to locate the moveable marker
   @Input() update = false; //external flag that this is an edit/update, not a create instantition: plot the mapMarker location with mapValues data
-  @Output() markerUpdate = new EventEmitter<L.LatLng>(); //send LatLng map events to listeners
-  @Output() markerSelect = new EventEmitter<vpMappedEventInfo>(); //send mapped pool info events to listeners
+  @Output() markerUpdate = new EventEmitter<L.LatLng>(); //when the mapMarker is moved or located, send LatLng map events to listeners
+  @Output() markerSelect = new EventEmitter<vpMappedEventInfo>(); //when a circleMarker is selected, send mapped pool info events to listeners
   itemLoc: L.LatLng = null; //store the location of the marker on the screen, passed with events to listeners, etc.
-  itemInfo: vpMappedEventInfo = new vpMappedEventInfo();
+  itemInfo: vpMappedEventInfo = new vpMappedEventInfo(); //store a marker's extended info, passed with events to listeners
   public map = null;
   marker = null;
   layerControl = null;
@@ -84,9 +110,14 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   //printControl = LP.control.browserPrint();
   myRenderer = L.canvas({ padding: 0.5 });
+  //https://www.w3schools.com/colors/colors_names.asp
+  potentialColors = ["Orange"];
+  probableColors = ["Cyan"];
+  confirmedColors = ["Navy"];
+  eliminatedColors = ["LightSteelBlue"];
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
-  cmClrCnt = 7; //(this.cmColors).length();
+  cmClrCnt = 2; //(this.cmColors).length();
   cmRadius = 1;
   cmGroup = L.featureGroup();
   cmLLArr = [];
@@ -185,7 +216,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
     }
     //always add cmGroup - now we may want both point and moveable marker at the same time
-    this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolCircles
+    this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolShapes
     this.cmGroup.on("click", e => this.onCircleGroupClick(e));
 
     this.zoomControl.setPosition('topright');
@@ -219,10 +250,12 @@ export class LeafletComponent implements OnInit, OnChanges {
     console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
     console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     await this.clearPools();
-    if (this.mapMarker && this.update) {
-      await this.plotPoolMarker(this.mapValues);
-    } else {
-      await this.plotPoolCircles(this.mapValues);
+    //if (this.mapMarker && this.update) {
+    if (this.mapMarker) {
+      await this.plotPoolMarker(this.locMarker);
+    }
+    if (this.mapPoints) {
+      await this.plotPoolShapes(this.mapValues);
     }
   }
 
@@ -255,15 +288,17 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.uxValuesService.setBaseLayer(index);
   }
 
+  //set plotted pool radius relative to zoom level
   onZoomEnd(e) {
     this.zoom = this.map.getZoom();
     //console.log('onZoomEnd', this.zoom);
-    this.cmRadius = this.zoom > 10 ? this.zoom - 10: 1;
+    this.cmRadius = this.zoom > 8 ? this.zoom - 8: 1;
     //console.log('cmCount', this.cmLLArr.length);
     if (this.cmLLArr.length < 20) {this.cmRadius = 5;}
     this.setCmRadius();
   }
 
+  //iterate through all marker in the group and alter each radius
   setCmRadius(rad = this.cmRadius) {
     this.cmGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
       cmLayer.setRadius(rad);
@@ -296,7 +331,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   /*
-    A click was received on the leaflet featureGroup of circle markers.
+    A click was received on the leaflet featureGroup of shape markers.
     From the event values - e.layer.options or e.sourceTarget - we can
     get data for the specific circleMarker that was clicked.
 
@@ -312,7 +347,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     const poolId = e.sourceTarget.options.poolId;
     const popText = this.buildPopup(index);
 
-    if (this.itemType == 'Visit Mapped Pool') {
+    if (this.itemType == 'Visit Mapped Pool') { //this is used to select a pool when creating a new visit
       this.itemInfo.latLng = cmLoc;
       this.itemInfo.poolId = poolId;
       this.markerSelect.emit(this.itemInfo);
@@ -334,9 +369,11 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     switch (this.itemType) {
       case 'Visit':
-        urlParts = {item:`${obj.visitId} for Pool ID ${obj.visitPoolId}` , view:`pools/visit/view/${obj.visitId}`, edit:`pools/visit/update/${obj.visitId}`};
-        text += `<div><a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a></div>`;
-        if (this.userIsAdmin) {text += `<div><a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a></div>`;}
+        text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
+        if (this.userIsAdmin) {
+          text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId}</a></div>`;
+          text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
+        }
         break;
       case 'Visit New Pool':
         //don't add links to the top - they just click on the point to get info about it
@@ -347,8 +384,11 @@ export class LeafletComponent implements OnInit, OnChanges {
       default:
       case 'Mapped Pool':
         urlParts = {item:obj.poolId, view:`pools/mapped/view/${obj.poolId}`, edit:`pools/mapped/update/${obj.poolId}`};
-        text += `<div><a href="${urlParts.view}">View ${this.itemType} ${urlParts.item}</a></div>`;
-        if (this.userIsAdmin) {text += `<div><a href="${urlParts.edit}">Edit ${this.itemType} ${urlParts.item}</a></div>`;}
+        text += `<div><a href="pools/mapped/view/${obj.poolId}">View Mapped Pool ${obj.poolId}</a></div>`;
+        if (this.userIsAdmin) {
+          text += `<div><a href="pools/mapped/update/${obj.poolId}">Edit Mapped Pool ${obj.poolId}</a></div>`;
+          text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
+        }
         break;
     }
 
@@ -381,8 +421,12 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     console.log('leaflet.edit.plotPoolMarker(',vpool.poolId,')');
 
+    //convert null, undefined, NaN, empty, etc to 0
+    vpool.latitude = vpool.latitude || 0;
+    vpool.longitude = vpool.longitude || 0;
+
     //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
-    if (Number(vpool.latitude) == 0 || Number(vpool.longitude) == 0) {
+    if (!vpool.latitude || !vpool.longitude) {
       console.log(`leaflet.edit.plotPoolMarker(${vpool.poolId}) NO Lat/Lng for pool.`);
       return;
     }
@@ -399,12 +443,14 @@ export class LeafletComponent implements OnInit, OnChanges {
                             `);
   }
 
-  async plotPoolCircles(vpools) {
+  async plotPoolShapes(vpools) {
     var llLoc = null;
+    var shape = null; //the shape object which is mapped
     var ptRadius = null;
-    var circle = null;
+    var ptColor = null; //color indicates pool status (optionally mappedConfidence)
+    var ptShape = null; //shape indicates visit/no visit, permission
 
-    console.log('leaflet.plotPoolCircles(',vpools,')');
+    //console.log('leaflet.plotPoolShapes(',vpools,')');
 
     //if (vpools === undefined) return;
 
@@ -422,7 +468,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
       if (!vpools[i].latitude || !vpools[i].longitude) {
-        console.log('leaflet.plotPoolCircles() NO Lat/Lng for pool', vpools[i].poolId);
+        console.log('leaflet.plotPoolShapes() NO Lat/Lng for pool', vpools[i].poolId);
         continue;
       }
 
@@ -443,17 +489,57 @@ export class LeafletComponent implements OnInit, OnChanges {
           break;
       }
 
-      // TODO: set the cmColor based upon mappedPoolStatus
+      // set the circleMarker's color based upon mappedPoolStatus
+      switch (vpools[i].mappedPoolStatus) {
+        case 'Eliminated':
+          ptColor = this.eliminatedColors[0];
+          break;
+        case 'Confirmed':
+          ptColor = this.confirmedColors[0];
+          break;
+        case 'Probable':
+          ptColor = this.probableColors[0];
+          break;
+        case 'Potential':
+        default:
+          ptColor = this.potentialColors[0];
+          break;
+      }
 
-      circle = L.circleMarker(llLoc, <any> {
-          renderer: this.myRenderer,
+      /* set the circleMarker's shape based upon access/permission :
+        landowner permission:
+      */
+/*
+      switch (vpools[i].) {
+        case 'Eliminated':
+          ptColor = this.eliminatedColors[0];
+          break;
+        case 'Confirmed':
+          ptColor = this.confirmedColors[0];
+          break;
+        case 'Probable':
+          ptColor = this.probableColors[0];
+          break;
+        case 'Potential':
+        default:
+          ptColor = this.potentialColors[0];
+          break;
+      }
+*/
+      //shape = L.circleMarker(llLoc, <any> {
+      shape = L.shapeMarker(llLoc, <any> {
+          //renderer: this.myRenderer,
+          shape: "square",
           radius: ptRadius,
-          color: this.cmColors[this.cmColor],
+          color: ptColor, //this.cmColors[this.cmColor],
           index: i, //event.sourceTarget.options.index
-          poolId: vpools[i].poolId //event.sourceTarget.options.poolId
+          poolId: vpools[i].poolId, //event.sourceTarget.options.poolId
+          status: vpools[i].mappedPoolStatus,
+          confidence: vpools[i].mappedConfidence,
+          locationUncertainty: vpools[i].mappedLocationUncertainty
       });
 
-      this.cmGroup.addLayer(circle); //add this marker to the current featureGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
+      this.cmGroup.addLayer(shape); //add this marker to the current featureGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
 
       this.cmLLArr.push(llLoc);
 
@@ -468,14 +554,16 @@ export class LeafletComponent implements OnInit, OnChanges {
           break;
       }
 
-      //NOTE circle.bindPopup was moved on onCircleGroupClick()
+      //NOTE shape.bindPopup was moved on onCircleGroupClick()
 
-      circle.bindTooltip(`${this.itemType} ${urlParts.item}<br>
-                        Lat: ${vpools[i].latitude}<br>
-                        Lon:${vpools[i].longitude}<br>`);
+      shape.bindTooltip(`
+                        <div>${this.itemType} ${urlParts.item}</div>
+                        <div>Status: ${vpools[i].mappedPoolStatus}</div>
+                        <div>Lat: ${vpools[i].latitude}</div>
+                        <div>Lon:${vpools[i].longitude}</div>`);
 
     } // for loop over vpools[i]
-  } // plotPoolCircles()
+  } // plotPoolShapes()
 
   changeColor(index=null) {
 
@@ -487,6 +575,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     console.log(`changeColor(${index})`);
 
     this.cmGroup.eachLayer((layer: any) => {
+
       layer.setStyle({color: this.cmColors[this.cmColor]})
     });
 

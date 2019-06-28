@@ -18,9 +18,10 @@ export class vpMapListComponent implements OnInit {
     last = 1;
     count: number = 1;
     filter = '';
-    vpmap = []; //data array from db
+    mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
+    pools = []; //data array from db
     itemType = 'Mapped Pool';
-    //vpmap: vpMapped = [];
+    //pools: vpMapped = [];
     //pgApi: pgApiResults;
     mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
@@ -147,7 +148,7 @@ export class vpMapListComponent implements OnInit {
           .pipe(first())
           .subscribe(
               data => {
-                this.vpmap = data.rows;
+                this.pools = data.rows;
                 this.count = data.rows[0] ? data.rows[0].count : data.rowCount;
                 this.setLast();
                 this.loading = false;
@@ -166,7 +167,7 @@ export class vpMapListComponent implements OnInit {
           .pipe(first())
           .subscribe(
               data => {
-                this.vpmap = data.rows;
+                this.pools = data.rows;
                 this.count = data.rowCount;
                 this.setLast();
                 this.loading = false;

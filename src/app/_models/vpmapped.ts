@@ -36,4 +36,8 @@ export class vpMapped {
 
     mappedTownId: number = 0;
     mappedTown: vtTown = null; //new vtTown(); //instantiating town causes circular dependency warning. set this on form load instead.
+
+    poolId: string = '';
+    latitude: number = 43.916944;
+    longitude: number = -72.668056;
 }

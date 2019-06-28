@@ -16,7 +16,8 @@ export class vpVisitListComponent implements OnInit {
     last = 1;
     count: number = 1;
     filter = '';
-    visits: vpVisit[] = []; //data array from db
+    mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
+    visits: vpVisit[] = []; //data array from db having lat and lon values to plot on map
     itemType = 'Visit';
     mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
 

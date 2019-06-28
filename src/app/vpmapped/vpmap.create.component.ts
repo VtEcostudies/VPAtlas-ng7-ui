@@ -22,9 +22,11 @@ export class vpMapCreateComponent implements OnInit {
     submitted = false;
     permission = false;
     poolId = null;
+    mapPoints = false; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pool: vpMapped = new vpMapped();
     poolUpdateLocation = new L.LatLng(43.6962, -72.3197);
-    mapMarker = true;
+    mapMarker = true; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
+    locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
 
     constructor(
         private formBuilder: FormBuilder,
@@ -174,6 +176,7 @@ export class vpMapCreateComponent implements OnInit {
               data => {
                 console.log('vpmap.create.component.loadPage result:', data);
                 this.pool = data.rows[0];
+                this.locMarker = {latitude: this.pool.latitude, longitude: this.pool.longitude};
                 this.dataLoading = false; //this forces a map update, which plots a point
                 this.afterLoad(); //update form fields with values loaded from db
               },

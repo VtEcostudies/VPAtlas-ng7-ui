@@ -81,6 +81,7 @@
 
       <div *ngIf="mapView">
         <app-map-comp
+          [mapPoints]="mapPoints"
           [mapValues]="visits"
           [itemType]="itemType">
         </app-map-comp>

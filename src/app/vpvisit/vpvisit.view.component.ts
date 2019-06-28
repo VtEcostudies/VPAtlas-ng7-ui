@@ -15,6 +15,7 @@ export class vpVisitViewComponent implements OnInit {
     dataLoading = false;
     //visit: vpVisit = new vpVisit();
     visit: any = new vpVisit(); //cast thype to any to prevent typeScript build errors on fields not in vpVisit
+    mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     itemType = 'Visit';
 
     constructor(

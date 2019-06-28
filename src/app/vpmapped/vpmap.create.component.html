@@ -205,8 +205,10 @@
         </app-map>
         -->
         <app-map-comp
+          [mapPoints]="mapPoints"
           [mapValues]="pool"
           [mapMarker]="mapMarker"
+          [locMarker]="locMarker"
           (markerUpdate)="poolMapUpdate($event)"
         >
         </app-map-comp>

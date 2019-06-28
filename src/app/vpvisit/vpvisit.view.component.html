@@ -73,6 +73,7 @@
   <div class="col-10">
     <div *ngIf="!dataLoading">
       <app-map-comp
+        [mapPoints]="mapPoints"
         [mapValues]="visit"
         [itemType]="itemType">
       </app-map-comp>

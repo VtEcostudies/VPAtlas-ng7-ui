@@ -61,7 +61,7 @@
                 <th>Source</th>
                 <th>Source2</th>
             </tr>
-            <tr *ngFor="let pool of vpmap">
+            <tr *ngFor="let pool of pools">
                 <td><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
                 <td>{{pool.mappedByUser}}</td>
                 <td>{{pool.mappedMethod}}</td>
@@ -82,7 +82,8 @@
         <app-map [mapPools]="vpmap"></app-map>
         -->
         <app-map-comp
-          [mapValues]="vpmap"
+          [mapPoints]="mapPoints"
+          [mapValues]="pools"
           [itemType]="itemType">
         </app-map-comp>
       </div>

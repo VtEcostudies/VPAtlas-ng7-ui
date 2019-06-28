@@ -12,7 +12,8 @@ export class vpMapViewComponent implements OnInit {
     userIsAdmin = false;
     vpMappedForm: FormGroup;
     dataLoading = false;
-    pool: vpMapped = new vpMapped();
+    mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
+    pool: vpMapped = new vpMapped(); //data to plot pool on map
     itemType = "Mapped Pool";
 
     constructor(

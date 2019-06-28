@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark"> <!-- *ngIf="currentUser"> -->
     <div class="navbar-nav">
         <a class="nav-item nav-link" routerLink="/">Home</a>
-        
+
         <a class="nav-item nav-link" routerLink="/pools/mapped/list" >Search Pools</a>
         <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="currentUser" >Add Pool</a>
 
@@ -21,7 +21,7 @@
 </nav>
 
 <!-- main app container -->
-<div class="jumbotron">
+<div id="jumbotron" class="jumbotron">
     <!-- <div class="container"> -->
         <div class="row">
             <div class="col-12">

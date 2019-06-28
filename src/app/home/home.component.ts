@@ -11,6 +11,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   loading = false;
   stats = [{ potential:0, probable:0, confirmed:0, eliminated:0, monitored:0 }];
   pools = [];
+  mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
   itemType = "Mapped Pool";
 
     constructor(
