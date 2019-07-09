@@ -19,18 +19,21 @@ import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { AdminComponent } from './admin';
 
+import { LeafletComponent } from './_components'; //hope to replace vpMapLeafletComponent later
+//import { LeafletViewComponent } from './_components'; //hope to replace vpMapLeafletComponent later
+//import { LeafletEditComponent } from './_components'; //hope to replace vpMapLeafletComponent later
+
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
-import { vpMapLeafletComponent } from './vpmapped';
-
-import { LeafletComponent } from './_components'; //hope to replace vpMapLeafletComponent later
-import { LeafletViewComponent } from './_components'; //hope to replace vpMapLeafletComponent later
-import { LeafletEditComponent } from './_components'; //hope to replace vpMapLeafletComponent later
+//import { vpMapLeafletComponent } from './vpmapped';
 
 import { vpVisitListComponent } from './vpvisit';
 import { vpVisitViewComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
+
+import { vpListComponent } from './vppools';
+import { vpViewComponent } from './vppools';
 
 @NgModule({
     imports: [
@@ -54,15 +57,18 @@ import { vpVisitCreateComponent } from './vpvisit';
         vpMapListComponent,
         vpMapViewComponent,
         vpMapCreateComponent,
-        vpMapLeafletComponent,
+        //vpMapLeafletComponent,
 
         LeafletComponent,
-        LeafletViewComponent,
-        LeafletEditComponent,
+        //LeafletViewComponent,
+        //LeafletEditComponent,
 
         vpVisitListComponent,
         vpVisitViewComponent,
         vpVisitCreateComponent,
+
+        vpListComponent,
+        vpViewComponent,
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

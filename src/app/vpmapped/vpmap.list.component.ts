@@ -14,7 +14,7 @@ export class vpMapListComponent implements OnInit {
     loading = false;
     page = 1;
     pageSize = 10;
-    loadAllRec = false; //flag to load by page or to load all at once
+    loadAllRec = true; //flag to load by page or to load all at once
     last = 1;
     count: number = 1;
     filter = '';
@@ -52,7 +52,7 @@ export class vpMapListComponent implements OnInit {
           //mappedTown: [{value: '', disabled: true}]
       });
       //and load page 1
-      this.firstPage();
+      this.loadPools(1);
     }
 
     //how to handle UI changes from checkbox input when NOT a formControl in a formGroup:
@@ -139,7 +139,7 @@ export class vpMapListComponent implements OnInit {
     }
 
     private loadPage(page) {
-      this.loadAllRec = false;
+      //this.loadAllRec = false;
       this.loading = true;
       this.getFilter();
       if (this.page < 1) this.page = 1;
@@ -160,7 +160,7 @@ export class vpMapListComponent implements OnInit {
     }
 
     private loadAll() {
-      this.loadAllRec = true;
+      //this.loadAllRec = true;
       this.loading = true;
       this.getFilter();
       this.vpMappedService.getAll(this.filter)

@@ -1,0 +1,107 @@
+
+<div class="row">
+  <div class="col-2">
+    <h3><u>Search Visits</u></h3>
+    <form [formGroup]="filterForm" class="">
+        <div class="form-group row">
+          <label for="visitId">Visit ID</label>
+          <!--
+          There's a performance issue here with search filters:
+          - use keyup if the result set is small (<100)
+          - use keyup.enter and keyup.tab otherwise
+          - to be safe, do the latter
+          -->
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
+        </div>
+        <div class="form-group row">
+          <label for="visitPoolId">Pool ID</label>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
+        </div>
+        <div class="form-group row">
+          <label for="visitUserName">User</label>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
+        </div>
+        <div class="form-group row">
+          <label for="visitTown">Town</label>
+          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitTown" class="form-control"/>
+        </div>
+    </form>
+  </div> <!-- col-2 -->
+
+  <div class="col-10">
+    <div *ngIf="!loading">
+      <div class="row">
+        <button (click)="loadAll()" class="btn btn-link">{{count}} Records</button>
+        <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" />
+        <button (click)="loadAll()" class="btn btn-link">Load All</button>
+        <div *ngIf="!loadAllRec">
+          <button (click)="firstPage()" class="btn btn-link">|< First</button>
+          <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
+          <button class="btn btn-link">Page {{page}}</button>
+          <button (click)="nextPage()" class="btn btn-link">Next >></button>
+          <button (click)="lastPage()" class="btn btn-link">Last >|</button>
+        </div>
+        <!--
+        <button (click)="loadAll()" class="btn btn-link">Load All</button>
+        -->
+        <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
+        <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
+      </div>
+
+      <div *ngIf="!mapView">
+        <table class="table table-striped table-sm table-responsive">
+            <tr>
+                <th>Pool</th>
+                <th>Mapped By</th>
+                <th>Mapped Town</th>
+                <th>Status</th>
+                <th>Mapped Lat</th>
+                <th>Mapped Lng</th>
+
+                <th>Visit</th>
+                <th>Visit User</th>
+                <th>Visit Date</th>
+                <th>Vernal Pool?</th>
+                <th>Visit Lat</th>
+                <th>Visit Lng</th>
+            </tr>
+            <tr *ngFor="let pool of pools">
+                <td><a [routerLink]="['/pools/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <td>{{pool.mappedByUser}}</td>
+                <td>{{pool.mappedTown.townName}}</td>
+                <td>{{pool.mappedPoolStatus}}</td>
+                <td>{{pool.mappedLatitude}}</td>
+                <td>{{pool.mappedLongitude}}</td>
+
+                <span *ngIf="pool.visitId">
+                  <td><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
+                </span>
+                <span *ngIf="!pool.visitId">
+                  <td>{{pool.visitId}}</td>
+                </span>
+                <td>{{pool.visitUserName}}</td>
+                <td>{{pool.visitDate}}</td>
+                <td>{{pool.visitVernalPool}}</td>
+                <td>{{pool.visitLatitude}}</td>
+                <td>{{pool.visitLongitude}}</td>
+            </tr>
+        </table>
+      </div>
+
+      <div *ngIf="mapView">
+        <app-map-comp
+          [mapPoints]="mapPoints"
+          [mapValues]="pools"
+          [itemType]="itemType">
+        </app-map-comp>
+      </div>
+
+    </div> <!-- loading -->
+
+    <div *ngIf="loading">
+      ...Loading
+    </div>
+
+  </div><!-- col-10 -->
+
+</div><!-- row -->

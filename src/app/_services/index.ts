@@ -5,3 +5,4 @@ export * from './vpmapped.service';
 export * from './uxvalues.service';
 export * from './towns.service';
 export * from './vpvisit.service';
+export * from './vppools.service';

@@ -19,16 +19,24 @@
          <span>{{visitPage.values[0].name}}</span>
       </label>
       <label>
-       <input type="radio" [checked]="visitPage.index===1" name="visitPage" (change)="onVisitPageSelect(1)" class="radio-button-horiz" />
-       <span>{{visitPage.values[1].name}}</span>
+       <input [disabled]="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===1" name="visitPage" (change)="onVisitPageSelect(1)" class="radio-button-horiz" />
+         <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[1].name}}</i>
+         <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[1].name}}</span>
       </label>
       <label>
-       <input type="radio" [checked]="visitPage.index===2" name="visitPage" (change)="onVisitPageSelect(2)" class="radio-button-horiz" />
-       <span>{{visitPage.values[2].name}}</span>
+       <input [disabled]="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===2" name="visitPage" (change)="onVisitPageSelect(2)" class="radio-button-horiz" />
+         <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[2].name}}</i>
+         <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[2].name}}</span>
       </label>
       <label>
-       <input type="radio" [checked]="visitPage.index===3" name="visitPage" (change)="onVisitPageSelect(3)" class="radio-button-horiz" />
-       <span>{{visitPage.values[3].name}}</span>
+       <input [disabled] ="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===3" name="visitPage" (change)="onVisitPageSelect(3)" class="radio-button-horiz" />
+       <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[3].name}}</i>
+       <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[3].name}}</span>
+      </label>
+      <label>
+       <input [disabled] ="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===4" name="visitPage" (change)="onVisitPageSelect(4)" class="radio-button-horiz" />
+       <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[4].name}}</i>
+       <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[4].name}}</span>
       </label>
     </div>
   </div> <!-- col -->
@@ -82,19 +90,19 @@
           https://angular.io/api/forms/RadioControlValueAccessor
       -->
       <div>
-        <label><u>2a) Vernal Pool Location Information:</u></label>
+        <label><u>2a) Vernal Pool Location Info:</u></label>&nbsp;
+        <label *ngIf="locate.visitPoolMapped.value=='true' && !poolId && !visitId" style="color: blue;">Please enter the Pool ID below, or select a Pool on the map.</label>
+        <label *ngIf="locate.visitPoolMapped.value=='false' && !poolId && !visitId" style="color: blue;">Please move the marker to the pool's location on the map.</label>
       </div>
       <div class="form-group form-inline">
            <label>
              <input type="radio" value="true" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
-               <span>This pool was mapped.</span>
+               <span>This pool was mapped</span>
            </label>
            <label>
              <input type="radio" value="false" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
-               <span>This pool was unmapped (New).</span>
+               <span>This pool was unmapped (New Pool)</span>
            </label>
-           <label *ngIf="locate.visitPoolMapped.value=='true'" style="color: blue;">Please enter the Pool ID below, or select a Pool on the map.</label>
-           <label *ngIf="locate.visitPoolMapped.value=='false'" style="color: blue;">Please move the marker to the pool's location on the map.</label>
       </div>
       <!-- 2a Vernal Pool Location Information -->
       <div class="row">
@@ -183,7 +191,8 @@
       </div>
       </div> <!-- col -->
       </div> <!-- row -->
-    </span>
+    </span> <!-- visitPoolMapped is true -->
+
     <span *ngIf="locate.visitPoolMapped.value=='false'">
       <!--
         visitLocationUncertainty
@@ -208,8 +217,11 @@
             <input type="radio" value=">100" formControlName="visitLocationUncertainty" class="form-control radio-button-horiz" />
             <span>Greater than 100 yards</span>
           </label>
+          <div *ngIf="submitted && locate.visitLocationUncertainty.errors" class="invalid-feedback">
+             <div *ngIf="locate.visitLocationUncertainty.errors.required">Location Uncertainty is required</div>
+          </div>
       </div>
-    </span>
+    </span> <!-- visitPoolMapped is false -->
 
       <!--
         visitNavMethod - radio button
@@ -316,90 +328,11 @@
             <span>VT ANR Mapping website</span>
           </label>
       </div>
-
-      <div>
-        <label><u>2c) Landowner Contact Information</u></label>
-      </div>
-      <!-- visitUserIsLandowner -->
-      <div class="form-group form-inline">
-          <label for="visitUserIsLandowner">Are you the landowner?</label>&nbsp;
-          <input type="checkbox" formControlName="visitUserIsLandowner" />&nbsp;
-          <label>Yes</label>
-      </div>
-
-      <!-- visitLandownerPermission -->
-      <div class="form-group form-inline">
-          <label for="visitLandownerPermission">Do you have Landowner Permission to map this pool?</label>&nbsp;
-          <input type="checkbox" formControlName="visitLandownerPermission" />&nbsp;
-          <label>Yes</label>
-      </div>
-
-        <!-- visitLandownerData if they have permission -->
-        <form *ngIf="permission" [formGroup]="visitLandOwnForm">
-        <div class="form-group form-inline">
-            <label for="visitLandownerName">Landowner Name</label>
-            <input type="text" formControlName="visitLandownerName" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerName.errors }" />
-            <div *ngIf="submitted && landown.visitLandownerName.errors" class="invalid-feedback">
-                <div *ngIf="landown.visitLandownerName.errors.required">Landowner Name is required</div>
-            </div>
-        </div>
-        <div class="form-group form-inline">
-            <label for="visitLandownerAddress">Landowner Address</label>
-            <textarea rows="1" formControlName="visitLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerAddress.errors }">
-            </textarea>
-            <div *ngIf="submitted && landown.visitLandownerAddress.errors" class="invalid-feedback">
-                <div *ngIf="landown.visitLandownerAddress.errors.required">Landowner Address is required</div>
-            </div>
-        </div>
-<!--
-        <div class="form-group form-inline">
-            <label for="visitLandownerTown">Landowner Town</label>
-            <input type="text" formControlName="visitLandownerTown" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerTown.errors }" />
-            <div *ngIf="submitted && landown.visitLandownerTown.errors" class="invalid-feedback">
-                <div *ngIf="landown.visitLandownerTown.errors.required">Landowner Town is required</div>
-            </div>
-        </div>
-        <div class="form-group form-inline">
-            <label for="visitLandownerStateAbbrev">Landowner State Abbreviation</label>
-            <input type="text" formControlName="visitLandownerStateAbbrev" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerStateAbbrev.errors }" />
-            <div *ngIf="submitted && landown.visitLandownerStateAbbrev.errors" class="invalid-feedback">
-                <div *ngIf="landown.visitLandownerStateAbbrev.errors.required">Landowner StateAbbrev is required</div>
-            </div>
-        </div>
-        <div class="form-group form-inline">
-            <label for="visitLandownerZip5">Landowner Zip5</label>
-            <input type="text" formControlName="visitLandownerZip5" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerZip5.errors }" />
-            <div *ngIf="submitted && landown.visitLandownerZip5.errors" class="invalid-feedback">
-                <div *ngIf="landown.visitLandownerZip5.errors.required">Landowner Zip5 is required</div>
-            </div>
-        </div>
--->
-        <div class="form-group form-inline">
-            <label for="visitLandownerPhone">Landowner Phone</label>
-            <input type="text" formControlName="visitLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerPhone.errors }" />
-            <div *ngIf="submitted && landown.visitLandownerPhone.errors" class="invalid-feedback">
-              <!--
-              <div *ngIf="landown.visitLandownerPhone.errors.emailOrPhone">Landowner Phone or Email is required</div>
-              -->
-              <div *ngIf="landown.visitLandownerPhone.errors.phone">Please enter a valid phone number: (123) 456-7890.</div>
-            </div>
-        </div>
-        <div class="form-group form-inline">
-            <label for="visitLandownerEmail">Landowner Email</label>
-            <input type="text" formControlName="visitLandownerEmail" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerEmail.errors }" />
-            <div *ngIf="submitted && landown.visitLandownerEmail.errors" class="invalid-feedback">
-              <!--
-              <div *ngIf="landown.visitLandownerEmail.errors.emailOrPhone">Landowner Email or Phone is required</div>
-              -->
-              <div *ngIf="landown.visitLandownerEmail.errors.email">Please enter a valid email address.</div>
-            </div>
-        </div>
-      </form> <!-- visitLandOwnForm, if permission -->
     </div> <!-- col -->
     <div class="col-6">
     <div *ngIf="mapShowing">
       <div *ngIf="!poolsLoading">
-        <app-map-comp
+        <app-map-comp style="height:450px;"
           [mapPoints]="mapPoints"
           [mapValues]="pools"
           [mapMarker]="mapMarker"
@@ -418,8 +351,90 @@
   </div> <!-- row -->
 </form> <!-- visitLocationForm -->
 
+<form *ngIf="visitPage.index===1" [formGroup]="visitLocationForm">
+
+        <div>
+          <label><u>2c) Landowner Contact Information</u></label>
+        </div>
+        <!-- visitUserIsLandowner -->
+        <div class="form-group form-inline">
+            <label for="visitUserIsLandowner">Are you the landowner?</label>&nbsp;
+            <input type="checkbox" formControlName="visitUserIsLandowner" />&nbsp;
+            <label>Yes</label>
+        </div>
+
+        <!-- visitLandownerPermission -->
+        <div class="form-group form-inline">
+            <label for="visitLandownerPermission">Do you have Landowner Permission to map this pool?</label>&nbsp;
+            <input type="checkbox" formControlName="visitLandownerPermission" />&nbsp;
+            <label>Yes</label>
+        </div>
+
+          <!-- visitLandownerData if they have permission -->
+          <form *ngIf="permission" [formGroup]="visitLandOwnForm">
+          <div class="form-group form-inline">
+              <label for="visitLandownerName">Landowner Name</label>
+              <input type="text" formControlName="visitLandownerName" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerName.errors }" />
+              <div *ngIf="submitted && landown.visitLandownerName.errors" class="invalid-feedback">
+                  <div *ngIf="landown.visitLandownerName.errors.required">Landowner Name is required</div>
+              </div>
+          </div>
+          <div class="form-group form-inline">
+              <label for="visitLandownerAddress">Landowner Address</label>
+              <textarea rows="1" formControlName="visitLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerAddress.errors }">
+              </textarea>
+              <div *ngIf="submitted && landown.visitLandownerAddress.errors" class="invalid-feedback">
+                  <div *ngIf="landown.visitLandownerAddress.errors.required">Landowner Address is required</div>
+              </div>
+          </div>
+  <!--
+          <div class="form-group form-inline">
+              <label for="visitLandownerTown">Landowner Town</label>
+              <input type="text" formControlName="visitLandownerTown" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerTown.errors }" />
+              <div *ngIf="submitted && landown.visitLandownerTown.errors" class="invalid-feedback">
+                  <div *ngIf="landown.visitLandownerTown.errors.required">Landowner Town is required</div>
+              </div>
+          </div>
+          <div class="form-group form-inline">
+              <label for="visitLandownerStateAbbrev">Landowner State Abbreviation</label>
+              <input type="text" formControlName="visitLandownerStateAbbrev" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerStateAbbrev.errors }" />
+              <div *ngIf="submitted && landown.visitLandownerStateAbbrev.errors" class="invalid-feedback">
+                  <div *ngIf="landown.visitLandownerStateAbbrev.errors.required">Landowner StateAbbrev is required</div>
+              </div>
+          </div>
+          <div class="form-group form-inline">
+              <label for="visitLandownerZip5">Landowner Zip5</label>
+              <input type="text" formControlName="visitLandownerZip5" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerZip5.errors }" />
+              <div *ngIf="submitted && landown.visitLandownerZip5.errors" class="invalid-feedback">
+                  <div *ngIf="landown.visitLandownerZip5.errors.required">Landowner Zip5 is required</div>
+              </div>
+          </div>
+  -->
+          <div class="form-group form-inline">
+              <label for="visitLandownerPhone">Landowner Phone</label>
+              <input type="text" formControlName="visitLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerPhone.errors }" />
+              <div *ngIf="submitted && landown.visitLandownerPhone.errors" class="invalid-feedback">
+                <!--
+                <div *ngIf="landown.visitLandownerPhone.errors.emailOrPhone">Landowner Phone or Email is required</div>
+                -->
+                <div *ngIf="landown.visitLandownerPhone.errors.phone">Please enter a valid phone number: (123) 456-7890.</div>
+              </div>
+          </div>
+          <div class="form-group form-inline">
+              <label for="visitLandownerEmail">Landowner Email</label>
+              <input type="text" formControlName="visitLandownerEmail" class="form-control" [ngClass]="{ 'is-invalid': submitted && landown.visitLandownerEmail.errors }" />
+              <div *ngIf="submitted && landown.visitLandownerEmail.errors" class="invalid-feedback">
+                <!--
+                <div *ngIf="landown.visitLandownerEmail.errors.emailOrPhone">Landowner Email or Phone is required</div>
+                -->
+                <div *ngIf="landown.visitLandownerEmail.errors.email">Please enter a valid email address.</div>
+              </div>
+          </div>
+        </form> <!-- visitLandOwnForm, if permission -->
+</form>
+
 <!-- 3. Vernal Pool Field-Verification Information - visitFieldVerificationForm -->
-<form *ngIf="visitPage.index===1" [formGroup]="visitFieldVerificationForm">
+<form *ngIf="visitPage.index===2" [formGroup]="visitFieldVerificationForm">
   <!--
     visitVernalPool - radio button
   -->
@@ -515,11 +530,13 @@
     <div>
       <label><u>3c) Surrounding Habitat (within 250 feet of pool)</u></label>
     </div>
+<div class="row">
+  <div class="col-6">
     <!--
       visitForestUpland - radio button: Deciduous, Coniferous, Mixed
     -->
     <div class="form-group form-inline">
-        <label for="visitForestUpland">Forested Upland:</label>
+        <label for="visitForestUpland"><u>Forested Upland:</u></label>
         <label>
           <input type="radio" value="Deciduous" formControlName="visitForestUpland" class="form-control radio-button-horiz" />
           <span>Deciduous</span>
@@ -533,11 +550,13 @@
           <span>Mixed</span>
         </label>
     </div>
+  </div> <!-- col -->
+  <div class="col-6">
     <!--
       visitForestUpland - radio button:
     -->
     <div class="form-group form-inline">
-        <label for="visitForestCondition">Forest Condition:</label>
+        <label for="visitForestCondition"><u>Forest Condition:</u></label>
         <label>
           <input type="radio" value="Undisturbed" formControlName="visitForestCondition" class="form-control radio-button-horiz" />
           <span>Undisturbed</span>
@@ -551,6 +570,8 @@
           <span>Major logging</span>
         </label>
     </div>
+  </div> <!-- col -->
+</div> <!-- row -->
     <!--
       visitHabitat{descriptors} - checkboxes
     -->
@@ -593,7 +614,7 @@
 </form> <!-- visitFieldVerificationForm -->
 
 <!-- 4. Pool Characteristics -- visitPoolCharacteristicsForm -->
-<form *ngIf="visitPage.index===2" [formGroup]="visitPoolCharacteristicsForm">
+<form *ngIf="visitPage.index===3" [formGroup]="visitPoolCharacteristicsForm">
   <div>
     <label><u>Hydrology</u></label>
   </div>
@@ -751,7 +772,7 @@
 
 </form> <!-- visitFieldVerificationForm -->
 
-<form *ngIf="visitPage.index===3" [formGroup]="visitIndicatorSpeciesForm">
+<form *ngIf="visitPage.index===4" [formGroup]="visitIndicatorSpeciesForm">
   <div>
     <label><u>5. Indicator Species | Provide a photograph of the pool & each indicator species (or egg masses) observed.</u></label>
   </div>
@@ -889,7 +910,7 @@
     <button [disabled]="dataLoading" *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">Save Pool</button>
     <button [disabled]="dataLoading || itemType==='Visit New Pool'" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
     <button [disabled]="dataLoading || itemType==='Visit New Pool'" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
-    <button [disabled]="dataLoading" *ngIf="visitPage.index===3" class="btn btn-primary" (click)="CreateVisit()">Save</button>
+    <button [disabled]="dataLoading" *ngIf="visitPage.index>0" class="btn btn-primary" (click)="CreateVisit()">Save</button>
     <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
     <button (click)="cancelVisit()" class="btn">Cancel</button>
     <button *ngIf="update && userIsAdmin" (click)="deleteVisit()" [disabled]="dataLoading" class="btn">Delete</button>

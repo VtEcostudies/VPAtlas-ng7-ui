@@ -1,3 +1,12 @@
 #map {
-  height: 100vh;
+  /*height: 90vh;*/
+  height: 650px;
+}
+
+.map-primary {
+  height: 80vh;
+}
+
+.map-topfields {
+  height: 550px;
 }

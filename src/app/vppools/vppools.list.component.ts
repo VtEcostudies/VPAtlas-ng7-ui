@@ -2,12 +2,12 @@
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, UserService, AuthenticationService, vpVisitService } from '@app/_services';
-import { vpVisit } from '@app/_models';
+import { AlertService, UserService, AuthenticationService, vpPoolsService } from '@app/_services';
+import { vpMapped, vpVisit } from '@app/_models';
 
 //@add_component_here
-@Component({templateUrl: 'vpvisit.list.component.html'})
-export class vpVisitListComponent implements OnInit {
+@Component({templateUrl: 'vppools.list.component.html'})
+export class vpListComponent implements OnInit {
     filterForm: FormGroup;
     loading = false;
     page = 1;
@@ -17,8 +17,8 @@ export class vpVisitListComponent implements OnInit {
     count: number = 1;
     filter = '';
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
-    visits: vpVisit[] = []; //data array from db having lat and lon values to plot on map
-    itemType = 'Visit';
+    pools: vpMapped[] = []; //data array from db having lat and lon values to plot on map
+    itemType = 'Pools-Visits'; //used by leaflet map to format popup content
     mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
@@ -26,13 +26,8 @@ export class vpVisitListComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
-        private vpVisitService: vpVisitService
-    ) {
-        // redirect to home if user not logged in - the API can't handle no-token access (yet)
-        if (!this.authenticationService.currentUserValue) {
-            //this.router.navigate(['/login']);
-        }
-    }
+        private vpPoolsService: vpPoolsService
+    ) {}
 
     // convenience getter for easy access to form fields
     get f() { return this.filterForm.controls; }
@@ -101,7 +96,7 @@ export class vpVisitListComponent implements OnInit {
         this.filter += `vptown."townName"|LIKE=%${this.f.visitTown.value}%`;
       }
 
-      console.log('vpvisit.list.getfilter()', this.filter);
+      console.log('vppools.list.getfilter()', this.filter);
     }
 
     firstPage() {
@@ -133,16 +128,15 @@ export class vpVisitListComponent implements OnInit {
     }
 
     private loadPage(page) {
-      //this.loadAllRec = false;
       this.loading = true;
       this.getFilter();
       if (this.page < 1) this.page = 1;
       if (this.page > this.last) this.page = this.last;
-      this.vpVisitService.getPage(this.page, this.filter)
+      this.vpPoolsService.getPage(this.page, this.filter)
           .pipe(first())
           .subscribe(
               data => {
-                this.visits = data.rows;
+                this.pools = data.rows;
                 this.count = data.rows[0] ? data.rows[0].count : data.rowCount;
                 this.setLast();
                 this.loading = false;
@@ -154,14 +148,13 @@ export class vpVisitListComponent implements OnInit {
     }
 
     private loadAll() {
-      //this.loadAllRec = true;
       this.loading = true;
       this.getFilter();
-      this.vpVisitService.getAll(this.filter)
+      this.vpPoolsService.getAll(this.filter)
           .pipe(first())
           .subscribe(
               data => {
-                this.visits = data.rows;
+                this.pools = data.rows;
                 this.count = data.rowCount;
                 this.setLast();
                 this.loading = false;
@@ -173,8 +166,14 @@ export class vpVisitListComponent implements OnInit {
 
     }
 
-    viewVisit (visitId) {
-      this.router.navigate([`/pools/visit/view/${visitId}`]);
+    //// TODO: distinguish btw viewing mapped pool and pool visit
+    viewPoolVisit(visitId) {
+      this.router.navigate([`/pools/view/${visitId}`]);
+    }
+
+    //// TODO: distinguish btw viewing mapped pool and pool visit
+    viewMappedPool(poolId) {
+      this.router.navigate([`/pools/mapped/view/${poolId}`]);
     }
 
     showMap() {

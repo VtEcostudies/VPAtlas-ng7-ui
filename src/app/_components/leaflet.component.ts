@@ -215,6 +215,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.mapMarker) {
       this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
     }
+
     //always add cmGroup - now we may want both point and moveable marker at the same time
     this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolShapes
     this.cmGroup.on("click", e => this.onCircleGroupClick(e));
@@ -250,30 +251,56 @@ export class LeafletComponent implements OnInit, OnChanges {
     console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
     console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     await this.clearPools();
-    //if (this.mapMarker && this.update) {
-    if (this.mapMarker) {
-      await this.plotPoolMarker(this.locMarker);
-    }
     if (this.mapPoints) {
       await this.plotPoolShapes(this.mapValues);
     }
+    if (this.mapMarker) {
+      this.marker.addTo(this.map);
+      await this.plotPoolMarker(this.locMarker);
+    }
+    if (this.mapMarker && !this.mapPoints) { //zoom to the mapMarker if it's the only feature
+      this.zoomMarker();
+    }
   }
 
-  zoomExtents() {
+  zoomMarker(event=null) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.mapMarker) {
+      this.map.setView(this.marker._latlng, 15);
+    }
+  }
+
+  zoomExtents(event=null) {
+
+    if (event) {
+      event.stopPropagation();
+    }
+
     if (this.map) {
-      if (this.cmLLArr.length > 1) { //can't zoom to a single point - causes an error
-        this.map.fitBounds(this.cmLLArr);
-      } else if (this.cmLLArr.length == 1 ) {
-        this.map.setView(this.cmLLArr[0], 12);
+      /*
+        If there is an array of points, zoom to them.
+        If there is just a marker, zoom to that.
+        NOTE: We do NOT add the moveable marker to cmLLArr[].
+      */
+      if (this.cmLLArr.length > 0) {
+        this.map.fitBounds(this.cmGroup.getBounds());
+      } else if (this.mapMarker) {
+        this.map.setView(this.marker._latlng, 15);
       } else {
-        //no points in array?
+        this.zoomVermont();
       }
     }
   }
 
-  zoomVermont() {
+  zoomVermont(event=null) {
+    if (event) {
+      event.stopPropagation();
+    }
+
     if (this.map) {
-      this.map.setView(this.vtCenter, 8 );
+      this.map.setView(this.vtCenter, 8);
     }
   }
 
@@ -419,7 +446,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (Array.isArray(vpool)) {vpool = vpool[0];}
 
-    console.log('leaflet.edit.plotPoolMarker(',vpool.poolId,')');
+    console.log('leaflet.component.plotPoolMarker(', vpool.poolId, ')');
 
     //convert null, undefined, NaN, empty, etc to 0
     vpool.latitude = vpool.latitude || 0;
@@ -427,13 +454,15 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
     if (!vpool.latitude || !vpool.longitude) {
-      console.log(`leaflet.edit.plotPoolMarker(${vpool.poolId}) NO Lat/Lng for pool.`);
+      console.log(`leaflet.component.plotPoolMarker(${vpool.poolId}) NO Lat/Lng for pool.`);
       return;
     }
 
+    console.log('leaflet.component.plotPoolMarker | Location:', vpool.latitude, vpool.longitude,')');
+
     llLoc = L.latLng(vpool.latitude, vpool.longitude);
 
-    this.cmLLArr.push(llLoc);
+    //this.cmLLArr.push(llLoc); //don't add markers to LatLon array. it mucks zoom, etc.
 
     this.marker.setLatLng(llLoc);
 
