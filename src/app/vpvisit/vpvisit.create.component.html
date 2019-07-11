@@ -1,12 +1,16 @@
 <div class="row">
 
   <div class="col-4">
-    <div *ngIf="!update" style="display:inline-block;">
-      <h3><u>New Vernal Pool Visit</u></h3>
+    <div *ngIf="!update && itemType==='Visit'" style="display:inline-block;">
+      <h3><u>Add Vernal Pool Visit</u></h3>
     </div>
 
-    <div *ngIf="update" style="display:inline-block;">
+    <div *ngIf="update && itemType==='Visit'" style="display:inline-block;">
       <h3><u>Edit Vernal Pool Visit '{{visitId}}'</u></h3>
+    </div>
+
+    <div *ngIf="!update && itemType==='View Visit'" style="display:inline-block;">
+      <h3><u>View Vernal Pool Visit '{{visitId}}'</u></h3>
     </div>
   </div> <!-- col -->
 
@@ -787,7 +791,7 @@
       <th>Notes</th>
     </tr>
 
-    <tr class="form-group form-inline">
+    <tr class="form-group">
       <td>Wood Frog</td>
       <td><input type="text" formControlName="visitWoodFrogAdults" size="1" class="form-control" /></td>
       <td><input type="text" formControlName="visitWoodFrogLarvae" size="1" class="form-control" /></td>
@@ -800,12 +804,12 @@
       </td>
       <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitWoodFrogPhoto" size="15" class="form-control overlay-text" />
+        <input type="text" disabled="true" formControlName="visitWoodFrogPhoto" size="15" class="form-control overlay-input" />
       </td>
       <td><input type="text" formControlName="visitWoodFrogNotes" size="30" class="form-control" /></td>
     </tr>
 
-    <tr class="form-group form-inline">
+    <tr class="form-group">
       <td>Spotted Salamander</td>
       <td><input type="text" formControlName="visitSpsAdults" size="1" class="form-control" /></td>
       <td><input type="text" formControlName="visitSpsLarvae" size="1" class="form-control" /></td>
@@ -818,12 +822,12 @@
       </td>
       <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitSpsPhoto" size="15" class="form-control overlay-text" />
+        <input type="text" disabled="true" formControlName="visitSpsPhoto" size="15" class="form-control overlay-input" />
       </td>
       <td><input type="text" formControlName="visitSpsNotes" size="30" class="form-control" /></td>
     </tr>
 
-    <tr class="form-group form-inline">
+    <tr class="form-group">
       <td>Jefferson Salamander</td>
       <td><input type="text" formControlName="visitJesaAdults" size="1" class="form-control" /></td>
       <td><input type="text" formControlName="visitJesaLarvae" size="1" class="form-control" /></td>
@@ -836,12 +840,12 @@
       </td>
       <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitJesaPhoto" size="15" class="form-control overlay-text" />
+        <input type="text" disabled="true" formControlName="visitJesaPhoto" size="15" class="form-control overlay-input" />
       </td>
       <td><input type="text" formControlName="visitJesaNotes" size="30" class="form-control" /></td>
     </tr>
 
-    <tr class="form-group form-inline">
+    <tr class="form-group">
       <td>Blue-spotted Salamander</td>
       <td><input type="text" formControlName="visitBssaAdults" size="1" class="form-control" /></td>
       <td><input type="text" formControlName="visitBssaLarvae" size="1" class="form-control" /></td>
@@ -854,12 +858,12 @@
       </td>
       <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitBssaPhoto" size="15" class="form-control overlay-text" />
+        <input type="text" disabled="true" formControlName="visitBssaPhoto" size="15" class="form-control overlay-input" />
       </td>
       <td><input type="text" formControlName="visitBssaNotes" size="30" class="form-control" /></td>
     </tr>
 
-    <tr class="form-group form-inline">
+    <tr class="form-group">
       <td>Fairy Shrimp</td>
       <td><input type="text" formControlName="visitFairyShrimp" size="1" class="form-control" /></td>
       <td></td>
@@ -867,12 +871,12 @@
       <td></td>
       <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitFairyShrimpPhoto" size="15" class="form-control overlay-text" />
+        <input type="text" disabled="true" formControlName="visitFairyShrimpPhoto" size="15" class="form-control overlay-input" />
       </td>
       <td><input type="text" formControlName="visitFairyShrimpNotes" size="30" class="form-control" /></td>
     </tr>
 
-    <tr class="form-group form-inline">
+    <tr class="form-group">
       <td>Fingernail Clams</td>
       <td><input type="text" formControlName="visitFingerNailClams" size="1" class="form-control" /></td>
       <td></td>
@@ -880,12 +884,12 @@
       <td></td>
       <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitFingerNailClamsPhoto" size="15" class="form-control overlay-text" />
+        <input type="text" disabled="true" formControlName="visitFingerNailClamsPhoto" size="15" class="form-control overlay-input" />
       </td>
       <td><input type="text" formControlName="visitFingerNailClamsNotes" size="30" class="form-control" /></td>
     </tr>
 
-    <tr class="form-group form-inline">
+    <tr class="form-group">
       <td>
         Other:<input type="text" formControlName="visitSpeciesOtherName" size="10" class="form-control" />
       </td>
@@ -895,7 +899,7 @@
       <td></td>
       <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitSpeciesOtherPhoto" size="15" class="form-control overlay-text" />
+        <input type="text" disabled="true" formControlName="visitSpeciesOtherPhoto" size="15" class="form-control overlay-input" />
       </td>
       <td><input type="text" formControlName="visitSpeciesOtherNotes" size="30" class="form-control" /></td>
     </tr>
@@ -910,7 +914,7 @@
     <button [disabled]="dataLoading" *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">Save Pool</button>
     <button [disabled]="dataLoading || itemType==='Visit New Pool'" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
     <button [disabled]="dataLoading || itemType==='Visit New Pool'" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
-    <button [disabled]="dataLoading" *ngIf="visitPage.index>0" class="btn btn-primary" (click)="CreateVisit()">Save</button>
+    <button [disabled]="dataLoading" *ngIf="visitPage.index>0 && itemType!='View Visit'" class="btn btn-primary" (click)="CreateVisit()">Save</button>
     <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
     <button (click)="cancelVisit()" class="btn">Cancel</button>
     <button *ngIf="update && userIsAdmin" (click)="deleteVisit()" [disabled]="dataLoading" class="btn">Delete</button>

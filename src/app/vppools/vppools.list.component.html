@@ -1,30 +1,69 @@
 
 <div class="row">
-  <div class="col-2">
-    <h3><u>Search Visits</u></h3>
-    <form [formGroup]="filterForm" class="">
-        <div class="form-group row">
-          <label for="visitId">Visit ID</label>
-          <!--
-          There's a performance issue here with search filters:
-          - use keyup if the result set is small (<100)
-          - use keyup.enter and keyup.tab otherwise
-          - to be safe, do the latter
-          -->
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
-        </div>
-        <div class="form-group row">
-          <label for="visitPoolId">Pool ID</label>
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
-        </div>
-        <div class="form-group row">
-          <label for="visitUserName">User</label>
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
-        </div>
-        <div class="form-group row">
-          <label for="visitTown">Town</label>
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitTown" class="form-control"/>
-        </div>
+
+  <div class="col-2 content-left-border-right">
+    <h4><u>Vernal Pool Atlas</u></h4>
+    <table class="table table-sm">
+      <th style="width: 50%;"></th>
+      <th style="width: 50%;"></th>
+      <tr>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('')" class="btn btn-link">All Pools</button></td>
+          <td class="vert-aligned">{{stats.total}}</td>
+      </tr>
+      <tr>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Potential')" class="btn btn-link">Potential Pools</button></td>
+          <td class="vert-aligned">{{stats.potential}}</td>
+      </tr>
+      <tr>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Probable')" class="btn btn-link">Probable Pools</button></td>
+          <td class="vert-aligned">{{stats.probable}}</td>
+      </tr>
+      <tr>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Confirmed')" class="btn btn-link">Confirmed Pools</button></td>
+          <td class="vert-aligned">{{stats.confirmed}}</td>
+      </tr>
+      <tr>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Monitored')" class="btn btn-link">Monitored Pools</button></td>
+          <td class="vert-aligned">{{stats.monitored}}</td>
+      </tr>
+    </table>
+
+    <h4><u>Search Pools/Visits</u></h4>
+    <!--
+    There's a performance issue here with search filters:
+    - use keyup if the result set is small (<100)
+    - use keyup.enter and keyup.tab otherwise
+    - to be safe, do the latter
+    -->
+    <form [formGroup]="filterForm">
+      <table class="table table-sm"> <!-- odd discovery: table without <tr>, <td> does nice things -->
+        <th style="width: 50%;"></th>
+        <th style="width: 50%;"></th>
+        <tr class="form-group">
+          <td for="visitId">Visit ID</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td for="visitPoolId">Pool ID</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td for="visitUserName">User</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td for="visitTown">Town</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitTown" class="form-control"/>
+          </td>
+        </tr>
+      </table>
     </form>
   </div> <!-- col-2 -->
 
@@ -49,7 +88,8 @@
       </div>
 
       <div *ngIf="!mapView">
-        <table class="table table-striped table-sm table-responsive">
+        <table class="table table-sm table-responsive">
+          <thead>
             <tr>
                 <th>Pool</th>
                 <th>Mapped By</th>
@@ -64,27 +104,32 @@
                 <th>Vernal Pool?</th>
                 <th>Visit Lat</th>
                 <th>Visit Lng</th>
-            </tr>
+              </tr>
+          </thead>
+          <div style="width: 100%; height: 550px; overflow: scroll;">
+          <tbody>
             <tr *ngFor="let pool of pools">
-                <td><a [routerLink]="['/pools/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
-                <td>{{pool.mappedByUser}}</td>
-                <td>{{pool.mappedTown.townName}}</td>
-                <td>{{pool.mappedPoolStatus}}</td>
-                <td>{{pool.mappedLatitude}}</td>
-                <td>{{pool.mappedLongitude}}</td>
+                <td class="vert-aligned"><a [routerLink]="['/pools/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <td class="vert-aligned">{{pool.mappedByUser}}</td>
+                <td class="vert-aligned">{{pool.mappedTown.townName}}</td>
+                <td class="vert-aligned">{{pool.mappedPoolStatus}}</td>
+                <td class="vert-aligned">{{pool.mappedLatitude}}</td>
+                <td class="vert-aligned">{{pool.mappedLongitude}}</td>
 
                 <span *ngIf="pool.visitId">
-                  <td><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
+                  <td class="vert-aligned"><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
                 </span>
                 <span *ngIf="!pool.visitId">
-                  <td>{{pool.visitId}}</td>
+                  <td class="vert-aligned">{{pool.visitId}}</td>
                 </span>
-                <td>{{pool.visitUserName}}</td>
-                <td>{{pool.visitDate}}</td>
-                <td>{{pool.visitVernalPool}}</td>
-                <td>{{pool.visitLatitude}}</td>
-                <td>{{pool.visitLongitude}}</td>
+                <td class="vert-aligned">{{pool.visitUserName}}</td>
+                <td class="vert-aligned">{{pool.visitDate}}</td>
+                <td class="vert-aligned">{{pool.visitVernalPool}}</td>
+                <td class="vert-aligned">{{pool.visitLatitude}}</td>
+                <td class="vert-aligned">{{pool.visitLongitude}}</td>
             </tr>
+          </tbody>
+        </div>
         </table>
       </div>
 

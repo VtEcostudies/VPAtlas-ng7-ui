@@ -104,6 +104,18 @@ handle buttons on top of text inputs
   float: left;
 }
 .overlay-wrapper {
-    display: flex;
+    display: inline-flex;
     width: 75%;
+}
+
+/*
+  align table elements vertically. use <td class="vert-aligned"> for
+  each <td> in a table.
+*/
+.table tbody > tr > td.vert-aligned {
+    vertical-align: middle;
+}
+
+.content-left-border-right {
+  border-right: 1px dashed #333;
 }

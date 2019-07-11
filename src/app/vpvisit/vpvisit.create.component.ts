@@ -690,11 +690,9 @@ export class vpVisitCreateComponent implements OnInit {
     }
 
     nextPage(direction) {
-      //this.visitPage.index = (this.visitPage.index > 3) ? this.visitPage.index++ : 0;
       this.visitPage.index += direction;
       if (this.visitPage.index < 0) this.visitPage.index = 0;
-      if (this.visitPage.index > 4) this.visitPage.index = 4;
-      //console.log('vpvisit.create.nextPage() | visitPage:', this.visitPage);
+      if (this.visitPage.index > this.visitPage.values.length-1) this.visitPage.index = this.visitPage.values.length-1;
     }
 
     setPage(page) {

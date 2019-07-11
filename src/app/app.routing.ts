@@ -23,7 +23,8 @@ import { vpViewComponent } from './vppools';
 
 //@add_component_here
 const appRoutes: Routes = [
-    { path: '', component: HomeComponent },
+    //{ path: '', component: HomeComponent },
+    { path: '', component: vpViewComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
@@ -34,7 +35,8 @@ const appRoutes: Routes = [
     { path: 'pools/mapped/update/:mappedPoolId', component: vpMapCreateComponent, canActivate: [AuthGuard] },
 
     { path: 'pools/visit/list', component: vpVisitListComponent },
-    { path: 'pools/visit/view/:visitId', component: vpVisitViewComponent },
+    //{ path: 'pools/visit/view/:visitId', component: vpVisitViewComponent },
+    { path: 'pools/visit/view/:visitId', component: vpViewComponent }, //with new mapped/visit UX, push all views to generic page
     { path: 'pools/visit/create', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/visit/create/:poolId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/visit/update/:visitId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },

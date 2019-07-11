@@ -36,7 +36,7 @@ export class vpViewComponent implements OnInit {
     visit: vpVisit = new vpVisit(); //not passed to map, used by the forms
     mapPoints = false; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
-    itemType = 'Visit'; //passed to map via [itemType]="itemType"
+    itemType = 'View Visit'; //passed to map via [itemType]="itemType"
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
@@ -68,8 +68,9 @@ export class vpViewComponent implements OnInit {
       this.poolId = this.route.snapshot.params.poolId;
       console.log('vppools.view.ngOnInit route.snapshot params: visitId:', this.visitId, 'poolId:', this.poolId);
 
-      this.update = false;
-      this.mapMarker = false;
+      this.update = false; //view only
+      this.mapMarker = false; //mapMarker is for updating pool Location
+      this.mapPoints = true; //here we map a single point, mapped or visit
       await this.createFormControls();
 
       if (this.visitId) { //update an existing visit - set all initial values in setFormValues()
@@ -376,58 +377,53 @@ export class vpViewComponent implements OnInit {
     get indSpc() { return this.visitIndicatorSpeciesForm.controls; }
 
     /*
-      When updating an existing Visit, load that visit and populate the fields
+      For View Visit, load pool and visit data in one go
     */
     async loadPoolVisit(visitId) {
       this.dataLoading = true;
+      this.poolsLoading = true;
       console.log('vppools.view.component.loadPage:', visitId);
       this.vpVisitService.getById(visitId)
           .pipe(first())
           .subscribe(
               data => {
                 console.log('vppools.view.component.loadPage result:', data);
-                this.visit = data.rows[0];
-                this.locMarker = {latitude: this.visit.latitude, longitude: this.visit.longitude};
+                this.pools = data.rows[0]; //sets map data
+                this.visit = data.rows[0]; //sets form data
                 this.setFormValues();
                 this.dataLoading = false;
+                this.poolsLoading = false;
               },
               error => {
                   this.alertService.error(error);
                   this.dataLoading = false;
+                  this.poolsLoading = false;
               });
     }
 
+    /*
+      For View Mapped Pool, load pool data, and (somehow, TBD), apply that to visit data form values...
+    */
     async LoadMappedPool(poolId) {
       this.dataLoading = true;
+      this.poolsLoading = true;
       this.vpMappedService.getById(poolId)
           .pipe(first())
           .subscribe(
               data => {
-                  console.log(`vpvisit.LoadMappedPool=>data:`, data);
-                  this.locMarker = data.rows[0];
+                  console.log(`vppools.LoadMappedPool=>data:`, data);
+                  this.pools = data.rows[0]; //sets map data
+                  this.visit = data.rows[0]; // TODO: not sure what this means for a mapped-only pool...
                   this.dataLoading = false;
+                  this.poolsLoading = false;
               },
               error => {
-                  console.log(`vpvisit.LoadMappedPool=>error: ${error}`);
+                  console.log(`vppools.LoadMappedPool=>error: ${error}`);
                   this.alertService.error(error);
                   this.dataLoading = false;
+                  this.poolsLoading = false;
               });
     }
-
-  private loadMappedPools() {
-    this.poolsLoading = true;
-    this.vpMappedService.getAll('')
-        .pipe(first())
-        .subscribe(
-            data => {
-              this.pools = data.rows;
-              this.poolsLoading = false;
-            },
-            error => {
-              this.alertService.error(error);
-              this.poolsLoading = false;
-            });
-  }
 
   private loadTowns() {
     this.dataLoading = true;
@@ -451,6 +447,17 @@ export class vpViewComponent implements OnInit {
   compareTownFn(t1: vtTown, t2: vtTown) {
     //console.log('compareTownFn t1:', t1, ' t2:', t2);
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
+  }
+
+  nextPage(direction) {
+    this.visitPage.index += direction;
+    if (this.visitPage.index < 0) this.visitPage.index = 0;
+    if (this.visitPage.index > this.visitPage.values.length-1) this.visitPage.index = this.visitPage.values.length-1;
+  }
+
+  cancelVisit() {
+    var navUrl = `/pools/list`;
+    this.router.navigate([navUrl]);
   }
 
 }

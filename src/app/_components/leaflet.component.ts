@@ -57,6 +57,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   layerControl = null;
   zoomControl = L.control.zoom();
   scaleControl = L.control.scale();
+  cursorLat = null; //value for map display of cursor latitue location on map
+  cursorLng = null; //value for map display of cursor longitude location on map
 /*
   customControl =  L.Control.Layers.extend({
 
@@ -109,18 +111,18 @@ export class LeafletComponent implements OnInit, OnChanges {
 */
 
   //printControl = LP.control.browserPrint();
-  myRenderer = L.canvas({ padding: 0.5 });
+  myRenderer = L.canvas({ padding: 0.5 }); //we cannot use canvas renderer with the shapeMarker plugin. hope we don't need it.
   //https://www.w3schools.com/colors/colors_names.asp
   potentialColors = ["Orange"];
   probableColors = ["Cyan"];
   confirmedColors = ["Navy"];
   eliminatedColors = ["LightSteelBlue"];
+  cmLLArr = []; //array of shapeMarkers (originally native circleMarkers) 1:1 with mapPoints values
+  cmGroup = L.featureGroup(); //enhanced layerGroup that contains all plotted shapeMarkers
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
-  cmClrCnt = 2; //(this.cmColors).length();
-  cmRadius = 1;
-  cmGroup = L.featureGroup();
-  cmLLArr = [];
+  cmClrCnt = this.cmColors.length; //(this.cmColors).length();
+  cmRadius = 4 ;
   zoom = 0;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
@@ -164,7 +166,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     } as any);
 
     baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-    baseLayers = [this.openTopo, this.esriTopo, this.googleSat, this.streets, this.light];
+    baseLayers = [this.esriTopo, this.openTopo, this.googleSat, this.streets, this.light]; //make esriTopo default b/c openTopo often loads slowly
 
 
   constructor(
@@ -234,6 +236,8 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.map.on("click", e => this.onMapClick(e));
 
+    this.map.on("mousemove", e => this.onMouseMove(e));
+
     this.marker.on("moveend", e => this.onMarkerMoveEnd(e));
 
     //this.map.addControl(new this.customControl());
@@ -261,6 +265,9 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.mapMarker && !this.mapPoints) { //zoom to the mapMarker if it's the only feature
       this.zoomMarker();
     }
+    if (this.mapPoints && this.cmLLArr.length===1) { //zoom to a mapped point if it's the only feature
+      this.zoomExtents();
+    }
   }
 
   zoomMarker(event=null) {
@@ -280,14 +287,17 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (this.map) {
       /*
-        If there is an array of points, zoom to them.
-        If there is just a marker, zoom to that.
+        If there is an array of points, zoom to their bounds (if point are closely grouped, this could be zoomed too far).
+        If there is a single point, center map on point and zoom to level 15 (300m)
+        If there is just a marker, center map on marker and zoom to level 15 (300m)
         NOTE: We do NOT add the moveable marker to cmLLArr[].
       */
-      if (this.cmLLArr.length > 0) {
-        this.map.fitBounds(this.cmGroup.getBounds());
+      if (this.cmLLArr.length > 1) { //change from > 0 to > 1 so we can custom-zoom to a single point
+        this.map.fitBounds(this.cmGroup.getBounds()); //for a single marker, max zoom is 10m - too close for basemaps
+      } else if (this.cmLLArr.length == 1) {
+        this.map.setView(this.cmLLArr[0], 15); //zoomLevel 15 is 300m
       } else if (this.mapMarker) {
-        this.map.setView(this.marker._latlng, 15);
+        this.map.setView(this.marker._latlng, 15); //zommLevl 15 is 300m
       } else {
         this.zoomVermont();
       }
@@ -319,9 +329,9 @@ export class LeafletComponent implements OnInit, OnChanges {
   onZoomEnd(e) {
     this.zoom = this.map.getZoom();
     //console.log('onZoomEnd', this.zoom);
-    this.cmRadius = this.zoom > 8 ? this.zoom - 8: 1;
+    this.cmRadius = this.zoom > 8 ? this.zoom - 4: 4;
     //console.log('cmCount', this.cmLLArr.length);
-    if (this.cmLLArr.length < 20) {this.cmRadius = 5;}
+    //if (this.cmLLArr.length < 20) {this.cmRadius = 5;}
     this.setCmRadius();
   }
 
@@ -355,6 +365,11 @@ export class LeafletComponent implements OnInit, OnChanges {
                              Lat: ${this.itemLoc.lat}<br>
                              Lng: ${this.itemLoc.lng}
                             `);
+  }
+
+  onMouseMove(e) {
+    this.cursorLat = e.latlng.lat;
+    this.cursorLng = e.latlng.lng;
   }
 
   /*
@@ -392,9 +407,15 @@ export class LeafletComponent implements OnInit, OnChanges {
     var obj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
     var text = '';
     var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
-    var urlParts = {item: null, view: null, edit: null};
 
+    //Create action links at the top of the popup display based upon the context - 'itemType'
     switch (this.itemType) {
+      case 'Visit New Pool':
+        //don't add links to the top - they just click on the point to get info about it
+        break;
+      case 'Visit Mapped Pool':
+        //don't add links to the top - they just click on the point to select it
+        break;
       case 'Visit':
         text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
         if (this.userIsAdmin) {
@@ -402,23 +423,35 @@ export class LeafletComponent implements OnInit, OnChanges {
           text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
         }
         break;
-      case 'Visit New Pool':
-        //don't add links to the top - they just click on the point to get info about it
-        break;
-      case 'Visit Mapped Pool':
-        //don't add links to the top - they just click on the point to select it
-        break;
-      default:
       case 'Mapped Pool':
-        urlParts = {item:obj.poolId, view:`pools/mapped/view/${obj.poolId}`, edit:`pools/mapped/update/${obj.poolId}`};
         text += `<div><a href="pools/mapped/view/${obj.poolId}">View Mapped Pool ${obj.poolId}</a></div>`;
         if (this.userIsAdmin) {
           text += `<div><a href="pools/mapped/update/${obj.poolId}">Edit Mapped Pool ${obj.poolId}</a></div>`;
           text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         }
         break;
+
+      default:
+      case 'Pools/Visits':
+        if (this.userIsAdmin) {
+          //text += `<div><a href="pools/mapped/update/${obj.poolId}">Edit Mapped Pool ${obj.poolId}</a></div>`;
+        }
+        if (obj.visitId) {
+          text += `<div><a href="pools/visit/view/${obj.visitId}">View Pool/Visit ${obj.visitId}</a></div>`;
+        } else {
+          text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
+        }
+        if (this.userIsAdmin) {
+          if (obj.visitId) {
+            text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Pool/Visit ${obj.visitId}</a></div>`;
+          }
+          text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
+        }
+        break;
     }
 
+    // Iterate over pool data object. Add non-null fields to popup text as html divs.
+    // TODO: make this a select list of meaningful fields...
     Object.keys(obj).forEach(function(key,index) {
       if (obj[key] && !exclude.includes(key)) { //add non-null values not in the exclusion list
         text += `<div>${key}: ${obj[key]}</div>`;
@@ -428,6 +461,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     return text;
   }
 
+  // TODO: remember what this was for. Use it or lose it!
   createVisitForPool(poolId) {
     console.log('createVisitForPool', poolId);
   }
@@ -508,6 +542,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       //set the cmRadius based upon mappedLocationUncertainty
       switch (vpools[i].mappedLocationUncertainty) {
         case null:
+        case '10':
         case '50':
           break;
         case '100':
@@ -520,7 +555,8 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       // set the circleMarker's color based upon mappedPoolStatus
       switch (vpools[i].mappedPoolStatus) {
-        case 'Eliminated':
+        case 'Duplicate': //duplicate pools should NOT be displayed
+        case 'Eliminated': //eliminate pools should NOT be displayed
           ptColor = this.eliminatedColors[0];
           break;
         case 'Confirmed':
@@ -535,32 +571,32 @@ export class LeafletComponent implements OnInit, OnChanges {
           break;
       }
 
-      /* set the circleMarker's shape based upon access/permission :
-        landowner permission:
+      /*
+        // TODO: set the circleMarker's shape based upon
+        - access/permission?
+        - mappedPoolStatus?
+        - Visit Data.
+        See https://github.com/rowanwins/Leaflet.SvgShapeMarkers
+        for options, shapes, etc.
       */
-/*
-      switch (vpools[i].) {
-        case 'Eliminated':
-          ptColor = this.eliminatedColors[0];
-          break;
-        case 'Confirmed':
-          ptColor = this.confirmedColors[0];
-          break;
-        case 'Probable':
-          ptColor = this.probableColors[0];
-          break;
-        case 'Potential':
-        default:
-          ptColor = this.potentialColors[0];
-          break;
+      if (vpools[i].visitId) {
+        ptShape = "triangle";
+      } else {
+        ptShape = "circle";
       }
-*/
+
+      /*
+        See https://leafletjs.com/reference-1.3.4.html#path-weight for Path options.
+      */
       //shape = L.circleMarker(llLoc, <any> {
       shape = L.shapeMarker(llLoc, <any> {
-          //renderer: this.myRenderer,
-          shape: "square",
+          //renderer: this.myRenderer, //works with circleMarker, doesn't work with shapeMarker
+          shape: ptShape,
           radius: ptRadius,
-          color: ptColor, //this.cmColors[this.cmColor],
+          fillColor: ptColor,
+          fillOpacity: 0.7,
+          color: "black",
+          weight: 1,
           index: i, //event.sourceTarget.options.index
           poolId: vpools[i].poolId, //event.sourceTarget.options.poolId
           status: vpools[i].mappedPoolStatus,
@@ -572,24 +608,20 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       this.cmLLArr.push(llLoc);
 
-      var urlParts = {item: null, view: null, edit: null};
-      switch (this.itemType) {
-        case 'Visit':
-          urlParts = {item:vpools[i].visitId , view:`pools/visit/view/${vpools[i].visitId}`, edit:`pools/visit/update/${vpools[i].visitId}`};
-          break;
-        default:
-        case 'Mapped Pool':
-          urlParts = {item:vpools[i].poolId, view:`pools/mapped/view/${vpools[i].poolId}`, edit:`pools/mapped/update/${vpools[i].poolId}`};
-          break;
+      var toolText = '';
+      if (vpools[i].visitId) {
+        toolText += `<div>Visit ${vpools[i].visitId}</div>`;
+
       }
+      toolText += `
+            <div>Pool ${vpools[i].poolId}</div>
+            <div>Status: ${vpools[i].mappedPoolStatus}</div>
+            <div>Lat: ${vpools[i].latitude}</div>
+            <div>Lon:${vpools[i].longitude}</div>`;
 
-      //NOTE shape.bindPopup was moved on onCircleGroupClick()
+      //NOTE shape.bindPopup was moved to onCircleGroupClick()
 
-      shape.bindTooltip(`
-                        <div>${this.itemType} ${urlParts.item}</div>
-                        <div>Status: ${vpools[i].mappedPoolStatus}</div>
-                        <div>Lat: ${vpools[i].latitude}</div>
-                        <div>Lon:${vpools[i].longitude}</div>`);
+      shape.bindTooltip(toolText);
 
     } // for loop over vpools[i]
   } // plotPoolShapes()

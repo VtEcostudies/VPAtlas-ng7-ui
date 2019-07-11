@@ -3,6 +3,16 @@
     <div class="col-2">
       <button (click)="zoomExtents($event)" class="topmost btn btn-link">Zoom to Pools</button>
     </div>
+    <!--
+    <div class="col-2">
+      <label class="topmost text-input-block">Lat</label>
+      <input class="topmost text-input-block" value="{{cursorLat}}" disabled=true size="6" />
+    </div>
+    <div class="col-2">
+      <label class="topmost text-input-block">Lon</label>
+      <input class="topmost text-input-block" value="{{cursorLng}}" disabled=true size="7" />
+    </div>
+    -->
   </div>
   <div class="row">
     <div class="col-2">
@@ -16,4 +26,22 @@
     </div>
   </div>
   -->
+  <div class="row">
+    <div class="col-2">
+      <table class="table table-sm topmost">
+        <tr>
+          <td>Lat</td>
+          <td>
+            <input value="{{cursorLat}}" disabled=true size="6" />
+          </td>
+        </tr>
+        <tr>
+          <td>Lon</td>
+          <td>
+            <input value="{{cursorLng}}" disabled=true size="6" />
+          </td>
+        <tr>
+      </table>
+    </div>
+  </div>
 </div>

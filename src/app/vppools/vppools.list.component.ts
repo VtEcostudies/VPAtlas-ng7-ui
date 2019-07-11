@@ -2,7 +2,7 @@
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, UserService, AuthenticationService, vpPoolsService } from '@app/_services';
+import { AlertService, UserService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
 import { vpMapped, vpVisit } from '@app/_models';
 
 //@add_component_here
@@ -10,6 +10,7 @@ import { vpMapped, vpVisit } from '@app/_models';
 export class vpListComponent implements OnInit {
     filterForm: FormGroup;
     loading = false;
+    stats = null;
     page = 1;
     pageSize = 10;
     loadAllRec = true; //flag to load by page or to load all at once
@@ -18,28 +19,31 @@ export class vpListComponent implements OnInit {
     filter = '';
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools: vpMapped[] = []; //data array from db having lat and lon values to plot on map
-    itemType = 'Pools-Visits'; //used by leaflet map to format popup content
-    mapView = false; //flag to toggle between table and map view - TODO: setting should persist across data loads
+    itemType = 'Pools/Visits'; //used by leaflet map to format popup content, etc.
+    mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
+        private vpMappedService: vpMappedService,
         private vpPoolsService: vpPoolsService
     ) {}
 
     // convenience getter for easy access to form fields
     get f() { return this.filterForm.controls; }
 
-    ngOnInit() {
+    async ngOnInit() {
       //these are the pool search filter fields
       this.filterForm = this.formBuilder.group({
           visitId: [''],
           visitPoolId: [''],
           visitUserName: [''],
           visitTown: [''],
+          mappedPoolStatus: ['']
       });
+      await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
       this.loadPools(1);
     }
@@ -54,7 +58,17 @@ export class vpListComponent implements OnInit {
         this.loadPools();
     }
 
+    setStatusLoadPools(status="") {
+      if (status=="Monitored") {
+        this.alertService.error("Monitored Pools are not implemented in VPAtlas yet.");
+        return;
+      }
+      this.filterForm.get("mappedPoolStatus").setValue(status);
+      this.loadPools();
+    }
+
     loadPools(page=0) {
+      this.alertService.clear();
       if (this.loadAllRec) {
         this.loadAll();
       } else {
@@ -96,6 +110,13 @@ export class vpListComponent implements OnInit {
         this.filter += `vptown."townName"|LIKE=%${this.f.visitTown.value}%`;
       }
 
+      if (this.f.mappedPoolStatus.value) {
+        if (this.filter) {
+          this.filter += '&';
+        }
+        this.filter += `mappedPoolStatus=${this.f.mappedPoolStatus.value}`;
+      }
+
       console.log('vppools.list.getfilter()', this.filter);
     }
 
@@ -127,7 +148,7 @@ export class vpListComponent implements OnInit {
       }
     }
 
-    private loadPage(page) {
+    async loadPage(page) {
       this.loading = true;
       this.getFilter();
       if (this.page < 1) this.page = 1;
@@ -147,7 +168,7 @@ export class vpListComponent implements OnInit {
               });
     }
 
-    private loadAll() {
+    async loadAll() {
       this.loading = true;
       this.getFilter();
       this.vpPoolsService.getAll(this.filter)
@@ -164,6 +185,21 @@ export class vpListComponent implements OnInit {
                 this.loading = false;
               });
 
+    }
+
+    async loadPoolStats() {
+      this.loading = true;
+      this.vpMappedService.getStats()
+          .pipe(first())
+          .subscribe(
+              data => {
+                this.stats = data.rows[0];
+                this.loading = false;
+              },
+              error => {
+                this.alertService.error(error);
+                this.loading = false;
+              });
     }
 
     //// TODO: distinguish btw viewing mapped pool and pool visit

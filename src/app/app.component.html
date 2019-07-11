@@ -2,16 +2,16 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark"> <!-- *ngIf="currentUser"> -->
     <div class="navbar-nav">
         <a class="nav-item nav-link" routerLink="/">Home</a>
-        <a class="nav-item nav-link" routerLink="/pools/mapped/list" >Mapped Pools</a>
+        <a class="nav-item nav-link" routerLink="/pools/mapped/list" >(Mapped Pools)</a>
         <!--
         <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="currentUser" >Add Pool</a>
         -->
-        <a class="nav-item nav-link" routerLink="/pools/visit/list" >Pool Visits</a>
+        <a class="nav-item nav-link" routerLink="/pools/visit/list" >(Pool Visits)</a>
         <!--
         <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Visit</a>
         -->
-        <a class="nav-item nav-link" routerLink="/pools/list" >Search Pools/Visits</a>
-        <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Pool/Visit</a>
+        <a class="nav-item nav-link" routerLink="/pools/list" >Search Pool Data</a>
+        <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Pool Data</a>
         <!--
         <a class="nav-item nav-link" routerLink="/pools/mapped/import" >Import Pools</a>
         -->
@@ -39,8 +39,8 @@
 <!-- credits -->
 <div class="footer text-center">
     <p>
-        VPAtlas is a joint effort of
-        <a href="http://vtecostudies.org" target="_top">The Vermont Center for Ecostudies</a>
+        VPAtlas is a joint effort of the
+        <a href="http://vtecostudies.org" target="_top">Vermont Center for Ecostudies</a>
         and
         <a href="https://vtfishandwildlife.com/" target="_top">Vermont Fish and Wildlife</a>
     </p>
