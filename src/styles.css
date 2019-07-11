@@ -116,6 +116,15 @@ handle buttons on top of text inputs
     vertical-align: middle;
 }
 
+.table tbody > tr > td.body-scroll-align-columns th.body-scroll-align-columns {
+    horizontal-align: left;
+    /* width: 10px !important;*/ /* doesn't override default */
+}
+
+.btn-link .btn a {
+  padding: 0px;
+}
+
 .content-left-border-right {
   border-right: 1px dashed #333;
 }

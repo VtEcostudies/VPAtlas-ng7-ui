@@ -467,6 +467,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   async clearPools() {
+    console.log('clearPools');
     this.cmGroup.clearLayers();
     this.cmLLArr = [];
   }

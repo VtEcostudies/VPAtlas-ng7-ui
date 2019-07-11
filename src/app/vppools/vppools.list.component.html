@@ -48,19 +48,25 @@
         <tr class="form-group">
           <td for="visitPoolId">Pool ID</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="poolId" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
           <td for="visitUserName">User</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="userName" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
-          <td for="visitTown">Town</td>
+          <td>Town</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitTown" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="town" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td>Method</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedMethod" class="form-control"/>
           </td>
         </tr>
       </table>
@@ -87,46 +93,51 @@
         <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
       </div>
 
-      <div *ngIf="!mapView">
-        <table class="table table-sm table-responsive">
+      <div *ngIf="!mapView" class="container-fluid">
+        <table class="table table-sm table-responsive" style="width:105%">
+          <div style="height:550px; overflow:auto;">
           <thead>
             <tr>
-                <th>Pool</th>
-                <th>Mapped By</th>
-                <th>Mapped Town</th>
-                <th>Status</th>
-                <th>Mapped Lat</th>
-                <th>Mapped Lng</th>
+                <th class="body-scroll-align-columns">Pool</th>
+                <th class="body-scroll-align-columns">Mapped By</th>
+                <th class="body-scroll-align-columns">Mapped Town</th>
+                <th class="body-scroll-align-columns">Method</th>
+                <th class="body-scroll-align-columns">Status</th>
+                <th class="body-scroll-align-columns">Mapped Lat</th>
+                <th class="body-scroll-align-columns">Mapped Lng</th>
 
-                <th>Visit</th>
-                <th>Visit User</th>
-                <th>Visit Date</th>
-                <th>Vernal Pool?</th>
-                <th>Visit Lat</th>
-                <th>Visit Lng</th>
+                <th class="body-scroll-align-columns">Visit</th>
+                <th class="body-scroll-align-columns">Visit User</th>
+                <th class="body-scroll-align-columns">Visit Date</th>
+                <th class="body-scroll-align-columns">Vernal Pool?</th>
+                <th class="body-scroll-align-columns">Visit Lat</th>
+                <th class="body-scroll-align-columns">Visit Lng</th>
               </tr>
           </thead>
+          <!--
           <div style="width: 100%; height: 550px; overflow: scroll;">
+          -->
           <tbody>
             <tr *ngFor="let pool of pools">
-                <td class="vert-aligned"><a [routerLink]="['/pools/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
-                <td class="vert-aligned">{{pool.mappedByUser}}</td>
-                <td class="vert-aligned">{{pool.mappedTown.townName}}</td>
-                <td class="vert-aligned">{{pool.mappedPoolStatus}}</td>
-                <td class="vert-aligned">{{pool.mappedLatitude}}</td>
-                <td class="vert-aligned">{{pool.mappedLongitude}}</td>
+                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedTown.townName}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedPoolStatus}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedLatitude}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedLongitude}}</td>
 
                 <span *ngIf="pool.visitId">
-                  <td class="vert-aligned"><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
+                  <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
                 </span>
                 <span *ngIf="!pool.visitId">
-                  <td class="vert-aligned">{{pool.visitId}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitId}}</td>
                 </span>
-                <td class="vert-aligned">{{pool.visitUserName}}</td>
-                <td class="vert-aligned">{{pool.visitDate}}</td>
-                <td class="vert-aligned">{{pool.visitVernalPool}}</td>
-                <td class="vert-aligned">{{pool.visitLatitude}}</td>
-                <td class="vert-aligned">{{pool.visitLongitude}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitLatitude}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitLongitude}}</td>
             </tr>
           </tbody>
         </div>
