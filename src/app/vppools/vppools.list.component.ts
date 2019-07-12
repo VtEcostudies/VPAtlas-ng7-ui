@@ -10,7 +10,7 @@ import { vpMapped, vpVisit } from '@app/_models';
 export class vpListComponent implements OnInit {
     filterForm: FormGroup;
     loading = false;
-    stats = null;
+    stats = [{count:0, Potential:0, Probable:0, Confirmed:0, Eliminated:0, Duplicate:0, Monitored:0}]; //need a default to prevent pre-load errors?
     page = 1;
     pageSize = 10;
     loadAllRec = true; //flag to load by page or to load all at once
@@ -46,7 +46,7 @@ export class vpListComponent implements OnInit {
       });
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
-      this.loadPools(1);
+      await this.loadPools(1);
     }
 
     //how to handle UI changes from checkbox input when NOT a formControl in a formGroup:
@@ -57,6 +57,11 @@ export class vpListComponent implements OnInit {
         console.log('checkBoxValueChanged: ', e.target.checked);
         this.loadAllRec = e.target.checked;
         this.loadPools();
+    }
+
+    checkBoxSetValue(value=true) {
+      this.loadAllRec = value;
+      this.loadPools();
     }
 
     setStatusLoadPools(status="") {
@@ -134,6 +139,7 @@ export class vpListComponent implements OnInit {
           this.filter += '&';
         }
         this.filter += `mappedPoolStatus=${this.f.mappedPoolStatus.value}`;
+        //this.filter += `mappedPoolStatus|IN=${this.f.mappedPoolStatus.value}`;
       }
 
       console.log('vppools.list.getfilter()', this.filter);
@@ -231,11 +237,21 @@ export class vpListComponent implements OnInit {
       this.router.navigate([`/pools/mapped/view/${poolId}`]);
     }
 
-    showMap() {
+    async showMap() {
+      /*
+      if (this.loadAllRec == false) {
+        this.loadAllRec = true;
+        await this.loadPools();
+      }
+      */
       this.mapView = true;
     }
 
-    showTable() {
+    async showTable() {
+      if (this.loadAllRec == true) { //combined UX table view is very slow - don't allow 'Load All'
+        this.loadAllRec = false;
+        await this.loadPools();
+      }
       this.mapView = false;
     }
 }

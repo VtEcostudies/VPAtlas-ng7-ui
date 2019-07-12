@@ -66,6 +66,9 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   margin-right:5px;
   margin-left:5px;
 }
+.radio-button-justify-left {
+  margin-right:5px;
+}
 
 /*
   add padding to buttons
@@ -113,9 +116,10 @@ handle buttons on top of text inputs
   each <td> in a table.
 */
 .table tbody > tr > td.vert-aligned {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
+/* note: this didn't work... */
 .table tbody > tr > td.body-scroll-align-columns th.body-scroll-align-columns {
     horizontal-align: left;
     /* width: 10px !important;*/ /* doesn't override default */
@@ -127,4 +131,8 @@ handle buttons on top of text inputs
 
 .content-left-border-right {
   border-right: 1px dashed #333;
+}
+
+label.disabled {
+  color: #cccc;
 }

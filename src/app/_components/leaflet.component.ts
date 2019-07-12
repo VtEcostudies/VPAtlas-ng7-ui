@@ -234,7 +234,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
 
-    this.map.on("click", e => this.onMapClick(e));
+    //this.map.on("click", e => this.onMapClick(e)); //when used for plotting a point, this causes problems
 
     this.map.on("mousemove", e => this.onMouseMove(e));
 
@@ -342,7 +342,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     });
   }
 
-  onMapClick(e) {
+  onMapClick(e) { //this is no longer used for mapping a pool
     //console.log("leaflet.onMapClick | event: ", e);
     this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     this.marker.setLatLng(this.itemLoc);
@@ -352,8 +352,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     //console.log("leaflet.onMapClick | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
                              Lat: ${this.itemLoc.lat}<br>
-                             Lng: ${this.itemLoc.lng}
-                            `);
+                             Lng: ${this.itemLoc.lng}`);
   }
 
   onMarkerMoveEnd(e) {
@@ -363,8 +362,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     console.log("leaflet.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
                              Lat: ${this.itemLoc.lat}<br>
-                             Lng: ${this.itemLoc.lng}
-                            `);
+                             Lng: ${this.itemLoc.lng}`);
   }
 
   onMouseMove(e) {
@@ -437,13 +435,13 @@ export class LeafletComponent implements OnInit, OnChanges {
           //text += `<div><a href="pools/mapped/update/${obj.poolId}">Edit Mapped Pool ${obj.poolId}</a></div>`;
         }
         if (obj.visitId) {
-          text += `<div><a href="pools/visit/view/${obj.visitId}">View Pool/Visit ${obj.visitId}</a></div>`;
+          text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
         } else {
-          text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
+          //text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
         }
         if (this.userIsAdmin) {
           if (obj.visitId) {
-            text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Pool/Visit ${obj.visitId}</a></div>`;
+            text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
           }
           text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         }

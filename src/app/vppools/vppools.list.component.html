@@ -3,30 +3,90 @@
 
   <div class="col-2 content-left-border-right">
     <h4><u>Vernal Pool Atlas</u></h4>
+    <fieldset id="poolStatus"> <!-- for radio-button grouping -->
     <table class="table table-sm">
-      <th style="width: 50%;"></th>
-      <th style="width: 50%;"></th>
+      <th style="width: 70%;"></th>
+      <th style="width: 30%;"></th>
+
       <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('')" class="btn btn-link">All Pools</button></td>
+        <td>
+          <label>
+            <input checked name="poolStatus" type="radio" (click)="setStatusLoadPools('')" class="radio-button-justify-left" />
+            <span>All Pools</span>
+          </label>
+        </td>
+        <td>{{stats.total}}</td>
+      </tr>
+
+      <tr>
+        <td>
+          <label>
+            <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Potential')" class="radio-button-justify-left" />
+            <span>Potential</span>
+          </label>
+        </td>
+        <td>{{stats.potential}}</td>
+      </tr>
+
+      <tr>
+        <td>
+          <label>
+            <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Probable')" class="radio-button-justify-left" />
+            <span>Probable</span>
+          </label>
+        </td>
+        <td>{{stats.probable}}</td>
+      </tr>
+
+      <tr>
+        <td>
+          <label>
+            <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Confirmed')" class="radio-button-justify-left" />
+            <span>Confirmed</span>
+          </label>
+        </td>
+        <td>{{stats.confirmed}}</td>
+      </tr>
+
+      <tr>
+        <td>
+          <label class="disabled">
+            <input disabled name="poolStatus" type="radio" (click)="setStatusLoadPools('Monitored')" class="radio-button-justify-left" />
+            <span>Monitored</span>
+          </label>
+        </td>
+        <td>{{stats.monitored}}</td>
+      </tr>
+
+    </table>
+
+    </fieldset>
+<!--
+<table class="table table-sm form-group">
+  <th style="width: 50%;"></th>
+  <th style="width: 50%;"></th>
+      <tr>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('')">All Pools</button></td>
           <td class="vert-aligned">{{stats.total}}</td>
       </tr>
       <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Potential')" class="btn btn-link">Potential Pools</button></td>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Potential')">Potential Pools</button></td>
           <td class="vert-aligned">{{stats.potential}}</td>
       </tr>
       <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Probable')" class="btn btn-link">Probable Pools</button></td>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Probable')">Probable Pools</button></td>
           <td class="vert-aligned">{{stats.probable}}</td>
       </tr>
       <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Confirmed')" class="btn btn-link">Confirmed Pools</button></td>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Confirmed')">Confirmed Pools</button></td>
           <td class="vert-aligned">{{stats.confirmed}}</td>
       </tr>
       <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Monitored')" class="btn btn-link">Monitored Pools</button></td>
+          <td class="vert-aligned"><button (click)="setStatusLoadPools('Monitored')">Monitored Pools</button></td>
           <td class="vert-aligned">{{stats.monitored}}</td>
       </tr>
     </table>
+-->
 
     <h4><u>Search Pools/Visits</u></h4>
     <!--
@@ -66,7 +126,15 @@
         <tr class="form-group">
           <td>Method</td>
           <td>
+            <!--
             <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedMethod" class="form-control"/>
+            -->
+            <select (change)="loadPools(1)" formControlName="mappedMethod" class="form-control">
+              <option value="">All</option>
+              <option value="Aerial">Aerial</option>
+              <option value="Known">Known</option>
+              <option value="Visit">Visit</option>
+            </select>
           </td>
         </tr>
       </table>
@@ -76,21 +144,26 @@
   <div class="col-10">
     <div *ngIf="!loading">
       <div class="row">
-        <button (click)="loadAll()" class="btn btn-link">{{count}} Records</button>
+        <div> <!-- OMFG, all vertical alignment issues were due to different div levels!!! -->
+          <button (click)="checkBoxSetValue(true)" class="btn btn-link">{{count}} Records</button>
+          <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
+          <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
+        </div>
+        <label class="btn btn-link vert-align-mid" style="vertical-align:bottom;">
+          <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" class="radio-button-justify-left"/>
+          <span>Load All</span>
+        </label>
+        <!--
         <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" />
         <button (click)="loadAll()" class="btn btn-link">Load All</button>
-        <div *ngIf="!loadAllRec">
+        -->
+        <span *ngIf="!loadAllRec">
           <button (click)="firstPage()" class="btn btn-link">|< First</button>
           <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
           <button class="btn btn-link">Page {{page}}</button>
           <button (click)="nextPage()" class="btn btn-link">Next >></button>
           <button (click)="lastPage()" class="btn btn-link">Last >|</button>
-        </div>
-        <!--
-        <button (click)="loadAll()" class="btn btn-link">Load All</button>
-        -->
-        <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
-        <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
+        </span>
       </div>
 
       <div *ngIf="!mapView" class="container-fluid">
@@ -119,7 +192,10 @@
           -->
           <tbody>
             <tr *ngFor="let pool of pools">
-                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <!--
+                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                -->
+                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedTown.townName}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
@@ -131,7 +207,7 @@
                   <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
                 </span>
                 <span *ngIf="!pool.visitId">
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitId}}</td>
+                  <td class="vert-aligned body-scroll-align-columns"></td>
                 </span>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
