@@ -288,6 +288,7 @@ export class vpVisitCreateComponent implements OnInit {
       const locatePool = this.visit.visitLocatePool ? this.visit.visitLocatePool.toString() : false; //radio button bool=>string
       this.visitLocationForm.controls['visitLocatePool'].setValue(locatePool);
       this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
+      this.visitLocationForm.controls['visitLocationUncertainty'].setValue(this.visit.visitLocationUncertainty);
       this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
       this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
@@ -486,7 +487,7 @@ export class vpVisitCreateComponent implements OnInit {
       if (this.visitLocationForm.value.visitPoolMapped == 'true') {
         this.visitLocationForm.controls['visitPoolId'].setValue('');
         this.visitLocationForm.controls['visitPoolId'].enable();
-        this.itemType = "Visit Mapped Pool";
+        this.itemType = "Visit Mapped Pool"; //must use this itemType to signal map to send poolId via event
         this.mapMarker = false;
         this.mapPoints = true;
         this.loadMappedPools();
@@ -571,8 +572,8 @@ export class vpVisitCreateComponent implements OnInit {
                   //this.visitLocationForm.value.visitPoolId = this.poolId;
                   this.poolId = data.rows[0].mappedPoolId; //this is used when poolId form value is null due to being disabled
                   this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
-                  this.itemType = "Visit Mapped Pool"; //we now have a Mapped Pool and can proceed to Visit data
-                  //this.visitLocationForm.controls['visitPoolMapped'].setValue('true'); //don't set this to true - we keep this 1st visit's data as it was initially created
+                  this.itemType = "Visit Mapped Pool"; //we now have a Mapped Pool and can proceed to Visit data, must set itemType='Visit Mapped Pool' to signal map to send poolId via event
+                  this.visitLocationForm.get('visitPoolMapped').disable(); //must disable this selector after saving NEW* pool, or too confusing
               },
               error => {
                   console.log(`vpvisit.CreateMappedPool=>error: ${error}`);

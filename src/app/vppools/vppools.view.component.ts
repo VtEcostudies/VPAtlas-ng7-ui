@@ -69,11 +69,11 @@ export class vpViewComponent implements OnInit {
       console.log('vppools.view.ngOnInit route.snapshot params: visitId:', this.visitId, 'poolId:', this.poolId);
 
       this.update = false; //view only
-      this.mapMarker = false; //mapMarker is for updating pool Location
-      this.mapPoints = true; //here we map a single point, mapped or visit
+      this.mapMarker = false; //no mapMarker - it's for updating pool Location
+      this.mapPoints = true; //for viewing, we map a single point, mapped or visit
       await this.createFormControls();
 
-      if (this.visitId) { //update an existing visit - set all initial values in setFormValues()
+      if (this.visitId) { //view an existing visit - load all initial values and display
         await this.loadPoolVisit(this.visitId);
       } else if (this.poolId) {
         await this.LoadMappedPool(this.poolId);
@@ -227,12 +227,14 @@ export class vpViewComponent implements OnInit {
         visitPoolPhoto: [],
       });
 
+      //disable all at the formGroup level for viewing only
       this.visitObserverForm.disable();
       this.visitLocationForm.disable();
       this.visitLandOwnForm.disable();
       this.visitFieldVerificationForm.disable();
       this.visitPoolCharacteristicsForm.disable();
       this.visitIndicatorSpeciesForm.disable();
+
     } //end createFormControls()
 
     async setFormValues() {
@@ -246,6 +248,7 @@ export class vpViewComponent implements OnInit {
       const locatePool = this.visit.visitLocatePool ? this.visit.visitLocatePool.toString() : false; //radio button bool=>string
       this.visitLocationForm.controls['visitLocatePool'].setValue(locatePool);
       this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
+      this.visitLocationForm.controls['visitLocationUncertainty'].setValue(this.visit.visitLocationUncertainty);
       this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
       this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);

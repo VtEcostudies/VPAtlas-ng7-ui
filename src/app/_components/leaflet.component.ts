@@ -59,6 +59,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   scaleControl = L.control.scale();
   cursorLat = null; //value for map display of cursor latitue location on map
   cursorLng = null; //value for map display of cursor longitude location on map
+  zoomLevel = 0; //global value that tracks the map zoomLevel
 /*
   customControl =  L.Control.Layers.extend({
 
@@ -123,7 +124,6 @@ export class LeafletComponent implements OnInit, OnChanges {
   cmColor = 0; //current color index
   cmClrCnt = this.cmColors.length; //(this.cmColors).length();
   cmRadius = 4 ;
-  zoom = 0;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
       id: 'google.sat', //illegal property
@@ -224,6 +224,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
+    this.zoomLevel = this.map.getZoom();
 
     //this.printControl.position('topright');
     //this.printControl.addTo(this.map);
@@ -327,18 +328,21 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   //set plotted pool radius relative to zoom level
   onZoomEnd(e) {
-    this.zoom = this.map.getZoom();
+    this.zoomLevel = this.map.getZoom();
     //console.log('onZoomEnd', this.zoom);
-    this.cmRadius = this.zoom > 8 ? this.zoom - 4: 4;
+    //this.cmRadius = this.zoom > 8 ? this.zoom - 4: 4;
     //console.log('cmCount', this.cmLLArr.length);
     //if (this.cmLLArr.length < 20) {this.cmRadius = 5;}
-    this.setCmRadius();
+    this.setPointRadius();
   }
 
   //iterate through all marker in the group and alter each radius
-  setCmRadius(rad = this.cmRadius) {
+  setPointRadius(radius = this.cmRadius) {
+    var i=0;
     this.cmGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
-      cmLayer.setRadius(rad);
+      //if (++i < 10) {console.log('leaflet.component.setPointRadius', cmLayer)}
+      radius = this.GetRadiusForPool(cmLayer.options); //we hang pool properties on each plotted pool shape for use here
+      cmLayer.setRadius(radius);
     });
   }
 
@@ -470,6 +474,25 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.cmLLArr = [];
   }
 
+  private GetRadiusForPool(objPool:any) {
+    var radius = this.cmRadius;
+
+    //set the radius based upon mappedLocationUncertainty
+    switch (objPool.mappedLocationUncertainty) {
+      case null:
+      case '10':
+      case '50':
+        break;
+      case '100':
+        radius = 6;
+        break;
+      case '>100':
+        radius = 8;
+        break;
+    }
+    return radius;
+  }
+
   async plotPoolMarker(vpool) {
     var llLoc = null;
 
@@ -536,21 +559,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       llLoc = L.latLng(vpools[i].latitude, vpools[i].longitude);
 
-      ptRadius = this.cmRadius;
-
-      //set the cmRadius based upon mappedLocationUncertainty
-      switch (vpools[i].mappedLocationUncertainty) {
-        case null:
-        case '10':
-        case '50':
-          break;
-        case '100':
-          ptRadius = 2 * this.cmRadius;
-          break;
-        case '>100':
-          ptRadius = 4 * this.cmRadius;
-          break;
-      }
+      ptRadius = this.GetRadiusForPool(vpools[i]);
 
       // set the circleMarker's color based upon mappedPoolStatus
       switch (vpools[i].mappedPoolStatus) {
@@ -591,16 +600,16 @@ export class LeafletComponent implements OnInit, OnChanges {
       shape = L.shapeMarker(llLoc, <any> {
           //renderer: this.myRenderer, //works with circleMarker, doesn't work with shapeMarker
           shape: ptShape,
-          radius: ptRadius,
-          fillColor: ptColor,
-          fillOpacity: 0.7,
-          color: "black",
-          weight: 1,
+          radius: ptRadius, //applies to all shapes
+          fillColor: ptColor, //interior color
+          fillOpacity: 0.8, //values from 0 to 1
+          color: "black", //border color
+          weight: 1, //border thickness
           index: i, //event.sourceTarget.options.index
           poolId: vpools[i].poolId, //event.sourceTarget.options.poolId
-          status: vpools[i].mappedPoolStatus,
-          confidence: vpools[i].mappedConfidence,
-          locationUncertainty: vpools[i].mappedLocationUncertainty
+          mappedPoolStatus: vpools[i].mappedPoolStatus,
+          mappedConfidence: vpools[i].mappedConfidence,
+          mappedLocationUncertainty: vpools[i].mappedLocationUncertainty
       });
 
       this.cmGroup.addLayer(shape); //add this marker to the current featureGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status

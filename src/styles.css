@@ -133,6 +133,6 @@ handle buttons on top of text inputs
   border-right: 1px dashed #333;
 }
 
-label.disabled {
+label.disabled span.disabled {
   color: #cccc;
 }

@@ -1,8 +1,12 @@
 <div class="row">
 
   <div class="col-4">
-    <div *ngIf="!update && itemType==='Visit'" style="display:inline-block;">
+    <div *ngIf="!update && (itemType==='Visit' || itemType==='Visit Mapped Pool')" style="display:inline-block;">
       <h3><u>Add Vernal Pool Visit</u></h3>
+    </div>
+
+    <div *ngIf="!update && itemType==='Visit New Pool'" style="display:inline-block;">
+      <h3><u>Add NEW* Vernal Pool</u></h3>
     </div>
 
     <div *ngIf="update && itemType==='Visit'" style="display:inline-block;">
@@ -20,27 +24,23 @@
       <!-- https://juristr.com/blog/2016/11/ng2-binding-radiobutton-lists/ -->
       <label>
        <input type="radio" [checked]="visitPage.index===0" name="visitPage" (change)="onVisitPageSelect(0)" class="radio-button-horiz" />
-         <span>{{visitPage.values[0].name}}</span>
+       <span>{{visitPage.values[0].name}}</span>
       </label>
-      <label>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
        <input [disabled]="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===1" name="visitPage" (change)="onVisitPageSelect(1)" class="radio-button-horiz" />
-         <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[1].name}}</i>
-         <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[1].name}}</span>
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[1].name}}</span>
       </label>
-      <label>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
        <input [disabled]="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===2" name="visitPage" (change)="onVisitPageSelect(2)" class="radio-button-horiz" />
-         <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[2].name}}</i>
-         <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[2].name}}</span>
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[2].name}}</span>
       </label>
-      <label>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
        <input [disabled] ="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===3" name="visitPage" (change)="onVisitPageSelect(3)" class="radio-button-horiz" />
-       <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[3].name}}</i>
-       <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[3].name}}</span>
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[3].name}}</span>
       </label>
-      <label>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
        <input [disabled] ="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===4" name="visitPage" (change)="onVisitPageSelect(4)" class="radio-button-horiz" />
-       <i *ngIf="itemType==='Visit New Pool'">{{visitPage.values[4].name}}</i>
-       <span *ngIf="itemType!='Visit New Pool'">{{visitPage.values[4].name}}</span>
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[4].name}}</span>
       </label>
     </div>
   </div> <!-- col -->
@@ -912,10 +912,11 @@
 -->
 <div class="form-group form-inline">
     <button [disabled]="dataLoading" *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">Save Pool</button>
-    <button [disabled]="dataLoading || itemType==='Visit New Pool'" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
-    <button [disabled]="dataLoading || itemType==='Visit New Pool'" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
-    <button [disabled]="dataLoading" *ngIf="visitPage.index>0 && itemType!='View Visit'" class="btn btn-primary" (click)="CreateVisit()">Save</button>
+    <button [disabled]="dataLoading || itemType==='Visit New Pool' || visitPage.index===0" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
+    <button [disabled]="dataLoading || itemType==='Visit New Pool' || visitPage.index===4" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
+    <button [disabled]="dataLoading || itemType==='Visit New Pool'" *ngIf="itemType!='Visit New Pool' && itemType!='View Visit'" class="btn btn-primary" (click)="CreateVisit()">Save</button>
     <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
     <button (click)="cancelVisit()" class="btn">Cancel</button>
     <button *ngIf="update && userIsAdmin" (click)="deleteVisit()" [disabled]="dataLoading" class="btn">Delete</button>
+    <a *ngIf="!update && userIsAdmin && visitId" href="/pools/visit/update/{{visitId}}" class="btn btn-primary">Edit</a>
 </div>

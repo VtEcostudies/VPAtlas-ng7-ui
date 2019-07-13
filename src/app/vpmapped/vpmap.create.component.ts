@@ -15,7 +15,7 @@ export class vpMapCreateComponent implements OnInit {
     userIsAdmin = false;
     vpLandOwnForm: FormGroup;
     vpMappedForm: FormGroup;
-    locUncs = ['50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
+    locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
     towns = [];
     townCount = 0;
     dataLoading = false;
