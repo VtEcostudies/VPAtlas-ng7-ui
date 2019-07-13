@@ -2,7 +2,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vtInfoService } from '@app/_services';
+import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vpPoolsService, vtInfoService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
@@ -50,6 +50,7 @@ export class vpVisitCreateComponent implements OnInit {
         private alertService: AlertService,
         private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
+        private vpPoolsService: vpPoolsService,
         private townService: vtInfoService
     ) {
       if (this.authenticationService.currentUserValue) {
@@ -131,7 +132,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitNavMethod: ['', Validators.nullValidator],
         visitNavMethodOther: ['', Validators.nullValidator],
         visitDirections: ['', Validators.nullValidator],
-        visitTown: [new vtTown(), new FormControl(this.towns[this.townCount])], //displayed form-only value - a selectable list of towns
+        visitTown: [this.visit.visitTown, new FormControl(this.towns[this.townCount])], //displayed form-only value - a selectable list of towns
         visitTownId: [], //non-display db-only value set when the form is submitted
         visitLocationComments: ['', Validators.nullValidator],
         //2b Location of Pool
@@ -290,7 +291,9 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
       this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
+      console.log('vpvisit.create.setFormValues | visitTown: ', this.visit.visitTown);
       this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown); //set whole object, uses compare fn to match drop-down
+      this.visitLocationForm.controls['visitTownId'].setValue(this.visit.visitTownId);
       this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
       //2b Location of Pool
       this.visitLocationForm.controls['visitCoordSource'].setValue(this.visit.visitCoordSource);
@@ -451,7 +454,7 @@ export class vpVisitCreateComponent implements OnInit {
     async loadPage(visitId) {
       this.dataLoading = true;
       console.log('vpvisit.create.component.loadPage:', visitId);
-      this.vpVisitService.getById(visitId)
+      this.vpPoolsService.getByVisitId(visitId)
           .pipe(first())
           .subscribe(
               data => {
@@ -609,7 +612,8 @@ export class vpVisitCreateComponent implements OnInit {
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
-        this.visitLocationForm.value.visitTownId = this.visitLocationForm.value.visitTown.townId;
+        console.log('vpvisit.create.createVisit | visitTownId: ', this.visitLocationForm.value.visitTown.townId);
+        this.visitLocationForm.controls['visitTownId'].setValue(this.visitLocationForm.value.visitTown.townId);
 
         // stop here if form is invalid - navigate to the earliest page missing data
         if (this.visitObserverForm.invalid) {
@@ -767,7 +771,7 @@ export class vpVisitCreateComponent implements OnInit {
             });
   }
 
-  private loadTowns() {
+  async loadTowns() {
     this.dataLoading = true;
     this.townService.getTowns()
         .pipe(first())
@@ -787,7 +791,7 @@ export class vpVisitCreateComponent implements OnInit {
   //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
   //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
   compareTownFn(t1: vtTown, t2: vtTown) {
-    //console.log('compareTownFn t1:', t1, ' t2:', t2);
+    //console.log('vpvisit.create.compareTownFn t1:', t1, ' t2:', t2);
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 

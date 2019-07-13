@@ -319,7 +319,7 @@ export class vpMapCreateComponent implements OnInit {
   //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
   //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
   compareTownFn(t1: vtTown, t2: vtTown) {
-    //console.log('compareTownFn t1:', t1, ' t2:', t2);
+    //console.log('vpmap.create.compareTownFn t1:', t1, ' t2:', t2);
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 

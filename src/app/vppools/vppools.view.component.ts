@@ -258,15 +258,16 @@ export class vpViewComponent implements OnInit {
       //2c Landowner Contact Information - add in vpvisit.alter.sql
       this.visitLocationForm.controls['visitUserIsLandowner'].setValue(this.visit.visitUserIsLandowner);
       this.visitLocationForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
-      //this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
+      this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
+      this.permission = this.visit.visitLandownerPermission; //flag view to display landowner info
       if (this.visit.visitLandowner) {
-        this.visitLandOwnForm.controls['visitLandownerName'].setValue(this.visit.visitLandowner.landownerName);
-        this.visitLandOwnForm.controls['visitLandownerAddress'].setValue(this.visit.visitLandowner.landownerAddress);
-        //this.visitLandOwnForm.controls['visitLandownerTown'].setValue(this.visit.visitLandowner.landownerTown);
-        //this.visitLandOwnForm.controls['visitLandownerStateAbbrev'].setValue(this.visit.visitLandowner.landownerStateAbbrev);
-        //this.visitLandOwnForm.controls['visitLandownerZip5'].setValue(this.visit.visitLandowner.landownerZip5);
-        this.visitLandOwnForm.controls['visitLandownerPhone'].setValue(this.visit.visitLandowner.landownerPhone);
-        this.visitLandOwnForm.controls['visitLandownerEmail'].setValue(this.visit.visitLandowner.landownerEmail);
+        this.visitLandOwnForm.controls['visitLandownerName'].setValue(this.visit.visitLandowner.visitLandownerName);
+        this.visitLandOwnForm.controls['visitLandownerAddress'].setValue(this.visit.visitLandowner.visitLandownerAddress);
+        //this.visitLandOwnForm.controls['visitLandownerTown'].setValue(this.visit.visitLandowner.visitLandownerTown);
+        //this.visitLandOwnForm.controls['visitLandownerStateAbbrev'].setValue(this.visit.visitLandowner.visitLandownerStateAbbrev);
+        //this.visitLandOwnForm.controls['visitLandownerZip5'].setValue(this.visit.visitLandowner.visitLandownerZip5);
+        this.visitLandOwnForm.controls['visitLandownerPhone'].setValue(this.visit.visitLandowner.visitLandownerPhone);
+        this.visitLandOwnForm.controls['visitLandownerEmail'].setValue(this.visit.visitLandowner.visitLandownerEmail);
       }
       //3 Vernal Pool Field-Verification Informtion
       //3a Pool Type

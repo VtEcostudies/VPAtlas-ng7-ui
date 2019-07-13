@@ -22,10 +22,10 @@ export class vpPoolsService {
     }
 
     getByPoolId(id: number) {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/${id}`);
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/poolId/${id}`);
     }
 
     getByVisitId(id: number) {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/visit/${id}`);
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/visitId/${id}`);
     }
 }
