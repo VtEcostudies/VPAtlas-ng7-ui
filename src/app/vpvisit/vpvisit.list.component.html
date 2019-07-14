@@ -1,39 +1,64 @@
-
 <div class="row">
-  <div class="col-2">
+  <div class="col-2 content-left-border-right">
     <h3><u>Search Visits</u></h3>
-    <form [formGroup]="filterForm" class="">
-        <div class="form-group row">
-          <label for="visitId">Visit ID</label>
-          <!--
-          There's a performance issue here with search filters:
-          - use keyup if the result set is small (<100)
-          - use keyup.enter and keyup.tab otherwise
-          - to be safe, do the latter
-          -->
+    <form [formGroup]="filterForm">
+
+    <table class="table table-sm"> <!-- odd discovery: table without <tr>, <td> does nice things -->
+      <th style="width: 50%;"></th>
+      <th style="width: 50%;"></th>
+      <tr class="form-group">
+        <td for="visitId">Visit ID</td>
+        <td>
           <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
-        </div>
-        <div class="form-group row">
-          <label for="visitPoolId">Pool ID</label>
+        </td>
+      </tr>
+      <tr class="form-group">
+        <td for="visitPoolId">Pool ID</td>
+        <td>
           <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
-        </div>
-        <div class="form-group row">
-          <label for="visitUserName">Visit User</label>
+        </td>
+      </tr>
+      <tr class="form-group">
+        <td for="visitUserName">User</td>
+        <td>
           <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
-        </div>
-        <div class="form-group row">
-          <label for="visitTown">Town</label>
+        </td>
+      </tr>
+      <tr class="form-group">
+        <td for="visitTown">Town</td>
+        <td>
           <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitTown" class="form-control"/>
-        </div>
-    </form>
+        </td>
+      </tr>
+      <!-- mappedMethod is not an appropriate search criterion for vpvisit
+      <tr class="form-group">
+        <td>Method</td>
+        <td>
+          <select (change)="loadPools(1)" formControlName="mappedMethod" class="form-control">
+            <option value="">All</option>
+            <option value="Aerial">Aerial</option>
+            <option value="Known">Known</option>
+            <option value="Visit">Visit</option>
+          </select>
+        </td>
+      </tr>
+      -->
+    </table>
+  </form>
   </div> <!-- col-2 -->
 
   <div class="col-10">
     <div *ngIf="!loading">
       <div class="row">
-        <button (click)="loadAll()" class="btn btn-link">{{count}} Records</button>
-        <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" />
-        <button (click)="loadAll()" class="btn btn-link">Load All</button>
+        <div> <!-- OMFG, all vertical alignment issues were due to different div levels!!! -->
+          <button (click)="checkBoxSetValue(true)" class="btn btn-link">{{count}} Records</button>
+          <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
+          <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
+        </div>
+        <label class="btn btn-link vert-align-mid" style="vertical-align:bottom;">
+          <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" class="radio-button-justify-left"/>
+          <span>Load All</span>
+        </label>
         <div *ngIf="!loadAllRec">
           <button (click)="firstPage()" class="btn btn-link">|< First</button>
           <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
@@ -41,11 +66,6 @@
           <button (click)="nextPage()" class="btn btn-link">Next >></button>
           <button (click)="lastPage()" class="btn btn-link">Last >|</button>
         </div>
-        <!--
-        <button (click)="loadAll()" class="btn btn-link">Load All</button>
-        -->
-        <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
-        <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
       </div>
 
       <div *ngIf="!mapView">

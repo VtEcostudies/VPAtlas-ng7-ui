@@ -2,7 +2,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vtInfoService } from '@app/_services';
+import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vpPoolsService, vtInfoService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
@@ -50,6 +50,7 @@ export class vpViewComponent implements OnInit {
         private alertService: AlertService,
         private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
+        private vpPoolsService: vpPoolsService,
         private townService: vtInfoService
     ) {
       if (this.authenticationService.currentUserValue) {
@@ -252,6 +253,7 @@ export class vpViewComponent implements OnInit {
       this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
       this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
+      console.log('vppools.view.setFormValues | visitTown: ', this.visit.visitTown);
       this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown);
       this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
       //2b Location of Pool
@@ -387,7 +389,7 @@ export class vpViewComponent implements OnInit {
       this.dataLoading = true;
       this.poolsLoading = true;
       console.log('vppools.view.component.loadPage:', visitId);
-      this.vpVisitService.getById(visitId)
+      this.vpPoolsService.getByVisitId(visitId)
           .pipe(first())
           .subscribe(
               data => {

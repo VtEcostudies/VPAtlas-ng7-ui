@@ -132,7 +132,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitNavMethod: ['', Validators.nullValidator],
         visitNavMethodOther: ['', Validators.nullValidator],
         visitDirections: ['', Validators.nullValidator],
-        visitTown: [this.visit.visitTown, new FormControl(this.towns[this.townCount])], //displayed form-only value - a selectable list of towns
+        visitTown: [new vtTown(), new FormControl(this.towns[this.townCount]), Validators.required], //displayed form-only value - a selectable list of towns
         visitTownId: [], //non-display db-only value set when the form is submitted
         visitLocationComments: ['', Validators.nullValidator],
         //2b Location of Pool
@@ -256,6 +256,7 @@ export class vpVisitCreateComponent implements OnInit {
     formControlValueChanged() {
       this.visitLocationForm.get('visitLandownerPermission').valueChanges.subscribe(
         (mode: boolean) => {
+        console.log('vpvisit.create.fomrControlValueChanged.visitLandownerPermisssion', mode);
         this.permission = mode;
         if (this.permission) {
           this.visitLocationForm.get('visitLandowner').enable();
@@ -293,7 +294,8 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
       console.log('vpvisit.create.setFormValues | visitTown: ', this.visit.visitTown);
-      this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown); //set whole object, uses compare fn to match drop-down
+      //if visitTown from the db is null, we must set a default value here
+      this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown || new vtTown()); //set whole object, uses compare fn to match drop-down
       this.visitLocationForm.controls['visitTownId'].setValue(this.visit.visitTownId);
       this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
       //2b Location of Pool
@@ -303,9 +305,9 @@ export class vpVisitCreateComponent implements OnInit {
       //2c Landowner Contact Information - add in vpvisit.alter.sql
       this.visitLocationForm.controls['visitUserIsLandowner'].setValue(this.visit.visitUserIsLandowner);
       this.visitLocationForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
-
-      if (this.visit.visitLandowner) {
-        //console.log('vpvisit.create.setFormValues | visitLandowner: ', this.visit.visitLandowner);
+      console.log('vpvisit.create.setFormValues | visitLandownerPermission: ', this.visit.visitLandownerPermission);
+      if (this.visit.visitLandownerPermission) {
+        console.log('vpvisit.create.setFormValues | visitLandowner: ', this.visit.visitLandowner);
         this.visitLocationForm.get('visitLandowner').enable();
         this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
         this.visitLandOwnForm.enable();
@@ -614,36 +616,42 @@ export class vpVisitCreateComponent implements OnInit {
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
         console.log('vpvisit.create.createVisit | visitTownId: ', this.visitLocationForm.value.visitTown.townId);
-        this.visitLocationForm.controls['visitTownId'].setValue(this.visitLocationForm.value.visitTown.townId);
+        if (typeof(this.visitLocationForm.value.visitTown) != undefined && this.visitLocationForm.value.visitTown) {
+          this.visitLocationForm.controls['visitTownId'].setValue(this.visitLocationForm.value.visitTown.townId);
+        } else {
+          this.alertService.error('Please select a Town for this Visit.')
+          this.setPage(0);
+          return;
+        }
 
         // stop here if form is invalid - navigate to the earliest page missing data
         if (this.visitObserverForm.invalid) {
-          console.log(`visitObserverForm.invalid`);
+          console.log(`visitObserverForm.invalid`,this.visitObserverForm.invalid);
           this.setPage(0);
           return;
         }
         if (this.visitLocationForm.invalid) {
-          console.log(`visitLocationForm.invalid`);
+          console.log(`visitLocationForm.invalid`,this.visitLocationForm.invalid);
           this.setPage(0);
           return;
         }
         if (this.visitLandOwnForm.enabled && this.visitLandOwnForm.invalid) {
-          console.log(`visitLandOwnForm.invalid`);
+          console.log(`visitLandOwnForm.invalid`, this.visitLandOwnForm.invalid);
           this.setPage(1);
           return;
         }
         if (this.visitFieldVerificationForm.invalid) {
-          console.log(`visitFieldVerificationForm.invalid`);
+          console.log(`visitFieldVerificationForm.invalid`,this.visitFieldVerificationForm.invalid);
           this.setPage(2);
           return;
         }
         if (this.visitPoolCharacteristicsForm.invalid) {
-          console.log(`visitPoolCharacteristicsForm.invalid`);
+          console.log(`visitPoolCharacteristicsForm.invalid`,this.visitPoolCharacteristicsForm.invalid);
           this.setPage(3);
           return;
         }
         if (this.visitIndicatorSpeciesForm.invalid) {
-          console.log(`visitIndicatorSpeciesForm.invalid`);
+          console.log(`visitIndicatorSpeciesForm.invalid`,this.visitIndicatorSpeciesForm.invalid);
           this.setPage(4);
           return;
         }

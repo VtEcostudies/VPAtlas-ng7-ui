@@ -48,8 +48,8 @@ export class vpMapListComponent implements OnInit {
           mappedPoolId: [''],
           mappedByUser: [''],
           mappedTown: [''],
-          mappedConfidence: [''],
-          //mappedTown: [{value: '', disabled: true}]
+          mappedMethod: [''],
+          mappedConfidence: ['']
       });
       //and load page 1
       this.loadPools(1);
@@ -81,6 +81,7 @@ export class vpMapListComponent implements OnInit {
     */
     getFilter() {
       this.filter = ''; //must clear first to undo filters
+      var i = 0;
 
       if (this.f.mappedPoolId.value) {
         this.filter += `mappedPoolId|LIKE=%${this.f.mappedPoolId.value}%`;
@@ -88,23 +89,30 @@ export class vpMapListComponent implements OnInit {
 
       if (this.f.mappedByUser.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `mappedByUser|LIKE=%${this.f.mappedByUser.value}%`;
       }
 
       if (this.f.mappedTown.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `vptown."townName"|LIKE=%${this.f.mappedTown.value}%`;
       }
 
       if (this.f.mappedConfidence.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `mappedConfidence=${this.f.mappedConfidence.value}`;
+      }
+
+      if (this.f.mappedMethod.value) {
+        if (this.filter) {
+          this.filter += `&logical${++i}=AND&`;
+        }
+        this.filter += `mappedMethod=${this.f.mappedMethod.value}`;
       }
 
       console.log('vpmap.list.components.ts::getfilter()', this.filter);

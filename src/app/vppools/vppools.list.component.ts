@@ -88,47 +88,62 @@ export class vpListComponent implements OnInit {
       to filter db query results.
       Put the value of that fileter into the class variable.
     */
+
+    /*
+      We have a problem with Search and the combined UX of Pools and Visits.
+      We are looking up into 2 tables, both of which have userNames, poolIds,
+      and more duplicate values. How do we handle this? There are lots of ways,
+      and they're all a lot of work.
+
+      NOTE: Implemented this on both ends by removing the default AND condition
+      and requiring logical operators be sent as below. Not easy.
+    */
     getFilter() {
       this.filter = ''; //must clear first to undo filters
+      var i = 0;
 
       if (this.f.visitId.value) {
         this.filter += `visitId=${this.f.visitId.value}`;
       }
-
-      /*
-        We have a problem with Search and the combined UX of Pools and Visits.
-        We are looking up into 2 tables, both of which have userNames, poolIds,
-        and more duplicate values. How do we handle this? There are lots of ways,
-        and they're all a lot of work.
-      */
       if (this.f.poolId.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
-        // TODO: add ability to send OR filter conditions
-        //this.filter += `visitPoolId|LIKE=%${this.f.poolId.value}%`;
-        this.filter += `mappedPoolId|LIKE=%${this.f.poolId.value}%`;
+        this.filter += `logical${++i}=(`;
+        this.filter += `&mappedPoolId|LIKE=%${this.f.poolId.value}%`;
+        this.filter += `&logical${++i}=OR`;
+        this.filter += `&visitPoolId|LIKE=%${this.f.poolId.value}%`;
+        this.filter += `&logical${++i}=)`;
       }
 
       if (this.f.userName.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         // TODO: add ability to send OR filter conditions
         //this.filter += `visitUserName|LIKE=%${this.f.userName.value}%`;
-        this.filter += `mappedByUser|LIKE=%${this.f.userName.value}%`;
+        //this.filter += `mappedByUser|LIKE=%${this.f.userName.value}%`;
+        this.filter += `logical${++i}=(`;
+        this.filter += `&mappedByUser|LIKE=%${this.f.userName.value}%`;
+        this.filter += `&logical${++i}=OR`;
+        this.filter += `&visitUserName|LIKE=%${this.f.userName.value}%`;
+        this.filter += `&logical${++i}=)`;
       }
 
       if (this.f.town.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `vptown."townName"|LIKE=%${this.f.town.value}%`;
+        this.filter += `logical${++i}=(`;
+        this.filter += `&mappedtown."townName"|LIKE=%${this.f.town.value}%`;
+        this.filter += `&logical${++i}=OR`;
+        this.filter += `&visittown."townName"|LIKE=%${this.f.town.value}%`;
+        this.filter += `&logical${++i}=)`;
       }
 
       if (this.f.mappedMethod.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `mappedMethod=${this.f.mappedMethod.value}`;
       }
@@ -136,7 +151,7 @@ export class vpListComponent implements OnInit {
       //hidden field, populated from code
       if (this.f.mappedPoolStatus.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `mappedPoolStatus=${this.f.mappedPoolStatus.value}`;
         //this.filter += `mappedPoolStatus|IN=${this.f.mappedPoolStatus.value}`;
@@ -238,12 +253,10 @@ export class vpListComponent implements OnInit {
     }
 
     async showMap() {
-      /*
       if (this.loadAllRec == false) {
         this.loadAllRec = true;
         await this.loadPools();
       }
-      */
       this.mapView = true;
     }
 

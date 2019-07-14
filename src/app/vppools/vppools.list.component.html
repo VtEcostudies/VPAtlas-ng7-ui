@@ -1,6 +1,5 @@
 
 <div class="row">
-
   <div class="col-2 content-left-border-right">
     <h4><u>Vernal Pool Atlas</u></h4>
     <fieldset id="poolStatus"> <!-- for radio-button grouping -->
@@ -106,19 +105,19 @@
           </td>
         </tr>
         <tr class="form-group">
-          <td for="visitPoolId">Pool ID</td>
+          <td for="poolId">Pool ID</td>
           <td>
             <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="poolId" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
-          <td for="visitUserName">User</td>
+          <td for="userName">User</td>
           <td>
             <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="userName" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
-          <td>Town</td>
+          <td for="town">Town</td>
           <td>
             <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="town" class="form-control"/>
           </td>
@@ -153,10 +152,6 @@
           <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" class="radio-button-justify-left"/>
           <span>Load All</span>
         </label>
-        <!--
-        <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" />
-        <button (click)="loadAll()" class="btn btn-link">Load All</button>
-        -->
         <span *ngIf="!loadAllRec">
           <button (click)="firstPage()" class="btn btn-link">|< First</button>
           <button (click)="prevPage()" class="btn btn-link"><< Prev</button>

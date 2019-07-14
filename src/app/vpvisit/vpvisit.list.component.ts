@@ -75,6 +75,7 @@ export class vpVisitListComponent implements OnInit {
     */
     getFilter() {
       this.filter = ''; //must clear first to undo filters
+      var i = 0;
 
       if (this.f.visitId.value) {
         this.filter += `visitId=${this.f.visitId.value}`;
@@ -82,23 +83,23 @@ export class vpVisitListComponent implements OnInit {
 
       if (this.f.visitPoolId.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `visitPoolId|LIKE=%${this.f.visitPoolId.value}%`;
       }
 
       if (this.f.visitUserName.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `visitUserName|LIKE=%${this.f.visitUserName.value}%`;
       }
 
       if (this.f.visitTown.value) {
         if (this.filter) {
-          this.filter += '&';
+          this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `vptown."townName"|LIKE=%${this.f.visitTown.value}%`;
+        this.filter += `visittown."townName"|LIKE=%${this.f.visitTown.value}%`;
       }
 
       console.log('vpvisit.list.getfilter()', this.filter);

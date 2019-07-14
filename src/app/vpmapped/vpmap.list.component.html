@@ -1,14 +1,51 @@
 
 <div class="row">
-  <div class="col-2">
+  <div class="col-2 content-left-border-right">
     <h3><u>Search Pools</u></h3>
     <form [formGroup]="filterForm" class="">
+      <table class="table table-sm"> <!-- odd discovery: table without <tr>, <td> does nice things -->
+        <th style="width: 50%;"></th>
+        <th style="width: 50%;"></th>
+        <tr class="form-group">
+          <td for="mappedPoolId">Pool ID</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="mappedPoolId" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td for="mappedByUser">User</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedByUser" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td for="mappedTown">Town</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedTown" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td for="mappedConfidence">Confidence</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedConfidence" class="form-control"/>
+          </td>
+        </tr>
+        <tr class="form-group">
+          <td for="mappedMethod">Method</td>
+          <td>
+            <select (change)="loadPools(1)" formControlName="mappedMethod" class="form-control">
+              <option value="">All</option>
+              <option value="Aerial">Aerial</option>
+              <option value="Known">Known</option>
+              <option value="Visit">Visit</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+
+<!--
         <div class="form-group row">
           <label for="mappedPoolId">Pool ID</label>
-          <!--
-          consider using keyup.enter and keyup.tab instead of keyup?
-          need to see db performance on cloud server to decide...
-          -->
           <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="mappedPoolId" class="form-control"/>
         </div>
         <div class="form-group row">
@@ -23,15 +60,22 @@
           <label for="mappedConfidence">Confidence</label>
           <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="mappedConfidence" class="form-control"/>
         </div>
+-->
     </form>
-  </div> <!-- col-sm-3 -->
+  </div> <!-- col -->
 
   <div class="col-10">
     <div *ngIf="!loading">
       <div class="row">
-        <button (click)="loadAll()" class="btn btn-link">{{count}} Records</button>
-        <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" />
-        <button (click)="loadAll()" class="btn btn-link">Load All</button>
+        <div> <!-- OMFG, all vertical alignment issues were due to different div levels!!! -->
+          <button (click)="checkBoxSetValue(true)" class="btn btn-link">{{count}} Records</button>
+          <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
+          <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
+        </div>
+        <label class="btn btn-link vert-align-mid" style="vertical-align:bottom;">
+          <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" class="radio-button-justify-left"/>
+          <span>Load All</span>
+        </label>
         <div *ngIf="!loadAllRec">
           <button (click)="firstPage()" class="btn btn-link">|< First</button>
           <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
@@ -39,11 +83,6 @@
           <button (click)="nextPage()" class="btn btn-link">Next >></button>
           <button (click)="lastPage()" class="btn btn-link">Last >|</button>
         </div>
-        <!--
-        <button (click)="loadAll()" class="btn btn-link">Load All</button>
-        -->
-        <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
-        <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
       </div>
 
       <div *ngIf="!mapView">

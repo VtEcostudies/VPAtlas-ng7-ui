@@ -326,27 +326,30 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.uxValuesService.setBaseLayer(index);
   }
 
-  //set plotted pool radius relative to zoom level
+  //respond to map zoom: set plotted pool radius relative to zoom level and update all points
   onZoomEnd(e) {
     this.zoomLevel = this.map.getZoom();
-    //console.log('onZoomEnd', this.zoom);
-    //this.cmRadius = this.zoom > 8 ? this.zoom - 4: 4;
-    //console.log('cmCount', this.cmLLArr.length);
-    //if (this.cmLLArr.length < 20) {this.cmRadius = 5;}
-    this.setPointRadius();
+    this.SetPointZoomRadius();
+    this.setEachPointRadius();
   }
 
-  //iterate through all marker in the group and alter each radius
-  setPointRadius(radius = this.cmRadius) {
+  //set the class value of plotted pool radius relative to zoom level
+  async SetPointZoomRadius() {
+    this.cmRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
+    console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'cmRadius', this.cmRadius);
+  }
+
+  //iterate through all plotted pools in the featureGroup and alter each radius
+  setEachPointRadius(radius = this.cmRadius) {
     var i=0;
     this.cmGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
-      //if (++i < 10) {console.log('leaflet.component.setPointRadius', cmLayer)}
+      //if (++i < 10) {console.log('leaflet.component.setEachPointRadius', cmLayer)}
       radius = this.GetRadiusForPool(cmLayer.options); //we hang pool properties on each plotted pool shape for use here
       cmLayer.setRadius(radius);
     });
   }
 
-  onMapClick(e) { //this is no longer used for mapping a pool
+  onMapClick(e) { //this is no longer used for mapping a pool (disabled)
     //console.log("leaflet.onMapClick | event: ", e);
     this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     this.marker.setLatLng(this.itemLoc);
@@ -481,13 +484,15 @@ export class LeafletComponent implements OnInit, OnChanges {
     switch (objPool.mappedLocationUncertainty) {
       case null:
       case '10':
+        break;
       case '50':
+        radius = this.cmRadius + 1;
         break;
       case '100':
-        radius = 6;
+        radius = this.cmRadius + 2;
         break;
       case '>100':
-        radius = 8;
+        radius = this.cmRadius + 4;
         break;
     }
     return radius;
@@ -545,6 +550,8 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (vpools.length < 20) {this.cmRadius = 5;}
 
+    this.SetPointZoomRadius(); //adjust cmRadius to current zoomLevel
+
     for (var i = 0; i < vpools.length; i++) {
 
       //convert null, undefined, NaN, empty, etc to 0
@@ -580,7 +587,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       }
 
       /*
-        // TODO: set the circleMarker's shape based upon
+        // TODO: set the shapeMarker's shape based upon
         - access/permission?
         - mappedPoolStatus?
         - Visit Data.
