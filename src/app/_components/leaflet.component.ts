@@ -4,6 +4,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange
 //import * as LP from "leaflet.browser.print";
 import { AuthenticationService, uxValuesService } from '@app/_services';
 import { vpMappedEventInfo } from '@app/_models';
+import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 //import * as L from "leaflet";
 //how to import leaflet module with extensions:
@@ -459,7 +460,15 @@ export class LeafletComponent implements OnInit, OnChanges {
     // TODO: make this a select list of meaningful fields...
     Object.keys(obj).forEach(function(key,index) {
       if (obj[key] && !exclude.includes(key)) { //add non-null values not in the exclusion list
-        text += `<div>${key}: ${obj[key]}</div>`;
+        if (key.includes('Town')) {
+          text += `<div>${key}: ${obj[key].townName}</div>`;
+        } else if (key.includes('Date')) {
+          text += `<div>${key}: ${Moment(obj[key]).format('MM/DD/YYYY')}</div>`;
+        } else if (key.includes('reatedAt') || key.includes('pdatedAt')) {
+          text += `<div>${key}: ${Moment(obj[key]).format('MM/DD/YYYY@HH:MM')}</div>`;
+        } else {
+          text += `<div>${key}: ${obj[key]}</div>`;
+        }
       }
     });
 
