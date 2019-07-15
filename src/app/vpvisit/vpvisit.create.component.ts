@@ -737,7 +737,7 @@ export class vpVisitCreateComponent implements OnInit {
       navUrl = `/pools/mapped/view/${this.poolId}`;
     } else {
       msgTxt = `of a New Visit to a New Pool`;
-      navUrl = `/pools/visit/list`;
+      navUrl = `/pools/list`;
     }
 
     if (confirm(`Are you sure you want to cancel edits ${msgTxt}?`)) {

@@ -55,70 +55,66 @@ export class LeafletComponent implements OnInit, OnChanges {
   itemInfo: vpMappedEventInfo = new vpMappedEventInfo(); //store a marker's extended info, passed with events to listeners
   public map = null;
   marker = null;
-  layerControl = null;
-  zoomControl = L.control.zoom();
-  scaleControl = L.control.scale();
+  scaleControl = L.control.scale({position: 'topright'});
+  layerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});//null;
+  zoomControl = L.control.zoom({position: 'topright'});
   cursorLat = null; //value for map display of cursor latitue location on map
   cursorLng = null; //value for map display of cursor longitude location on map
   zoomLevel = 0; //global value that tracks the map zoomLevel
-/*
-  customControl =  L.Control.Layers.extend({
-
-    onAdd: function () {
-      this._initLayout();
-      this._addButton();
-      this._update();
-      //return this._map._container;
-    },
-    _addButton: function () {
-      console.log('_addButton() | the this: ', this);
-      var elements = this._map._container.getElementsByClassName('leaflet-control-layers-list');
-      var button = L.DomUtil.create('button', 'my-button-class', elements[0]);
-      button.textContent = 'Close control';
-      L.DomEvent.on(button, 'click', function(e){
-        L.DomEvent.stop(e);
-        //this._collapse();
-        console.log('layer button clicked');
-      }, this);
-      return button;
-    }
-  });
-*/
-/*
-  customBox =  L.Control.extend({
+  /*
+    https://leafletjs.com/reference-1.5.0.html#domevent eg. L.DomEvent.on(div, 'click', e => onDivClick(e))
+    https://leafletjs.com/reference-1.5.0.html#domutil
+  */
+  legendControl = L.Control.extend({
     options: {
-      position: 'topleft'
+      position: 'bottomright'
     },
 
-    onAdd: function (mod) {
+    onAdd: function (map) {
 
-      console.log('customBox mod: ', mod);
+      var div = L.DomUtil.create('div', 'info legend');
 
-      var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+      div.style.backgroundColor = 'white';
 
-      container.style.backgroundColor = 'white';
-      container.style.backgroundImage = "url(https://t1.gstatic.com/images?q=tbn:ANd9GcR6FCUMW5bPn8C4PbKak2BJQQsmC-K9-mbYBeFZm1ZM2w2GRy40Ew)";
-      container.style.backgroundSize = "30px 30px";
-      container.style.width = '30px';
-      container.style.height = '30px';
 
-      L.DomEvent.on(container, 'click', function(e) {
-        L.DomEvent.stop(e);
-        console.log('Custom Container Clicked');
-        mod.zoomExtents(); //doesn't work.
-      }, this);
-      return container;
+      div.innerHTML = `
+      <div class="col-12">
+        <div class="row">
+          <div class="circle" style="background:Orange;"></div>
+          <label style="padding-left:3px;">Potential</label>
+        </div>
+        <div class="row">
+          <div class="circle" style="background:Cyan;"></div>
+          <label style="padding-left:3px;">Probable</label>
+        </div>
+        <div class="row">
+          <div class="circle" style="background:Navy;"></div>
+          <label style="padding-left:3px;">Confirmed</label>
+        </div>
+        <div class="row">
+          <div class="circle" style="background:Purple;"></div>
+          <label style="padding-left:3px;">Monitored</label>
+        </div>
+        <div class="row">
+          <div class="triangle">
+            <div class="filled"> </div>
+          </div>
+          <label>Visited</label>
+        </div>
+      </div>
+      `;
+
+      return div;
     }
   });
-*/
-
   //printControl = LP.control.browserPrint();
   myRenderer = L.canvas({ padding: 0.5 }); //we cannot use canvas renderer with the shapeMarker plugin. hope we don't need it.
   //https://www.w3schools.com/colors/colors_names.asp
   potentialColors = ["Orange"];
   probableColors = ["Cyan"];
   confirmedColors = ["Navy"];
-  eliminatedColors = ["LightSteelBlue"];
+  eliminatedColors = ["Black"];
+  monitoredColors = ["LightSteelBlue"];
   cmLLArr = []; //array of shapeMarkers (originally native circleMarkers) 1:1 with mapPoints values
   cmGroup = L.featureGroup(); //enhanced layerGroup that contains all plotted shapeMarkers
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
@@ -204,10 +200,11 @@ export class LeafletComponent implements OnInit, OnChanges {
                zoom: 8
              });
 
-    this.scaleControl.setPosition('topright');
+    //this.scaleControl.setPosition('topright');
     this.scaleControl.addTo(this.map);
 
-    this.layerControl = L.control.layers(null, null, { collapsed: true }).addTo(this.map);
+    //this.layerControl = L.control.layers(null, null, { collapsed: true }).addTo(this.map);
+    this.layerControl.addTo(this.map);
 
     for (var i=0;i<this.baseLayers.length;i++) {
       //note: get around TypeScript type-checking by accessing non-declared object .properties in
@@ -223,7 +220,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolShapes
     this.cmGroup.on("click", e => this.onCircleGroupClick(e));
 
-    this.zoomControl.setPosition('topright');
+    //this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
     this.zoomLevel = this.map.getZoom();
 
@@ -242,11 +239,8 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.marker.on("moveend", e => this.onMarkerMoveEnd(e));
 
-    //this.map.addControl(new this.customControl());
-
-    //this.map.addControl(new this.customBox(this));
+    this.map.addControl(new this.legendControl(this.map));
   }
-
 
   /*
     this is magic. this is called when the parent (containing) component's data
@@ -582,6 +576,9 @@ export class LeafletComponent implements OnInit, OnChanges {
         case 'Duplicate': //duplicate pools should NOT be displayed
         case 'Eliminated': //eliminate pools should NOT be displayed
           ptColor = this.eliminatedColors[0];
+          break;
+        case 'Monitored':
+          ptColor = this.monitoredColors[0];
           break;
         case 'Confirmed':
           ptColor = this.confirmedColors[0];
