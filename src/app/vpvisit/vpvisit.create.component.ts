@@ -806,10 +806,12 @@ export class vpVisitCreateComponent implements OnInit {
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 
+  //this fn is called once on init to populate an array of help info values for display.
   setDialogInfoText() {
     this.visitDialogText = {
-      visitPoolMappedInfo:
-      `<h3>Vernal Pool Location Info</h3>
+      //page 1 - location info
+      visitPoolMapped:`
+      <h3><u>Vernal Pool Location Info</u></h3>
       <div>Add a new Visit to an already-mapped Vernal Pool by selecting 'This pool was mapped'.</div>
       <div>Once you choose that option, existing pools will be shown on the map at right. Simply click</div>
       <div>on a pool on the map to select that pool for your Visit data. Or, if you have the pool's ID</div>
@@ -817,15 +819,65 @@ export class vpVisitCreateComponent implements OnInit {
       <div>---</div>
       <div>Add a new Vernal Pool to the map by selecting 'This pool was unmapped (New Pool)'.</div>
       <div>When selected, a moveable marker will appear on the map at right. Move the marker <div>
-      <div>to the location on the map where the pool is located.</div>
-      `,
-      visitPoolIdInfo: `<h3>Visit Pool ID</h3>
-      <p>Type a valid Pool ID if you know it.</p>
-      <p>If you don't know it, search for it on the map, and click a pool to fill it in.</P
-      `,
-      visitDateInfo: ``,
-      visitTownInfo: ``,
-      visitNavMethodInfo: ``
+      <div>to the location on the map where the pool is located.</div>`,
+      visitPoolId: `
+      <h3><u>Pool ID</u></h3>
+      <p>Type a valid Pool ID if you know it. Pool IDs are <em>case-sensitive</em>.</p>
+      <p>If you don't know the Pool ID, search for it on the map, and click a pool to fill it in.</p>`,
+      visitDate:`
+      <h3><u>Date</u></h3>
+      <p>Please enter the date when you recorded information about this pool.</p>
+      <p>Dates must be in the format 'MM/DD/YYYY'.</p>`,
+      visitTown: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitLocatePool: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitCertainty: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitLocationUncertainty: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitNavMethod: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitLatitude: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitLongitude: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitCoordSource: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+
+      //page 2 - landowner info
+      visitUserIsLandowner: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+      visitLandownerPermission: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`,
+
+      //page 3 - field verification
+      //page 4 - pool characteristics
+      //page 5 - indicator species
+      visitXXXXX: `
+      <h3><u>Title</u></h3>
+      <p>Content paragraph...</p>
+      <p>Content paragraph...</p>`
     }
   }
 }

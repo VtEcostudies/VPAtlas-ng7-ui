@@ -1,8 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 /*
   import styles to enable angular-material dialogs
+  ...dunno about 'deeppurple-amber' theme. so far
+  it's  not imposing that look.
 */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+/*
+  Moved here from html-dialog-app.css because it has no effect, there!
+
+  Remove all surrounding space from the dialog-box's icon so it doesn't
+  muck spacing of labels, etc. it adorns.
+
+  NOTE: !important is necessary to have effect
+*/
+html-dialog-app {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+}
 
 /*
   reduce padding on the navbar
@@ -170,12 +186,4 @@ label.disabled span.disabled {
   border-bottom:solid 8px white;
   border-right:solid 4px transparent;
   border-left:solid 4px transparent;
-}
-
-.info-icon {
-    background: url('./assets/images/info.png');
-    height: 25px;
-    width: 25px;
-    display: block;
-    /* Other styles here */
 }
