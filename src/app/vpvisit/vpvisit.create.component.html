@@ -94,9 +94,21 @@
           https://angular.io/api/forms/RadioControlValueAccessor
       -->
       <div>
+        <!--
+        <dialog-box [dialogValues]="{
+          title: 'Vernal Pool Location Info',
+          text: 'Add a new Visit to an already-mapped Vernal Pool by selecting *This pool was mapped*.'
+          }">
+        </dialog-box>
+        -->
+        <html-dialog-app [htmlContent]="visitDialogText.visitPoolMappedInfo"></html-dialog-app>
         <label><u>2a) Vernal Pool Location Info:</u></label>&nbsp;
-        <label *ngIf="locate.visitPoolMapped.value=='true' && !poolId && !visitId" style="color: blue;">Please enter the Pool ID below, or select a Pool on the map.</label>
-        <label *ngIf="locate.visitPoolMapped.value=='false' && !poolId && !visitId" style="color: blue;">Please move the marker to the pool's location on the map.</label>
+        <label *ngIf="locate.visitPoolMapped.value=='true' && !poolId && !visitId" style="color: blue;">
+          Please enter the Pool ID below, or select a Pool on the map.
+        </label>
+        <label *ngIf="locate.visitPoolMapped.value=='false' && !poolId && !visitId" style="color: blue;">
+          Please locate the marker on the map or enter Lat/Lon below.
+        </label>
       </div>
       <div class="form-group form-inline">
            <label>
@@ -115,12 +127,13 @@
               visitPoolId - text
           -->
           <div class="form-group form-inline">
-              <label for="visitPoolId">Pool ID</label>
-              <input type="text" formControlName="visitPoolId" (change)="visitPoolIdChanged($event)" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
-              <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
-                  <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
-              </div>
+            <html-dialog-app [htmlContent]="visitDialogText.visitPoolIdInfo"></html-dialog-app>
+            <label for="visitPoolId">Pool ID</label>
+            <input type="text" formControlName="visitPoolId" (change)="visitPoolIdChanged($event)" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
+            <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
+                <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
             </div>
+          </div>
         </div> <!-- col -->
         <div class="col-4">
           <!--
@@ -276,13 +289,6 @@
 
       <div>
         <label><u>2b) Location of Pool</u></label>
-        <!--
-        <label style="padding-left:10px;">
-          <span>(</span>
-          <input style="padding-left:5px;" [checked]="mapShowing" (change)="mapShowingChange($event)" type="checkbox" />
-          <span style="padding-left:5px;">Show Map)</span>
-        </label>
-        -->
       </div>
   <div class="row">
     <div class="col-6">
@@ -334,7 +340,6 @@
       </div>
     </div> <!-- col -->
     <div class="col-6">
-    <div *ngIf="mapShowing">
       <div *ngIf="!poolsLoading">
         <app-map-comp style="height:450px;"
           [mapPoints]="mapPoints"
@@ -350,7 +355,6 @@
       <div *ngIf="poolsLoading">
         Loading...
       </div> <!-- poolsLoading -->
-    </div> <!-- ngIf mapShowing -->
     </div>
   </div> <!-- row -->
 </form> <!-- visitLocationForm -->

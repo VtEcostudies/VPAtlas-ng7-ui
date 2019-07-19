@@ -40,7 +40,7 @@ export class vpVisitCreateComponent implements OnInit {
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
-    mapShowing = true; //flag to show/hide map (NO LONGER USED)
+    visitDialogText = {};
 
     constructor(
         private formBuilder: FormBuilder,
@@ -51,7 +51,10 @@ export class vpVisitCreateComponent implements OnInit {
         private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
         private vpPoolsService: vpPoolsService,
-        private townService: vtInfoService
+        private townService: vtInfoService,
+        //public matDialog: MatDialog,
+        //public dialogBox: DialogBox,
+
     ) {
       if (this.authenticationService.currentUserValue) {
         let currentUser = this.authenticationService.currentUserValue.user;
@@ -63,6 +66,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.router.navigate(['/visits/visit/list']);
       }
       this.loadTowns();
+      this.setDialogInfoText(); //just set some static values for displaying UX info about the form
     }
 
     async ngOnInit() {
@@ -89,7 +93,7 @@ export class vpVisitCreateComponent implements OnInit {
         await this.createFormControls();
         if (this.poolId) {
           this.mapMarker =  true;
-          await this.LoadMappedPool(this.poolId);
+          await this.LoadVisitPool(this.poolId);
         }
       }
     } //end ngOnInit
@@ -439,11 +443,6 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitLocationForm.controls['visitLongitude'].setValue(itemInfo.latLng.lng);
     }
 
-    mapShowingChange(e) {
-      console.log('mapShowingChange', e);
-      this.mapShowing = e.target.checked;
-    }
-
     // convenience getters for easy access to form fields
     get observ() { return this.visitObserverForm.controls; }
     get locate() { return this.visitLocationForm.controls; }
@@ -452,12 +451,13 @@ export class vpVisitCreateComponent implements OnInit {
     get indSpc() { return this.visitIndicatorSpeciesForm.controls; }
 
     /*
-      When updating an existing Visit, load that visit and populate the fields
+      When updating an existing Visit, load that visit and populate the fields.
+      NOTE: vpvisit lat/lon are canonical here.
     */
     async loadPage(visitId) {
       this.dataLoading = true;
       console.log('vpvisit.create.component.loadPage:', visitId);
-      this.vpPoolsService.getByVisitId(visitId)
+      this.vpVisitService.getById(visitId)
           .pipe(first())
           .subscribe(
               data => {
@@ -504,20 +504,23 @@ export class vpVisitCreateComponent implements OnInit {
       }
     }
 
-    async LoadMappedPool(poolId) {
+    /*
+    NOTE: here we load pool data from vpvisit, and visit lat/lon are displayed.
+    */
+    async LoadVisitPool(poolId) {
       this.dataLoading = true;
-      this.vpMappedService.getById(poolId)
+      this.vpVisitService.getById(poolId)
           .pipe(first())
           .subscribe(
               data => {
-                  console.log(`vpvisit.LoadMappedPool=>data:`, data);
+                  console.log(`vpvisit.LoadVisitPool=>data:`, data);
                   this.locMarker = data.rows[0];
                   this.visitLocationForm.controls['visitLatitude'].setValue(this.locMarker.latitude);
                   this.visitLocationForm.controls['visitLongitude'].setValue(this.locMarker.longitude);
                   this.dataLoading = false;
               },
               error => {
-                  console.log(`vpvisit.LoadMappedPool=>error: ${error}`);
+                  console.log(`vpvisit.LoadVisitPool=>error: ${error}`);
                   this.alertService.error(error);
                   this.dataLoading = false;
               });
@@ -794,7 +797,6 @@ export class vpVisitCreateComponent implements OnInit {
               this.alertService.error(error);
               this.dataLoading = false;
             });
-
   }
 
   //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
@@ -804,4 +806,26 @@ export class vpVisitCreateComponent implements OnInit {
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 
+  setDialogInfoText() {
+    this.visitDialogText = {
+      visitPoolMappedInfo:
+      `<h3>Vernal Pool Location Info</h3>
+      <div>Add a new Visit to an already-mapped Vernal Pool by selecting 'This pool was mapped'.</div>
+      <div>Once you choose that option, existing pools will be shown on the map at right. Simply click</div>
+      <div>on a pool on the map to select that pool for your Visit data. Or, if you have the pool's ID</div>
+      <div>you may enter that value in the 'Pool ID' text box.</div>
+      <div>---</div>
+      <div>Add a new Vernal Pool to the map by selecting 'This pool was unmapped (New Pool)'.</div>
+      <div>When selected, a moveable marker will appear on the map at right. Move the marker <div>
+      <div>to the location on the map where the pool is located.</div>
+      `,
+      visitPoolIdInfo: `<h3>Visit Pool ID</h3>
+      <p>Type a valid Pool ID if you know it.</p>
+      <p>If you don't know it, search for it on the map, and click a pool to fill it in.</P
+      `,
+      visitDateInfo: ``,
+      visitTownInfo: ``,
+      visitNavMethodInfo: ``
+    }
+  }
 }

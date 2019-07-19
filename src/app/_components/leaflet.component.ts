@@ -103,10 +103,10 @@ export class LeafletComponent implements OnInit, OnChanges {
         </div>
       </div>
       `;
-
       return div;
     }
-  });
+  }); // end legendControl
+
   //printControl = LP.control.browserPrint();
   myRenderer = L.canvas({ padding: 0.5 }); //we cannot use canvas renderer with the shapeMarker plugin. hope we don't need it.
   //https://www.w3schools.com/colors/colors_names.asp
@@ -441,7 +441,10 @@ export class LeafletComponent implements OnInit, OnChanges {
         } else {
           //text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
         }
-        if (this.userIsAdmin) {
+        console.log('leaflet.componenent.buildPopup',this.currentUser);
+        if (this.userIsAdmin ||
+          ((this.currentUser && (this.currentUser.username === obj.mappedByUser || this.currentUser.usename === obj.visitUserName)))
+          ) {
           if (obj.visitId) {
             text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
           }

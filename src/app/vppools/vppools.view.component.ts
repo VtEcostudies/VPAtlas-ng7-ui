@@ -389,7 +389,8 @@ export class vpViewComponent implements OnInit {
       this.dataLoading = true;
       this.poolsLoading = true;
       console.log('vppools.view.component.loadPage:', visitId);
-      this.vpPoolsService.getByVisitId(visitId)
+      //this.vpPoolsService.getByVisitId(visitId)
+      this.vpVisitService.getById(visitId)
           .pipe(first())
           .subscribe(
               data => {

@@ -60,32 +60,6 @@
     </table>
 
     </fieldset>
-<!--
-<table class="table table-sm form-group">
-  <th style="width: 50%;"></th>
-  <th style="width: 50%;"></th>
-      <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('')">All Pools</button></td>
-          <td class="vert-aligned">{{stats.total}}</td>
-      </tr>
-      <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Potential')">Potential Pools</button></td>
-          <td class="vert-aligned">{{stats.potential}}</td>
-      </tr>
-      <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Probable')">Probable Pools</button></td>
-          <td class="vert-aligned">{{stats.probable}}</td>
-      </tr>
-      <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Confirmed')">Confirmed Pools</button></td>
-          <td class="vert-aligned">{{stats.confirmed}}</td>
-      </tr>
-      <tr>
-          <td class="vert-aligned"><button (click)="setStatusLoadPools('Monitored')">Monitored Pools</button></td>
-          <td class="vert-aligned">{{stats.monitored}}</td>
-      </tr>
-    </table>
--->
 
     <h4><u>Search Pools/Visits</u></h4>
     <!--
@@ -190,7 +164,7 @@
                 <!--
                 <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
                 -->
-                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <td title="Add a visit for pool {{pool.mappedPoolId}}" class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedTown.townName}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
@@ -199,7 +173,7 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedLongitude}}</td>
 
                 <span *ngIf="pool.visitId">
-                  <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
+                  <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
                 </span>
                 <span *ngIf="!pool.visitId">
                   <td class="vert-aligned body-scroll-align-columns"></td>

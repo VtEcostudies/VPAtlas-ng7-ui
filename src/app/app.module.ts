@@ -3,14 +3,24 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-//import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //import { MatDatepickerModule, MatInputModule, MatNativeDateModule } from '@angular/material';
+//import { MatDialogModule } from '@angular/material/dialog';
+import {
+  MatButtonModule,
+  MatDialogModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule
+} from '@angular/material';
 
 // used to create fake backend
+// NOTE: this could be used as a local database option
 import { fakeBackendProvider } from './_helpers';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
+
 //@add_component_here
 import { AlertComponent } from './_components';
 import { JwtInterceptor, ErrorInterceptor } from './_helpers';
@@ -20,13 +30,10 @@ import { RegisterComponent } from './register';
 import { AdminComponent } from './admin';
 
 import { LeafletComponent } from './_components'; //hope to replace vpMapLeafletComponent later
-//import { LeafletViewComponent } from './_components'; //hope to replace vpMapLeafletComponent later
-//import { LeafletEditComponent } from './_components'; //hope to replace vpMapLeafletComponent later
 
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
-//import { vpMapLeafletComponent } from './vpmapped';
 
 import { vpVisitListComponent } from './vpvisit';
 import { vpVisitViewComponent } from './vpvisit';
@@ -35,13 +42,17 @@ import { vpVisitCreateComponent } from './vpvisit';
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
 
+import { DialogBox, DialogBoxDialog } from './dialogBox';
+import { HtmlDialog, HtmlDialogApp } from './dialogBox';
+
 @NgModule({
     imports: [
         BrowserModule,
-        //BrowserAnimationsModule,
+        BrowserAnimationsModule,
         ReactiveFormsModule,
         FormsModule,
-        //MatDatepickerModule, MatInputModule,MatNativeDateModule,
+        //MatDatepickerModule, MatInputModule, MatNativeDateModule,
+        MatDialogModule,
         HttpClientModule,
         routing
     ],
@@ -57,11 +68,12 @@ import { vpViewComponent } from './vppools';
         vpMapListComponent,
         vpMapViewComponent,
         vpMapCreateComponent,
-        //vpMapLeafletComponent,
 
         LeafletComponent,
-        //LeafletViewComponent,
-        //LeafletEditComponent,
+        DialogBox,
+        DialogBoxDialog,
+        HtmlDialog,
+        HtmlDialogApp,
 
         vpVisitListComponent,
         vpVisitViewComponent,
@@ -77,7 +89,12 @@ import { vpViewComponent } from './vppools';
         // provider used to create fake backend
         //fakeBackendProvider
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [
+      DialogBox,
+      DialogBoxDialog,
+      HtmlDialog,
+    ]
 })
 
 export class AppModule { }
