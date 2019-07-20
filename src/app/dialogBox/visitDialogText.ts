@@ -19,37 +19,55 @@ export const visitDialogText = {
 <p>Please enter the date when you recorded information about this pool.</p>
 <p>Dates must be in the format 'MM/DD/YYYY'.</p>`,
     visitTown:`
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Town</u></h3>
+<p>Optionally select a Vermont town from the drop-down list of all Vermont towns.</p>
+<p>Town name should be the town where you observed the vernal pool.</p>`,
     visitLocatePool:`
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Was the pool located?</u></h3>
+<p>If you set out to visit a VPAtlas mapped vernal pool, did you locate that pool?</p>
+<p>NOT locating a 'Potential' pool, for example, is valid and useful information.<br>
+This would indicated that a Potential pool was non-existent for the date of your visit.</p>`,
     visitCertainty: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>How certain are you that you were in the correct Location?</u></h3>
+<p>If you visited a pool that was already mapped in VPAtlas, please describe your<br>
+degree of certainty that you found the correct pool.</p>
+<p>Please use the VPAtlas map, at right, to review the details of your selected pool<br>
+to aid in verifying that you located the pool in question.</p>`,
     visitLocationUncertainty:`
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Please estimate the location uncertainty of this pool in yards</u></h3>
+<p>Please select a value, in yards, that corresponds to your estimate of how accurately you located this pool. </p>
+<p>This can be a guess, or can be based upon the known accuracy of your GPS device, or some other estimation method.</p>`,
     visitNavMethod: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>What navigation method was used?</u></h3>
+<p>Please record the method you used to navigate to the pool.</p>
+<p></p>`,
+    visitDirections:`
+<h3><u>Brief directions to pool</u></h3>
+<p>Please provide directions to the pool so that others may find it.</p>
+<p></p>`,
+    visitLocationComments:`
+<h3><u>Location Comments</u></h3>
+<p>Please provide any additional information or comments about this pool which might be relevant.</p>
+<p></p>`,
     visitLatitude: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Latitude</u></h3>
+<p>Please record the Latitude value for this pool.</p>
+<p>If you used the VPAtlas map on this page to locate the pool, <em><u>do NOT enter or edit this value.</u></em></p>
+<p>If you navigated to the pool using a GPS and recorded its Latitude, you may enter that value here.</p>
+`,
     visitLongitude: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Longitude</u></h3>
+<p>Please record the Longitude value for this pool.</p>
+<p>If you used the VPAtlas map on this page to locate the pool, <em><u>do NOT enter or edit this value.</u></em></p>
+<p>If you navigated to the pool using a GPS and recorded its Longitude, you may enter that value here.</p>
+`,
     visitCoordSource: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Source of Pool Coordinates</u></h3>
+<p>Please enter the method used to determine the Lat/Lon values for this pool's location.</p>
+<p>If you navigated to this pool using a GPS and recorded those coordinates, select 'GPS'.</p>
+<p>If you found the pool on a map, then used dead-recking to locate and visit the pool, please<br>
+select the type of map used to locate the pool.</p>
+`,
 
 //page 2 Landowner-Info
     visitUserIsLandowner:`

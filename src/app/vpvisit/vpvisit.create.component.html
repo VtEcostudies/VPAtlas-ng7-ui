@@ -272,6 +272,7 @@
       -->
       <div class="form-group">
           <label for="visitDirections">Brief directions to pool:</label>
+          <html-dialog-app [htmlContent]="visitDialogText.visitDirections"></html-dialog-app>
           <textarea rows="1" formControlName="visitDirections" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
@@ -281,6 +282,7 @@
       -->
       <div class="form-group">
           <label for="visitLocationComments">Comments:</label>
+          <html-dialog-app [htmlContent]="visitDialogText.visitLocationComments"></html-dialog-app>
           <textarea rows="1" formControlName="visitLocationComments" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
