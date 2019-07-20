@@ -7,6 +7,7 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
+import { visitDialogText} from '@app/dialogBox/visitDialogText';
 
 @Component({templateUrl: '../vpvisit/vpvisit.create.component.html'})
 export class vpViewComponent implements OnInit {
@@ -41,6 +42,7 @@ export class vpViewComponent implements OnInit {
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
     mapShowing = true; //flag to show/hide map (NO LONGER USED)
+    visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
 
     constructor(
         private formBuilder: FormBuilder,

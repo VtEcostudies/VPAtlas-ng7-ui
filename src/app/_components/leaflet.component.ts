@@ -168,7 +168,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   constructor(
     private uxValuesService: uxValuesService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
     ) {
     /*
       preserve baseLayer shown across page loads with outside service
