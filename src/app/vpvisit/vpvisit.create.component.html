@@ -85,6 +85,38 @@
   </div> <!-- row -->
 </form> <!-- visitObserverForm -->
 
+<form *ngIf="visitPage.index===0" [formGroup]="visitPoolMappedForm">
+  <div class="row">
+    <div class="col-6">
+      <!--
+          visitPoolMapped - radio button
+          https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
+          https://angular.io/api/forms/RadioControlValueAccessor
+      -->
+      <div class="form-inline">
+        <label><u>2a) Vernal Pool Location Info:</u></label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitPoolMapped"></html-dialog-app>
+        <label *ngIf="mapped.visitPoolMapped.value=='true' && !poolId && !visitId" style="color: blue;">
+          Please enter the Pool ID below, or select a Pool on the map.
+        </label>
+        <label *ngIf="mapped.visitPoolMapped.value=='false' && !poolId && !visitId" style="color: blue;">
+          Please locate the marker on the map or enter Lat/Lon below.
+        </label>
+      </div>
+      <div class="form-group form-inline">
+           <label>
+             <input type="radio" value="true" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
+               <span>This pool was mapped</span>
+           </label>
+           <label>
+             <input type="radio" value="false" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
+               <span>This pool was unmapped (New Pool)</span>
+           </label>
+      </div>
+    </div> <!-- col -->
+  </div> <!-- row -->
+</form> <!-- visitPoolMappedForm -->
+
 <form *ngIf="visitPage.index===0" [formGroup]="visitLocationForm">
   <div class="row">
     <div class="col-6">
@@ -93,6 +125,7 @@
           https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
           https://angular.io/api/forms/RadioControlValueAccessor
       -->
+<!--
       <div class="form-inline">
         <label><u>2a) Vernal Pool Location Info:</u></label>
         <html-dialog-app [htmlContent]="visitDialogText.visitPoolMapped"></html-dialog-app>
@@ -113,6 +146,7 @@
                <span>This pool was unmapped (New Pool)</span>
            </label>
       </div>
+-->
       <!-- 2a Vernal Pool Location Information -->
       <div class="row">
         <div class="col-4">
@@ -122,7 +156,7 @@
           <div class="form-group form-inline">
             <label for="visitPoolId">Pool ID</label>
             <html-dialog-app [htmlContent]="visitDialogText.visitPoolId"></html-dialog-app>
-            <input type="text" formControlName="visitPoolId" (change)="visitPoolIdChanged($event)" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
+            <input type="text" size="10" (change)="visitPoolIdChanged($event)" (keyup.enter)="filterMappedPools()" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
             <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
                 <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
             </div>
@@ -135,10 +169,12 @@
           <div class="form-group form-inline">
               <label for="visitDate">Visit Date</label>
               <html-dialog-app [htmlContent]="visitDialogText.visitDate"></html-dialog-app>
-              <!-- Can't figure out how to set the value of input type="date"
-              <input type="date" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
+              <!--
+               NOTE: format must be YYYY-MM-DD to set value of input type="date" from code.
+               Oddly, setting the default date in that format does not alter is default Date
+               format, which is MM / DD / YYYY.
               -->
-              <input type="text" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
+              <input type="date" formControlName="visitDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitDate.errors }" />
               <div *ngIf="submitted && locate.visitDate.errors" class="invalid-feedback">
                   <div *ngIf="locate.visitDate.errors.required">Visit Date is required</div>
                   <div *ngIf="locate.visitDate.errors.date">Visit Date must be a valid date in the format MM/DD/YYYY</div>
@@ -165,7 +201,7 @@
           https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
           NOTE: radio button values are type string. it does not handle boolean by default.
       -->
-    <span *ngIf="locate.visitPoolMapped.value=='true'">
+    <span *ngIf="mapped.visitPoolMapped.value=='true'">
       <div class="row">
       <div class="col-4">
       <label for="visitLocatePool"><u>Was the pool located?</u></label>
@@ -207,7 +243,7 @@
       </div> <!-- row -->
     </span> <!-- visitPoolMapped is true -->
 
-    <span *ngIf="locate.visitPoolMapped.value=='false'">
+    <span *ngIf="mapped.visitPoolMapped.value=='false'">
       <!--
         visitLocationUncertainty
       -->

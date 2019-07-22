@@ -40,7 +40,7 @@
       -->
       <div class="form-group">
           <label for="mappedDateText">Mapped Date</label>
-          <input type="text" formControlName="mappedDateText" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedDateText.errors }" />
+          <input type="date" formControlName="mappedDateText" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedDateText.errors }" />
           <div *ngIf="submitted && f.mappedDateText.errors" class="invalid-feedback">
               <div *ngIf="f.mappedDateText.errors.required">Mapped Date is required</div>
               <div *ngIf="f.mappedDateText.errors.date">Mapped Date must be a valid date in the format MM/DD/YYYY</div>

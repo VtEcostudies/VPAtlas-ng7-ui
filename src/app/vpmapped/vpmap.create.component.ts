@@ -62,7 +62,7 @@ export class vpMapCreateComponent implements OnInit {
         this.update = false;
         this.pool.mappedPoolId = `${this.authenticationService.currentUserValue.user.username}1`;
         this.pool.mappedByUser = this.authenticationService.currentUserValue.user.username;
-        this.pool.mappedDateText = Moment().format('MM/DD/YYYY');
+        this.pool.mappedDateText = Moment().format('YYYY-MM-DD');
         this.pool.mappedLatitude = 43.916944;
         this.pool.mappedLongitude = -72.668056;
         this.pool.mappedTown = new vtTown(); //instantiates town object to enable default value for town drop-down
@@ -88,7 +88,7 @@ export class vpMapCreateComponent implements OnInit {
 
         mappedPoolId: [this.pool.mappedPoolId, Validators.required],
         mappedByUser: [this.pool.mappedByUser, Validators.required],
-        mappedDateText: [this.pool.mappedDateText, Validators.required],
+        mappedDateText: [Moment(this.pool.mappedDateText).format('YYYY-MM-DD'), Validators.required],
         mappedLatitude: [this.pool.mappedLatitude, Validators.required],
         mappedLongitude: [this.pool.mappedLongitude, Validators.required],
         mappedTown: [this.pool.mappedTown, new FormControl(this.towns[this.townCount])],
@@ -125,7 +125,7 @@ export class vpMapCreateComponent implements OnInit {
     afterLoad() {
       this.vpMappedForm.controls['mappedPoolId'].setValue(this.pool.mappedPoolId);
       this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
-      this.vpMappedForm.controls['mappedDateText'].setValue(Moment(this.pool.mappedDateText).format('MM/DD/YYYY'));
+      this.vpMappedForm.controls['mappedDateText'].setValue(Moment(this.pool.mappedDateText).format('YYYY-MM-DD'));
       this.vpMappedForm.controls['mappedLatitude'].setValue(this.pool.mappedLatitude);
       this.vpMappedForm.controls['mappedLongitude'].setValue(this.pool.mappedLongitude);
 

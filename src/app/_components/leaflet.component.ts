@@ -358,10 +358,10 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   onMarkerMoveEnd(e) {
-    console.log("leaflet.onMarkerMoveEnd | event: ", e);
+    //console.log("leaflet.onMarkerMoveEnd | event: ", e);
     this.itemLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
     this.markerUpdate.emit(this.itemLoc);
-    console.log("leaflet.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
+    //console.log("leaflet.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
                              Lat: ${this.itemLoc.lat}<br>
                              Lng: ${this.itemLoc.lng}`);

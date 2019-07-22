@@ -79,21 +79,21 @@ export class vpVisitCreateComponent implements OnInit {
         this.update = true;
         this.mapMarker = true;
         await this.createFormControls();
-        await this.loadPage(this.visitId);
+        await this.LoadVisitData(this.visitId);
       } else { //create a new visit - set a few necessary initial values
         this.update = false;
         this.mapMarker = false;
         this.visit.visitId = 0;
         this.visit.visitPoolId = this.poolId; //null or valid
         this.visit.visitUserName = this.authenticationService.currentUserValue.user.username;
-        this.visit.visitDate = Moment().format('MM/DD/YYYY');
+        this.visit.visitDate = Moment().format('YYYY-MM-DD'); //NOTE: format must be YYYY-MM-DD to set value of input type="date"
         this.visit.visitLatitude = 43.916944;
         this.visit.visitLongitude = -72.668056;
         this.visit.visitTown = new vtTown(); //instantiates town object to enable default value for town drop-down
         await this.createFormControls();
         if (this.poolId) {
           this.mapMarker =  true;
-          await this.LoadVisitPool(this.poolId);
+          await this.LoadMappedPool(this.poolId);
         }
       }
     } //end ngOnInit
@@ -123,13 +123,16 @@ export class vpVisitCreateComponent implements OnInit {
           validator: EmailOrPhone('visitLandownerPhone', 'visitLandownerEmail')
       });
       */
+      this.visitPoolMappedForm = this.formBuilder.group({
+        visitPoolMapped: [{value: this.poolId != null ? 'true' : null, disabled: this.poolId != null || this.visitId != null}, Validators.required], //if poolId was passed to form, visitPoolMapped is TRUE
+      });
 
       this.visitLocationForm = this.formBuilder.group({
         //2a Vernal Pool Location Information
         //if poolId was passed to form, visitPoolId is disabled
+        //visitPoolMapped: [{value: this.poolId != null ? 'true' : null, disabled: this.poolId != null || this.visitId != null}, Validators.required], //if poolId was passed to form, visitPoolMapped is TRUE
         visitPoolId: [{value: this.poolId, disabled: this.poolId != null || this.visitId != null }, Validators.required], //conditionally disabled in afterLoad
-        visitDate: [Moment().format('MM/DD/YYYY'), Validators.required],
-        visitPoolMapped: [{value: this.poolId != null ? 'true' : null, disabled: this.poolId != null || this.visitId != null}, Validators.required], //if poolId was passed to form, visitPoolMapped is TRUE
+        visitDate: [Moment().format('YYYY-MM-DD'), Validators.required], //NOTE: format must be YYYY-MM-DD to set value of input type="date"
         visitLocatePool: ['', Validators.nullValidator],
         visitCertainty: ['', Validators.nullValidator],
         visitLocationUncertainty: ['', Validators.nullValidator],
@@ -150,6 +153,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitLandowner: [{disabled: true}, this.visitLandOwnForm], //non-display db-only value (JSON column) set when the form is submitted
         //see below separate formGroup for landowner contact info
       });
+      this.visitLocationForm.disable();
 
       this.visitFieldVerificationForm = this.formBuilder.group({
         visitVernalPool: [],
@@ -271,7 +275,8 @@ export class vpVisitCreateComponent implements OnInit {
         }
       });
 
-      this.visitLocationForm.get('visitPoolMapped').valueChanges.subscribe(
+      //this.visitLocationForm.get('visitPoolMapped').valueChanges.subscribe(
+      this.visitPoolMappedForm.get('visitPoolMapped').valueChanges.subscribe(
         (mode: string) => {
           console.log('vpvisit.create.formControlValueChanged.visitPoolMapped', mode);
           if (mode == 'true') { //enable/disable to conditionally include this field in POST
@@ -288,8 +293,9 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitObserverForm.controls['visitUserName'].setValue(this.visit.visitUserName);
       //2a Vernal Pool Location Information
       this.visitLocationForm.controls['visitPoolId'].setValue(this.visit.visitPoolId);
-      this.visitLocationForm.controls['visitDate'].setValue(Moment(this.visit.visitDate).format('MM/DD/YYYY'));
-      this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
+      this.visitLocationForm.controls['visitDate'].setValue(Moment(this.visit.visitDate).format('YYYY-MM-DD')); //NOTE: format must be YYYY-MM-DD to set value of input type="date"
+      //this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
+      this.visitPoolMappedForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
       const locatePool = this.visit.visitLocatePool ? this.visit.visitLocatePool.toString() : false; //radio button bool=>string
       this.visitLocationForm.controls['visitLocatePool'].setValue(locatePool);
       this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
@@ -445,6 +451,7 @@ export class vpVisitCreateComponent implements OnInit {
 
     // convenience getters for easy access to form fields
     get observ() { return this.visitObserverForm.controls; }
+    get mapped() { return this.visitPoolMappedForm.controls; }
     get locate() { return this.visitLocationForm.controls; }
     get landown() { return this.visitLandOwnForm.controls; }
     get fldVer() { return this.visitFieldVerificationForm.controls; }
@@ -454,14 +461,14 @@ export class vpVisitCreateComponent implements OnInit {
       When updating an existing Visit, load that visit and populate the fields.
       NOTE: vpvisit lat/lon are canonical here.
     */
-    async loadPage(visitId) {
+    async LoadVisitData(visitId) {
       this.dataLoading = true;
-      console.log('vpvisit.create.component.loadPage:', visitId);
+      console.log('vpvisit.create.component.LoadVisitData:', visitId);
       this.vpVisitService.getById(visitId)
           .pipe(first())
           .subscribe(
               data => {
-                console.log('vpvisit.create.component.loadPage result:', data);
+                console.log('vpvisit.create.component.LoadVisitData result:', data);
                 this.visit = data.rows[0];
                 this.locMarker = {latitude: this.visit.latitude, longitude: this.visit.longitude};
                 this.setFormValues();
@@ -485,8 +492,10 @@ export class vpVisitCreateComponent implements OnInit {
      column visitPoolMapped.
     */
     visitModeChanged(e) {
-      console.log(this.visitLocationForm.value.visitPoolMapped);
-      if (this.visitLocationForm.value.visitPoolMapped == 'true') {
+      //console.log(this.visitLocationForm.value.visitPoolMapped);
+      console.log(this.visitPoolMappedForm.value.visitPoolMapped);
+      if (this.visitPoolMappedForm.value.visitPoolMapped == 'true') {
+        this.visitLocationForm.enable();
         this.visitLocationForm.controls['visitPoolId'].setValue('');
         this.visitLocationForm.controls['visitPoolId'].enable();
         this.itemType = "Visit Mapped Pool"; //must use this itemType to signal map to send poolId via event
@@ -494,7 +503,9 @@ export class vpVisitCreateComponent implements OnInit {
         this.mapPoints = true;
         this.loadMappedPools();
       }
-      if (this.visitLocationForm.value.visitPoolMapped == 'false') {
+      //if (this.visitLocationForm.value.visitPoolMapped == 'false') {
+      if (this.visitPoolMappedForm.value.visitPoolMapped == 'false') {
+        this.visitLocationForm.enable();
         this.visitLocationForm.controls['visitPoolId'].setValue('NEW*');
         this.visitLocationForm.controls['visitPoolId'].disable();
         this.itemType = "Visit New Pool";
@@ -505,22 +516,22 @@ export class vpVisitCreateComponent implements OnInit {
     }
 
     /*
-    NOTE: here we load pool data from vpvisit, and visit lat/lon are displayed.
+    NOTE: here we load pool data from vpmapped, so vpmapped lat/lon are displayed.
     */
-    async LoadVisitPool(poolId) {
+    async LoadMappedPool(poolId) {
       this.dataLoading = true;
-      this.vpVisitService.getById(poolId)
+      this.vpMappedService.getById(poolId)
           .pipe(first())
           .subscribe(
               data => {
-                  console.log(`vpvisit.LoadVisitPool=>data:`, data);
+                  console.log(`vpvisit.LoadMappedPool=>data:`, data);
                   this.locMarker = data.rows[0];
                   this.visitLocationForm.controls['visitLatitude'].setValue(this.locMarker.latitude);
                   this.visitLocationForm.controls['visitLongitude'].setValue(this.locMarker.longitude);
                   this.dataLoading = false;
               },
               error => {
-                  console.log(`vpvisit.LoadVisitPool=>error: ${error}`);
+                  console.log(`vpvisit.LoadMappedPool=>error: ${error}`);
                   this.alertService.error(error);
                   this.dataLoading = false;
               });
@@ -574,11 +585,13 @@ export class vpVisitCreateComponent implements OnInit {
               data => {
                   console.log(`vpvisit.CreateMappedPool=>data:`, data);
                   this.dataLoading = false;
-                  //this.visitLocationForm.value.visitPoolId = this.poolId;
                   this.poolId = data.rows[0].mappedPoolId; //this is used when poolId form value is null due to being disabled
                   this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
                   this.itemType = "Visit Mapped Pool"; //we now have a Mapped Pool and can proceed to Visit data, must set itemType='Visit Mapped Pool' to signal map to send poolId via event
-                  this.visitLocationForm.get('visitPoolMapped').disable(); //must disable this selector after saving NEW* pool, or too confusing
+                  //this.visitLocationForm.get('visitPoolMapped').disable(); //must disable this selector after saving NEW* pool, or too confusing
+                  this.visitPoolMappedForm.get('visitPoolMapped').disable(); //must disable this selector after saving NEW* pool, or too confusing
+                  // Update the mapMarker's toolTip to show newly-created visitPoolId. Do this by forcing leaflet plotPoolMarker via ngOnChanges by setting 'locMarker'...!phew!
+                  this.locMarker = {"poolId":this.poolId, "latitude":mappedPool.mappedLatitude, "longitude":mappedPool.mappedLongitude};
               },
               error => {
                   console.log(`vpvisit.CreateMappedPool=>error: ${error}`);
@@ -621,7 +634,7 @@ export class vpVisitCreateComponent implements OnInit {
         console.log('vpvisit.create.createVisit | visitTownId: ', this.visitLocationForm.value.visitTown.townId);
         if (typeof(this.visitLocationForm.value.visitTown) != undefined && this.visitLocationForm.value.visitTown) {
           this.visitLocationForm.controls['visitTownId'].setValue(this.visitLocationForm.value.visitTown.townId);
-        } else {
+        } else { //visitTownId is required in db. must at least set value to 'Unknown'.
           this.alertService.error('Please select a Town for this Visit.')
           this.setPage(0);
           return;
@@ -675,7 +688,8 @@ export class vpVisitCreateComponent implements OnInit {
           this.visitLocationForm.controls['visitLandowner'].setValue(this.visitLandOwnForm.value);
         }
         //have to convert true/false radio buttons from string to boolean
-        this.visitLocationForm.value.visitPoolMapped = this.visitLocationForm.value.visitPoolMapped == 'true';
+        //this.visitLocationForm.value.visitPoolMapped = this.visitLocationForm.value.visitPoolMapped == 'true';
+        this.visitPoolMappedForm.value.visitPoolMapped = this.visitPoolMappedForm.value.visitPoolMapped == 'true';
         this.visitLocationForm.value.visitLocatePool = this.visitLocationForm.value.visitLocatePool == 'true';
 
         //visitObserverForm
@@ -690,7 +704,7 @@ export class vpVisitCreateComponent implements OnInit {
         //visitIndicatorSpeciesForm
         Object.assign(this.visitLocationForm.value, this.visitIndicatorSpeciesForm.value);
 
-        //remove visitId from the POST data if creating a New pool
+        //Remove visitId from the POST data if creating a New pool. Its value is '(New)'.
         if (!this.update) {
           delete this.visitLocationForm.value.visitId;
         }
@@ -768,9 +782,18 @@ export class vpVisitCreateComponent implements OnInit {
     }
   }
 
-  private loadMappedPools() {
+  private filterMappedPools() {
+    var filter = '';
+    const poolId = this.visitLocationForm.value.visitPoolId;
+    console.log('vpvisit.create.component.filterMappedPools', poolId);
+    filter = `mappedPoolId|LIKE=%${poolId}%`;
+    this.loadMappedPools(filter);
+  }
+
+  private loadMappedPools(filter='') {
     this.poolsLoading = true;
-    this.vpMappedService.getAll('')
+    console.log('vpvisit.create.component.loadMappedPools', filter);
+    this.vpMappedService.getAll(filter)
         .pipe(first())
         .subscribe(
             data => {

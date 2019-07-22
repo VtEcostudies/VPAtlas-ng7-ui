@@ -3,16 +3,16 @@ export const visitDialogText = {
     visitPoolMapped:`
 <h3><u>Vernal Pool Location Info</u></h3>
 <p>Add a new Visit to an already-mapped Vernal Pool by selecting 'This pool was mapped'.</p>
-<p>Once you choose that option, existing pools will be shown on the map at right. Simply click</p>
-<p>on a pool on the map to select that pool for your Visit data. Or, if you have the pool's ID</p>
-<p>you may enter that value in the 'Pool ID' text box.</p>
-<p>---</p>
+<p>Once you choose that option, existing pools will be shown on the map at right. Simply click<br>
+on a pool on the map to select that pool for your Visit data. Or, if you have the pool's ID<br>
+you may enter that value in the 'Pool ID' text box.</p>
 <p>Add a new Vernal Pool to the map by selecting 'This pool was unmapped (New Pool)'.</p>
-<p>When selected, a moveable marker will appear on the map at right. Move the marker <p>
-<p>to the location on the map where the pool is located.</p>`,
+<p>When selected, a moveable marker will appear on the map at right. Move the marker<br>
+to the location on the map where the pool is located.</p>`,
     visitPoolId: `
 <h3><u>Pool ID</u></h3>
-<p>Type a valid Pool ID if you know it. Pool IDs are <em>case-sensitive</em>.</p>
+<p>Type a valid Pool ID and press <b><u>Enter</u></b> to search for that pool in the database.<br>
+Pool IDs are <em>case-sensitive</em>.</p>
 <p>If you don't know the Pool ID, search for it on the map, and click a pool to fill it in.</p>`,
     visitDate:`
 <h3><u>Date</u></h3>

@@ -93,12 +93,16 @@ export class vpViewComponent implements OnInit {
         visitUserName: [{value: this.visit.visitUserName, disabled: true}, Validators.required],
       });
 
+      this.visitPoolMappedForm = this.formBuilder.group({
+        visitPoolMapped: [],
+      });
+
       this.visitLocationForm = this.formBuilder.group({
         //2a Vernal Pool Location Information
         //if poolId was passed to form, visitPoolId is disabled
         visitPoolId: [],
         visitDate: [],
-        visitPoolMapped: [],
+        //visitPoolMapped: [],
         visitLocatePool: [],
         visitCertainty: [],
         visitLocationUncertainty: [],
@@ -232,6 +236,7 @@ export class vpViewComponent implements OnInit {
 
       //disable all at the formGroup level for viewing only
       this.visitObserverForm.disable();
+      this.visitPoolMappedForm.disable();
       this.visitLocationForm.disable();
       this.visitLandOwnForm.disable();
       this.visitFieldVerificationForm.disable();
@@ -246,8 +251,9 @@ export class vpViewComponent implements OnInit {
       this.visitObserverForm.controls['visitUserName'].setValue(this.visit.visitUserName);
       //2a Vernal Pool Location Information
       this.visitLocationForm.controls['visitPoolId'].setValue(this.visit.visitPoolId);
-      this.visitLocationForm.controls['visitDate'].setValue(Moment(this.visit.visitDate).format('MM/DD/YYYY'));
-      this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
+      this.visitLocationForm.controls['visitDate'].setValue(Moment(this.visit.visitDate).format('YYYY-MM-DD')); //NOTE: format must be YYYY-MM-DD to set value of input type="date"
+      //this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
+      this.visitPoolMappedForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
       const locatePool = this.visit.visitLocatePool ? this.visit.visitLocatePool.toString() : false; //radio button bool=>string
       this.visitLocationForm.controls['visitLocatePool'].setValue(locatePool);
       this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
@@ -379,6 +385,7 @@ export class vpViewComponent implements OnInit {
 
     // convenience getters for easy access to form fields
     get observ() { return this.visitObserverForm.controls; }
+    get mapped() { return this.visitPoolMappedForm.controls; }
     get locate() { return this.visitLocationForm.controls; }
     get landown() { return this.visitLandOwnForm.controls; }
     get fldVer() { return this.visitFieldVerificationForm.controls; }

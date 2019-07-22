@@ -6,6 +6,10 @@
 */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+.link {
+  cursor: pointer;
+}
+
 /*
   Moved here from html-dialog-app.css because it has no effect, there!
 
