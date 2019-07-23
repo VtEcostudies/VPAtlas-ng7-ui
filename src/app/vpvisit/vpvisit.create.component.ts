@@ -54,9 +54,6 @@ export class vpVisitCreateComponent implements OnInit {
         private vpVisitService: vpVisitService,
         private vpPoolsService: vpPoolsService,
         private townService: vtInfoService,
-        //public matDialog: MatDialog,
-        //public dialogBox: DialogBox,
-
     ) {
       if (this.authenticationService.currentUserValue) {
         let currentUser = this.authenticationService.currentUserValue.user;
@@ -154,7 +151,8 @@ export class vpVisitCreateComponent implements OnInit {
         visitLandowner: [{disabled: true}, this.visitLandOwnForm], //non-display db-only value (JSON column) set when the form is submitted
         //see below separate formGroup for landowner contact info
       });
-      this.visitLocationForm.disable();
+      //disable this form if this is potentially a NEW pool
+      if (!this.visitId && !this.poolId) {this.visitLocationForm.disable();}
 
       this.visitFieldVerificationForm = this.formBuilder.group({
         visitVernalPool: [],
@@ -445,6 +443,7 @@ export class vpVisitCreateComponent implements OnInit {
     */
     markerSelected(itemInfo: vpMappedEventInfo) {
       console.log('vpvisit.create.markerSelected()', itemInfo);
+      this.poolId = itemInfo.poolId;
       this.visitLocationForm.controls['visitPoolId'].setValue(itemInfo.poolId);
       this.visitLocationForm.controls['visitLatitude'].setValue(itemInfo.latLng.lat);
       this.visitLocationForm.controls['visitLongitude'].setValue(itemInfo.latLng.lng);
@@ -495,6 +494,7 @@ export class vpVisitCreateComponent implements OnInit {
     visitModeChanged(e) {
       //console.log(this.visitLocationForm.value.visitPoolMapped);
       console.log(this.visitPoolMappedForm.value.visitPoolMapped);
+      this.poolId = null;
       if (this.visitPoolMappedForm.value.visitPoolMapped == 'true') {
         this.visitLocationForm.enable();
         this.visitLocationForm.controls['visitPoolId'].setValue('');
@@ -788,6 +788,7 @@ export class vpVisitCreateComponent implements OnInit {
     const poolId = this.visitLocationForm.value.visitPoolId;
     console.log('vpvisit.create.component.filterMappedPools', poolId);
     filter = `mappedPoolId|LIKE=%${poolId}%`;
+    this.poolId = null;
     this.loadMappedPools(filter);
   }
 
@@ -799,6 +800,7 @@ export class vpVisitCreateComponent implements OnInit {
         .subscribe(
             data => {
               this.pools = data.rows;
+              if (data.rowCount == 1) {this.poolId = data.rows[0].poolId;}
               this.poolsLoading = false;
             },
             error => {

@@ -1,20 +1,24 @@
 <div class="row">
 
   <div class="col-4">
-    <div *ngIf="!update && (itemType==='Visit' || itemType==='Visit Mapped Pool')" style="display:inline-block;">
-      <h3><u>Add Vernal Pool Data</u></h3>
+    <div *ngIf="!update && itemType==='Visit Mapped Pool'" style="display:inline-block;">
+      <h3><u>Add Data for Vernal Pool {{poolId}}</u></h3>
     </div>
 
     <div *ngIf="!update && itemType==='Visit New Pool'" style="display:inline-block;">
       <h3><u>Add NEW* Vernal Pool</u></h3>
     </div>
 
+    <div *ngIf="!update && itemType==='Visit' && poolId" style="display:inline-block;">
+      <h3><u>Add Data for Vernal Pool {{poolId}}</u></h3>
+    </div>
+
     <div *ngIf="update && itemType==='Visit'" style="display:inline-block;">
-      <h3><u>Edit Vernal Pool Data '{{visitId}}'</u></h3>
+      <h3><u>Edit Vernal Pool Visit {{visitId}}</u></h3>
     </div>
 
     <div *ngIf="!update && itemType==='View Visit'" style="display:inline-block;">
-      <h3><u>View Vernal Pool Data '{{visitId}}'</u></h3>
+      <h3><u>View Vernal Pool Visit {{visitId}}</u></h3>
     </div>
   </div> <!-- col -->
 
