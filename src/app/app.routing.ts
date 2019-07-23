@@ -26,8 +26,8 @@ import { HtmlDialog } from './dialogBox';
 
 //@add_component_here
 const appRoutes: Routes = [
-    //{ path: '', component: HomeComponent },
-    { path: '', component: vpViewComponent },
+    { path: '', component: HomeComponent },
+    //{ path: '', component: vpListComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },

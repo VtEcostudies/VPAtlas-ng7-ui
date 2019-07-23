@@ -1,39 +1,91 @@
-<div *ngIf="!loading">
   <div class="row">
-    <div class="col-2">
+    <div class="col-8">
+      <div class="row">
+          <img style="width:100%;height:auto;" [src]="imagePath">
+          <p>
+            The Vernal Pool Atlas is a new project to map and monitor Vernal Pools in Vermont. A joint effort
+            of VCE and VT F&W, VPAtlas combines all Vermont Vernal Pool data into a single mapping database. These data
+            include the Vernal Pool Mapping Project, the Vernal Pool Monitoring Project, and a new data entered by
+            Citizen Scientists.
+          </p>
+      </div>
+    </div>
+<!--
+    <div class="col-2 content-left-border-right">
       <h4><u>Vernal Pool Atlas</u></h4>
-      <table class="table table-striped">
-          <tr>
-              <td>Potential Pools</td>
-              <td>{{stats.potential}}</td>
-          </tr>
-          <tr>
-              <td>Probable Pools</td>
-              <td>{{stats.probable}}</td>
-          </tr>
-          <tr>
-              <td>Confirmed Pools</td>
-              <td>{{stats.confirmed}}</td>
-          </tr>
-          <tr>
-              <td>Monitored Pools</td>
-              <td>{{stats.monitored}}</td>
-          </tr>
+      <fieldset id="poolStatus">
+      <table class="table table-sm">
+        <th style="width: 70%;"></th>
+        <th style="width: 30%;"></th>
+
+        <tr>
+          <td>
+            <label>
+              <input checked name="poolStatus" type="radio" (click)="setStatusLoadPools('')" class="radio-button-justify-left" />
+              <span>All Pools</span>
+            </label>
+          </td>
+          <td>{{stats.total}}</td>
+        </tr>
+
+        <tr>
+          <td>
+            <label>
+              <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Potential')" class="radio-button-justify-left" />
+              <span>Potential</span>
+            </label>
+          </td>
+          <td>{{stats.potential}}</td>
+        </tr>
+
+        <tr>
+          <td>
+            <label>
+              <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Probable')" class="radio-button-justify-left" />
+              <span>Probable</span>
+            </label>
+          </td>
+          <td>{{stats.probable}}</td>
+        </tr>
+
+        <tr>
+          <td>
+            <label>
+              <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Confirmed')" class="radio-button-justify-left" />
+              <span>Confirmed</span>
+            </label>
+          </td>
+          <td>{{stats.confirmed}}</td>
+        </tr>
+
+        <tr>
+          <td>
+            <label [ngClass]="{ 'disabled':true }">
+              <input disabled name="poolStatus" type="radio" (click)="setStatusLoadPools('Monitored')" class="radio-button-justify-left" />
+              <span [ngClass]="{ 'disabled':true }">Monitored</span>
+            </label>
+          </td>
+          <td>{{stats.monitored}}</td>
+        </tr>
+
       </table>
+
+      </fieldset>
     </div>
-    <div class="col-10">
-      <!--
-      <app-map [mapPools]="pools"></app-map>
-      -->
-      <app-map-comp
-        [mapPoints]="mapPoints"
-        [mapValues]="pools"
-        [itemType]="itemType"
-        >
-      </app-map-comp>
-    </div>
-  </div>
-</div>
-<div *ngIf="loading">
-  ...Loading
-</div>
+-->
+    <div class="col-4">
+
+      <div *ngIf="!loading">
+        <app-map-comp
+          [mapPoints]="mapPoints"
+          [mapValues]="pools"
+          [itemType]="itemType"
+          >
+        </app-map-comp>
+      </div> <!-- !loading -->
+      <div *ngIf="loading">
+        ...Loading
+      </div>
+
+    </div> <!-- col -->
+  </div> <!-- row -->

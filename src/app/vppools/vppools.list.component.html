@@ -49,9 +49,9 @@
 
       <tr>
         <td>
-          <label class="disabled">
+          <label [ngClass]="{ 'disabled':true }">
             <input disabled name="poolStatus" type="radio" (click)="setStatusLoadPools('Monitored')" class="radio-button-justify-left" />
-            <span>Monitored</span>
+            <span [ngClass]="{ 'disabled':true }">Monitored</span>
           </label>
         </td>
         <td>{{stats.monitored}}</td>
@@ -99,9 +99,6 @@
         <tr class="form-group">
           <td>Method</td>
           <td>
-            <!--
-            <input (keyup.enter)="loadPools(1)" (blur)="loadPools(1)" formControlName="mappedMethod" class="form-control"/>
-            -->
             <select (change)="loadPools(1)" formControlName="mappedMethod" class="form-control">
               <option value="">All</option>
               <option value="Aerial">Aerial</option>

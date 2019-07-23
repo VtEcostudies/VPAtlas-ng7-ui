@@ -2,7 +2,7 @@
 
   <div class="col-4">
     <div *ngIf="!update && (itemType==='Visit' || itemType==='Visit Mapped Pool')" style="display:inline-block;">
-      <h3><u>Add Vernal Pool Visit</u></h3>
+      <h3><u>Add Vernal Pool Data</u></h3>
     </div>
 
     <div *ngIf="!update && itemType==='Visit New Pool'" style="display:inline-block;">
@@ -10,11 +10,11 @@
     </div>
 
     <div *ngIf="update && itemType==='Visit'" style="display:inline-block;">
-      <h3><u>Edit Vernal Pool Visit '{{visitId}}'</u></h3>
+      <h3><u>Edit Vernal Pool Data '{{visitId}}'</u></h3>
     </div>
 
     <div *ngIf="!update && itemType==='View Visit'" style="display:inline-block;">
-      <h3><u>View Vernal Pool Visit '{{visitId}}'</u></h3>
+      <h3><u>View Vernal Pool Data '{{visitId}}'</u></h3>
     </div>
   </div> <!-- col -->
 
@@ -85,9 +85,12 @@
   </div> <!-- row -->
 </form> <!-- visitObserverForm -->
 
+<div *ngIf="visitPage.index===0" class="row"> <!-- Master -->
+  <div class="col-6"> <!-- Master -->
+
 <form *ngIf="visitPage.index===0" [formGroup]="visitPoolMappedForm">
   <div class="row">
-    <div class="col-6">
+    <div class="col-12">
       <!--
           visitPoolMapped - radio button
           https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
@@ -96,6 +99,9 @@
       <div class="form-inline">
         <label><u>2a) Vernal Pool Location Info:</u></label>
         <html-dialog-app [htmlContent]="visitDialogText.visitPoolMapped"></html-dialog-app>
+        <label *ngIf="mapped.visitPoolMapped.value==null && !poolId && !visitId" style="color: blue;">
+          Please begin by selecting one option below.
+        </label>
         <label *ngIf="mapped.visitPoolMapped.value=='true' && !poolId && !visitId" style="color: blue;">
           Please enter the Pool ID below, or select a Pool on the map.
         </label>
@@ -110,7 +116,7 @@
            </label>
            <label>
              <input type="radio" value="false" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
-               <span>This pool was unmapped (New Pool)</span>
+               <span>This pool was NOT mapped (New Pool)</span>
            </label>
       </div>
     </div> <!-- col -->
@@ -119,34 +125,7 @@
 
 <form *ngIf="visitPage.index===0" [formGroup]="visitLocationForm">
   <div class="row">
-    <div class="col-6">
-      <!--
-          visitPoolMapped - radio button
-          https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
-          https://angular.io/api/forms/RadioControlValueAccessor
-      -->
-<!--
-      <div class="form-inline">
-        <label><u>2a) Vernal Pool Location Info:</u></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitPoolMapped"></html-dialog-app>
-        <label *ngIf="locate.visitPoolMapped.value=='true' && !poolId && !visitId" style="color: blue;">
-          Please enter the Pool ID below, or select a Pool on the map.
-        </label>
-        <label *ngIf="locate.visitPoolMapped.value=='false' && !poolId && !visitId" style="color: blue;">
-          Please locate the marker on the map or enter Lat/Lon below.
-        </label>
-      </div>
-      <div class="form-group form-inline">
-           <label>
-             <input type="radio" value="true" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
-               <span>This pool was mapped</span>
-           </label>
-           <label>
-             <input type="radio" value="false" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
-               <span>This pool was unmapped (New Pool)</span>
-           </label>
-      </div>
--->
+    <div class="col-12">
       <!-- 2a Vernal Pool Location Information -->
       <div class="row">
         <div class="col-4">
@@ -326,6 +305,7 @@
   </div> <!-- row -->
       <div>
         <label><u>2b) Location of Pool</u></label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitLocationOfPool"></html-dialog-app>
       </div>
   <div class="row">
     <div class="col-6">
@@ -333,7 +313,7 @@
         visitLatitude
       -->
       <div class="form-group form-inline">
-          <label for="visitLatitude" class="leading-label">Latitude</label>
+          <label for="visitLatitude" class="leading-label">Latitude/Northing</label>
           <html-dialog-app [htmlContent]="visitDialogText.visitLatitude"></html-dialog-app>
           <input type="text" formControlName="visitLatitude" size="15" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitLatitude.errors }" />
           <div *ngIf="submitted && locate.visitLatitude.errors" class="invalid-feedback">
@@ -346,7 +326,7 @@
         visitLongitude
       -->
       <div class="form-group form-inline">
-          <label for="visitLongitude" class="leading-label" >Longitude</label>
+          <label for="visitLongitude" class="leading-label" >Longitude/Easting</label>
           <html-dialog-app [htmlContent]="visitDialogText.visitLongitude"></html-dialog-app>
           <input type="text" formControlName="visitLongitude" size="15" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitLongitude.errors }" />
           <div *ngIf="submitted && locate.visitLongitude.errors" class="invalid-feedback">
@@ -379,7 +359,11 @@
           </label>
       </div>
     </div> <!-- col -->
-    <div class="col-6">
+  </div> <!-- row -->
+</form> <!-- visitLocationForm -->
+</div> <!-- col-6 Master -->
+
+  <div class="col-6"> <!-- Master -->
       <div *ngIf="!poolsLoading">
         <app-map-comp style="height:450px;"
           [mapPoints]="mapPoints"
@@ -391,13 +375,14 @@
           (markerSelect)="markerSelected($event)"
           >
         </app-map-comp>
-      </div> <!-- !poolsLoading -->
+      </div>
       <div *ngIf="poolsLoading">
         Loading...
-      </div> <!-- poolsLoading -->
-    </div>
-  </div> <!-- row -->
-</form> <!-- visitLocationForm -->
+      </div>
+  </div> <!-- col-6 Master -->
+</div> <!-- row Master -->
+
+<!-- <div class="row">  row Master -->
 
 <form *ngIf="visitPage.index===1" [formGroup]="visitLocationForm">
 
@@ -952,6 +937,7 @@
 
   </table>
 </form>
+<!--</div>  row Master -->
 
 <!--
   Action buttons

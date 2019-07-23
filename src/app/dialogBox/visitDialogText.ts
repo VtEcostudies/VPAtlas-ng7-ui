@@ -49,6 +49,14 @@ to aid in verifying that you located the pool in question.</p>`,
 <h3><u>Location Comments</u></h3>
 <p>Please provide any additional information or comments about this pool which might be relevant.</p>
 <p></p>`,
+    visitLocationOfPool: `
+<h3><u>Location Of Pool</u></h3>
+<p>Please do <em>one</em> of the following:</p>
+<ol>
+  <li>Click on a pool on the map at right. This will auto-fill these Lat/Lon values.</li>
+  <li>Enter Lat/Lon coordinates in <em>decimal</em> degrees. Eg. Latitude: 44.764322 Longitude: -72.654222.</li>
+</ol>
+`,
     visitLatitude: `
 <h3><u>Latitude</u></h3>
 <p>Please record the Latitude value for this pool.</p>

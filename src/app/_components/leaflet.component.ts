@@ -43,12 +43,14 @@ export class LeafletComponent implements OnInit, OnChanges {
   currentUser = null;
   userIsAdmin = false;
   vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
+  vtCenterLeft = new L.LatLng(43.916944, -72.25); //Zoom so VT is on left edge...
   @Input() itemType = 'Visit'; //flag what type of item is being mapped (vpMapped, vpVisit-mapped, vpVisit-new, etc.)
   @Input() mapPoints = false; //external flag plot mapValues as circleMarkers
   @Input() mapValues = null; //single value or array of values having .latitude and .longitude properties to plot as circleMarkers, set by the parent
   @Input() mapMarker = false; //external flag to invoke the map with a moveable marker
   @Input() locMarker = null; //single object having .latitude and .longitude properties to locate the moveable marker
   @Input() update = false; //external flag that this is an edit/update, not a create instantition: plot the mapMarker location with mapValues data
+  @Input() zoomTo = {center: this.vtCenter, zoomLevel:8}; //external flag to set zoom/center of map
   @Output() markerUpdate = new EventEmitter<L.LatLng>(); //when the mapMarker is moved or located, send LatLng map events to listeners
   @Output() markerSelect = new EventEmitter<vpMappedEventInfo>(); //when a circleMarker is selected, send mapped pool info events to listeners
   itemLoc: L.LatLng = null; //store the location of the marker on the screen, passed with events to listeners, etc.
@@ -307,6 +309,16 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (this.map) {
       this.map.setView(this.vtCenter, 8);
+    }
+  }
+
+  zoomVermontLeft(event=null) {
+    if (event) {
+      event.stopPropagation();
+    }
+
+    if (this.map) {
+      this.map.setView(this.vtCenterLeft, 8);
     }
   }
 

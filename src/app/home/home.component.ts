@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { User } from '@app/_models';
-import { AlertService, AuthenticationService, vpMappedService } from '@app/_services';
+import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -12,13 +12,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   stats = [{ potential:0, probable:0, confirmed:0, eliminated:0, monitored:0 }];
   pools = [];
   mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
-  itemType = "Mapped Pool";
+  itemType = "Home";
+  imagePath = '../assets/images/vp_splash.jpg';
 
     constructor(
         private router: Router,
         private alertService: AlertService,
         private authenticationService: AuthenticationService,
-        private vpMappedService: vpMappedService
+        private vpMappedService: vpMappedService,
+        private vpPoolsService: vpPoolsService
     ) {
       /*
         API handles this UI route's (/home) API route calls (/pools/mapped)
@@ -45,7 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           .subscribe(
               data => {
                 this.stats = data.rows[0];
-                this.loadAllPools(); //chain data-loads together
+                this.loadPools(); //chain data-loads together
                 //this.loading = false;
               },
               error => {
@@ -54,9 +56,21 @@ export class HomeComponent implements OnInit, OnDestroy {
               });
     }
 
-    private loadAllPools() {
+    setStatusLoadPools(status=null) {
+      var filter = '';
+      if (status=="Monitored") {
+        this.alertService.error("Monitored Pools are not implemented in VPAtlas yet.");
+        return;
+      }
+      if (status) {
+        var filter = `mappedPoolStatus=${status}`;
+      }
+      this.loadPools(filter);
+    }
+
+    private loadPools(filter='') {
       this.loading = true;
-      this.vpMappedService.getAll('')
+      this.vpPoolsService.getAll(filter)
           .pipe(first())
           .subscribe(
               data => {

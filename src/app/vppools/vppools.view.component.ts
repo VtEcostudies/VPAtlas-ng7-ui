@@ -14,6 +14,7 @@ export class vpViewComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
     userIsAdmin = false;
     visitObserverForm: FormGroup = this.formBuilder.group({});
+    visitPoolMappedForm: FormGroup = this.formBuilder.group({});
     visitLocationForm: FormGroup = this.formBuilder.group({});
     visitLandOwnForm: FormGroup = this.formBuilder.group({});
     visitFieldVerificationForm: FormGroup = this.formBuilder.group({});
