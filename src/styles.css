@@ -173,6 +173,15 @@ label.disabled span.disabled {
   background: green;
 }
 
+.square {
+  position:relative;
+  top: 4px;
+  height: 10px;
+  width: 10px;
+  border:solid 1px black;
+  background-color: transparent;
+}
+
 .triangle {
   position: relative;
   top:-12px;

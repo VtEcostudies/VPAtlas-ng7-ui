@@ -94,13 +94,11 @@ export class LeafletComponent implements OnInit, OnChanges {
           <label style="padding-left:3px;">Confirmed</label>
         </div>
         <div class="row">
-          <div class="circle" style="background:Purple;"></div>
+          <div class="square"></div>
           <label style="padding-left:3px;">Monitored</label>
         </div>
         <div class="row">
-          <div class="triangle">
-            <div class="filled"> </div>
-          </div>
+          <div class="triangle"><div class="filled"></div></div>
           <label>Visited</label>
         </div>
       </div>
