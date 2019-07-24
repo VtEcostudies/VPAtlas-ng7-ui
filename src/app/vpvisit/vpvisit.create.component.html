@@ -386,8 +386,6 @@
   </div> <!-- col-6 Master -->
 </div> <!-- row Master -->
 
-<!-- <div class="row">  row Master -->
-
 <form *ngIf="visitPage.index===1" [formGroup]="visitLocationForm">
 
         <div>
@@ -479,6 +477,7 @@
   -->
   <div class="form-group form-inline">
       <label for="visitVernalPool">Is this a Vernal Pool?</label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitVernalPool"></html-dialog-app>
       <label>
         <input type="radio" value="Yes" formControlName="visitVernalPool" class="form-control radio-button-horiz" />
         <span>Yes</span>
@@ -494,6 +493,7 @@
   </div>
   <div>
     <label for="visitPoolType"><u>3a) Pool Type</u></label>
+    <html-dialog-app [htmlContent]="visitDialogText.visitPoolType"></html-dialog-app>
   </div>
   <!--
     visitPoolType - radio button
@@ -534,6 +534,7 @@
   -->
   <div class="form-group form-inline">
       <label for="visitInletType">Type of Inlet (an inlet is a seasonal or permanent channel providing water into pool)</label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitInletType"></html-dialog-app>
       <label>
         <input type="radio" value="No Inlet" formControlName="visitInletType" class="form-control radio-button-horiz" />
         <span>No Inlet</span>
@@ -552,6 +553,7 @@
     -->
     <div class="form-group form-inline">
         <label for="visitOutletType">Type of Outlet (an outlet is a seasonal or permanent channel draining water from pool)</label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitOutletType"></html-dialog-app>
         <label>
           <input type="radio" value="No Outlet" formControlName="visitOutletType" class="form-control radio-button-horiz" />
           <span>No Outlet</span>
@@ -568,6 +570,7 @@
 
     <div>
       <label><u>3c) Surrounding Habitat (within 250 feet of pool)</u></label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitSurroundingHabitat"></html-dialog-app>
     </div>
 <div class="row">
   <div class="col-6">
@@ -576,6 +579,7 @@
     -->
     <div class="form-group form-inline">
         <label for="visitForestUpland"><u>Forested Upland:</u></label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitForestUpland"></html-dialog-app>
         <label>
           <input type="radio" value="Deciduous" formControlName="visitForestUpland" class="form-control radio-button-horiz" />
           <span>Deciduous</span>
@@ -596,6 +600,7 @@
     -->
     <div class="form-group form-inline">
         <label for="visitForestCondition"><u>Forest Condition:</u></label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitForestCondition"></html-dialog-app>
         <label>
           <input type="radio" value="Undisturbed" formControlName="visitForestCondition" class="form-control radio-button-horiz" />
           <span>Undisturbed</span>
@@ -619,37 +624,44 @@
           <input type="checkbox" formControlName="visitHabitatAgriculture" class="form-control radio-button-horiz" />
           <span>Agriculture/grassland</span>
         </label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatAgriculture"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatLightDev" class="form-control radio-button-horiz" />
           <span>Light development (<25% developed)</span>
         </label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatLightDev"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatHeavyDev" class="form-control radio-button-horiz" />
           <span>Intensive development (>25% developed)</span>
         </label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatHeavyDev"></html-dialog-app>
     </div>
     <div class="form-group form-inline">
         <label>
           <input type="checkbox" formControlName="visitHabitatPavedRd" class="form-control radio-button-horiz" />
           <span>Road/driveway (paved)</span>
         </label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatPavedRd"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatDirtRd" class="form-control radio-button-horiz" />
           <span>Road/driveway (dirt/gravel)</span>
         </label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatDirtRd"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatPowerline" class="form-control radio-button-horiz" />
           <span>Powerline right-of-way</span>
         </label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatPowerline"></html-dialog-app>
         <label for="visitHabitatOther" class="leading-label">Other:</label>
         <input type="text" formControlName="visitHabitatOther"  class="form-control" />
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatOther"></html-dialog-app>
     </div>
     <!-- visitHabitatComment -->
     <div class="form-group form-inline">
         <label for="visitHabitatComment">Visit Habitat Comments</label>
         <input type="text" formControlName="visitHabitatComment" class="form-control" />
+        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatComment"></html-dialog-app>
     </div>
-
 </form> <!-- visitFieldVerificationForm -->
 
 <!-- 4. Pool Characteristics -- visitPoolCharacteristicsForm -->
@@ -659,6 +671,7 @@
   </div>
   <div>
     <label><u>4a) Approximate Maximum Pool Depth:</u></label>
+    <html-dialog-app [htmlContent]="visitDialogText.visitMaxDepth"></html-dialog-app>
   </div>
   <!-- visitMaxDepth - radio button -->
   <div class="form-group form-inline">
@@ -690,6 +703,7 @@
   <!-- visitWaterLevelObs - radio button -->
   <div class="form-group form-inline">
       <label><u>4b) Water Level at Time of Survey:</u></label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitWaterLevelObs"></html-dialog-app>
       <label>
         <input type="radio" value="Full" formControlName="visitWaterLevelObs" class="form-control radio-button-horiz" />
         <span>Full</span>
@@ -709,6 +723,7 @@
     </div>
     <div>
       <label><u>4c) Hydroperiod (select the likely hydroperiod)</u></label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitHydroPeriod"></html-dialog-app>
     </div>
     <!-- Hydroperiod -->
     <div class="form-group form-inline">
@@ -728,6 +743,7 @@
     <!-- visitMaxWidth -->
     <div class="form-group form-inline">
       <label><u>4d) Approximate size of pool (at maximum capacity):</u></label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitApproxSizeofPool"></html-dialog-app>
         <label for="visitMaxWidth" class="leading-label">Width:</label>
         <input type="text" size="3" formControlName="visitMaxWidth" class="form-control" />
         <label for="visitMaxWidth" class="trailing-label">(ft)</label>
@@ -738,6 +754,7 @@
     </div>
     <div class="form-group form-inline">
       <label><u>4e) Vegetation:</u></label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitVegetation"></html-dialog-app>
         <!-- visitPoolTrees -->
         <label for="visitPoolTrees" class="leading-label">Trees:</label>
         <input type="text" size="1" formControlName="visitPoolTrees" class="form-control" />
@@ -758,6 +775,7 @@
     <!-- visitSubstrate: radio button -->
     <div class="form-group form-inline">
       <label><u>4f) Substrate:</u></label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitSubstrate"></html-dialog-app>
         <label>
           <input type="radio" value="Leaf litter" formControlName="visitSubstrate" class="form-control radio-button-horiz" />
           <span>Leaf litter</span>
@@ -776,13 +794,14 @@
         </label>
         <label>
           <input type="radio" value="Other" formControlName="visitSubstrate" class="form-control radio-button-horiz" />
-          <span>Other:</span>
-          <input type="text" value="" formControlName="visitSubstrateOther" class="form-control" />
+          <label for="visitSubstrateOther" class="leading-label">Other:</label>
+          <input type="text" formControlName="visitSubstrateOther" class="form-control" />
         </label>
       </div>
       <!-- Pool Disturbance -->
       <div>
         <label><u>4g) Pool Disturbance (check all that apply)</u></label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitDisturbance"></html-dialog-app>
       </div>
       <div class="form-group form-inline">
           <label>
@@ -805,11 +824,10 @@
             <input type="checkbox" formControlName="visitDisturbDitching" class="form-control radio-button-horiz"  />
             <span>Ditching/draining</span>
           </label>
-            <label for="visitDisturbOther" class="leading-label">Other:</label>
-            <input type="text" formControlName="visitDisturbOther" class="form-control" />
+          <label for="visitDisturbOther" class="leading-label">Other:</label>
+          <input type="text" formControlName="visitDisturbOther" class="form-control" />
       </div>
-
-</form> <!-- visitFieldVerificationForm -->
+    </form> <!-- visitPoolCharacteristicsForm -->
 
 <form *ngIf="visitPage.index===4" [formGroup]="visitIndicatorSpeciesForm">
   <div>
@@ -940,8 +958,7 @@
     </tr>
 
   </table>
-</form>
-<!--</div>  row Master -->
+</form> <!-- visitIndicatorSpeciesForm -->
 
 <!--
   Action buttons

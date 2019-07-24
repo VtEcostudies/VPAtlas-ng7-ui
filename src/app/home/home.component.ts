@@ -14,6 +14,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
   itemType = "Home";
   imagePath = '../assets/images/vp_splash.jpg';
+  vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg'; //C:\Users\jloomis\Documents\VCE\VPAtlas\vpAtlas-ng7-ui\src\assets\images\vce logo new clr w tag.jpg
+  fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
 
     constructor(
         private router: Router,

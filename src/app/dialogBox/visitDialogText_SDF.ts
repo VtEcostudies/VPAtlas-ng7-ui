@@ -111,7 +111,6 @@ select the type of map used to locate the pool.</p>
   <li>The site has no permanent inlet or outlet stream;</li>
   <li>The site does not appear to be a permanent water body;</li>
   <li>The site does not contain fish, and;</li>
-  <li></li>
   <ol>
     <li>You visited during the active season (April to August) and detected the eggs, larvae, or adults of at least one of the following indicator species (Wood Frog, Spotted Salamander, Jefferson Salamander, Blue-spotted Salamander, or Fairy Shrimp), OR</li>
     <li>You visited outside the active season, and in your judegment or past experience, the site provides suitable conditions to support one of the indicator species.</li>
@@ -142,12 +141,6 @@ box above is appropriate.</p>`,
     visitPoolTypeOther:`
 <h3><u>Other</u></h3>
 <p>If none of the above, please describe.</p>`,
-    visitInletType:`
-<h3><u>Inlet Type</u></h3>
-<p>No Inlet: There is no evidence of any channelized water entering the pool</p>
-<p>Ephemeral Inlet: There is evidence of water entering the pool, but it isn't channelized and doesn't appear to flow continuously.</p>
-<p>Permanent Inlet: There is channelized water between well-defined banks continuously running
-into the pool. These sites are typically not vernal pools.</p>`,
     visitInletTypeNoInlet:`
 <h3><u>No Inlet</u></h3>
 <p>There is no evidence of any channelized water entering the pool</p>`,
@@ -158,21 +151,12 @@ into the pool. These sites are typically not vernal pools.</p>`,
 <h3><u>Permanent Inlet</u></h3>
 <p>There is channelized water between well-defined banks continuously running
 into the pool. These sites are typically not vernal pools.</p>`,
-    visitOutletType:`
-<h3><u>Outlet Type</u></h3>
-<p>No Outlet: There is no evidence of any channelized water exiting the pool</p>
-<p>Ephemeral Outlet: There is evidence of water exiting the pool, but it isn't channelized and
-doesn't appear to flow continuously. Many vernal pools, for example, have an overflow outlet
-that functions if the water level in the pool reaches a certain level.</p>
-<p>Permanent Outlet: There is channelized water between well-defined banks continuously running
-out of the pool. These sites are typically not vernal pools.</p>`,
     visitOutletTypeNoOutlet:`
 <h3><u>No Outlet</u></h3>
 <p>There is no evidence of any channelized water exiting the pool.</p>`,
     visitOutletTypeEphemeral:`
 <h3><u>Ephemeral Outlet</u></h3>
-<p>There is evidence of water exiting the pool, but it isn't channelized and doesn't appear to flow continuously.
-Many vernal pools, for example, have an overflow outlet that functions if the water level in the pool reaches a certain level.</p>`,
+<p>There is evidence of water exiting the pool, but it isn't channelized and doesn't appear to flow continuously. Many vernal pools, for example, have an overflow outlet that functions if the water level in the pool reaches a certain level.</p>`,
     visitOutletTypePermanent:`
 <h3><u>Permanent Outlet</u></h3>
 <p>There is channelized water between well-defined banks continuously running out of the pool.
@@ -183,17 +167,6 @@ These sites are typically not vernal pools.</p>`,
     visitForestUpland:`
 <h3><u>ForestUpland</u></h3>
 <p>Select the one that best describes the forest cover type surrounding the pool.</p>`,
-    visitForestCondition:`
-<h3><u>Forest Condition</u></h3>
-<h4><u>Undisturbed</u></h4>
-<p>No evidence of logging within 250-feet of the pool OR logging took place far enough
-in the past that the site has, for all practical purposes, recovered.</p>
-<h4><u>Minor logging</u></h4>
-<p>There is evidence of thinning cuts which have left =70% of the canopy intact.</p>
-<h4><u>Major logging</u></h4>
-<p>There is evidence of aggressive thinning or clearcut logging leaving <70% of the canopy intact.
-Be careful to distinguish between logging activity (flat-topped stumps) and natural disturbances
-(such as wind-throw and ice storms) that can leave canopy gaps.</p>`,
     visitForestConditionUndisturbed:`
 <h3><u>Undisturbed</u></h3>
 <p>No evidence of logging within 250-feet of the pool OR logging took place far enough
@@ -245,13 +218,6 @@ estimate from the pool edge will suffice.</p>`,
 <h3><u>WaterLevelObs</u></h3>
 <p>In order to estimate this, examine the edges of the pool for signs of high water,
 including water-stained leaves, sediment deposits on the leaf litter, and water marks on tree trunks.</p>`,
-    visitHydroPeriod: `
-<h3><u>Hydro Period</u></h3>
-<p><b><u>Permanent</u></b>: Check this box for sites (like ponds) that appear to retain water throughout the year.</p>
-<p><b><u>Semi-permanent</u></b>: Check this box for sites that appear to retain at least some water in most years. These sites may dry
-completely, but only in drought years.</p>
-<p><b><u>Ephemeral</u></b>: Check this box for sites that appear to dry completely most years. Most 'typical' vernal pools fall
-into this category.</p>`,
     visitHydroPeriodPermanent: `
 <h3><u>Permanent</u></h3>
 <p>Check this box for sites (like ponds) that appear to retain water throughout the year.</p>`,
@@ -264,7 +230,7 @@ completely, but only in drought years.</p>`,
 <p>Check this box for sites that appear to dry completely most years. Most 'typical' vernal pools fall into this category.</p>`,
     visitApproxSizeofPool: `
 <h3><u>Approximate size of pool (at maximum capacity):</u></h3>
-<p>While use of a measuring tape to obtain the dimensions is preferable, pacing or estimating the dimensions are also acceptable.</p>
+<p>While use of a measuring tape to obtain the dimensions is preferable, pacing or estimating the dimensions are also acceptable./p>
 <p>To obtain these measurements when the pool is not completely full, examine the immediate pool basin
 for evidence of high water marks. Signs include water-stained leaves, sediment deposits on the leaf litter,
 and water marks on tree trunks.</p>`,
@@ -350,4 +316,4 @@ the dropdown menu in the next column to indicate if the number entered was deriv
 using the following protocol:</p>
 <p>Pool ID_Your Initials_Picture #.</p>
 <p>For example: SDF34_JD_1. This will allow us to link each photograph with the appropriate pool data form.</p>`
-};
+}

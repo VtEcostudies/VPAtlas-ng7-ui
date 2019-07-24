@@ -42,7 +42,9 @@ export class vpListComponent implements OnInit {
           userName: [''],
           town: [''],
           mappedMethod: [''],
-          mappedPoolStatus: ['']
+          mappedPoolStatus: ['All'],
+          visitedPool: [],
+          monitoredPool: []
       });
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
@@ -65,11 +67,17 @@ export class vpListComponent implements OnInit {
     }
 
     setStatusLoadPools(status="") {
-      if (status=="Monitored") {
-        this.alertService.error("Monitored Pools are not implemented in VPAtlas yet.");
-        return;
+      this.filterForm.get("visitedPool").setValue(false);
+      this.filterForm.get("monitoredPool").setValue(false);
+
+      if (status=="Visited") {
+        this.filterForm.get("visitedPool").setValue(true);
+        console.log('setStatusLoadPools | visitedPool', this.filterForm.value.visitedPool);
+      } else if (status=="Monitored"){
+        this.filterForm.get("monitoredPool").setValue(true);
+        console.log('setStatusLoadPools | monitoredPool', this.filterForm.value.monitoredPool);
       }
-      this.filterForm.get("mappedPoolStatus").setValue(status);
+
       this.loadPools();
     }
 
@@ -149,12 +157,31 @@ export class vpListComponent implements OnInit {
       }
 
       //hidden field, populated from code
+      /*
+        NOTE: there IS a way to send multiple values for one selector in http:
+        send multiple instances of that same field in the query param lists
+        node express parses them into an array for us...
+      */
       if (this.f.mappedPoolStatus.value) {
+        if (this.f.mappedPoolStatus.value!="All" &&
+            this.f.mappedPoolStatus.value!="Visited" &&
+            this.f.mappedPoolStatus.value!="Monitored"
+          ) {
+          if (this.filter) {
+            this.filter += `&logical${++i}=AND&`;
+          }
+          this.filter += `mappedPoolStatus=${this.f.mappedPoolStatus.value}`;
+          //this.filter += `mappedPoolStatus|IN=${this.f.mappedPoolStatus.value}`;
+        }
+      }
+
+      //hidden field, populated from code
+      console.log('getFilter | visitedPool', this.f.visitedPool.value);
+      if (this.f.visitedPool.value == true) {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `mappedPoolStatus=${this.f.mappedPoolStatus.value}`;
-        //this.filter += `mappedPoolStatus|IN=${this.f.mappedPoolStatus.value}`;
+        this.filter += `visitPoolId|!=NULL`;
       }
 
       console.log('vppools.list.getfilter()', this.filter);

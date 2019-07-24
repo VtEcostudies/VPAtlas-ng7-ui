@@ -2,6 +2,9 @@
 <div class="row">
   <div class="col-2 content-left-border-right">
     <h4><u>Vernal Pool Atlas</u></h4>
+
+<form [formGroup]="filterForm">
+
     <fieldset id="poolStatus"> <!-- for radio-button grouping -->
     <table class="table table-sm">
       <th style="width: 70%;"></th>
@@ -10,7 +13,7 @@
       <tr>
         <td>
           <label>
-            <input checked name="poolStatus" type="radio" (click)="setStatusLoadPools('')" class="radio-button-justify-left" />
+            <input checked formControlName="mappedPoolStatus" type="radio" value="All" (change)="setStatusLoadPools('')" class="radio-button-justify-left" />
             <span>All Pools</span>
           </label>
         </td>
@@ -20,7 +23,7 @@
       <tr>
         <td>
           <label>
-            <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Potential')" class="radio-button-justify-left" />
+            <input formControlName="mappedPoolStatus" type="radio" value="Potential" (change)="setStatusLoadPools('Potential')" class="radio-button-justify-left" />
             <span>Potential</span>
           </label>
         </td>
@@ -30,7 +33,7 @@
       <tr>
         <td>
           <label>
-            <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Probable')" class="radio-button-justify-left" />
+            <input formControlName="mappedPoolStatus" type="radio" value="Probable" (change)="setStatusLoadPools('Probable')" class="radio-button-justify-left" />
             <span>Probable</span>
           </label>
         </td>
@@ -40,7 +43,7 @@
       <tr>
         <td>
           <label>
-            <input name="poolStatus" type="radio" (click)="setStatusLoadPools('Confirmed')" class="radio-button-justify-left" />
+            <input formControlName="mappedPoolStatus" type="radio" value="Confirmed" (change)="setStatusLoadPools('Confirmed')" class="radio-button-justify-left" />
             <span>Confirmed</span>
           </label>
         </td>
@@ -49,8 +52,21 @@
 
       <tr>
         <td>
+          <label>
+            <input formControlName="mappedPoolStatus" type="radio" value="Visited" (change)="setStatusLoadPools('Visited')" class="radio-button-justify-left" />
+            <!--
+            <input formControlName="visitedPool" type="checkbox" (change)="loadPools()" class="radio-button-justify-left" />
+            -->
+            <span>Visited</span>
+          </label>
+        </td>
+        <td>{{stats.visited}}</td>
+      </tr>
+
+      <tr>
+        <td>
           <label [ngClass]="{ 'disabled':true }">
-            <input disabled name="poolStatus" type="radio" (click)="setStatusLoadPools('Monitored')" class="radio-button-justify-left" />
+            <input disabled formControlName="mappedPoolStatus" type="radio" value="Monitored" class="radio-button-justify-left" />
             <span [ngClass]="{ 'disabled':true }">Monitored</span>
           </label>
         </td>
@@ -60,6 +76,8 @@
     </table>
 
     </fieldset>
+
+</form>
 
     <h4><u>Search Pools/Visits</u></h4>
     <!--

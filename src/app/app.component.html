@@ -1,16 +1,18 @@
 ﻿<!-- nav -->
 <nav class="navbar navbar-expand navbar-dark bg-dark"> <!-- *ngIf="currentUser"> -->
     <div class="navbar-nav">
+        <!--
+        <a href="http://vtecostudies.org"><i class="icon-vce">VCE</i></a>
+        -->
         <a class="nav-item nav-link" routerLink="/">Home</a>
         <a class="nav-item nav-link" routerLink="/pools/list" >Search Pools</a>
-        <a class="nav-item nav-link" routerLink="/pools/mapped/list" >(Mapped Pools)</a>
-        <!--
-        <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="currentUser" >Add Pool</a>
-        -->
-        <a class="nav-item nav-link" routerLink="/pools/visit/list" >(Pool Visits)</a>
+        <a class="nav-item nav-link" routerLink="/pools/mapped/list" *ngIf="userIsAdmin" >(Mapped Pools)</a>
+
+        <a class="nav-item nav-link" routerLink="/pools/visit/list" *ngIf="userIsAdmin" >(Pool Visits)</a>
         <!--
         <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Visit</a>
         -->
+        <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="userIsAdmin" >(Add Mapped Pool)</a>
         <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="currentUser" >Add Pool Data</a>
         <!--
         <a class="nav-item nav-link" routerLink="/pools/mapped/import" >Import Pools</a>
