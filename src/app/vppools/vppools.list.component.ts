@@ -11,7 +11,7 @@ export class vpListComponent implements OnInit {
     userIsAdmin = false;
     filterForm: FormGroup;
     loading = false;
-    stats = {total:0, potential:0, probable:0, confirmed:0, eliminated:0, duplicate:0, monitored:0}; //need a default to prevent pre-load errors?
+    stats = { total:0, potential:0, probable:0, confirmed:0, eliminated:0, duplicate:0, visited:0, monitored:0 }; //need a default to prevent pre-load errors?
     page = 1;
     pageSize = 10;
     loadAllRec = true; //flag to load by page or to load all at once
