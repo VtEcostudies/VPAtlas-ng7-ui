@@ -8,8 +8,10 @@ import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } 
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit, OnDestroy {
+  userIsAdmin = false;
   loading = false;
-  stats = [{ potential:0, probable:0, confirmed:0, eliminated:0, monitored:0 }];
+  filter = '';
+  stats = [{ potential:0, probable:0, confirmed:0, eliminated:0, duplicate:0, visited:0, monitored:0 }];
   pools = [];
   mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
   itemType = "Home";
@@ -29,8 +31,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         without authentication.
         Leave this code stub here for future use.
       */
-      if (!this.authenticationService.currentUserValue) {
-          //this.router.navigate(['/login']);
+      if (this.authenticationService.currentUserValue) {
+        let currentUser = this.authenticationService.currentUserValue.user;
+        this.userIsAdmin = currentUser.userrole == 'admin';
+      } else {
+        this.userIsAdmin = false;
       }
     }
 
@@ -59,20 +64,33 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     setStatusLoadPools(status=null) {
-      var filter = '';
       if (status=="Monitored") {
         this.alertService.error("Monitored Pools are not implemented in VPAtlas yet.");
         return;
       }
       if (status) {
-        var filter = `mappedPoolStatus=${status}`;
+        this.filter = `mappedPoolStatus=${status}`;
       }
-      this.loadPools(filter);
+      this.loadPools();
+    }
+
+    getFilter() {
+        var i = 0;
+        //filter hidden pools if user is not admin
+        if (!this.userIsAdmin) {
+          if (this.filter) {
+            this.filter += `&logical${++i}=AND&`;
+          }
+          this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+          this.filter += `&`;
+          this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
+        }
     }
 
     private loadPools(filter='') {
       this.loading = true;
-      this.vpPoolsService.getAll(filter)
+      this.getFilter();
+      this.vpPoolsService.getAll(this.filter)
           .pipe(first())
           .subscribe(
               data => {

@@ -373,8 +373,8 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.markerUpdate.emit(this.itemLoc);
     //console.log("leaflet.onMarkerMoveEnd | itemLoc: ", this.itemLoc);
     this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
-                             Lat: ${this.itemLoc.lat}<br>
-                             Lng: ${this.itemLoc.lng}`);
+                             Lat: ${Number(this.itemLoc.lat).toFixed(5)}<br>
+                             Lng: ${Number(this.itemLoc.lng).toFixed(5)}`);
   }
 
   onMouseMove(e) {
@@ -405,6 +405,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.markerSelect.emit(this.itemInfo);
     } else {
       const popShow = L.popup({
+        className: 'leaflet-custom-popup',
       	maxHeight: 200,
         keepInView: true
       }).setContent(popText);
@@ -417,6 +418,30 @@ export class LeafletComponent implements OnInit, OnChanges {
     var obj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
     var text = '';
     var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
+    var include = [ //an array of column names to include in the popup list of values from the db
+      'poolId',
+      'mappedLatitude',
+      'mappedLongitude',
+      'mappedTown',
+      'visitTown',
+      'mappedPoolStatus',
+      'mappedDateText',
+      'mappedDate',
+      'visitDate',
+      'mappedMethod'
+    ];
+    var fieldName = {
+      'poolId':'Pool ID',
+      'mappedLatitude':'Mapped Latitude',
+      'mappedLongitude':'Mapped Longitude',
+      'mappedTown':'Mapped Town',
+      'visitTown':'Visit Town',
+      'mappedPoolStatus':'Pool Status',
+      'mappedDateText':'Date Mapped',
+      'mappedDate':'Date Mapped',
+      'visitDate':'Visit Date',
+      'mappedMethod':'Mapped Method'
+    }
 
     //Create action links at the top of the popup display based upon the context - 'itemType'
     switch (this.itemType) {
@@ -451,7 +476,6 @@ export class LeafletComponent implements OnInit, OnChanges {
         } else {
           //text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
         }
-        console.log('leaflet.componenent.buildPopup',this.currentUser);
         if (this.userIsAdmin ||
           ((this.currentUser && (this.currentUser.username === obj.mappedByUser || this.currentUser.usename === obj.visitUserName)))
           ) {
@@ -463,21 +487,41 @@ export class LeafletComponent implements OnInit, OnChanges {
         break;
     }
 
+    //text += `<div class="container-fluid">`;
+    //text += `<div class="table-responsive">`;
+    //text += `<table class="table table-sm table-bordered">`;
+    //
+    /*
+      Bootstrap tables wreak havoc with viewport sizing and scrollbars. Abandon ship.
+
+      It looks like the issue with the vertical scrollbar clipping table content happens
+      when the table is the widest element, and content has vertical overflow. A hack
+      solution is to force an element outside the table to be wider, which makes room
+      for the table and the vertical scrollbar.
+    */
+    text += `<table class="leaflet-table">`;
+
     // Iterate over pool data object. Add non-null fields to popup text as html divs.
     // TODO: make this a select list of meaningful fields...
     Object.keys(obj).forEach(function(key,index) {
-      if (obj[key] && !exclude.includes(key)) { //add non-null values not in the exclusion list
+      if (obj[key] && include.includes(key)) { //add values in inclusion list
+      //if (obj[key] && !exclude.includes(key)) { //add non-null values not in the exclusion list
         if (key.includes('Town')) {
-          text += `<div>${key}: ${obj[key].townName}</div>`;
+          text += `<tr><td>${fieldName[key]}</td><td>${obj[key].townName}</td></tr>`;
         } else if (key.includes('Date')) {
-          text += `<div>${key}: ${Moment(obj[key]).format('MM/DD/YYYY')}</div>`;
+          text += `<tr><td>${fieldName[key]}</td><td>${Moment(obj[key]).format('MM/DD/YYYY')}</td></tr>`;
         } else if (key.includes('reatedAt') || key.includes('pdatedAt')) {
-          text += `<div>${key}: ${Moment(obj[key]).format('MM/DD/YYYY@HH:MM')}</div>`;
+          text += `<tr><td>${fieldName[key]}</td><td>${Moment(obj[key]).format('MM/DD/YYYY@HH:MM')}</td></tr>`;
+        } else if (key.includes('atitude') || key.includes('ongitude')) {
+          text += `<tr><td>${fieldName[key]}</td><td>${Number(obj[key]).toFixed(5)}</td></tr>`;
         } else {
-          text += `<div>${key}: ${obj[key]}</div>`;
+          text += `<tr><td>${fieldName[key]}</td><td>${obj[key]}</td></tr>`;
         }
       }
     });
+    text += '</table>';
+    //text += '</div>'; //div table-responsive
+    //text += '</div>'; //div container-fluid
 
     return text;
   }
@@ -495,6 +539,8 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   private GetRadiusForPool(objPool:any) {
     var radius = this.cmRadius;
+
+    return radius;
 
     //set the radius based upon mappedLocationUncertainty
     switch (objPool.mappedLocationUncertainty) {
@@ -544,8 +590,8 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.marker.setLatLng(llLoc);
 
     this.marker.bindTooltip(`Pool ID: ${vpool.poolId}<br>
-                             Lat: ${llLoc.lat}<br>
-                             Lng: ${llLoc.lng}
+                             Lat: ${Number(llLoc.lat).toFixed(5)}<br>
+                             Lng: ${Number(llLoc.lng).toFixed(5)}
                             `);
   }
 
@@ -650,8 +696,8 @@ export class LeafletComponent implements OnInit, OnChanges {
       toolText += `
             <div>Pool ${vpools[i].poolId}</div>
             <div>Status: ${vpools[i].mappedPoolStatus}</div>
-            <div>Lat: ${vpools[i].latitude}</div>
-            <div>Lon:${vpools[i].longitude}</div>`;
+            <div>Lat: ${Number(vpools[i].latitude).toFixed(5)}</div>
+            <div>Lon:${Number(vpools[i].longitude).toFixed(5)}</div>`;
 
       //NOTE shape.bindPopup was moved to onCircleGroupClick()
 

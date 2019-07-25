@@ -1,6 +1,11 @@
 ﻿<!-- nav -->
-<nav class="navbar navbar-expand navbar-dark bg-dark"> <!-- *ngIf="currentUser"> -->
+<!-- <nav class="navbar navbar-expand navbar-dark bg-dark"> -->
+<!-- <nav class="navbar navbar-expand navbar-light bg-light vce-green"> -->
+<nav class="navbar navbar-expand navbar-dark vce-green">
     <div class="navbar-nav">
+        <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/">
+          <img [src]="vceLogoPath" height="20" alt="VCE Vernal Pool Mapping Project">
+        </a>
         <!--
         <a href="http://vtecostudies.org"><i class="icon-vce">VCE</i></a>
         -->
@@ -23,6 +28,9 @@
         -->
         <a class="nav-item nav-link" (click)="logout()" *ngIf="currentUser" >Logout ({{currentUser.user.username}})</a>
         <a class="nav-item nav-link" routerLink="/login" *ngIf="!currentUser" >Login/Register</a>
+        <a href="https://vtfishandwildlife.com/">
+          <img [src]="fNwLogoPath" height="20" alt="VT Fish and Wildlife">
+        </a>
     </div>
 </nav>
 

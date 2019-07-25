@@ -6,8 +6,16 @@
 */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+/*
+  cursor pointer for info icons, etc.
+*/
 .link {
   cursor: pointer;
+}
+
+.vce-green {
+  background: #235650;
+  color: white;
 }
 
 /*
@@ -41,13 +49,21 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
 }
 
 /*
-  alter font size in bootstrap tables
+  custom style to alter font size in bootstrap small tables
 */
-.table-condensed{
-  font-size: 18px;
-}
-.table-sm{
+.vce-table-sm {
   font-size: 14px;
+}
+
+/*
+  Custom style for leaflet popups
+*/
+.leaflet-custom-popup {
+  font-size: 10px;
+}
+
+.leaflet-table td {
+  border: 1px solid lightgrey;
 }
 
 #jumbotron {
@@ -199,8 +215,4 @@ label.disabled span.disabled {
   border-bottom:solid 8px white;
   border-right:solid 4px transparent;
   border-left:solid 4px transparent;
-}
-
-.icon-vce {
-  background:url("./assets/images/vce_favicon_DN9_icon.ico");
 }

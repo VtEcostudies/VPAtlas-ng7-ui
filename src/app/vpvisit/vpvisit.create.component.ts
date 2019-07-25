@@ -55,15 +55,15 @@ export class vpVisitCreateComponent implements OnInit {
         private vpPoolsService: vpPoolsService,
         private townService: vtInfoService,
     ) {
-      if (this.authenticationService.currentUserValue) {
-        let currentUser = this.authenticationService.currentUserValue.user;
-        console.log('vpvisit.create.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
-        this.userIsAdmin = currentUser.userrole == 'admin';
-      } else {
-        this.userIsAdmin = false;
-        // redirect to visit search if user not logged-in
-        this.router.navigate(['/visits/visit/list']);
-      }
+        if (this.authenticationService.currentUserValue) {
+          let currentUser = this.authenticationService.currentUserValue.user;
+          console.log('vpvisit.create.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
+          this.userIsAdmin = currentUser.userrole == 'admin';
+        } else {
+          this.userIsAdmin = false;
+          // redirect to visit search if user not logged-in
+          this.router.navigate(['/visits/visit/list']);
+        }
       this.loadTowns();
     }
 

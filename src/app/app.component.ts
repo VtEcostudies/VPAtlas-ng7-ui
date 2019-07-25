@@ -8,6 +8,9 @@ import { User, Auth } from './_models';
 export class AppComponent {
     currentUser: Auth;
     userIsAdmin = false;
+    vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';
+    vceIconPath = '../assets/images/vce_favicon.png';
+    fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
 
     constructor(
         private router: Router,

@@ -8,6 +8,7 @@ import { vpMapped, vpVisit } from '@app/_models';
 //@add_component_here
 @Component({templateUrl: 'vppools.list.component.html'})
 export class vpListComponent implements OnInit {
+    userIsAdmin = false;
     filterForm: FormGroup;
     loading = false;
     stats = {total:0, potential:0, probable:0, confirmed:0, eliminated:0, duplicate:0, monitored:0}; //need a default to prevent pre-load errors?
@@ -29,7 +30,14 @@ export class vpListComponent implements OnInit {
         private alertService: AlertService,
         private vpMappedService: vpMappedService,
         private vpPoolsService: vpPoolsService
-    ) {}
+    ) {
+      if (this.authenticationService.currentUserValue) {
+        let currentUser = this.authenticationService.currentUserValue.user;
+        this.userIsAdmin = currentUser.userrole == 'admin';
+      } else {
+        this.userIsAdmin = false;
+      }
+    }
 
     // convenience getter for easy access to form fields
     get f() { return this.filterForm.controls; }
@@ -182,6 +190,16 @@ export class vpListComponent implements OnInit {
           this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `visitPoolId|!=NULL`;
+      }
+
+      //filter hidden pools if user is not admin
+      if (!this.userIsAdmin) {
+        if (this.filter) {
+          this.filter += `&logical${++i}=AND&`;
+        }
+        this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+        this.filter += `&`;
+        this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
       }
 
       console.log('vppools.list.getfilter()', this.filter);

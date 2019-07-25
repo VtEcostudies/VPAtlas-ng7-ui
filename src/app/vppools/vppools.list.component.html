@@ -50,6 +50,22 @@
         <td>{{stats.confirmed}}</td>
       </tr>
 
+      <tr *ngIf="userIsAdmin">
+        <td><label>
+            <input formControlName="mappedPoolStatus" type="radio" value="Eliminated" (change)="setStatusLoadPools('Eliminated')" class="radio-button-justify-left" />
+            <span>Eliminated</span>
+        </label></td>
+        <td>{{stats.eliminated}}</td>
+      </tr>
+
+      <tr *ngIf="userIsAdmin">
+        <td><label>
+            <input formControlName="mappedPoolStatus" type="radio" value="Duplicate" (change)="setStatusLoadPools('Duplicate')" class="radio-button-justify-left" />
+            <span>Duplicate</span>
+        </label></td>
+        <td>{{stats.duplicate}}</td>
+      </tr>
+
       <tr>
         <td>
           <label>
@@ -151,7 +167,7 @@
       </div>
 
       <div *ngIf="!mapView" class="container-fluid">
-        <table class="table table-sm table-responsive" style="width:105%">
+        <table class="table table-sm table-responsive vce-table-sm" style="width:105%">
           <div style="height:550px; overflow:auto;">
           <thead>
             <tr>
