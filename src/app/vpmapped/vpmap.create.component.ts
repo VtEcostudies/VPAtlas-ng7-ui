@@ -16,6 +16,7 @@ export class vpMapCreateComponent implements OnInit {
     vpLandOwnForm: FormGroup;
     vpMappedForm: FormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
+    methods = ['Aerial', 'Known', 'Visited', 'Monitored']; //https://angular.io/api/forms/SelectControlValueAccessor
     towns = [];
     townCount = 0;
     dataLoading = false;
@@ -98,12 +99,13 @@ export class vpMapCreateComponent implements OnInit {
         mappedLandowner: [{disabled: true}, this.vpLandOwnForm],
 
         mappedLandownerInfo: ['', Validators.nullValidator],
-        mappedLocationUncertainty: ['50', new FormControl(this.locUncs[3], Validators.required)],
+        mappedLocationUncertainty: ['50', new FormControl(this.locUncs[4], Validators.required)],
         mappedComments: ['', Validators.nullValidator],
+        mappedMethod: ['Visited', new FormControl(this.methods[4], Validators.required)],
       });
 
       //how to handle UI changes from checkbox input:
-      //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-method-in-angular-reactive-forms-
+      //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-methods-in-angular-reactive-forms-
       this.formControlValueChanged();
     }
 
@@ -144,6 +146,7 @@ export class vpMapCreateComponent implements OnInit {
 
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
+      this.vpMappedForm.controls['mappedMethod'].setValue(this.pool.mappedMethod);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
 
       /* these fields are not displayed on new pool entry
@@ -161,7 +164,6 @@ export class vpMapCreateComponent implements OnInit {
       }
 
       console.dir(this.vpMappedForm.value);
-      console.dir(this.vpMappedForm.value);
     }
 
     /*
@@ -176,7 +178,7 @@ export class vpMapCreateComponent implements OnInit {
               data => {
                 console.log('vpmap.create.component.loadPage result:', data);
                 this.pool = data.rows[0];
-                this.locMarker = {latitude: this.pool.latitude, longitude: this.pool.longitude};
+                this.locMarker = {poolId: this.pool.mappedPoolId, latitude: this.pool.latitude, longitude: this.pool.longitude};
                 this.dataLoading = false; //this forces a map update, which plots a point
                 this.afterLoad(); //update form fields with values loaded from db
               },
@@ -184,7 +186,6 @@ export class vpMapCreateComponent implements OnInit {
                   this.alertService.error(error);
                   this.dataLoading = false;
               });
-
     }
 
     onSubmit() {
@@ -313,7 +314,6 @@ export class vpMapCreateComponent implements OnInit {
               this.alertService.error(error);
               this.dataLoading = false;
             });
-
   }
 
   //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection

@@ -192,8 +192,12 @@ export class vpListComponent implements OnInit {
         this.filter += `visitPoolId|!=NULL`;
       }
 
-      //filter hidden pools if user is not admin
-      if (!this.userIsAdmin) {
+      /*
+        filter hidden pools if user is not admin
+        filter hidden pools for admins by default
+      */
+      console.log('mappedPoolStatus', this.f.mappedPoolStatus.value);
+      if (!this.userIsAdmin || (this.userIsAdmin && (this.f.mappedPoolStatus.value=="All" || this.f.visitedPool.value == true))) {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }

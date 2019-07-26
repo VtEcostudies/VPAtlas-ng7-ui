@@ -43,7 +43,7 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
 /*
   remove vertical padding for nav items to allow navbar to govern
 */
-.nav-item, .nav-link {
+.nav-item .nav-link {
   padding-top:0px !important;
   padding-bottom:0px !important;
 }
@@ -140,6 +140,10 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   background: #235650;
   opacity: 0.7;
   width: 100%;
+}
+
+.vce-logo-noshrink {
+  min-width: 125px; /*the desired min-width*/
 }
 
 /*

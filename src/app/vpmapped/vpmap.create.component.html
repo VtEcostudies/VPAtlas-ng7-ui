@@ -1,16 +1,10 @@
 <div *ngIf="!update">
-  <h2>Map New Vernal Pool</h2>
+  <h2><u>Map New Vernal Pool</u></h2>
 </div>
 
 <div *ngIf="update">
-  <h2>Edit Vernal Pool '{{poolId}}'</h2>
+  <h2><u>Edit Vernal Pool '{{poolId}}'</u></h2>
 </div>
-
-<!-- test field for leaflet map event emitter
-<div>
-  poolUpdateLocation: {{poolUpdateLocation}}
-</div>
--->
 
 <form [formGroup]="vpMappedForm">
   <div class="row">
@@ -18,9 +12,9 @@
       <!--
           mappedPoolId
       -->
-      <div class="form-group">
-          <label for="mappedPoolId">Mapped Pool ID</label>
-          <input type="text" formControlName="mappedPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedPoolId.errors }" />
+      <div class="form-group form-inline float-right">
+          <label for="mappedPoolId">Pool ID</label>
+          <input type="text" size="11" formControlName="mappedPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedPoolId.errors }" />
           <div *ngIf="submitted && f.mappedPoolId.errors" class="invalid-feedback">
               <div *ngIf="f.mappedPoolId.errors.required">Mapped Pool ID is required</div>
           </div>
@@ -28,9 +22,9 @@
       <!--
           mappedByUser
       -->
-      <div class="form-group">
-          <label for="mappedByUser">Mapped By User</label>
-          <input type="text" formControlName="mappedByUser" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedByUser.errors }" />
+      <div class="form-group form-inline float-right">
+          <label for="mappedByUser">User</label>
+          <input type="text" size="11" formControlName="mappedByUser" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedByUser.errors }" />
           <div *ngIf="submitted && f.mappedByUser.errors" class="invalid-feedback">
               <div *ngIf="f.mappedByUser.errors.required">Mapped By User is required</div>
           </div>
@@ -38,9 +32,9 @@
       <!--
           mappedDateText
       -->
-      <div class="form-group">
-          <label for="mappedDateText">Mapped Date</label>
-          <input type="date" formControlName="mappedDateText" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedDateText.errors }" />
+      <div class="form-group form-inline float-right">
+          <label for="mappedDateText">Date</label>
+          <input type="date" style="width:150px;" formControlName="mappedDateText" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedDateText.errors }" />
           <div *ngIf="submitted && f.mappedDateText.errors" class="invalid-feedback">
               <div *ngIf="f.mappedDateText.errors.required">Mapped Date is required</div>
               <div *ngIf="f.mappedDateText.errors.date">Mapped Date must be a valid date in the format MM/DD/YYYY</div>
@@ -49,9 +43,9 @@
       <!--
         mappedLatitude
       -->
-      <div class="form-group">
+      <div class="form-group form-inline float-right">
           <label for="mappedLatitude">Latitude</label>
-          <input type="text" formControlName="mappedLatitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLatitude.errors }" />
+          <input type="text" size="11" formControlName="mappedLatitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLatitude.errors }" />
           <div *ngIf="submitted && f.mappedLatitude.errors" class="invalid-feedback">
               <div *ngIf="f.mappedLatitude.errors.required">Mapped Latitude is required</div>
           </div>
@@ -59,9 +53,9 @@
       <!--
         mappedLongitude
       -->
-      <div class="form-group">
+      <div class="form-group form-inline float-right">
           <label for="mappedLongitude">Longitude</label>
-          <input type="text" formControlName="mappedLongitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLongitude.errors }" />
+          <input type="text" size="11" formControlName="mappedLongitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLongitude.errors }" />
           <div *ngIf="submitted && f.mappedLongitude.errors" class="invalid-feedback">
               <div *ngIf="f.mappedLongitude.errors.required">Mapped Longitude is required</div>
           </div>
@@ -70,7 +64,7 @@
       <!--
         mappedTown
       -->
-      <div class="form-group">
+      <div class="form-group form-inline float-right">
           <label for="mappedTown">Town</label>
           <select [compareWith]="compareTownFn" formControlName="mappedTown" class="form-control">
             <option *ngFor="let town of towns" [ngValue]="town">
@@ -81,7 +75,7 @@
       <!--
           mappedLocationUncertainty
       -->
-      <div class="form-group">
+      <div class="form-group form-inline float-right">
           <label for="mappedLocationUncertainty">Mapped Location Uncertainty (yards)</label>
           <select formControlName="mappedLocationUncertainty" class="form-control">
             <option *ngFor="let locUnc of locUncs" [ngValue]="locUnc">
@@ -89,24 +83,34 @@
             </option>
           </select>
       </div>
-      <!--
-        mappedComments
-      -->
-      <div class="form-group">
-          <label for="mappedComments">Comments</label>
-          <textarea rows="1" formControlName="mappedComments" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedComments.errors }"> </textarea>
-          <div *ngIf="submitted && f.mappedComments.errors" class="invalid-feedback">
-              <div *ngIf="f.mappedComments.errors.required">Mapped Comments is required</div>
-          </div>
-      </div>
 
     </div> <!-- col -->
     <div class="col-3">
 
       <!--
+          mappedMethod
+      -->
+      <div class="form-group form-inline float-right">
+          <label for="mappedMethod">Mapped Method</label>
+          <select formControlName="mappedLocationUncertainty" class="form-control">
+            <option *ngFor="let method of methods" [ngValue]="method">
+              {{ method }}
+            </option>
+          </select>
+      </div>
+
+      <!--
+        mappedComments
+      -->
+      <div class="form-group form-inline float-right">
+          <label for="mappedComments">Comments</label>
+          <textarea rows="1" formControlName="mappedComments" class="form-control"> </textarea>
+      </div>
+
+      <!--
         mappedLandownerPermission
       -->
-      <div class="form-group">
+      <div class="form-group form-inline float-right">
           <label for="mappedLandownerPermission">Do you have Landowner Permission to map this pool?</label>&nbsp;
           <label>
             <input type="checkbox" formControlName="mappedLandownerPermission" />&nbsp;
@@ -116,14 +120,14 @@
 
         <!-- mappedLandownerData if they have permission -->
         <form *ngIf="permission" [formGroup]="vpLandOwnForm">
-        <div class="form-group">
+        <div class="form-group form-inline float-right">
             <label for="mappedLandownerName">Landowner Name</label>
             <input type="text" formControlName="mappedLandownerName" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerName.errors }" />
             <div *ngIf="submitted && l.mappedLandownerName.errors" class="invalid-feedback">
                 <div *ngIf="l.mappedLandownerName.errors.required">Landowner Name is required</div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group form-inline float-right">
             <label for="mappedLandownerAddress">Landowner Address</label>
             <textarea rows="1" formControlName="mappedLandownerAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerAddress.errors }">
             </textarea>
@@ -132,21 +136,21 @@
             </div>
         </div>
 <!--
-        <div class="form-group">
+        <div class="form-group form-inline float-right">
             <label for="mappedLandownerTown">Landowner Town</label>
             <input type="text" formControlName="mappedLandownerTown" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerTown.errors }" />
             <div *ngIf="submitted && l.mappedLandownerTown.errors" class="invalid-feedback">
                 <div *ngIf="l.mappedLandownerTown.errors.required">Landowner Town is required</div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group form-inline float-right">
             <label for="mappedLandownerStateAbbrev">Landowner State Abbreviation</label>
             <input type="text" formControlName="mappedLandownerStateAbbrev" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerStateAbbrev.errors }" />
             <div *ngIf="submitted && l.mappedLandownerStateAbbrev.errors" class="invalid-feedback">
                 <div *ngIf="l.mappedLandownerStateAbbrev.errors.required">Landowner StateAbbrev is required</div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group form-inline float-right">
             <label for="mappedLandownerZip5">Landowner Zip5</label>
             <input type="text" formControlName="mappedLandownerZip5" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerZip5.errors }" />
             <div *ngIf="submitted && l.mappedLandownerZip5.errors" class="invalid-feedback">
@@ -154,7 +158,7 @@
             </div>
         </div>
 -->
-        <div class="form-group">
+        <div class="form-group form-inline float-right">
             <label for="mappedLandownerPhone">Landowner Phone</label>
             <input type="text" formControlName="mappedLandownerPhone" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerPhone.errors }" />
             <div *ngIf="submitted && l.mappedLandownerPhone.errors" class="invalid-feedback">
@@ -164,7 +168,7 @@
               <div *ngIf="l.mappedLandownerPhone.errors.emailOrPhone">Landowner Phone or Email is required.</div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group form-inline float-right">
             <label for="mappedLandownerEmail">Landowner Email</label>
             <input type="text" formControlName="mappedLandownerEmail" class="form-control" [ngClass]="{ 'is-invalid': submitted && l.mappedLandownerEmail.errors }" />
             <div *ngIf="submitted && l.mappedLandownerEmail.errors" class="invalid-feedback">
@@ -178,15 +182,16 @@
       <!--
           mappedLandownerInfo
       -->
-      <div class="form-group">
+      <!--
+      <div class="form-group form-inline float-right">
           <label for="mappedLandownerInfo">Please add any relevant Landowner Details Below.</label>
           <textarea rows="1" formControlName="mappedLandownerInfo" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mappedLandownerInfo.errors }"> </textarea>
       </div>
-
+      -->
       <!--
         Action buttons
       -->
-      <div class="form-group">
+      <div class="form-group form-inline float-right">
           <button [disabled]="dataLoading" class="btn btn-primary" (click)="onSubmit()">Save</button>
           <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
           <button (click)="cancelMappedPool()" class="btn">Cancel</button>

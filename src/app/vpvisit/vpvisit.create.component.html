@@ -503,26 +503,37 @@
         <input type="radio" value="Isolated Forest Depression" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Isolated Forest Depression</span>
       </label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitIsolatedForestDepression"></html-dialog-app>
+
       <label>
         <input type="radio" value="Floodplain Depression" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Floodplain Depression</span>
       </label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitFloodplainDepression"></html-dialog-app>
+
       <label>
         <input type="radio" value="Manmade" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Manmade (impoundment, quarry, excavated pond, etc.)</span>
       </label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitManmadeImpoundmentQuarryEtc"></html-dialog-app>
+
       <label>
         <input type="radio" value="Isolated Non-Forest Depression" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Isolated Non-Forest Depression</span>
       </label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitIsolatedNonForestDepression"></html-dialog-app>
+
       <label>
         <input type="radio" value="Pool associated with larger wetland complex" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Pool associated with larger wetland complex</span>
       </label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitPoolAssociatedWithLargerWetlandComplex"></html-dialog-app>
+
       <label>
         <input type="radio" value="Other" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Other:</span>
       </label>
+      <html-dialog-app [htmlContent]="visitDialogText.visitPoolTypeOther"></html-dialog-app>
       <input type="text" value="" formControlName="visitPoolTypeOther" class="form-control" />
 
   </div>
@@ -624,43 +635,37 @@
           <input type="checkbox" formControlName="visitHabitatAgriculture" class="form-control radio-button-horiz" />
           <span>Agriculture/grassland</span>
         </label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatAgriculture"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatLightDev" class="form-control radio-button-horiz" />
           <span>Light development (<25% developed)</span>
         </label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatLightDev"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatHeavyDev" class="form-control radio-button-horiz" />
           <span>Intensive development (>25% developed)</span>
         </label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatHeavyDev"></html-dialog-app>
     </div>
     <div class="form-group form-inline">
         <label>
           <input type="checkbox" formControlName="visitHabitatPavedRd" class="form-control radio-button-horiz" />
           <span>Road/driveway (paved)</span>
         </label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatPavedRd"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatDirtRd" class="form-control radio-button-horiz" />
           <span>Road/driveway (dirt/gravel)</span>
         </label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatDirtRd"></html-dialog-app>
         <label>
           <input type="checkbox" formControlName="visitHabitatPowerline" class="form-control radio-button-horiz" />
           <span>Powerline right-of-way</span>
         </label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatPowerline"></html-dialog-app>
         <label for="visitHabitatOther" class="leading-label">Other:</label>
         <input type="text" formControlName="visitHabitatOther"  class="form-control" />
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatOther"></html-dialog-app>
+    <!--
     </div>
-    <!-- visitHabitatComment -->
+    visitHabitatComment
     <div class="form-group form-inline">
-        <label for="visitHabitatComment">Visit Habitat Comments</label>
-        <input type="text" formControlName="visitHabitatComment" class="form-control" />
-        <html-dialog-app [htmlContent]="visitDialogText.visitHabitatComment"></html-dialog-app>
+    -->
+        <label for="visitHabitatComment">Habitat Comments</label>
+        <textarea rows="1" formControlName="visitHabitatComment" class="form-control"> </textarea>
     </div>
 </form> <!-- visitFieldVerificationForm -->
 

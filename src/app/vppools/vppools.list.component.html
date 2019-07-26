@@ -9,7 +9,7 @@
     <table class="table table-sm">
       <th style="width: 70%;"></th>
       <th style="width: 30%;"></th>
-
+<!--
       <tr *ngIf="userIsAdmin">
         <td>
           <label>
@@ -19,8 +19,8 @@
         </td>
         <td>{{stats.total_data}}</td>
       </tr>
-
-      <tr *ngIf="!userIsAdmin">
+-->
+      <tr>
         <td>
           <label>
             <input checked formControlName="mappedPoolStatus" type="radio" value="All" (change)="setStatusLoadPools('')" class="radio-button-justify-left" />
@@ -76,13 +76,10 @@
         <td>{{stats.duplicate}}</td>
       </tr>
 
-      <tr>
+      <tr *ngIf="userIsAdmin">
         <td>
           <label>
             <input formControlName="mappedPoolStatus" type="radio" value="Visited" (change)="setStatusLoadPools('Visited')" class="radio-button-justify-left" />
-            <!--
-            <input formControlName="visitedPool" type="checkbox" (change)="loadPools()" class="radio-button-justify-left" />
-            -->
             <span>Visited</span>
           </label>
         </td>
