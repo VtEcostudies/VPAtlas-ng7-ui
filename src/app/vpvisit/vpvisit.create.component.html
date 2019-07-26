@@ -30,21 +30,21 @@
        <input type="radio" [checked]="visitPage.index===0" name="visitPage" (change)="onVisitPageSelect(0)" class="radio-button-horiz" />
        <span>{{visitPage.values[0].name}}</span>
       </label>
-      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
-       <input [disabled]="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===1" name="visitPage" (change)="onVisitPageSelect(1)" class="radio-button-horiz" />
-       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[1].name}}</span>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool'||(!poolId&&!visitId) }">
+       <input [disabled]="itemType==='Visit New Pool'||(!poolId&&!visitId)" type="radio" [checked]="visitPage.index===1" name="visitPage" (change)="onVisitPageSelect(1)" class="radio-button-horiz" />
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool'||(!poolId&&!visitId) }">{{visitPage.values[1].name}}</span>
       </label>
-      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
-       <input [disabled]="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===2" name="visitPage" (change)="onVisitPageSelect(2)" class="radio-button-horiz" />
-       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[2].name}}</span>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Poo||(!poolId&&!visitId)'||(!poolId&&!visitId) }">
+       <input [disabled]="itemType==='Visit New Pool'||(!poolId&&!visitId)" type="radio" [checked]="visitPage.index===2" name="visitPage" (change)="onVisitPageSelect(2)" class="radio-button-horiz" />
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool'||(!poolId&&!visitId) }">{{visitPage.values[2].name}}</span>
       </label>
-      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
-       <input [disabled] ="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===3" name="visitPage" (change)="onVisitPageSelect(3)" class="radio-button-horiz" />
-       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[3].name}}</span>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool'||(!poolId&&!visitId) }">
+       <input [disabled] ="itemType==='Visit New Pool'||(!poolId&&!visitId)" type="radio" [checked]="visitPage.index===3" name="visitPage" (change)="onVisitPageSelect(3)" class="radio-button-horiz" />
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool'||(!poolId&&!visitId) }">{{visitPage.values[3].name}}</span>
       </label>
-      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">
-       <input [disabled] ="itemType==='Visit New Pool'" type="radio" [checked]="visitPage.index===4" name="visitPage" (change)="onVisitPageSelect(4)" class="radio-button-horiz" />
-       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool' }">{{visitPage.values[4].name}}</span>
+      <label [ngClass]="{ 'disabled': itemType==='Visit New Pool'||(!poolId&&!visitId) }">
+       <input [disabled] ="itemType==='Visit New Pool'||(!poolId&&!visitId)" type="radio" [checked]="visitPage.index===4" name="visitPage" (change)="onVisitPageSelect(4)" class="radio-button-horiz" />
+       <span [ngClass]="{ 'disabled': itemType==='Visit New Pool'||(!poolId&&!visitId) }">{{visitPage.values[4].name}}</span>
       </label>
     </div>
   </div> <!-- col -->
@@ -835,13 +835,27 @@
   </div>
   <table class="table table-striped table-sm table-responsive">
     <tr>
-      <th>Species Obseserved</th>
-      <th>Adults</th>
-      <th>Tadpoles / Larvae</th>
-      <th>Egg Mass Number</th>
-      <th>Egg Mass Method</th>
-      <th>Photo Upload</th>
-      <th>Notes</th>
+      <th>Species Obseserved
+        <html-dialog-app [htmlContent]="visitDialogText.visitSpeciesObserved"></html-dialog-app>
+      </th>
+      <th>Adults
+        <html-dialog-app [htmlContent]="visitDialogText.visitAdults"></html-dialog-app>
+      </th>
+      <th>Tadpoles / Larvae
+        <html-dialog-app [htmlContent]="visitDialogText.visitTadpolesLarvae"></html-dialog-app>
+      </th>
+      <th>Egg Mass Number
+        <html-dialog-app [htmlContent]="visitDialogText.visitEggMassNumber"></html-dialog-app>
+      </th>
+      <th>Egg Mass Method
+        <html-dialog-app [htmlContent]="visitDialogText.visitEggMassMethod"></html-dialog-app>
+      </th>
+      <th>Photo Upload
+        <html-dialog-app [htmlContent]="visitDialogText.visitPhotoUpload"></html-dialog-app>
+      </th>
+      <th>Notes
+        <html-dialog-app [htmlContent]="visitDialogText.visitSpeciesNotes"></html-dialog-app>
+      </th>
     </tr>
 
     <tr class="form-group">
@@ -964,10 +978,13 @@
   Action buttons
 -->
 <div class="form-group form-inline">
-    <button [disabled]="dataLoading" *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">Save Pool</button>
-    <button [disabled]="dataLoading || itemType==='Visit New Pool' || visitPage.index===0" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
-    <button [disabled]="dataLoading || itemType==='Visit New Pool' || visitPage.index===4" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
-    <button [disabled]="dataLoading || itemType==='Visit New Pool'" *ngIf="itemType!='Visit New Pool' && itemType!='View Visit'" class="btn btn-primary" (click)="CreateVisit()">Save</button>
+    <button *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">Save Pool</button>
+    <button [disabled]="itemType==='Visit New Pool' || visitPage.index===0 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
+    <button [disabled]="itemType==='Visit New Pool' || visitPage.index===4 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
+    <button [disabled]="itemType==='Visit New Pool' || (!poolId&&!visitId)"
+    *ngIf="itemType!='Visit New Pool' && itemType!='View Visit'"
+    class="btn btn-primary" (click)="CreateVisit()">
+    Save</button>
     <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
     <button (click)="cancelVisit()" class="btn">Cancel</button>
     <button *ngIf="update && userIsAdmin" (click)="deleteVisit()" [disabled]="dataLoading" class="btn">Delete</button>

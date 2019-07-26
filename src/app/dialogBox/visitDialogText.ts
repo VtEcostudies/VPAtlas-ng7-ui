@@ -58,15 +58,15 @@ to aid in verifying that you located the pool in question.</p>`,
 </ol>
 `,
     visitLatitude: `
-<h3><u>Latitude</u></h3>
-<p>Please record the Latitude value for this pool.</p>
-<p>If you used the VPAtlas map on this page to locate the pool, <em><u>do NOT enter or edit this value.</u></em></p>
+<h3><u>Latitude/Northing</u></h3>
+<p>Please record the Latitude/Northing value for this pool in <em>decimal</em> degrees. Eg. Latitude: 44.764322.</p>
+<p>If you used the VPAtlas map on this page to locate the pool, <em><u><b>do NOT edit this value.</b></u></em></p>
 <p>If you navigated to the pool using a GPS and recorded its Latitude, you may enter that value here.</p>
 `,
     visitLongitude: `
-<h3><u>Longitude</u></h3>
-<p>Please record the Longitude value for this pool.</p>
-<p>If you used the VPAtlas map on this page to locate the pool, <em><u>do NOT enter or edit this value.</u></em></p>
+<h3><u>Longitude/Easting</u></h3>
+<p>Please record the Longitude/Easting value for this pool in <em>decimal</em> degrees. Eg. Longitude: -72.654222.</p>
+<p>If you used the VPAtlas map on this page to locate the pool, <em><u><b>do NOT edit this value.</b></u></em></p>
 <p>If you navigated to the pool using a GPS and recorded its Longitude, you may enter that value here.</p>
 `,
     visitCoordSource: `
@@ -80,28 +80,23 @@ select the type of map used to locate the pool.</p>
 //page 2 Landowner-Info
     visitUserIsLandowner:`
 <h3><u>Are you the landowner?</u></h3>
-<p>If the pool is located on your land, please check 'Yes'.</p>
-<p>Content paragraph...</p>`,
+<p>If the pool is located on your land, please check 'Yes'.</p>`,
     visitLandownerPermission:`
 <h3><u>Do you have Landowner Permission to map this pool?</u></h3>
 <p>If the pool is not located on your land, do you have permission from the landowner to visit the pool?</p>
 <p>If so, please check 'Yes'.</p>`,
     visitLandownerName: `
 <h3><u>Title</u></h3>
-<p>Please provide as much information as you can.</p>
-<p>Content paragraph...</p>`,
+<p>Please provide as much information as you can.</p>`,
     visitLandownerAddress: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Landowner Address</u></h3>
+<p>Please add enough information so that we can contact the landowner if necessary.</p>`,
     visitLandownerPhone: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Landowner Phone</u></h3>
+<p>Please enter either a valid Phone, or a valid Email, or both.</p>`,
     visitLandownerEmail: `
-<h3><u>Title</u></h3>
-<p>Content paragraph...</p>
-<p>Content paragraph...</p>`,
+<h3><u>Landowner Email</u></h3>
+<p>Please enter either a valid Phone, or a valid Email, or both.</p>`,
 
 //page 3 Field-Verification
     visitVernalPool:`
@@ -144,9 +139,9 @@ box above is appropriate.</p>`,
 <p>If none of the above, please describe.</p>`,
     visitInletType:`
 <h3><u>Inlet Type</u></h3>
-<p>No Inlet: There is no evidence of any channelized water entering the pool</p>
-<p>Ephemeral Inlet: There is evidence of water entering the pool, but it isn't channelized and doesn't appear to flow continuously.</p>
-<p>Permanent Inlet: There is channelized water between well-defined banks continuously running
+<p><u><b>No Inlet</b></u>: There is no evidence of any channelized water entering the pool</p>
+<p><u><b>Ephemeral Inlet</b></u>: There is evidence of water entering the pool, but it isn't channelized and doesn't appear to flow continuously.</p>
+<p><u><b>Permanent Inlet</b></u>: There is channelized water between well-defined banks continuously running
 into the pool. These sites are typically not vernal pools.</p>`,
     visitInletTypeNoInlet:`
 <h3><u>No Inlet</u></h3>
@@ -160,11 +155,11 @@ into the pool. These sites are typically not vernal pools.</p>`,
 into the pool. These sites are typically not vernal pools.</p>`,
     visitOutletType:`
 <h3><u>Outlet Type</u></h3>
-<p>No Outlet: There is no evidence of any channelized water exiting the pool</p>
-<p>Ephemeral Outlet: There is evidence of water exiting the pool, but it isn't channelized and
+<p><u><b>No Outlet</b></u>: There is no evidence of any channelized water exiting the pool</p>
+<p><u><b>Ephemeral Outlet</b></u>: There is evidence of water exiting the pool, but it isn't channelized and
 doesn't appear to flow continuously. Many vernal pools, for example, have an overflow outlet
 that functions if the water level in the pool reaches a certain level.</p>
-<p>Permanent Outlet: There is channelized water between well-defined banks continuously running
+<p><u><b>Permanent Outlet</b></u>: There is channelized water between well-defined banks continuously running
 out of the pool. These sites are typically not vernal pools.</p>`,
     visitOutletTypeNoOutlet:`
 <h3><u>No Outlet</u></h3>
@@ -185,13 +180,10 @@ These sites are typically not vernal pools.</p>`,
 <p>Select the one that best describes the forest cover type surrounding the pool.</p>`,
     visitForestCondition:`
 <h3><u>Forest Condition</u></h3>
-<h4><u>Undisturbed</u></h4>
-<p>No evidence of logging within 250-feet of the pool OR logging took place far enough
+<p><b><u>Undisturbed</u></b>: No evidence of logging within 250-feet of the pool OR logging took place far enough
 in the past that the site has, for all practical purposes, recovered.</p>
-<h4><u>Minor logging</u></h4>
-<p>There is evidence of thinning cuts which have left =70% of the canopy intact.</p>
-<h4><u>Major logging</u></h4>
-<p>There is evidence of aggressive thinning or clearcut logging leaving <70% of the canopy intact.
+<p><b><u>Minor logging</u></b>: There is evidence of thinning cuts which have left =70% of the canopy intact.</p>
+<p><b><u>Major logging</u></b>: There is evidence of aggressive thinning or clearcut logging leaving <70% of the canopy intact.
 Be careful to distinguish between logging activity (flat-topped stumps) and natural disturbances
 (such as wind-throw and ice storms) that can leave canopy gaps.</p>`,
     visitForestConditionUndisturbed:`
@@ -237,12 +229,12 @@ Be careful to distinguish between logging activity (flat-topped stumps) and natu
 
 //page 4 Pool-Characteristics
     visitMaxDepth: `
-<h3><u>MaxDepth</u></h3>
+<h3><u>Approximate Maximum Pool Depth</u></h3>
 <p>This is an approximate depth at the deepest part of the pool (typically the center). Feel free
 to use a stick or other measuring device instead of wading into the deepest part. In most cases, an
 estimate from the pool edge will suffice.</p>`,
     visitWaterLevelObs: `
-<h3><u>WaterLevelObs</u></h3>
+<h3><u>Water Level at Time of Survey</u></h3>
 <p>In order to estimate this, examine the edges of the pool for signs of high water,
 including water-stained leaves, sediment deposits on the leaf litter, and water marks on tree trunks.</p>`,
     visitHydroPeriod: `
@@ -275,8 +267,7 @@ and water marks on tree trunks.</p>`,
     visitVegetation: `
 <h3><u>Vegetation</u></h3>
 <p>Estimate the percentage of the pool that is occupied by the different types of vegetation. More than
-one vegetation type can be filled in and the sum of the percentages can exceed 100%.</p>
-<p>Content paragraph...</p>`,
+one vegetation type can be filled in and the sum of the percentages can exceed 100%.</p>`,
     visitPoolShrubs: `
 <h3><u>Title</u></h3>
 <p>Content paragraph...</p>
@@ -322,11 +313,13 @@ one vegetation type can be filled in and the sum of the percentages can exceed 1
 
 //page 5 Indicator-Species
     visitSpeciesObserved: `
-<h3><u>SpeciesObserved</u></h3>
-<p>Use amphibian identification aids found here
-(https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/volunteer-materials/)
-to help identify the indicator species using the pool. Presence of other amphibian species (such as Eastern Newt or Green Frog)
-are also noteworthy and should be included in the 'Other' row.</p>`,
+<h3><u>Indicator Species Observed</u></h3>
+<p>Use amphibian identification aids
+<a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/volunteer-materials/">
+found here
+</a> to help identify the indicator species using the pool.</p>
+<p>Presence of other amphibian species (such as Eastern Newt or Green Frog) are also noteworthy and should be
+included in the 'Other' row.</p>`,
     visitAdults: `
 <h3><u>Adults</u></h3>
 <p>Please enter the approximate number of adults observed for the amphibians present. For invertebrates such as
@@ -334,18 +327,22 @@ fingernail clams and fairy shrimp, counting individuals is not necessary. An 'X'
 presence is sufficient.</p>`,
     visitTadpolesLarvae: `
 <h3><u>Tadpoles/Larvae</u></h3>
-<p>Mark an 'X' in this column to indicate the presence of tadpoles or larvae of each species present.</p>
-<p>Content paragraph...</p>`,
+<p>Mark an 'X' in this column to indicate the presence of tadpoles or larvae of each species present.</p>`,
     visitEggMassNumber: `
-<h3><u>EggMassNumber</u></h3>
-<p>Please enter the number of egg masses (not individual embryos) of each species present in the pool. Use
-the dropdown menu in the next column to indicate if the number entered was derived from an actual count or an estimate.</p>`,
+<h3><u>Egg Mass Number</u></h3>
+<p>Please enter the number of egg masses (not individual embryos) of each species present in the pool.</p>
+<p>Use the dropdown menu in the next column to indicate if the number entered was derived from an actual
+count or an estimate.</p>`,
+    visitEggMassMethod: `
+<h3><u>Egg Mass Method</u></h3>
+<p>Please use this dropdown menu to indicate if the Egg Mass Number entered in the previous column was derived from
+an actual count or an estimate.</p>`,
     visitPhotoUpload: `
-<h3><u>PhotoUpload</u></h3>
+<h3><u>Photo Upload</u></h3>
 <p>Please upload a photograph of the entire pool AND photographs of each indicator species present
 (egg masses, tadpoles, metamorphs or adults).</p>`,
-    visitNotes: `
-<h3><u>Notes</u></h3>
+    visitSpeciesNotes: `
+<h3><u>Indicator Species Notes</u></h3>
 <p>Use this column to enter any comments on the species present or the Photo ID#s. Please name each photograph
 using the following protocol:</p>
 <p>Pool ID_Your Initials_Picture #.</p>

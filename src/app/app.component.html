@@ -11,7 +11,7 @@
             <!--
             <a href="http://vtecostudies.org"><i class="icon-vce">VCE</i></a>
             -->
-            <a class="nav-item nav-link" routerLink="/">Home</a>
+            <a class="nav-item nav-link" routerLink="/">VPAtlas Home</a>
             <a class="nav-item nav-link" routerLink="/pools/list" >Search Pools</a>
             <a class="nav-item nav-link" routerLink="/pools/mapped/list" *ngIf="userIsAdmin" >(Mapped Pools)</a>
 
@@ -30,8 +30,9 @@
             -->
             <a class="nav-item nav-link" (click)="logout()" *ngIf="currentUser" >Logout ({{currentUser.user.username}})</a>
             <a class="nav-item nav-link" routerLink="/login" *ngIf="!currentUser" >Login/Register</a>
-            <a href="https://vtfishandwildlife.com/" style="float:right;">
-              <img [src]="fNwLogoPath" height="20" alt="VT Fish and Wildlife">VT F&W
+            <a class="nav-item nav-link" href="https://vtfishandwildlife.com/" style="float:right;">
+              <img [src]="fNwLogoPath" height="20" alt="VT Fish and Wildlife">
+              Vermont Fish & Wildlife
             </a>
         </div>
     </nav>
