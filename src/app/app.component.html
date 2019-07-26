@@ -1,39 +1,42 @@
 ﻿<!-- nav -->
-<!-- <nav class="navbar navbar-expand navbar-dark bg-dark"> -->
-<!-- <nav class="navbar navbar-expand navbar-light bg-light vce-green"> -->
-<nav class="navbar navbar-expand navbar-dark vce-green">
-    <div class="navbar-nav">
-        <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/">
-          <img [src]="vceLogoPath" height="20" alt="VCE Vernal Pool Mapping Project">
-        </a>
-        <!--
-        <a href="http://vtecostudies.org"><i class="icon-vce">VCE</i></a>
-        -->
-        <a class="nav-item nav-link" routerLink="/">Home</a>
-        <a class="nav-item nav-link" routerLink="/pools/list" >Search Pools</a>
-        <a class="nav-item nav-link" routerLink="/pools/mapped/list" *ngIf="userIsAdmin" >(Mapped Pools)</a>
+<div class="row">
+  <div class="col-1">
+    <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/">
+      <img [src]="vceLogoPath" height="30" alt="VCE Vernal Pool Mapping Project">
+    </a>
+  </div>
+  <div class="col-11">
+    <nav class="navbar navbar-expand navbar-dark vce-green">
+        <div class="navbar-nav">
+            <!--
+            <a href="http://vtecostudies.org"><i class="icon-vce">VCE</i></a>
+            -->
+            <a class="nav-item nav-link" routerLink="/">Home</a>
+            <a class="nav-item nav-link" routerLink="/pools/list" >Search Pools</a>
+            <a class="nav-item nav-link" routerLink="/pools/mapped/list" *ngIf="userIsAdmin" >(Mapped Pools)</a>
 
-        <a class="nav-item nav-link" routerLink="/pools/visit/list" *ngIf="userIsAdmin" >(Pool Visits)</a>
-        <!--
-        <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Visit</a>
-        -->
-        <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="userIsAdmin" >(Add Mapped Pool)</a>
-        <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="currentUser" >Add Pool Data</a>
-        <!--
-        <a class="nav-item nav-link" routerLink="/pools/mapped/import" >Import Pools</a>
-        -->
-        <a class="nav-item nav-link" routerLink="/admin" *ngIf="userIsAdmin" >Admin</a>
-        <!--
-        <a class="nav-item nav-link" routerLink="/user" *ngIf="currentUser" >Profile</a>
-        -->
-        <a class="nav-item nav-link" (click)="logout()" *ngIf="currentUser" >Logout ({{currentUser.user.username}})</a>
-        <a class="nav-item nav-link" routerLink="/login" *ngIf="!currentUser" >Login/Register</a>
-        <a href="https://vtfishandwildlife.com/">
-          <img [src]="fNwLogoPath" height="20" alt="VT Fish and Wildlife">
-        </a>
-    </div>
-</nav>
-
+            <a class="nav-item nav-link" routerLink="/pools/visit/list" *ngIf="userIsAdmin" >(Pool Visits)</a>
+            <!--
+            <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Visit</a>
+            -->
+            <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="userIsAdmin" >(Add Mapped Pool)</a>
+            <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="currentUser" >Add Pool Data</a>
+            <!--
+            <a class="nav-item nav-link" routerLink="/pools/mapped/import" >Import Pools</a>
+            -->
+            <a class="nav-item nav-link" routerLink="/admin" *ngIf="userIsAdmin" >Admin</a>
+            <!--
+            <a class="nav-item nav-link" routerLink="/user" *ngIf="currentUser" >Profile</a>
+            -->
+            <a class="nav-item nav-link" (click)="logout()" *ngIf="currentUser" >Logout ({{currentUser.user.username}})</a>
+            <a class="nav-item nav-link" routerLink="/login" *ngIf="!currentUser" >Login/Register</a>
+            <a href="https://vtfishandwildlife.com/" style="float:right;">
+              <img [src]="fNwLogoPath" height="20" alt="VT Fish and Wildlife">VT F&W
+            </a>
+        </div>
+    </nav>
+  </div>
+</div>
 <!-- main app container -->
 <div id="jumbotron" class="jumbotron">
     <div id="container" class="container-fluid"> <!-- fluid makes content fit the device's screen -->
@@ -48,10 +51,20 @@
 
 <!-- credits -->
 <div class="footer text-center">
-    <p>
+  <div class="row">
+    <div class="col-2">
+      <img [src]="vceLogoPath">
+    </div>
+    <div class="col-8">
+      <p>
         VPAtlas is a joint effort of the
         <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/" target="_top">Vermont Center for Ecostudies</a>
         and
         <a href="https://vtfishandwildlife.com/" target="_top">Vermont Fish and Wildlife</a>
-    </p>
+      </p>
+    </div>
+    <div class="col-2">
+      <img style="float:right;" [src]="fNwLogoPath">
+    </div>
+  </div>
 </div>

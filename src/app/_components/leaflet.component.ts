@@ -428,7 +428,9 @@ export class LeafletComponent implements OnInit, OnChanges {
       'mappedDateText',
       'mappedDate',
       'visitDate',
-      'mappedMethod'
+      'mappedMethod',
+      'mappedByUser',
+      'visitUserName'
     ];
     var fieldName = {
       'poolId':'Pool ID',
@@ -440,7 +442,9 @@ export class LeafletComponent implements OnInit, OnChanges {
       'mappedDateText':'Date Mapped',
       'mappedDate':'Date Mapped',
       'visitDate':'Visit Date',
-      'mappedMethod':'Mapped Method'
+      'mappedMethod':'Mapped Method',
+      'mappedByUser':'Mapped by User',
+      'visitUserName':'Visited by User'
     }
 
     //Create action links at the top of the popup display based upon the context - 'itemType'
