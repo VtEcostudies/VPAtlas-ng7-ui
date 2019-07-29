@@ -21,8 +21,8 @@
 /*
   Moved here from html-dialog-app.css because it has no effect, there!
 
-  Remove all surrounding space from the dialog-box's icon so it doesn't
-  muck spacing of labels, etc. it adorns.
+  Remove all surrounding space from the dialog-box's info icon so it
+  doesn't muck spacing of labels, etc. it adorns.
 
   NOTE: !important is necessary to have effect
 */
@@ -38,6 +38,7 @@ html-dialog-app {
 nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   padding-top:5px !important;
   padding-bottom:5px !important;
+  height: 30px;
 }
 
 /*
@@ -71,14 +72,24 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   padding-bottom: 5px;
   padding-left: 20px;
   padding-right: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
+/*
+  This keeps pages having minimal content looking reasonable by pushing
+  the footer to the bottom, leaving emtpy space above the footer and
+  below the content.
+ */
 #container {
-  min-height:600px !important;
+  min-height:550px !important;
 }
 
-.footer {
-  padding-top: 0px;
+#footer {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .form-inline > * {
@@ -116,10 +127,10 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   background-size: cover;
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 350px;
 }
 
-/* Place text in the middle of the image */
+/* For use with vce-banner-image. Place text in the middle of the image */
 .vce-banner-text-middle {
   text-align: center;
   position: absolute;
@@ -129,7 +140,7 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   color: white;
 }
 
-/*
+/* For use with vce-banner-image.
   Place text centered at the top of the image with tranlucent green background.
 */
 .vce-banner-text {
@@ -142,8 +153,19 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   width: 100%;
 }
 
+/*
+  Used for the small vce logo on the top-left of the navbar.
+
+  Non-shrinking elements wreak havoce with bootstrap columns,
+  which are designed to always shrink. Make this work, had to
+  remove the last column on the right.
+*/
 .vce-logo-noshrink {
   min-width: 125px; /*the desired min-width*/
+}
+
+.fill-to-end {
+  width: 100%;
 }
 
 /*
