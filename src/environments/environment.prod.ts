@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://vpatlas.org:4321'
+  apiUrl: 'https://vpatlas.org:4322'
 };
