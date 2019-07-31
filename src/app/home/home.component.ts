@@ -40,7 +40,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-      this.loadPoolStats(); //calls loadAllPools when done
+      //this.loadPoolStats(); //calls loadAllPools when done
+      this.loadPools(); //don't need stats on Home page anymore
     }
 
     ngOnDestroy() {
@@ -75,16 +76,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     getFilter() {
-        var i = 0;
-        //filter hidden pools if user is not admin
-        if (!this.userIsAdmin) {
-          if (this.filter) {
-            this.filter += `&logical${++i}=AND&`;
-          }
-          this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
-          this.filter += `&`;
-          this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
-        }
+      var i = 0;
+      //filter hidden pools for all users
+      if (this.filter) {
+        this.filter += `&logical${++i}=AND&`;
+      }
+      this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+      this.filter += `&`;
+      this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
     }
 
     private loadPools(filter='') {
