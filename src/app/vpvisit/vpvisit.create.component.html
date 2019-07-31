@@ -139,7 +139,7 @@
           <div class="form-group form-inline">
             <label for="visitPoolId">Pool ID</label>
             <html-dialog-app [htmlContent]="visitDialogText.visitPoolId"></html-dialog-app>
-            <input type="text" size="10" (change)="visitPoolIdChanged($event)" (keyup.enter)="filterMappedPools()" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
+            <input type="text" size="10" (change)="visitPoolIdChanged($event)" (keyup.enter)="FilterByPoolId()" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
             <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
                 <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
             </div>

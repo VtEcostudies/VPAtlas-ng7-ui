@@ -12,6 +12,7 @@ import { visitDialogText} from '@app/dialogBox/visitDialogText';
 @Component({templateUrl: 'vpvisit.create.component.html'})
 export class vpVisitCreateComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
+    filter = ''; //pool search filter for API loadMappedPools query
     userIsAdmin = false;
     visitObserverForm: FormGroup = this.formBuilder.group({});
     visitPoolMappedForm: FormGroup = this.formBuilder.group({});
@@ -502,6 +503,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.itemType = "Visit Mapped Pool"; //must use this itemType to signal map to send poolId via event
         this.mapMarker = false;
         this.mapPoints = true;
+        this.filter = '';
         this.loadMappedPools();
       }
       //if (this.visitLocationForm.value.visitPoolMapped == 'false') {
@@ -512,6 +514,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.itemType = "Visit New Pool";
         this.mapMarker = true;
         this.mapPoints = true;
+        this.filter = '';
         this.loadMappedPools();
       }
     }
@@ -783,19 +786,30 @@ export class vpVisitCreateComponent implements OnInit {
     }
   }
 
-  private filterMappedPools() {
-    var filter = '';
+  private FilterByPoolId() {
+    this.filter = '';
     const poolId = this.visitLocationForm.value.visitPoolId;
-    console.log('vpvisit.create.component.filterMappedPools', poolId);
-    filter = `mappedPoolId|LIKE=%${poolId}%`;
+    console.log('vpvisit.create.component.FilterByPoolId', poolId);
+    this.filter = `mappedPoolId|LIKE=%${poolId}%`;
     this.poolId = null;
-    this.loadMappedPools(filter);
+    this.loadMappedPools(this.filter);
   }
 
-  private loadMappedPools(filter='') {
+  private async FilterHiddenPools() {
+    var i = 0;
+    if (this.filter) {
+      this.filter += `&logical${++i}=AND&`;
+    }
+    this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+    this.filter += `&`;
+    this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
+  }
+
+  private async loadMappedPools(filter='') {
     this.poolsLoading = true;
-    console.log('vpvisit.create.component.loadMappedPools', filter);
-    this.vpMappedService.getAll(filter)
+    await this.FilterHiddenPools();
+    console.log('vpvisit.create.component.loadMappedPools', this.filter);
+    this.vpMappedService.getAll(this.filter)
         .pipe(first())
         .subscribe(
             data => {
