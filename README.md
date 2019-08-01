@@ -1,3 +1,3 @@
 # vpatlast-angular7
 
-Angular 7 VPAtlas using Angular CLI
+The Original Angular 7 VPAtlas using Angular CLI has migrated to Angular 8 CLI.
