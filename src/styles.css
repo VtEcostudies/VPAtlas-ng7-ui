@@ -290,3 +290,49 @@ label.disabled span.disabled {
   border-right:solid 4px transparent;
   border-left:solid 4px transparent;
 }
+
+input[type="checkbox"].x4-checkbox {
+    -webkit-appearance: initial;
+    appearance: initial;
+    background: white;
+    width: 35px;
+    height: 35px;
+    border: solid mediumgrey 1px;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%,0%);
+    -moz-transform: translate(-50%,0%);
+    -ms-transform: translate(-50%,0%);
+    transform: translate(-50%,0%);
+}
+input[type="checkbox"].x4-checkbox:checked {
+    background: white;
+}
+input[type="checkbox"].x4-checkbox:disabled {
+    background: transparent;
+}
+input[type="checkbox"].x4-checkbox:checked:after {
+    /* Heres your symbol replacement */
+    content: "X";
+    color: black;
+    /* The following positions my tick in the center,
+     * but you could just overlay the entire box
+     * with a full after element with a background if you want to */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    /*
+     * If you want to fully change the check appearance, use the following:
+     * content: " ";
+     * width: 100%;
+     * height: 100%;
+     * background: blue;
+     * top: 0;
+     * left: 0;
+     */
+}

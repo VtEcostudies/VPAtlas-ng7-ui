@@ -695,6 +695,18 @@ export class vpVisitCreateComponent implements OnInit {
         //this.visitLocationForm.value.visitPoolMapped = this.visitLocationForm.value.visitPoolMapped == 'true';
         this.visitPoolMappedForm.value.visitPoolMapped = this.visitPoolMappedForm.value.visitPoolMapped == 'true';
         this.visitLocationForm.value.visitLocatePool = this.visitLocationForm.value.visitLocatePool == 'true';
+        //amphibian adults must be counted. shrimp and clams are just 'present'. database column is text. convert to number or 'X'.
+        this.visitIndicatorSpeciesForm.value.visitWoodFrogAdults = Number(this.visitIndicatorSpeciesForm.value.visitWoodFrogAdults);
+        this.visitIndicatorSpeciesForm.value.visitSpsAdults = Number(this.visitIndicatorSpeciesForm.value.visitSpsAdults);
+        this.visitIndicatorSpeciesForm.value.visitJesaAdults = Number(this.visitIndicatorSpeciesForm.value.visitJesaAdults);
+        this.visitIndicatorSpeciesForm.value.visitBssaAdults = Number(this.visitIndicatorSpeciesForm.value.visitBssaAdults);
+        this.visitIndicatorSpeciesForm.value.visitFairyShrimp = this.visitIndicatorSpeciesForm.value.visitFairyShrimp ? 1 : 0;
+        this.visitIndicatorSpeciesForm.value.visitFingerNailClams = this.visitIndicatorSpeciesForm.value.visitFingerNailClams ? 1 : 0;
+        //tadpoles/larvae are 'present' or not. database column is integer. convert true/false to 1/0.
+        this.visitIndicatorSpeciesForm.value.visitWoodFrogLarvae = this.visitIndicatorSpeciesForm.value.visitWoodFrogLarvae ? 1 : 0;
+        this.visitIndicatorSpeciesForm.value.visitSpsLarvae = this.visitIndicatorSpeciesForm.value.visitSpsLarvae ? 1 : 0;
+        this.visitIndicatorSpeciesForm.value.visitJesaLarvae = this.visitIndicatorSpeciesForm.value.visitJesaLarvae ? 1 : 0;
+        this.visitIndicatorSpeciesForm.value.visitBssaLarvae = this.visitIndicatorSpeciesForm.value.visitBssaLarvae ? 1 : 0;
 
         //visitObserverForm
         Object.assign(this.visitLocationForm.value, this.visitObserverForm.value);

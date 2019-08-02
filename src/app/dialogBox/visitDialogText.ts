@@ -315,16 +315,19 @@ one vegetation type can be filled in and the sum of the percentages can exceed 1
     visitSpeciesObserved: `
 <h3><u>Indicator Species Observed</u></h3>
 <p>Use amphibian identification aids
-<a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/volunteer-materials/">
+<a target="_blank" href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/volunteer-materials/">
 found here
 </a> to help identify the indicator species using the pool.</p>
 <p>Presence of other amphibian species (such as Eastern Newt or Green Frog) are also noteworthy and should be
 included in the 'Other' row.</p>`,
     visitAdults: `
 <h3><u>Adults</u></h3>
-<p>Please enter the approximate number of adults observed for the amphibians present. For invertebrates such as
-fingernail clams and fairy shrimp, counting individuals is not necessary. An 'X' in this column to indicate
-presence is sufficient.</p>`,
+<p>
+Please enter the approximate number of adults observed for the amphibians (frogs and salamanders) present.
+</p>
+<p>
+For invertebrates such as fingernail clams and fairy shrimp, mark an 'X' in this column to indicate species present.
+</p>`,
     visitTadpolesLarvae: `
 <h3><u>Tadpoles/Larvae</u></h3>
 <p>Mark an 'X' in this column to indicate the presence of tadpoles or larvae of each species present.</p>`,
