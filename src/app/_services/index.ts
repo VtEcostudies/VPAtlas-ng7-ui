@@ -6,3 +6,4 @@ export * from './uxvalues.service';
 export * from './towns.service';
 export * from './vpvisit.service';
 export * from './vppools.service';
+export * from './aws-s3.service';

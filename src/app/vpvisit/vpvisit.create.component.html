@@ -873,11 +873,22 @@
          <option value="Estimated">Estimated</option>
          <option value="Counted">Counted</option>
         </select>
+
       </td>
-      <td class="overlay-wrapper">
+        <td class="overlay-wrapper">
         <button class="overlay-button">Select</button>
         <input type="text" disabled="true" formControlName="visitWoodFrogPhoto" size="15" class="form-control overlay-input" />
       </td>
+
+      <!--
+      <td>
+        <label class="btn btn-primary btn-file">
+          Upload Photo
+          <input type="file" style="display:none;" formControlName="visitWoodFrogPhoto"
+            (change)="PhotoFileEvent($event)" size="15" class="form-control"/>
+        </label>
+      </td>
+      -->
       <td><input type="text" formControlName="visitWoodFrogNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -950,7 +961,7 @@
 
     <tr class="form-group">
       <td>Fingernail Clams</td>
-      <td><input type="checkbox" formControlName="visitFingerNailClams" size="1" class="form-control x4-checkbox" /></td>
+      <td><input type="checkbox" formControlName="visitFingerNailClams" size="1" class="form-control x4-checkbox  " /></td>
       <td></td>
       <td></td>
       <td></td>
@@ -963,7 +974,7 @@
 
     <tr class="form-group">
       <td>
-        Other:<input type="text" formControlName="visitSpeciesOtherName" size="10" class="form-control" />
+        <input type="text" placeholder="Other..." formControlName="visitSpeciesOtherName" size="10" class="form-control" />
       </td>
       <td><input type="text" formControlName="visitSpeciesOtherCount" size="1" class="form-control" /></td>
       <td></td>
@@ -975,8 +986,43 @@
       </td>
       <td><input type="text" formControlName="visitSpeciesOtherNotes" size="30" class="form-control" /></td>
     </tr>
+    <tr>
+      <td>Comments:</td>
+      <td colspan="6">
+        <textarea placeholder="Comments..." formControlName="visitSpeciesComments" class="form-control"></textarea>
+      </td>
+    </tr>
 
   </table>
+
+  <div class="form-group form-inline">
+      <label>
+        <span>Were Fish Observed?</span>
+        <html-dialog-app [htmlContent]="visitDialogText.visitFish"></html-dialog-app>
+        <input type="checkbox" formControlName="visitFish" class="form-control radio-button-horiz"  />
+        <span>Yes</span>
+      </label>
+      <div *ngIf="indSpc.visitFish.value" class="form-inline">
+        <label>
+          ---
+        </label>
+        <label>How Many Fish?</label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitFishCount"></html-dialog-app>
+        <label>
+          <input type="radio" value="<10" formControlName="visitFishCount" class="form-control radio-button-horiz" />
+          <span><10</span>
+        </label>
+        <label>
+          <input type="radio" value="11-50" formControlName="visitFishCount" class="form-control radio-button-horiz" />
+          <span>11-50</span>
+        </label>
+        <label>
+          <input type="radio" value=">50" formControlName="visitFishCount" class="form-control radio-button-horiz" />
+          <span>>50</span>
+        </label>
+      </div>
+  </div>
+
 </form> <!-- visitIndicatorSpeciesForm -->
 
 <!--
@@ -984,8 +1030,8 @@
 -->
 <div class="form-group form-inline">
     <button *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">Save Pool</button>
-    <button [disabled]="itemType==='Visit New Pool' || visitPage.index===0 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
-    <button [disabled]="itemType==='Visit New Pool' || visitPage.index===4 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
+    <button *ngIf="itemType!='Visit New Pool'" [disabled]="itemType==='Visit New Pool' || visitPage.index===0 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
+    <button *ngIf="itemType!='Visit New Pool'" [disabled]="itemType==='Visit New Pool' || visitPage.index===4 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(1)">Next Page</button>
     <button [disabled]="itemType==='Visit New Pool' || (!poolId&&!visitId)"
     *ngIf="itemType!='Visit New Pool' && itemType!='View Visit'"
     class="btn btn-primary" (click)="CreateVisit()">

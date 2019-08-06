@@ -349,5 +349,11 @@ an actual count or an estimate.</p>`,
 <p>Use this column to enter any comments on the species present or the Photo ID#s. Please name each photograph
 using the following protocol:</p>
 <p>Pool ID_Your Initials_Picture #.</p>
-<p>For example: SDF34_JD_1. This will allow us to link each photograph with the appropriate pool data form.</p>`
+<p>For example: SDF34_JD_1. This will allow us to link each photograph with the appropriate pool data form.</p>`,
+visitFish: `
+<h3><u>Were Fish Observed?</u></h3>
+<p>Please indicate whether you observed any fish in the pool.</p>`,
+visitFishCount: `
+<h3><u>How Many Fish?</u></h3>
+<p>Please select the value that indicates how many fish were observed.</p>`
 };

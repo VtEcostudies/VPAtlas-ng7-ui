@@ -8,6 +8,7 @@ import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { visitDialogText} from '@app/dialogBox/visitDialogText';
+import { AwsS3Service } from '@app/_services';
 
 @Component({templateUrl: 'vpvisit.create.component.html'})
 export class vpVisitCreateComponent implements OnInit {
@@ -55,6 +56,7 @@ export class vpVisitCreateComponent implements OnInit {
         private vpVisitService: vpVisitService,
         private vpPoolsService: vpPoolsService,
         private townService: vtInfoService,
+        private s3: AwsS3Service,
     ) {
         if (this.authenticationService.currentUserValue) {
           let currentUser = this.authenticationService.currentUserValue.user;
@@ -676,8 +678,12 @@ export class vpVisitCreateComponent implements OnInit {
           return;
         }
 
-        //if the form value of visitPoolId is null (due to being disabled) use this.poolId
-        if (!this.visitLocationForm.value.visitPoolId) {
+        //if the form value of visitPoolId is undefined, or null (due to being disabled) use this.poolId
+        if (typeof this.visitLocationForm.value.visitPoolId === "undefined" || !this.visitLocationForm.value.visitPoolId) {
+          //this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
+          //you can't use the default setter to alter the value of a disabled field
+          //however, it appears that we can simple set the '.value.fieldName' attribute
+          //of the formGroup object, and it's passed to the db. use this method for now.
           this.visitLocationForm.value.visitPoolId = this.poolId;
         }
 
@@ -858,4 +864,11 @@ export class vpVisitCreateComponent implements OnInit {
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 
+  PhotoFileEvent(e) {
+    return;
+    //console.log('PhotoFileEvent', e);
+    console.log('PhotoFileEvent', this.visitIndicatorSpeciesForm.value.visitWoodFrogPhoto);
+    confirm(`Are you sure you want to upload ${this.visitIndicatorSpeciesForm.value.visitWoodFrogPhoto}?`);
+    this.s3.useBucket();
+  }
 }
