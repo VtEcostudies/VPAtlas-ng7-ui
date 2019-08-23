@@ -9,25 +9,25 @@
         <tr class="form-group">
           <td for="mappedPoolId">Pool ID</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="mappedPoolId" class="form-control"/>
+            <input (change)="loadPools(1)" type="text"  formControlName="mappedPoolId" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
           <td for="mappedByUser">User</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedByUser" class="form-control"/>
+            <input (change)="loadPools(1)" formControlName="mappedByUser" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
           <td for="mappedTown">Town</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedTown" class="form-control"/>
+            <input (change)="loadPools(1)" formControlName="mappedTown" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
           <td for="mappedConfidence">Confidence</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="mappedConfidence" class="form-control"/>
+            <input (change)="loadPools(1)" formControlName="mappedConfidence" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">

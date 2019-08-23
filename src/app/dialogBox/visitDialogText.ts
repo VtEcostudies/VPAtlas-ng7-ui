@@ -14,6 +14,9 @@ to the location on the map where the pool is located.</p>`,
 <p>Type a valid Pool ID and press <b><u>Enter</u></b> to search for that pool in the database.<br>
 Pool IDs are <em>case-sensitive</em>.</p>
 <p>If you don't know the Pool ID, search for it on the map, and click a pool to fill it in.</p>`,
+    visitPoolPhoto: `
+<h3><u>Pool Photo</u></h3>
+<p>Select a photo of the pool to be uploaded.</p>`,
     visitDate:`
 <h3><u>Date</u></h3>
 <p>Please enter the date when you recorded information about this pool.</p>

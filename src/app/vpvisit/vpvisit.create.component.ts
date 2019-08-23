@@ -7,7 +7,7 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
-import { visitDialogText} from '@app/dialogBox/visitDialogText';
+import { visitDialogText } from '@app/dialogBox/visitDialogText';
 import { AwsS3Service } from '@app/_services';
 
 @Component({templateUrl: 'vpvisit.create.component.html'})
@@ -45,6 +45,7 @@ export class vpVisitCreateComponent implements OnInit {
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
     visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
+    showImage = false; //flag to show pool photo over top of map on 1st page
 
     constructor(
         private formBuilder: FormBuilder,
@@ -473,7 +474,8 @@ export class vpVisitCreateComponent implements OnInit {
               data => {
                 console.log('vpvisit.create.component.LoadVisitData result:', data);
                 this.visit = data.rows[0];
-                this.locMarker = {latitude: this.visit.latitude, longitude: this.visit.longitude};
+                this.poolId = data.rows[0].poolId;
+                this.locMarker = {latitude: this.visit.latitude, longitude: this.visit.longitude, poolId: this.visit.poolId};
                 this.setFormValues();
                 this.dataLoading = false;
               },
@@ -597,7 +599,7 @@ export class vpVisitCreateComponent implements OnInit {
                   //this.visitLocationForm.get('visitPoolMapped').disable(); //must disable this selector after saving NEW* pool, or too confusing
                   this.visitPoolMappedForm.get('visitPoolMapped').disable(); //must disable this selector after saving NEW* pool, or too confusing
                   // Update the mapMarker's toolTip to show newly-created visitPoolId. Do this by forcing leaflet plotPoolMarker via ngOnChanges by setting 'locMarker'...!phew!
-                  this.locMarker = {"poolId":this.poolId, "latitude":mappedPool.mappedLatitude, "longitude":mappedPool.mappedLongitude};
+                  this.locMarker = {latitude:mappedPool.mappedLatitude, longitude:mappedPool.mappedLongitude, poolId:this.poolId};
               },
               error => {
                   console.log(`vpvisit.CreateMappedPool=>error: ${error}`);
@@ -678,13 +680,19 @@ export class vpVisitCreateComponent implements OnInit {
           return;
         }
 
+        console.log('createVisit | visitPoolId', this.visitLocationForm.value.visitPoolId);
+        console.log('createVisit | poolId', this.poolId);
+
         //if the form value of visitPoolId is undefined, or null (due to being disabled) use this.poolId
         if (typeof this.visitLocationForm.value.visitPoolId === "undefined" || !this.visitLocationForm.value.visitPoolId) {
+          console.log('createVisit | form value of visitPoolId not valid, using this.poolId');
           //this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
           //you can't use the default setter to alter the value of a disabled field
           //however, it appears that we can simple set the '.value.fieldName' attribute
           //of the formGroup object, and it's passed to the db. use this method for now.
           this.visitLocationForm.value.visitPoolId = this.poolId;
+          this.visitLocationForm.controls['visitPoolId'].enable();
+          this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
         }
 
         //flatten the POSTed object before posting. the visitLandowner nested form
@@ -865,10 +873,21 @@ export class vpVisitCreateComponent implements OnInit {
   }
 
   PhotoFileEvent(e) {
-    return;
-    //console.log('PhotoFileEvent', e);
-    console.log('PhotoFileEvent', this.visitIndicatorSpeciesForm.value.visitWoodFrogPhoto);
-    confirm(`Are you sure you want to upload ${this.visitIndicatorSpeciesForm.value.visitWoodFrogPhoto}?`);
-    this.s3.useBucket();
+    console.log('PhotoFileEvent', e.target.files[0]);
+    var files = e.target.files;
+    var file = e.target.files[0];
+    //console.log('PhotoFileEvent', this.visitIndicatorSpeciesForm.value.visitWoodFrogPhoto);
+    if (confirm(`Are you sure you want to upload ${file.name} for pool ${this.poolId}?`)) {
+      this.s3.uploadFile(file, this.poolId);
+    }
   }
+
+  ImgMouseOver() {
+    this.showImage = true;
+  }
+
+  ImgMouseOut() {
+    this.showImage = false;
+  }
+
 }

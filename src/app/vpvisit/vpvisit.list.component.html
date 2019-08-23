@@ -9,25 +9,25 @@
       <tr class="form-group">
         <td for="visitId">Visit ID</td>
         <td>
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
+          <input (change)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
         </td>
       </tr>
       <tr class="form-group">
         <td for="visitPoolId">Pool ID</td>
         <td>
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
+          <input (change)="loadPools(1)" type="text"  formControlName="visitPoolId" class="form-control"/>
         </td>
       </tr>
       <tr class="form-group">
         <td for="visitUserName">User</td>
         <td>
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
+          <input (change)="loadPools(1)" formControlName="visitUserName" class="form-control"/>
         </td>
       </tr>
       <tr class="form-group">
         <td for="visitTown">Town</td>
         <td>
-          <input (keyup.enter)="loadPools(1)" (keyup.tab)="loadPools(1)" formControlName="visitTown" class="form-control"/>
+          <input (change)="loadPools(1)" formControlName="visitTown" class="form-control"/>
         </td>
       </tr>
       <!-- mappedMethod is not an appropriate search criterion for vpvisit

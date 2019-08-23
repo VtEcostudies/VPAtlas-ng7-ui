@@ -488,6 +488,9 @@ export class LeafletComponent implements OnInit, OnChanges {
           }
           text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         }
+        text += `<div>
+                <a href="https://s3.us-east-1.amazonaws.com/vpatlas.data/${obj.poolId}">View Pool Photo</a>
+                </div>`;
         break;
     }
 
@@ -595,7 +598,11 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.marker.bindTooltip(`Pool ID: ${vpool.poolId}<br>
                              Lat: ${Number(llLoc.lat).toFixed(5)}<br>
-                             Lng: ${Number(llLoc.lng).toFixed(5)}
+                             Lng: ${Number(llLoc.lng).toFixed(5)}<br>
+                             <img
+                               src="https://s3.amazonaws.com/vpatlas.data/${vpool.poolId}"
+                               style="max-height: 100px; max-width: 100px;"
+                             />
                             `);
   }
 
@@ -701,7 +708,12 @@ export class LeafletComponent implements OnInit, OnChanges {
             <div>Pool ${vpools[i].poolId}</div>
             <div>Status: ${vpools[i].mappedPoolStatus}</div>
             <div>Lat: ${Number(vpools[i].latitude).toFixed(5)}</div>
-            <div>Lon:${Number(vpools[i].longitude).toFixed(5)}</div>`;
+            <div>Lon:${Number(vpools[i].longitude).toFixed(5)}</div>
+            <img
+              src="https://s3.amazonaws.com/vpatlas.data/${vpools[i].poolId}"
+              style="max-height: 100px; max-width: 100px;"
+            />
+            `;
 
       //NOTE shape.bindPopup was moved to onCircleGroupClick()
 

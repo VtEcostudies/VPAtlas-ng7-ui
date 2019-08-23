@@ -1,4 +1,4 @@
-import {Component, Input, Inject} from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SecurityContext } from '@angular/core';

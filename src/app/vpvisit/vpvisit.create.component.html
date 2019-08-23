@@ -1,24 +1,24 @@
 <div class="row">
 
-  <div class="col-4">
+  <div class="col-3">
     <div *ngIf="!update && itemType==='Visit Mapped Pool'" style="display:inline-block;">
-      <h3><u>Add Data for Vernal Pool {{poolId}}</u></h3>
+      <h4><u>Add Data for Vernal Pool {{poolId}}</u></h4>
     </div>
 
     <div *ngIf="!update && itemType==='Visit New Pool'" style="display:inline-block;">
-      <h3><u>Add NEW* Vernal Pool</u></h3>
+      <h4><u>Add NEW* Vernal Pool</u></h4>
     </div>
 
     <div *ngIf="!update && itemType==='Visit' && poolId" style="display:inline-block;">
-      <h3><u>Add Data for Vernal Pool {{poolId}}</u></h3>
+      <h4><u>Add Data for Vernal Pool {{poolId}}</u></h4>
     </div>
 
     <div *ngIf="update && itemType==='Visit'" style="display:inline-block;">
-      <h3><u>Edit Vernal Pool Visit {{visitId}}</u></h3>
+      <h4><u>Edit Vernal Pool Visit {{visitId}}</u></h4>
     </div>
 
     <div *ngIf="!update && itemType==='View Visit'" style="display:inline-block;">
-      <h3><u>View Vernal Pool Visit {{visitId}}</u></h3>
+      <h4><u>View Vernal Pool Visit {{visitId}}</u></h4>
     </div>
   </div> <!-- col -->
 
@@ -94,7 +94,6 @@
 
 <form *ngIf="visitPage.index===0" [formGroup]="visitPoolMappedForm">
   <div class="row">
-    <div class="col-12">
       <!--
           visitPoolMapped - radio button
           https://stackoverflow.com/questions/49078286/angular-5-reactive-forms-radio-button-group
@@ -113,6 +112,11 @@
           Please locate the marker on the map or enter Lat/Lon below.
         </label>
       </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-12">
       <div class="form-group form-inline">
            <label>
              <input type="radio" value="true" (change)="visitModeChanged($event)" formControlName="visitPoolMapped" class="form-control radio-button-horiz" />
@@ -124,7 +128,9 @@
            </label>
       </div>
     </div> <!-- col -->
+
   </div> <!-- row -->
+
 </form> <!-- visitPoolMappedForm -->
 
 <form *ngIf="visitPage.index===0" [formGroup]="visitLocationForm">
@@ -285,7 +291,7 @@
       </div>
 
   <div class="row">
-    <div class="col-6">
+    <div class="col-5">
       <!--
         visitDirections
       -->
@@ -295,7 +301,7 @@
           <textarea rows="1" formControlName="visitDirections" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
-    <div class="col-6">
+    <div class="col-5">
       <!--
         visitLocationComments
       -->
@@ -304,6 +310,29 @@
           <html-dialog-app [htmlContent]="visitDialogText.visitLocationComments"></html-dialog-app>
           <textarea rows="1" formControlName="visitLocationComments" class="form-control"> </textarea>
       </div>
+    </div> <!-- col -->
+
+    <div class="col-2">
+      <div class="form-group form-inline">
+        <label>Photo:</label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitPoolPhoto"></html-dialog-app>
+
+        <div class="form-inline"
+          (mouseover)="ImgMouseOver();"
+          (mouseout)="ImgMouseOut();"
+        >
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-camera"></i>
+            <input type="file" style="display:none;" formControlName="visitPoolPhoto"
+              (change)="PhotoFileEvent($event)" size="15" class="form-control"/>
+            <img
+              src="https://s3.amazonaws.com/vpatlas.data/{{visit.poolId}}"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </label>
+        </div>
+
+      </div> <!-- form-group -->
     </div> <!-- col -->
 
   </div> <!-- row -->
@@ -368,6 +397,7 @@
 </div> <!-- col-6 Master -->
 
   <div class="col-6"> <!-- Master -->
+    <div *ngIf="!showImage">
       <div *ngIf="!poolsLoading">
         <app-map-comp style="height:450px;"
           [mapPoints]="mapPoints"
@@ -380,10 +410,19 @@
           >
         </app-map-comp>
       </div>
+
       <div *ngIf="poolsLoading">
         Loading...
       </div>
+    </div> <!-- !showImage -->
+    <div *ngIf="showImage"> <!-- image overlay -->
+      <img
+        src="https://s3.amazonaws.com/vpatlas.data/{{visit.poolId}}"
+        style="max-height:100%; max-width:100%;"
+      />
+    </div>
   </div> <!-- col-6 Master -->
+
 </div> <!-- row Master -->
 
 <form *ngIf="visitPage.index===1" [formGroup]="visitLocationForm">
@@ -697,7 +736,7 @@
         <span>Hip-deep (2-3 ft)</span>
       </label>
       <label>
-        <input type="radio" value="Knee-deep" formControlName="visitMaxDepth" class="form-control radio-button-horiz" />
+        <input type="radio" value="Chest-deep" formControlName="visitMaxDepth" class="form-control radio-button-horiz" />
         <span>Chest-deep (3-4 ft)</span>
       </label>
       <label>

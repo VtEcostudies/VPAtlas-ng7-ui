@@ -477,4 +477,7 @@ export class vpViewComponent implements OnInit {
     this.router.navigate([navUrl]);
   }
 
+  PhotoFileEvent(e) {
+    console.log('NOTE: PhotoFileEvent(e) - photos are NOT uploadable from View Visit');
+  }
 }
