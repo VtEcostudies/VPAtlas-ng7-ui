@@ -63,6 +63,7 @@ export class vpMapCreateComponent implements OnInit {
         this.update = false;
         this.pool.mappedPoolId = `${this.authenticationService.currentUserValue.user.username}1`;
         this.pool.mappedByUser = this.authenticationService.currentUserValue.user.username;
+        this.pool.mappedObserverUserName = this.authenticationService.currentUserValue.user.username;
         this.pool.mappedDateText = Moment().format('YYYY-MM-DD');
         this.pool.mappedLatitude = 43.916944;
         this.pool.mappedLongitude = -72.668056;
@@ -88,7 +89,8 @@ export class vpMapCreateComponent implements OnInit {
       this.vpMappedForm = this.formBuilder.group({
 
         mappedPoolId: [this.pool.mappedPoolId, Validators.required],
-        mappedByUser: [this.pool.mappedByUser, Validators.required],
+        mappedByUser: [{value: this.pool.mappedByUser, disabled: true}, Validators.required],
+        mappedObserverUserName: [this.pool.mappedObserverUserName, Validators.required],
         mappedDateText: [Moment(this.pool.mappedDateText).format('YYYY-MM-DD'), Validators.required],
         mappedLatitude: [this.pool.mappedLatitude, Validators.required],
         mappedLongitude: [this.pool.mappedLongitude, Validators.required],
@@ -100,8 +102,8 @@ export class vpMapCreateComponent implements OnInit {
 
         mappedLandownerInfo: ['', Validators.nullValidator],
         mappedLocationUncertainty: ['50', new FormControl(this.locUncs[4], Validators.required)],
-        mappedComments: ['', Validators.nullValidator],
         mappedMethod: ['Visited', new FormControl(this.methods[4], Validators.required)],
+        mappedComments: ['', Validators.nullValidator],
       });
 
       //how to handle UI changes from checkbox input:
@@ -127,6 +129,7 @@ export class vpMapCreateComponent implements OnInit {
     afterLoad() {
       this.vpMappedForm.controls['mappedPoolId'].setValue(this.pool.mappedPoolId);
       this.vpMappedForm.controls['mappedByUser'].setValue(this.pool.mappedByUser);
+      this.vpMappedForm.controls['mappedObserverUserName'].setValue(this.pool.mappedObserverUserName);
       this.vpMappedForm.controls['mappedDateText'].setValue(Moment(this.pool.mappedDateText).format('YYYY-MM-DD'));
       this.vpMappedForm.controls['mappedLatitude'].setValue(this.pool.mappedLatitude);
       this.vpMappedForm.controls['mappedLongitude'].setValue(this.pool.mappedLongitude);
@@ -163,7 +166,7 @@ export class vpMapCreateComponent implements OnInit {
         this.vpMappedForm.get('mappedByUser').disable();
       }
 
-      console.dir(this.vpMappedForm.value);
+      console.dir(this.vpMappedForm.getRawValue());
     }
 
     /*
@@ -196,7 +199,7 @@ export class vpMapCreateComponent implements OnInit {
 
         //kluge to get around disabled fields not being included in form values
         //and not having an easy validator for requiring mappedByUser = logon user
-        if (!this.update && this.vpMappedForm.value.mappedByUser != this.authenticationService.currentUserValue.user.username) {
+        if (!this.update && this.vpMappedForm.getRawValue().mappedByUser != this.authenticationService.currentUserValue.user.username) {
           this.alertService.error("Mapped By User must be your username.");
           return;
         }
@@ -241,7 +244,7 @@ export class vpMapCreateComponent implements OnInit {
         }
 
         this.dataLoading = true;
-        this.vpMappedService.createOrUpdate(this.update, this.poolId, this.vpMappedForm.value)
+        this.vpMappedService.createOrUpdate(this.update, this.poolId, this.vpMappedForm.getRawValue())
             .pipe(first())
             .subscribe(
                 data => {

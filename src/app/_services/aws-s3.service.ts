@@ -16,8 +16,6 @@ export class AwsS3Service {
   bucket = null;
 
   constructor(private http: HttpClient) {
-    //this.credentials = new AWS.SharedIniFileCredentials({profile: 'default'});
-    //console.log('aws-s3-service', this.credentials);
     this.useBucket();
   }
 
@@ -27,31 +25,19 @@ export class AwsS3Service {
 
   public useBucket(bucketName='vpatlas.data') {
 
-    this.getS3Info(bucketName)
+    this.getS3Info(bucketName) //get bucket creds from db
     .pipe(first())
     .subscribe(
         data => {
-          this.s3Info = data.rows[0];
-          this.s3Info.apiVersion = '2006-03-01';
-          this.s3Info.params = {Bucket: bucketName};
+          this.s3Info = data.rows[0]; //bucket creds
+          this.s3Info.apiVersion = '2006-03-01'; //add api version
+          this.s3Info.params = {Bucket: bucketName}; //add bucket name
           //console.log('useBucket s3Info', this.s3Info);
-          this.bucket = new S3(this.s3Info);
+          this.bucket = new S3(this.s3Info); //instantiate bucket with access
         },
         error => {
           console.log('getS3Info error:', error);
         });
-
-/*
-    this.bucket = new S3({
-      apiVersion: '2006-03-01',
-      region: 'us-east-1',
-      credentials: this.credentials,
-      params: {Bucket: bucketName}
-    });
-    console.log('useBucket s3Info', this.s3Info);
-    this.bucket = new S3(this.s3Info);
-    console.log('useBucket', this.bucket);
-*/
   }
 
   public getPhoto(objectKey=null) {
@@ -71,47 +57,44 @@ export class AwsS3Service {
     });
   }
 
-  public uploadFile(file, poolId) {
+  public async uploadFile(file, poolId, cbProgress=null) {
     const contentType = file.type;
-/*
-    const bucket = new S3({
-      apiVersion: '2006-03-01',
-      region: 'us-east-1',
-      accessKeyId: 'AKIA377XAEZJWMGYEAN7',
-      secretAccessKey: '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'
-    });
-*/
+
     var params = {
       Bucket: 'vpatlas.data',
       Key: poolId,
       Body: file,
       ContentType: contentType
     };
+    if (!cbProgress) {
+      cbProgress = function (evt) {
+            console.log(evt.loaded + ' of ' + evt.total + ' Bytes');
+        };
+    }
+    //https://aws.amazon.com/blogs/developer/support-for-promises-in-the-sdk/
+    //return this.bucket.upload(params).promise();
+    //var upload; var promise = (upload = this.bucket.upload(params)).promise();
+    //var upload = this.bucket.upload(params); var promise = upload.promise();
+    var upload = this.bucket.upload(params);
+    upload.on('httpUploadProgress', cbProgress);
+    return upload.promise();
 /*
-    this.bucket.upload(params, function (err, data) {
-      if (err) {
-          console.log('There was an error uploading your file: ', err);
-          return false;
-      }
-      console.log('Successfully uploaded file.', data);
-      return true;
-    });
-*/
-
     //for upload progress
     this.bucket.upload(params).on('httpUploadProgress', function (evt) {
-        console.log(evt.loaded + ' of ' + evt.total + ' Bytes');
-    }).send(function (err, data) {
-        if (err) {
-            console.log('There was an error uploading your file: ', err);
-            return false;
-        }
-        console.log('Successfully uploaded file.', data);
-        return true;
-    });
-
+          console.log(evt.loaded + ' of ' + evt.total + ' Bytes');
+      }).send(function (err, data) {
+          if (err) {
+              console.log('There was an error uploading your file: ', err);
+              return false;
+          }
+          console.log('Successfully uploaded file.', data);
+          return true;
+      });
+*/
   }
 
+  //This should fail, now, because vpatlas user only has Object level permissions
+  //Can add those later
   public createBucket(bucketName=null) {
     if (!bucketName) {
       bucketName = 'vpatlas.' + v4();

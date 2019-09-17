@@ -14,6 +14,10 @@ to the location on the map where the pool is located.</p>`,
 <p>Type a valid Pool ID and press <b><u>Enter</u></b> to search for that pool in the database.<br>
 Pool IDs are <em>case-sensitive</em>.</p>
 <p>If you don't know the Pool ID, search for it on the map, and click a pool to fill it in.</p>`,
+  visitObserverUserName: `
+<h3><u>Visit Observer</u></h3>
+<p>Enter the username of the person who visited the Pool in the field.</p>
+<p>This value can be a VPAtlas user, or the free text name of a person not yet registered in VPAtlas.</p>`,
     visitPoolPhoto: `
 <h3><u>Pool Photo</u></h3>
 <p>Select a photo of the pool to be uploaded.</p>`,

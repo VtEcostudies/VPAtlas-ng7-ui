@@ -52,38 +52,45 @@
 
 <form [formGroup]="visitObserverForm">
   <div class="row">
-    <div class="col-3">
+    <div class="col-2">
       <!-- visitId -->
-      <div class="form-group form-inline">
+      <div class="form-group">
           <label for="visitId">Visit ID</label>
-          <input type="text" formControlName="visitId" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitId.errors }" />
-          <div *ngIf="submitted && observ.visitId.errors" class="invalid-feedback">
-              <div *ngIf="observ.visitId.errors.required">Visit ID is required</div>
-          </div>
+          <input type="text" size="10" formControlName="visitId" class="form-control" />
       </div>
     </div>
-    <div class="col-3">
+    <div class="col-2">
       <!--
           visitUserName
       -->
-      <div class="form-group form-inline">
-          <label for="visitUserName">Visit User</label>
-          <input type="text" formControlName="visitUserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitUserName.errors }" />
-          <div *ngIf="submitted && observ.visitUserName.errors" class="invalid-feedback">
-              <div *ngIf="observ.visitUserName.errors.required">Visit User is required</div>
-          </div>
+      <div class="form-group">
+          <label for="visitUserName">User</label>
+          <input type="text" size="10" formControlName="visitUserName" class="form-control" />
       </div>
     </div> <!-- col -->
-    <div class="col-3">
-      <div class=" form-inline">
+    <div class="col-2">
+    <!--
+        visitObserverUserName
+    -->
+    <div class="form-group">
+        <label for="visitObserverUserName">Observer</label>
+        <html-dialog-app [htmlContent]="visitDialogText.visitObserverUserName"></html-dialog-app>
+        <input type="text" size="10" formControlName="visitObserverUserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitObserverUserName.errors }" />
+        <div *ngIf="submitted && observ.visitObserverUserName.errors" class="invalid-feedback">
+            <div *ngIf="observ.visitObserverUserName.errors.required">Visit Observer is required</div>
+        </div>
+    </div>
+    </div> <!-- col -->
+    <div class="col-2">
+      <div class="form-group">
         <label>Visit Pool ID</label>
-        <input type="text" class="form-control" disabled="true" value="{{locate.visitPoolId.value}}" />
+        <input type="text" size="10" class="form-control" disabled="true" value="{{locate.visitPoolId.value}}" />
       </div>
     </div> <!-- col -->
-    <div class="col-3">
-      <div class=" form-inline">
+    <div class="col-2">
+      <div class="form-group">
         <label>Visit Date</label>
-        <input type="text" class="form-control" disabled="true" value="{{locate.visitDate.value}}" />
+        <input type="text" size="10" class="form-control" disabled="true" value="{{locate.visitDate.value}}" />
       </div>
     </div> <!-- col -->
   </div> <!-- row -->
@@ -135,9 +142,11 @@
 
 <form *ngIf="visitPage.index===0" [formGroup]="visitLocationForm">
   <div class="row">
+    <!-- 2a Vernal Pool Location Information -->
+    <!--
     <div class="col-12">
-      <!-- 2a Vernal Pool Location Information -->
       <div class="row">
+        -->
         <div class="col-4">
           <!--
               visitPoolId - text
@@ -323,23 +332,27 @@
         >
           <label class="btn btn-primary btn-file">
             <i class="fa fa-camera"></i>
-            <input type="file" style="display:none;" formControlName="visitPoolPhoto"
+            <input [disabled]="itemType==='View Visit'" type="file" style="display:none;" formControlName="visitPoolPhoto"
               (change)="PhotoFileEvent($event)" size="15" class="form-control"/>
             <img
+              *ngIf="visit.visitPoolPhoto"
               src="https://s3.amazonaws.com/vpatlas.data/{{visit.poolId}}"
               style="display:inline-block; max-height:30px; max-width:30px;"
             />
           </label>
+          <!-- this doesn't work -->
+          <progress *ngIf="uploading" style="position:relative;width:100%;" [value]="uProgress" [max]="100"></progress>
         </div>
 
       </div> <!-- form-group -->
     </div> <!-- col -->
 
   </div> <!-- row -->
-      <div>
-        <label><u>2b) Location of Pool</u></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitLocationOfPool"></html-dialog-app>
-      </div>
+
+  <div>
+    <label><u>2b) Location of Pool</u></label>
+    <html-dialog-app [htmlContent]="visitDialogText.visitLocationOfPool"></html-dialog-app>
+  </div>
   <div class="row">
     <div class="col-6">
       <!--
@@ -391,8 +404,8 @@
             <span>VT ANR Mapping website</span>
           </label>
       </div>
-    </div> <!-- col -->
-  </div> <!-- row -->
+<!--    </div> <!-- col -->
+<!--</div> <!-- row -->
 </form> <!-- visitLocationForm -->
 </div> <!-- col-6 Master -->
 

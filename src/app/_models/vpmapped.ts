@@ -12,6 +12,7 @@ export class vpMapped {
     mappedDateUnixSeconds: number;
     mappedByUser: string = '';
     mappedByUserId: number = 0;
+    mappedObserverUserName = '';
     mappedPhotoNumber: string = '';
     mappedConfidence: string = '';
     mappedLocationAccuracy: string = '';

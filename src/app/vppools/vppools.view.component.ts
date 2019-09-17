@@ -44,6 +44,7 @@ export class vpViewComponent implements OnInit {
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
     mapShowing = true; //flag to show/hide map (NO LONGER USED)
     visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
+    showImage = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -90,8 +91,9 @@ export class vpViewComponent implements OnInit {
 
       this.visitObserverForm = this.formBuilder.group({
         //these values are always set from the context, so they're disabled by default
-        visitId: [{value: '(New)', disabled: true}, Validators.nullValidator],
-        visitUserName: [{value: this.visit.visitUserName, disabled: true}, Validators.required],
+        visitId: [],
+        visitUserName: [],
+        visitObserverUserName: [],
       });
 
       this.visitPoolMappedForm = this.formBuilder.group({
@@ -113,6 +115,7 @@ export class vpViewComponent implements OnInit {
         visitTown: [],
         visitTownId: [],
         visitLocationComments: [],
+        visitPoolPhoto: [],
         //2b Location of Pool
         visitCoordSource: [],
         visitLatitude: [],
@@ -250,6 +253,7 @@ export class vpViewComponent implements OnInit {
       //1a Observer Information
       this.visitObserverForm.controls['visitId'].setValue(this.visit.visitId);
       this.visitObserverForm.controls['visitUserName'].setValue(this.visit.visitUserName);
+      this.visitObserverForm.controls['visitObserverUserName'].setValue(this.visit.visitObserverUserName);
       //2a Vernal Pool Location Information
       this.visitLocationForm.controls['visitPoolId'].setValue(this.visit.visitPoolId);
       this.visitLocationForm.controls['visitDate'].setValue(Moment(this.visit.visitDate).format('YYYY-MM-DD')); //NOTE: format must be YYYY-MM-DD to set value of input type="date"
@@ -479,5 +483,15 @@ export class vpViewComponent implements OnInit {
 
   PhotoFileEvent(e) {
     console.log('NOTE: PhotoFileEvent(e) - photos are NOT uploadable from View Visit');
+  }
+
+  ImgMouseOver() {
+    if (this.visit.visitPoolPhoto) {
+      this.showImage = true;
+    }
+  }
+
+  ImgMouseOut() {
+    this.showImage = false;
   }
 }

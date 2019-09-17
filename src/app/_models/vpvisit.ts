@@ -7,6 +7,7 @@ export class vpVisit {
     visitPoolId: string = '';
     visitUserName: string = '';
     visitUserId: number = 0;
+    visitObserverUserName: string = '';
     visitNavMethod: string = '';
     visitNavMethodOther: string = '';
     visitPoolMapped: boolean = false;

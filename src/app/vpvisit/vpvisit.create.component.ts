@@ -46,6 +46,8 @@ export class vpVisitCreateComponent implements OnInit {
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
     visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
     showImage = false; //flag to show pool photo over top of map on 1st page
+    uploading = false; //image uploading flag
+    uProgress = 0;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -105,8 +107,10 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitObserverForm = this.formBuilder.group({
         //these values are always set from the context, so they're disabled by default
         visitId: [{value: '(New)', disabled: true}, Validators.nullValidator],
-        visitUserName: [{value: this.visit.visitUserName, disabled: true}, Validators.required],
+        visitUserName: [{value: this.visit.visitUserName, disabled: true}, Validators.nullValidator],
+        visitObserverUserName: [{value: this.visit.visitUserName, disabled: false}, Validators.required],
       });
+      //this.visitObserverForm.enable();
 
       //create a separate form for landowner data, to be nested within visitLocationForm
       //NOTE: these formdata to be rolled into a JSON oject and stored in a single field: visitLandowner
@@ -144,6 +148,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitTown: [new vtTown(), new FormControl(this.towns[this.townCount]), Validators.required], //displayed form-only value - a selectable list of towns
         visitTownId: [], //non-display db-only value set when the form is submitted
         visitLocationComments: ['', Validators.nullValidator],
+        visitPoolPhoto: ['', Validators.nullValidator],
         //2b Location of Pool
         visitCoordSource: ['', Validators.nullValidator],
         visitLatitude: ['', Validators.required],
@@ -294,6 +299,7 @@ export class vpVisitCreateComponent implements OnInit {
       //1a Observer Information
       this.visitObserverForm.controls['visitId'].setValue(this.visit.visitId);
       this.visitObserverForm.controls['visitUserName'].setValue(this.visit.visitUserName);
+      this.visitObserverForm.controls['visitObserverUserName'].setValue(this.visit.visitObserverUserName);
       //2a Vernal Pool Location Information
       this.visitLocationForm.controls['visitPoolId'].setValue(this.visit.visitPoolId);
       this.visitLocationForm.controls['visitDate'].setValue(Moment(this.visit.visitDate).format('YYYY-MM-DD')); //NOTE: format must be YYYY-MM-DD to set value of input type="date"
@@ -557,7 +563,9 @@ export class vpVisitCreateComponent implements OnInit {
 
       console.log(`vpvisit.create.CreateMappedPool`);
 
-      mappedPool.mappedByUser = this.visitObserverForm.value.visitUserName;
+      //Parts of the Observer form are disabled. Use getRawValue() to retrieve any value.
+      mappedPool.mappedByUser = this.visitObserverForm.getRawValue().visitUserName;
+      mappedPool.mappedObserverUserName = this.visitObserverForm.getRawValue().visitObserverUserName;
 
       //mappedPoolId value should be 'NEW*' to indicate to the db server that we need to generate a poolId
       //because visitPoolId is disabled, the value is underfined. argh.
@@ -610,14 +618,16 @@ export class vpVisitCreateComponent implements OnInit {
 
     //validate fields and create the visit
     CreateVisit() {
+        var objAll:any = {}; //target object to copy all form-object data to for submitting to API
 
         console.log(`vpvisit.create.CreateVisit`);
+        console.dir(this.visitObserverForm.getRawValue());
 
         this.submitted = true;
 
         //kluge to get around disabled fields not being included in form values
         //and not having an easy validator for requiring visitUser = logon user
-        if (!this.update && this.visitObserverForm.value.visitUserName != this.authenticationService.currentUserValue.user.username) {
+        if (!this.update && this.visitObserverForm.getRawValue().visitUserName != this.authenticationService.currentUserValue.user.username) {
           this.alertService.error("Visit User must be your username.");
           this.setPage(0);
           return;
@@ -635,11 +645,9 @@ export class vpVisitCreateComponent implements OnInit {
           return;
         }
 
-        //console.log('vpvisit.create.component.CreateVisit | visitTown',this.visitLocationForm.value.visitTown);
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
-        console.log('vpvisit.create.createVisit | visitTownId: ', this.visitLocationForm.value.visitTown.townId);
         if (typeof(this.visitLocationForm.value.visitTown) != undefined && this.visitLocationForm.value.visitTown) {
           this.visitLocationForm.controls['visitTownId'].setValue(this.visitLocationForm.value.visitTown.townId);
         } else { //visitTownId is required in db. must at least set value to 'Unknown'.
@@ -680,33 +688,12 @@ export class vpVisitCreateComponent implements OnInit {
           return;
         }
 
-        console.log('createVisit | visitPoolId', this.visitLocationForm.value.visitPoolId);
-        console.log('createVisit | poolId', this.poolId);
-
-        //if the form value of visitPoolId is undefined, or null (due to being disabled) use this.poolId
-        if (typeof this.visitLocationForm.value.visitPoolId === "undefined" || !this.visitLocationForm.value.visitPoolId) {
-          console.log('createVisit | form value of visitPoolId not valid, using this.poolId');
-          //this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
-          //you can't use the default setter to alter the value of a disabled field
-          //however, it appears that we can simple set the '.value.fieldName' attribute
-          //of the formGroup object, and it's passed to the db. use this method for now.
-          this.visitLocationForm.value.visitPoolId = this.poolId;
-          this.visitLocationForm.controls['visitPoolId'].enable();
-          this.visitLocationForm.controls['visitPoolId'].setValue(this.poolId);
-        }
-
-        //flatten the POSTed object before posting. the visitLandowner nested form
-        //is passed, but the API can't parse it. (to-do: handle that?)
-        // TODO: roll landowner data into json object for db JSONB column
+        //flatten the POSTed object before posting. visitLandowner is SQL JSONB.
         if (this.visitLocationForm.value.visitLandownerPermission) {
-          //Object.assign(this.visitLocationForm.value, this.visitLandOwnForm.value);
-          //delete this.visitLocationForm.value.visitLandowner; //JSON object on Location Form...
-          console.log('LocationForm.visitLandowner: ', this.visitLocationForm.value.visitLandowner);
-          console.log('LandownForm.visitLandowner: ', this.visitLandOwnForm.value);
           this.visitLocationForm.controls['visitLandowner'].setValue(this.visitLandOwnForm.value);
         }
+
         //have to convert true/false radio buttons from string to boolean
-        //this.visitLocationForm.value.visitPoolMapped = this.visitLocationForm.value.visitPoolMapped == 'true';
         this.visitPoolMappedForm.value.visitPoolMapped = this.visitPoolMappedForm.value.visitPoolMapped == 'true';
         this.visitLocationForm.value.visitLocatePool = this.visitLocationForm.value.visitLocatePool == 'true';
         //amphibian adults must be counted. shrimp and clams are just 'present'. database column is text. convert to number or 'X'.
@@ -722,25 +709,37 @@ export class vpVisitCreateComponent implements OnInit {
         this.visitIndicatorSpeciesForm.value.visitJesaLarvae = this.visitIndicatorSpeciesForm.value.visitJesaLarvae ? 1 : 0;
         this.visitIndicatorSpeciesForm.value.visitBssaLarvae = this.visitIndicatorSpeciesForm.value.visitBssaLarvae ? 1 : 0;
 
-        //visitObserverForm
-        Object.assign(this.visitLocationForm.value, this.visitObserverForm.value);
+        //visitObserverForm - some fields are disabled, so use getRawValue()
+        Object.assign(objAll, this.visitObserverForm.getRawValue());
+
+        //visitPoolMappedForm
+        Object.assign(objAll, this.visitPoolMappedForm.value);
+
+        //visitLocationForm - some fields are disabled, so use getRawValue()
+        Object.assign(objAll, this.visitLocationForm.getRawValue());
 
         //visitFieldVerificationForm
-        Object.assign(this.visitLocationForm.value, this.visitFieldVerificationForm.value);
+        Object.assign(objAll, this.visitFieldVerificationForm.value);
 
         //visitPoolCharacteristicsForm
-        Object.assign(this.visitLocationForm.value, this.visitPoolCharacteristicsForm.value);
+        Object.assign(objAll, this.visitPoolCharacteristicsForm.value);
 
         //visitIndicatorSpeciesForm
-        Object.assign(this.visitLocationForm.value, this.visitIndicatorSpeciesForm.value);
+        Object.assign(objAll, this.visitIndicatorSpeciesForm.value);
 
         //Remove visitId from the POST data if creating a New pool. Its value is '(New)'.
         if (!this.update) {
-          delete this.visitLocationForm.value.visitId;
+          delete objAll.visitId;
         }
 
+        if (this.visit.visitPoolPhoto) {
+          Object.assign(objAll, {"visitPoolPhoto":this.visit.visitPoolPhoto});
+        }
+
+        //console.log('CreateVisit'); console.dir(objAll);
+
         this.dataLoading = true;
-        this.vpVisitService.createOrUpdate(this.update, this.visitId, this.visitLocationForm.value)
+        this.vpVisitService.createOrUpdate(this.update, this.visitId, objAll)
             .pipe(first())
             .subscribe(
                 data => {
@@ -872,18 +871,36 @@ export class vpVisitCreateComponent implements OnInit {
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 
-  PhotoFileEvent(e) {
+  async PhotoFileEvent(e) {
     console.log('PhotoFileEvent', e.target.files[0]);
     var files = e.target.files;
     var file = e.target.files[0];
-    //console.log('PhotoFileEvent', this.visitIndicatorSpeciesForm.value.visitWoodFrogPhoto);
+
     if (confirm(`Are you sure you want to upload ${file.name} for pool ${this.poolId}?`)) {
-      this.s3.uploadFile(file, this.poolId);
-    }
-  }
+      this.uploading = true;
+      this.s3.uploadFile(file, this.poolId, this.PhotoFileUploadProgress)
+        .then(data => {
+          console.log(`PhotoFileEvent result:`, data);
+          this.uploading = false;
+          this.visit.visitPoolPhoto = `https://s3.amazonaws.com/vpatlas.data/${this.poolId}`;
+        })
+        .catch(error => {
+          console.log(`PhotoFileEvent result:`, error);
+          this.uploading = false;
+        });
+    } //confirm
+  } //function
+
+  PhotoFileUploadProgress(evt) {
+    this.uProgress = Math.floor(evt.loaded/evt.total * 100);
+    console.log('Uploaded ' + evt.loaded + ' of ' + evt.total + ' Bytes');
+    console.log(`Uploaded ${this.uProgress}%`)
+  };
 
   ImgMouseOver() {
-    this.showImage = true;
+    if (this.visit.visitPoolPhoto) {
+      this.showImage = true;
+    }
   }
 
   ImgMouseOut() {
