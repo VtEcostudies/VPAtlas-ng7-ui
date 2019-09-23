@@ -600,7 +600,7 @@ export class LeafletComponent implements OnInit, OnChanges {
                              Lat: ${Number(llLoc.lat).toFixed(5)}<br>
                              Lng: ${Number(llLoc.lng).toFixed(5)}<br>
                              <img
-                               src="https://s3.amazonaws.com/vpatlas.data/${vpool.poolId}"
+                               src="https://s3.amazonaws.com/vpatlas.data/${vpool.poolId}?${Date.now()}"
                                style="max-height: 100px; max-width: 100px;"
                              />
                             `);
@@ -709,11 +709,14 @@ export class LeafletComponent implements OnInit, OnChanges {
             <div>Status: ${vpools[i].mappedPoolStatus}</div>
             <div>Lat: ${Number(vpools[i].latitude).toFixed(5)}</div>
             <div>Lon:${Number(vpools[i].longitude).toFixed(5)}</div>
-            <img
-              src="https://s3.amazonaws.com/vpatlas.data/${vpools[i].poolId}"
-              style="max-height: 100px; max-width: 100px;"
-            />
             `;
+      //Add image to bottom of toolTip if one is indicated in field visitPoolPhoto
+      if (vpools[i].visitPoolPhoto) {
+        toolText += `<img
+          src="https://s3.amazonaws.com/vpatlas.data/${vpools[i].poolId}?${Date.now()}"
+          style="max-height: 100px; max-width: 100px;"
+          />`;
+      }
 
       //NOTE shape.bindPopup was moved to onCircleGroupClick()
 

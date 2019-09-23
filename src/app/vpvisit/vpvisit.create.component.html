@@ -307,7 +307,7 @@
       <div class="form-group">
           <label for="visitDirections">Brief directions to pool:</label>
           <html-dialog-app [htmlContent]="visitDialogText.visitDirections"></html-dialog-app>
-          <textarea rows="1" formControlName="visitDirections" class="form-control"> </textarea>
+          <textarea style="height:40px;" rows="1" formControlName="visitDirections" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
     <div class="col-5">
@@ -317,7 +317,7 @@
       <div class="form-group">
           <label for="visitLocationComments">Comments:</label>
           <html-dialog-app [htmlContent]="visitDialogText.visitLocationComments"></html-dialog-app>
-          <textarea rows="1" formControlName="visitLocationComments" class="form-control"> </textarea>
+          <textarea style="height:40px;" rows="1" formControlName="visitLocationComments" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
 
@@ -332,9 +332,12 @@
         >
           <label class="btn btn-primary btn-file">
             <i class="fa fa-camera"></i>
-            <input [disabled]="itemType==='View Visit'" type="file" style="display:none;" formControlName="visitPoolPhoto"
-              (change)="PhotoFileEvent($event)" size="15" class="form-control"/>
-            <img
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitPoolPhoto"
+              (change)="PhotoFileEvent($event)" size="15" class="form-control"
+              />
+            <img id="imgPoolThumb"
               *ngIf="visit.visitPoolPhoto"
               src="https://s3.amazonaws.com/vpatlas.data/{{visit.poolId}}"
               style="display:inline-block; max-height:30px; max-width:30px;"
@@ -429,7 +432,7 @@
       </div>
     </div> <!-- !showImage -->
     <div *ngIf="showImage"> <!-- image overlay -->
-      <img
+      <img id="imgPoolPhoto"
         src="https://s3.amazonaws.com/vpatlas.data/{{visit.poolId}}"
         style="max-height:100%; max-width:100%;"
       />

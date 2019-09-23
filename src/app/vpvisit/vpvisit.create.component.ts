@@ -9,6 +9,9 @@ import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { visitDialogText } from '@app/dialogBox/visitDialogText';
 import { AwsS3Service } from '@app/_services';
+//need these next 2 to manipulate the DOM directly
+import { Inject }  from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 @Component({templateUrl: 'vpvisit.create.component.html'})
 export class vpVisitCreateComponent implements OnInit {
@@ -60,6 +63,7 @@ export class vpVisitCreateComponent implements OnInit {
         private vpPoolsService: vpPoolsService,
         private townService: vtInfoService,
         private s3: AwsS3Service,
+        @Inject(DOCUMENT) document
     ) {
         if (this.authenticationService.currentUserValue) {
           let currentUser = this.authenticationService.currentUserValue.user;
@@ -871,26 +875,72 @@ export class vpVisitCreateComponent implements OnInit {
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 
+  /*
+  Save a link to the S3 Photo in the visit table.
+  Return the promise to the caller for use in handling success/failure.
+  Note: the promise is the angular http promise that uses first().
+  */
+  SavePhotoLink() {
+    /*
+    weird API/DB error trying to set the value of just one column:
+    update vpvisit set ("visitPoolPhoto") = ($2) where "visitId"=$1 returning "visitId"
+    error: source for a multiple-column UPDATE item must be a sub-SELECT or ROW() expression
+    taking the set values out of parenthesis allows the query to succeed.
+    */
+    var objUpd:any = {};
+
+    objUpd.visitPoolPhoto = this.ImgUrl();
+    objUpd.visitIdLegacy = this.visit.visitIdLegacy;
+
+    this.visit.visitPoolPhoto = objUpd.visitPoolPhoto; //set local variable for display update
+
+    console.log('SavePhotoLink', objUpd)
+
+    return this.vpVisitService.createOrUpdate(true, this.visitId, objUpd);
+  }
+
+  /*
+  Handle the outcome from a file-input control for uploading photos to AWS S3.
+  Since the file upload is to a different location than the postgres DB, we need to manage
+  the pg DB flag of a successful upload in tandem with the S3 file itself. We mark that flag
+  first, then proceed to S3 upload on success.
+  */
   async PhotoFileEvent(e) {
     console.log('PhotoFileEvent', e.target.files[0]);
     var files = e.target.files;
     var file = e.target.files[0];
+    var elemImg: any = document.getElementById('imgPoolThumb');
 
-    if (confirm(`Are you sure you want to upload ${file.name} for pool ${this.poolId}?`)) {
+    if (confirm(`Are you sure you want to upload ${file.name} for pool ${this.poolId} and save it?`)) {
       this.uploading = true;
-      this.s3.uploadFile(file, this.poolId, this.PhotoFileUploadProgress)
-        .then(data => {
-          console.log(`PhotoFileEvent result:`, data);
-          this.uploading = false;
-          this.visit.visitPoolPhoto = `https://s3.amazonaws.com/vpatlas.data/${this.poolId}`;
-        })
-        .catch(error => {
-          console.log(`PhotoFileEvent result:`, error);
-          this.uploading = false;
-        });
+      this.SavePhotoLink()
+        .pipe(first())
+        .subscribe(
+            data => {
+                console.log(`vpvisit.create.SavePhotoLink()=>data:`, data);
+                this.s3.uploadFile(file, this.poolId, this.PhotoFileUploadProgress)
+                  .then(data => {
+                    console.log(`PhotoFileEvent result:`, data);
+                    this.uploading = false;
+                    this.visit.visitPoolPhoto = this.ImgUrl();
+                    elemImg.src = this.ImgUrl();
+                  })
+                  .catch(error => {
+                    console.log(`PhotoFileEvent result:`, error);
+                    this.uploading = false;
+                  });
+            },
+            error => {
+                console.log(`vpvisit.create.SavePhotoLink()=>error:`, error);
+            });
+
     } //confirm
   } //function
 
+  /*
+  Callback passed to AWS upload service to receive progress updates. Attempted to use a simple
+  <progress> bar, but it doesn't see to work with angular binding...
+  */
   PhotoFileUploadProgress(evt) {
     this.uProgress = Math.floor(evt.loaded/evt.total * 100);
     console.log('Uploaded ' + evt.loaded + ' of ' + evt.total + ' Bytes');
@@ -898,8 +948,16 @@ export class vpVisitCreateComponent implements OnInit {
   };
 
   ImgMouseOver() {
+    var elemImg: any;
+
     if (this.visit.visitPoolPhoto) {
       this.showImage = true;
+      try { //wrap this is try/catch to prevent error messages. somehow, this works despite mostly errors...
+        elemImg = document.getElementById('imgPoolPhoto');
+        elemImg.src = this.ImgUrl();
+      } catch (err) {
+        //console.log('ImgMouseOver error', err);
+      }
     }
   }
 
@@ -907,4 +965,11 @@ export class vpVisitCreateComponent implements OnInit {
     this.showImage = false;
   }
 
+  /*
+  photo links go stale and need a forced update. appending a timstamp query parameter does this,
+  but only if this link can be refreshed on demand. statically loaded links can't use this call.
+  */
+  ImgUrl() {
+    return `https://s3.amazonaws.com/vpatlas.data/${this.poolId}?${Date.now()}`;
+  }
 }
