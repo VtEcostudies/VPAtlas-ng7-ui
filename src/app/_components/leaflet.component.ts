@@ -177,7 +177,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.baseLayer = this.uxValuesService.baseLayerIndex;
     this.cmColor = this.uxValuesService.pointColorIndex;
 
-    console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
+    //console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
 
     this.marker = L.marker(this.vtCenter, {
                 draggable: true,
@@ -188,7 +188,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   ngOnInit() {
     if (this.authenticationService.currentUserValue) {
       this.currentUser = this.authenticationService.currentUserValue.user;
-      console.log('vpvisit.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+      //console.log('vpvisit.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
 
@@ -248,8 +248,8 @@ export class LeafletComponent implements OnInit, OnChanges {
     event fires when the page's data changes.
   */
   async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
-    console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
+    //console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
+    //console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     await this.clearPools();
     if (this.mapPoints) {
       await this.plotPoolShapes(this.mapValues);
@@ -326,7 +326,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       return elm == e.layer;
     });
 
-    console.log(`onBaseLayerChange | name: ${e.name} | index: ${index}`);
+    //console.log(`onBaseLayerChange | name: ${e.name} | index: ${index}`);
 
     this.uxValuesService.setBaseLayer(index);
   }
@@ -341,7 +341,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   //set the class value of plotted pool radius relative to zoom level
   async SetPointZoomRadius() {
     this.cmRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
-    console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'cmRadius', this.cmRadius);
+    //console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'cmRadius', this.cmRadius);
   }
 
   //iterate through all plotted pools in the featureGroup and alter each radius
@@ -392,8 +392,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   */
   onCircleGroupClick(e) {
     //console.log("leaflet.onCircleGroupClick | event: ", e);
-    console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
-    console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
+    //console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
+    //console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
     const index = e.sourceTarget.options.index;
     const cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     const poolId = e.sourceTarget.options.poolId;
@@ -535,11 +535,11 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   // TODO: remember what this was for. Use it or lose it!
   createVisitForPool(poolId) {
-    console.log('createVisitForPool', poolId);
+    //console.log('createVisitForPool', poolId);
   }
 
   async clearPools() {
-    console.log('clearPools');
+    //console.log('clearPools');
     this.cmGroup.clearLayers();
     this.cmLLArr = [];
   }
@@ -576,7 +576,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (Array.isArray(vpool)) {vpool = vpool[0];}
 
-    console.log('leaflet.component.plotPoolMarker(', vpool.poolId, ')');
+    //console.log('leaflet.component.plotPoolMarker(', vpool.poolId, ')');
 
     //convert null, undefined, NaN, empty, etc to 0
     vpool.latitude = vpool.latitude || 0;
@@ -584,11 +584,11 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     //don't plot pools/visits/items lacking lat/lon values. it really mucks things up.
     if (!vpool.latitude || !vpool.longitude) {
-      console.log(`leaflet.component.plotPoolMarker(${vpool.poolId}) NO Lat/Lng for pool.`);
+      //console.log(`leaflet.component.plotPoolMarker(${vpool.poolId}) NO Lat/Lng for pool.`);
       return;
     }
 
-    console.log('leaflet.component.plotPoolMarker | Location:', vpool.latitude, vpool.longitude,')');
+    //console.log('leaflet.component.plotPoolMarker | Location:', vpool.latitude, vpool.longitude,')');
 
     llLoc = L.latLng(vpool.latitude, vpool.longitude);
 
@@ -727,12 +727,12 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   changeColor(index=null) {
 
-    console.log(`changeColor(${index})`);
+    //console.log(`changeColor(${index})`);
     if (!index) {
       this.cmColor++;
       if (this.cmColor > this.cmClrCnt) {this.cmColor = 0;}
     }
-    console.log(`changeColor(${index})`);
+    //console.log(`changeColor(${index})`);
 
     this.cmGroup.eachLayer((layer: any) => {
 
