@@ -14,18 +14,24 @@ export class AwsS3Service {
   s3Info = null; //s3 bucket config info
   credentials = null;
   bucket = null;
+  basicBucketName = 'vpatlas.data';
+  photoBucketName = 'vpatlas.photos';
+  soundBucketName = 'vpatlas.sounds';
 
   constructor(private http: HttpClient) {
     this.useBucket();
   }
 
+  /*
+  Get S3 bucket config and access from API
+  */
   private getS3Info(bucketName='vpatlas.data') {
     return this.http.get<any>(`${environment.apiUrl}/aws/s3/bucket/${bucketName}`);
   }
 
-  public useBucket(bucketName='vpatlas.data') {
+  public useBucket(bucketName=this.photoBucketName) {
 
-    this.getS3Info(bucketName) //get bucket creds from db
+    this.getS3Info() //get bucket creds from db. use default bucketName to retrieve.
     .pipe(first())
     .subscribe(
         data => {
@@ -42,7 +48,7 @@ export class AwsS3Service {
 
   public getPhoto(objectKey=null) {
     var params = {
-     Bucket: "vpatlas.data",
+     Bucket: this.photoBucketName,
      Key: objectKey
     };
 
@@ -57,15 +63,22 @@ export class AwsS3Service {
     });
   }
 
-  public async uploadFile(file, poolId, cbProgress=null) {
+  public async uploadPhoto(file, poolId, visitId=null, type='Pool', iter=1, cbProgress=null) {
     const contentType = file.type;
+    var folderPath = `${poolId}/`
+    var fileName = `${type}.${iter}`;
+
+    if (visitId) {
+      folderPath += `${visitId}/`;
+    }
 
     var params = {
-      Bucket: 'vpatlas.data',
-      Key: poolId,
+      Bucket: this.photoBucketName,
+      Key: folderPath + fileName,
       Body: file,
       ContentType: contentType
     };
+
     if (!cbProgress) {
       cbProgress = function (evt) {
             console.log(evt.loaded + ' of ' + evt.total + ' Bytes');
@@ -77,28 +90,31 @@ export class AwsS3Service {
     //var upload = this.bucket.upload(params); var promise = upload.promise();
     var upload = this.bucket.upload(params);
     upload.on('httpUploadProgress', cbProgress);
+    upload.on('error', function(error){console.log('aws-s3.service error', error);})
     return upload.promise();
-/*
-    //for upload progress
-    this.bucket.upload(params).on('httpUploadProgress', function (evt) {
-          console.log(evt.loaded + ' of ' + evt.total + ' Bytes');
-      }).send(function (err, data) {
-          if (err) {
-              console.log('There was an error uploading your file: ', err);
-              return false;
-          }
-          console.log('Successfully uploaded file.', data);
-          return true;
-      });
-*/
   }
 
-  //This should fail, now, because vpatlas user only has Object level permissions
-  //Can add those later
-  public createBucket(bucketName=null) {
-    if (!bucketName) {
-      bucketName = 'vpatlas.' + v4();
-    }
+  /*
+  This should fail, now, because vpatlas user only has Object level permissions
+  on bucket vpatlas.data. To add bucket-level action permissions, go to that
+  *bucket* in AWS and alter the 'Bucket Policy'. So far, have only figured out
+  how to add like this:
+
+  {
+    "Sid": "AddPermAtlasUser",
+    "Effect": "Allow",
+    "Principal": {
+        "AWS": "arn:aws:iam::824614856275:user/vpatlas"
+    },
+    "Action": "s3:*",
+    "Resource": "arn:aws:s3:::vpatlas.data/*"
+}
+  */
+  public createBucket(subBucket=null) {
+    if (!subBucket) return null;
+
+    var bucketName = `vpatlas.data.${subBucket}`;
+
     this.bucket = new S3({ apiVersion: '2006-03-01' });
     this.bucket.createBucket({Bucket: bucketName}, (err, data) => {
       if (err) {

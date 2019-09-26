@@ -300,7 +300,7 @@
       </div>
 
   <div class="row">
-    <div class="col-5">
+    <div class="col-4">
       <!--
         visitDirections
       -->
@@ -310,7 +310,7 @@
           <textarea style="height:40px;" rows="1" formControlName="visitDirections" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
-    <div class="col-5">
+    <div class="col-4">
       <!--
         visitLocationComments
       -->
@@ -321,30 +321,29 @@
       </div>
     </div> <!-- col -->
 
-    <div class="col-2">
-      <div class="form-group form-inline">
+    <div class="col-4">
+      <div class="form-group">
         <label>Photo:</label>
         <html-dialog-app [htmlContent]="visitDialogText.visitPoolPhoto"></html-dialog-app>
 
-        <div class="form-inline"
-          (mouseover)="ImgMouseOver();"
-          (mouseout)="ImgMouseOut();"
-        >
+        <div class="form-inline">
           <label class="btn btn-primary btn-file">
-            <i class="fa fa-camera"></i>
+            <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
             <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitPoolPhoto"
               (change)="PhotoFileEvent($event)" size="15" class="form-control"
               />
-            <img id="imgPoolThumb"
-              *ngIf="visit.visitPoolPhoto"
-              src="https://s3.amazonaws.com/vpatlas.data/{{visit.poolId}}"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
           </label>
-          <!-- this doesn't work -->
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1" target="_blank">
+            <img id="imgPoolThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1"
+              style="display:inline-block; height:30px; width:30px; margin-left: 0px;"
+            />
+          </a>
+          <!-- this doesn't work
           <progress *ngIf="uploading" style="position:relative;width:100%;" [value]="uProgress" [max]="100"></progress>
+           -->
         </div>
 
       </div> <!-- form-group -->
@@ -433,7 +432,7 @@
     </div> <!-- !showImage -->
     <div *ngIf="showImage"> <!-- image overlay -->
       <img id="imgPoolPhoto"
-        src="https://s3.amazonaws.com/vpatlas.data/{{visit.poolId}}"
+        src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1"
         style="max-height:100%; max-width:100%;"
       />
     </div>
@@ -930,20 +929,26 @@
         </select>
 
       </td>
-        <td class="overlay-wrapper">
-        <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitWoodFrogPhoto" size="15" class="form-control overlay-input" />
-      </td>
 
-      <!--
-      <td>
-        <label class="btn btn-primary btn-file">
-          Upload Photo
-          <input type="file" style="display:none;" formControlName="visitWoodFrogPhoto"
-            (change)="PhotoFileEvent($event)" size="15" class="form-control"/>
-        </label>
-      </td>
-      -->
+      <td> <!-- Photo object -->
+        <div class="form-inline">
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-upload"></i>
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitWoodFrogPhoto"
+              (change)="PhotoFileEvent($event,'WoodFrog')" class="form-control"
+              />
+          </label>
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1" target="_blank">
+            <img id="imgWoodFrogThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </a>
+        </div>
+      </td> <!-- Photo object -->
+
       <td><input type="text" formControlName="visitWoodFrogNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -958,10 +963,26 @@
          <option value="Counted">Counted</option>
         </select>
       </td>
-      <td class="overlay-wrapper">
-        <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitSpsPhoto" size="15" class="form-control overlay-input" />
-      </td>
+
+      <td> <!-- Photo object Sps -->
+        <div class="form-inline">
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-upload"></i>
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitSpsPhoto"
+              (change)="PhotoFileEvent($event,'Sps')" size="15" class="form-control"
+              />
+          </label>
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1" target="_blank">
+            <img id="imgSpsThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </a>
+        </div>
+      </td> <!-- Photo object Sps -->
+
       <td><input type="text" formControlName="visitSpsNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -976,10 +997,24 @@
          <option value="Counted">Counted</option>
         </select>
       </td>
-      <td class="overlay-wrapper">
-        <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitJesaPhoto" size="15" class="form-control overlay-input" />
-      </td>
+      <td> <!-- Photo object Jesa -->
+        <div class="form-inline">
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-upload"></i>
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitJesaPhoto"
+              (change)="PhotoFileEvent($event,'Jesa')" size="15" class="form-control"
+              />
+          </label>
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1" target="_blank">
+            <img id="imgJesaThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </a>
+        </div>
+      </td> <!-- Photo object Jesa -->
       <td><input type="text" formControlName="visitJesaNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -994,10 +1029,24 @@
          <option value="Counted">Counted</option>
         </select>
       </td>
-      <td class="overlay-wrapper">
-        <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitBssaPhoto" size="15" class="form-control overlay-input" />
-      </td>
+      <td> <!-- Photo object Bssa -->
+        <div class="form-inline">
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-upload"></i>
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitBssaPhoto"
+              (change)="PhotoFileEvent($event,'Bssa')" size="15" class="form-control"
+              />
+          </label>
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1" target="_blank">
+            <img id="imgBssaThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </a>
+        </div>
+      </td> <!-- Photo object Bssa -->
       <td><input type="text" formControlName="visitBssaNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1007,10 +1056,24 @@
       <td></td>
       <td></td>
       <td></td>
-      <td class="overlay-wrapper">
-        <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitFairyShrimpPhoto" size="15" class="form-control overlay-input" />
-      </td>
+      <td> <!-- Photo object FairyShrimp -->
+        <div class="form-inline">
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-upload"></i>
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitFairyShrimpPhoto"
+              (change)="PhotoFileEvent($event,'FairyShrimp')" size="15" class="form-control"
+              />
+          </label>
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1" target="_blank">
+            <img id="imgFairyShrimpThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </a>
+        </div>
+      </td> <!-- Photo object FairyShrimp -->
       <td><input type="text" formControlName="visitFairyShrimpNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1020,10 +1083,24 @@
       <td></td>
       <td></td>
       <td></td>
-      <td class="overlay-wrapper">
-        <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitFingerNailClamsPhoto" size="15" class="form-control overlay-input" />
-      </td>
+      <td> <!-- Photo object FingerNailClams -->
+        <div class="form-inline">
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-upload"></i>
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitFingerNailClams"
+              (change)="PhotoFileEvent($event,'FingerNailClams')" size="15" class="form-control"
+              />
+          </label>
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1" target="_blank">
+            <img id="imgFingerNailClamsThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </a>
+        </div>
+      </td> <!-- Photo object FingerNailClams -->
       <td><input type="text" formControlName="visitFingerNailClamsNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1035,10 +1112,24 @@
       <td></td>
       <td></td>
       <td></td>
-      <td class="overlay-wrapper">
-        <button class="overlay-button">Select</button>
-        <input type="text" disabled="true" formControlName="visitSpeciesOtherPhoto" size="15" class="form-control overlay-input" />
-      </td>
+      <td> <!-- Photo object SpeciesOther -->
+        <div class="form-inline">
+          <label class="btn btn-primary btn-file">
+            <i class="fa fa-upload"></i>
+            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+              type="file" style="display:none;" formControlName="visitSpeciesOtherPhoto"
+              (change)="PhotoFileEvent($event,'SpeciesOther')" size="15" class="form-control"
+              />
+          </label>
+          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1" target="_blank">
+            <img id="imgSpeciesOtherThumb"
+              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1"
+              style="display:inline-block; max-height:30px; max-width:30px;"
+            />
+          </a>
+        </div>
+      </td> <!-- Photo object SpeciesOther -->
       <td><input type="text" formControlName="visitSpeciesOtherNotes" size="30" class="form-control" /></td>
     </tr>
     <tr>

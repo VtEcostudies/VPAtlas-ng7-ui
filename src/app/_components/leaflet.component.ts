@@ -596,14 +596,17 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.marker.setLatLng(llLoc);
 
-    this.marker.bindTooltip(`Pool ID: ${vpool.poolId}<br>
-                             Lat: ${Number(llLoc.lat).toFixed(5)}<br>
-                             Lng: ${Number(llLoc.lng).toFixed(5)}<br>
-                             <img
-                               src="https://s3.amazonaws.com/vpatlas.data/${vpool.poolId}?${Date.now()}"
-                               style="max-height: 100px; max-width: 100px;"
-                             />
-                            `);
+    var toolTip = `Pool ID: ${vpool.poolId}<br>
+                   Lat: ${Number(llLoc.lat).toFixed(5)}<br>
+                   Lng: ${Number(llLoc.lng).toFixed(5)}<br>`;
+
+    if (vpool.visitPoolPhoto) {
+      toolTip += `<img
+                     src="${vpool.visitPoolPhoto}"
+                     style="max-height: 100px; max-width: 100px;"
+                   />`;
+                 }
+    this.marker.bindTooltip(toolTip);
   }
 
   async plotPoolShapes(vpools) {
@@ -713,7 +716,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       //Add image to bottom of toolTip if one is indicated in field visitPoolPhoto
       if (vpools[i].visitPoolPhoto) {
         toolText += `<img
-          src="https://s3.amazonaws.com/vpatlas.data/${vpools[i].poolId}?${Date.now()}"
+          src="${vpools[i].visitPoolPhoto}"
           style="max-height: 100px; max-width: 100px;"
           />`;
       }

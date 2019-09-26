@@ -51,6 +51,7 @@ export class vpVisitCreateComponent implements OnInit {
     showImage = false; //flag to show pool photo over top of map on 1st page
     uploading = false; //image uploading flag
     uProgress = 0;
+    s3PhotoBucket = 'vpatlas.photos';
 
     constructor(
         private formBuilder: FormBuilder,
@@ -880,7 +881,7 @@ export class vpVisitCreateComponent implements OnInit {
   Return the promise to the caller for use in handling success/failure.
   Note: the promise is the angular http promise that uses first().
   */
-  SavePhotoLink() {
+  SavePhotoLink(type='Pool') {
     /*
     weird API/DB error trying to set the value of just one column:
     update vpvisit set ("visitPoolPhoto") = ($2) where "visitId"=$1 returning "visitId"
@@ -889,12 +890,12 @@ export class vpVisitCreateComponent implements OnInit {
     */
     var objUpd:any = {};
 
-    objUpd.visitPoolPhoto = this.ImgUrl();
+    objUpd[`visit${type}Photo`] = this.ImgUrl();
     objUpd.visitIdLegacy = this.visit.visitIdLegacy;
 
-    this.visit.visitPoolPhoto = objUpd.visitPoolPhoto; //set local variable for display update
+    this.visit[`visit${type}Photo`] = objUpd[`visit${type}Photo`]; //set local variable for display update
 
-    //console.log('SavePhotoLink', objUpd)
+    console.log('SavePhotoLink', objUpd)
 
     return this.vpVisitService.createOrUpdate(true, this.visitId, objUpd);
   }
@@ -905,28 +906,34 @@ export class vpVisitCreateComponent implements OnInit {
   the pg DB flag of a successful upload in tandem with the S3 file itself. We mark that flag
   first, then proceed to S3 upload on success.
   */
-  async PhotoFileEvent(e) {
-    //console.log('PhotoFileEvent', e.target.files[0]);
+  async PhotoFileEvent(e, type='Pool', iter=1) {
+    //console.log('PhotoFileEvent', e.target.files[0], type);
     var files = e.target.files;
     var file = e.target.files[0];
-    var elemImg: any = document.getElementById('imgPoolThumb');
+    var elemName = `img${type}Thumb`;
+    var elemImg: any = document.getElementById(elemName);
+    var confMsg = `Are you sure you want to upload ${file.name} for pool ${this.poolId}, visit ${this.visitId}`;
+    if (type != 'Pool') {
+      confMsg += ` species ${type}`
+    }
+    confMsg += `, and save it?`;
 
-    if (confirm(`Are you sure you want to upload ${file.name} for pool ${this.poolId} and save it?`)) {
+    if (confirm(confMsg)) {
       this.uploading = true;
-      this.SavePhotoLink()
+      this.SavePhotoLink(type)
         .pipe(first())
         .subscribe(
             data => {
                 //console.log(`vpvisit.create.SavePhotoLink()=>data:`, data);
-                this.s3.uploadFile(file, this.poolId, this.PhotoFileUploadProgress)
+                this.s3.uploadPhoto(file, this.poolId, this.visitId, type, iter, this.PhotoFileUploadProgress)
                   .then(data => {
-                    //console.log(`PhotoFileEvent result:`, data);
+                    console.log(`PhotoFileEvent.s3.uploadPhoto success:`, data);
                     this.uploading = false;
-                    this.visit.visitPoolPhoto = this.ImgUrl();
+                    //this.visit.visitPoolPhoto = this.ImgUrl();
                     elemImg.src = this.ImgUrl();
                   })
                   .catch(error => {
-                    //console.log(`PhotoFileEvent result:`, error);
+                    console.log(`PhotoFileEvent.s3.uploadPhoto error:`, error);
                     this.uploading = false;
                   });
             },
@@ -947,21 +954,25 @@ export class vpVisitCreateComponent implements OnInit {
     console.log(`Uploaded ${this.uProgress}%`)
   };
 
-  ImgMouseOver() {
+  ImgMouseOver(type='Pool', iter=1) {
     var elemImg: any;
+
+    if (type != 'Pool') return;
 
     if (this.visit.visitPoolPhoto) {
       this.showImage = true;
-      try { //wrap this is try/catch to prevent error messages. somehow, this works despite mostly errors...
-        elemImg = document.getElementById('imgPoolPhoto');
-        elemImg.src = this.ImgUrl();
+      try { //wrap this in try/catch to prevent error messages. somehow, this works despite mostly errors...
+        elemImg = document.getElementById(`img${type}Photo`);
+        elemImg.src = this.ImgUrl(type, iter);
       } catch (err) {
         //console.log('ImgMouseOver error', err);
       }
     }
   }
 
-  ImgMouseOut() {
+  ImgMouseOut(type='Pool') {
+    if (type != 'Pool') return;
+
     this.showImage = false;
   }
 
@@ -969,7 +980,10 @@ export class vpVisitCreateComponent implements OnInit {
   photo links go stale and need a forced update. appending a timstamp query parameter does this,
   but only if this link can be refreshed on demand. statically loaded links can't use this call.
   */
-  ImgUrl() {
-    return `https://s3.amazonaws.com/vpatlas.data/${this.poolId}?${Date.now()}`;
+  ImgUrl(type='Pool', iter=1) {
+    var url = `https://s3.amazonaws.com/${this.s3PhotoBucket}/${this.poolId}/${this.visitId}/${type}.${iter}?${Date.now()}`;
+    //console.log('vpvisit.create.ImgUrl()', url);
+    return url;
   }
+
 }

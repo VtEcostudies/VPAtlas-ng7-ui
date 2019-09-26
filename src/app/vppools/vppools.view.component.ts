@@ -45,6 +45,7 @@ export class vpViewComponent implements OnInit {
     mapShowing = true; //flag to show/hide map (NO LONGER USED)
     visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
     showImage = false;
+    s3PhotoBucket = 'vpatlas.photos';
 
     constructor(
         private formBuilder: FormBuilder,
@@ -411,6 +412,7 @@ export class vpViewComponent implements OnInit {
                 console.log('vppools.view.component.loadPage result:', data);
                 this.pools = data.rows[0]; //sets map data
                 this.visit = data.rows[0]; //sets form data
+                this.poolId = this.visit.poolId; //needed for photos
                 this.setFormValues();
                 this.dataLoading = false;
                 this.poolsLoading = false;
@@ -435,6 +437,7 @@ export class vpViewComponent implements OnInit {
                   console.log(`vppools.LoadMappedPool=>data:`, data);
                   this.pools = data.rows[0]; //sets map data
                   this.visit = data.rows[0]; // TODO: not sure what this means for a mapped-only pool...
+                  this.visitId = this.visit.visitId; //needed for the display of photos
                   this.dataLoading = false;
                   this.poolsLoading = false;
               },
