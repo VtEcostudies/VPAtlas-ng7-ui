@@ -135,13 +135,29 @@
 
     <div class="col-4">
       <!--
+          mappedPoolStatus
+      -->
+      <div class="form-group">
+          <label for="mappedPoolStatus">Pool Status</label>
+          <select formControlName="mappedPoolStatus" class="form-control">
+            <option *ngFor="let status of statuses" [ngValue]="status">
+              {{ status }}
+            </option>
+          </select>
+      </div>
+    </div> <!-- col-4 -->
+  </div> <!-- row -->
+
+  <div class="row">
+    <div class="col-12">
+      <!--
         mappedComments
       -->
       <div class="form-group">
           <label for="mappedComments">Comments</label>
           <textarea rows="1" formControlName="mappedComments" class="form-control"> </textarea>
       </div>
-    </div> <!-- col-4 -->
+    </div> <!-- col-12 -->
   </div> <!-- row -->
 
   <div class="row">

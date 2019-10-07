@@ -8,6 +8,7 @@ import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } 
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit, OnDestroy {
+  currentUser = null;
   userIsAdmin = false;
   loading = false;
   filter = '';
@@ -32,8 +33,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         Leave this code stub here for future use.
       */
       if (this.authenticationService.currentUserValue) {
-        let currentUser = this.authenticationService.currentUserValue.user;
-        this.userIsAdmin = currentUser.userrole == 'admin';
+        this.currentUser = this.authenticationService.currentUserValue.user;
+        this.userIsAdmin = this.currentUser.userrole == 'admin';
       } else {
         this.userIsAdmin = false;
       }
@@ -50,7 +51,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     private loadPoolStats() {
       this.loading = true;
-      this.vpMappedService.getStats()
+      this.vpMappedService.getStats(this.currentUser.username)
           .pipe(first())
           .subscribe(
               data => {

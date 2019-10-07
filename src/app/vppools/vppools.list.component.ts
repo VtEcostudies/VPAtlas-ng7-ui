@@ -8,6 +8,7 @@ import { vpMapped, vpVisit } from '@app/_models';
 //@add_component_here
 @Component({templateUrl: 'vppools.list.component.html'})
 export class vpListComponent implements OnInit {
+    currentUser = null;
     userIsAdmin = false;
     filterForm: FormGroup;
     loading = false;
@@ -32,8 +33,8 @@ export class vpListComponent implements OnInit {
         private vpPoolsService: vpPoolsService
     ) {
       if (this.authenticationService.currentUserValue) {
-        let currentUser = this.authenticationService.currentUserValue.user;
-        this.userIsAdmin = currentUser.userrole == 'admin';
+        this.currentUser = this.authenticationService.currentUserValue.user;
+        this.userIsAdmin = this.currentUser.userrole == 'admin';
       } else {
         this.userIsAdmin = false;
       }
@@ -77,6 +78,7 @@ export class vpListComponent implements OnInit {
     setStatusLoadPools(status="") {
       this.filterForm.get("visitedPool").setValue(false);
       this.filterForm.get("monitoredPool").setValue(false);
+      this.filterForm.get("userName").setValue(null);
 
       if (status=="Visited") {
         this.filterForm.get("visitedPool").setValue(true);
@@ -84,6 +86,9 @@ export class vpListComponent implements OnInit {
       } else if (status=="Monitored"){
         this.filterForm.get("monitoredPool").setValue(true);
         console.log('setStatusLoadPools | monitoredPool', this.filterForm.value.monitoredPool);
+      } else if (status=="Mine"){
+        this.filterForm.get("userName").setValue(this.currentUser.username);
+        console.log('setStatusLoadPools | myPools', this.filterForm.value.userName);
       }
 
       this.loadPools();
@@ -168,12 +173,15 @@ export class vpListComponent implements OnInit {
       /*
         NOTE: there IS a way to send multiple values for one selector in http:
         send multiple instances of that same field in the query param lists
-        node express parses them into an array for us...
+        node express parses them into an array for us. We are not using this
+        previously unknown feature, yet.
       */
       if (this.f.mappedPoolStatus.value) {
+        //exclude search items which are not pool statuses
         if (this.f.mappedPoolStatus.value!="All" &&
             this.f.mappedPoolStatus.value!="Visited" &&
-            this.f.mappedPoolStatus.value!="Monitored"
+            this.f.mappedPoolStatus.value!="Monitored" &&
+            this.f.mappedPoolStatus.value!="Mine"
           ) {
           if (this.filter) {
             this.filter += `&logical${++i}=AND&`;
@@ -276,9 +284,12 @@ export class vpListComponent implements OnInit {
 
     }
 
+    /*
+    Just load pool stats.
+    */
     async loadPoolStats() {
       //this.loading = true;
-      this.vpMappedService.getStats()
+      this.vpMappedService.getStats(this.currentUser.username)
           .pipe(first())
           .subscribe(
               data => {

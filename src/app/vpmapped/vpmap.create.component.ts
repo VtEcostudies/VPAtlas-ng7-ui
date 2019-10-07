@@ -12,11 +12,13 @@ import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 @Component({templateUrl: 'vpmap.create.component.html'})
 export class vpMapCreateComponent implements OnInit {
     update = false; //flag for html config that this is create (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
+    currentUser = null;
     userIsAdmin = false;
     vpLandOwnForm: FormGroup;
     vpMappedForm: FormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
     methods = ['Aerial', 'Known', 'Visited', 'Monitored']; //https://angular.io/api/forms/SelectControlValueAccessor
+    statuses = ['Potential', 'Probable', 'Confirmed', 'Eliminated', 'Duplicate'];
     towns = [];
     townCount = 0;
     dataLoading = false;
@@ -39,9 +41,8 @@ export class vpMapCreateComponent implements OnInit {
         private townService: vtInfoService
     ) {
       if (this.authenticationService.currentUserValue) {
-        let currentUser = this.authenticationService.currentUserValue.user;
-        console.log('vpmap.create.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
-        this.userIsAdmin = currentUser.userrole == 'admin';
+        this.currentUser = this.authenticationService.currentUserValue.user;
+        this.userIsAdmin = this.currentUser.userrole == 'admin';
       } else {
         this.userIsAdmin = false;
         // redirect to pool search if user not logged-in
@@ -68,6 +69,7 @@ export class vpMapCreateComponent implements OnInit {
         this.pool.mappedLatitude = 43.916944;
         this.pool.mappedLongitude = -72.668056;
         this.pool.mappedTown = new vtTown(); //instantiates town object to enable default value for town drop-down
+        this.pool.mappedPoolStatus = 'Potential';
       }
 
       //create a separate form for landowner data, to be nested within vpMappedForm
@@ -103,8 +105,11 @@ export class vpMapCreateComponent implements OnInit {
         mappedLandownerInfo: ['', Validators.nullValidator],
         mappedLocationUncertainty: ['50', new FormControl(this.locUncs[4], Validators.required)],
         mappedMethod: ['Visited', new FormControl(this.methods[4], Validators.required)],
+        mappedPoolStatus: ['Potential', new FormControl(this.statuses[5], Validators.required)],
         mappedComments: ['', Validators.nullValidator],
       });
+      //Reactive form controls cannot be properly disabled with markup
+      if (!this.userIsAdmin) {this.vpMappedForm.get('mappedPoolStatus').disable();}
 
       //how to handle UI changes from checkbox input:
       //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-methods-in-angular-reactive-forms-
@@ -150,6 +155,7 @@ export class vpMapCreateComponent implements OnInit {
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
       this.vpMappedForm.controls['mappedMethod'].setValue(this.pool.mappedMethod);
+      this.vpMappedForm.controls['mappedPoolStatus'].setValue(this.pool.mappedPoolStatus);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
 
       /* these fields are not displayed on new pool entry

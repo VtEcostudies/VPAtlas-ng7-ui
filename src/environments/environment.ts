@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4000'
-  //apiUrl: 'https://vpatlas.org:4322'
+  apiUrl: 'http://localhost:4000',
+  s3PhotoBucket: 'vpatlas.data',
+  s3SoundBucket: 'vpatlas.data'
 };
 
 /*

@@ -481,16 +481,18 @@ export class LeafletComponent implements OnInit, OnChanges {
           //text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
         }
         if (this.userIsAdmin ||
-          ((this.currentUser && (this.currentUser.username === obj.mappedByUser || this.currentUser.usename === obj.visitUserName)))
+          ((this.currentUser && (this.currentUser.username === obj.mappedByUser || this.currentUser.username === obj.visitUserName)))
           ) {
           if (obj.visitId) {
             text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
           }
           text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         }
-        text += `<div>
-                <a href="https://s3.us-east-1.amazonaws.com/vpatlas.data/${obj.poolId}">View Pool Photo</a>
-                </div>`;
+        if (obj.visitPoolPhoto) {
+          text += `<div>
+                  <a href="${obj.visitPoolPhoto}" target="_blank">View Pool Photo</a>
+                  </div>`;
+        }
         break;
     }
 

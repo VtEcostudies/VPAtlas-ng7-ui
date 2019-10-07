@@ -30,8 +30,8 @@ export class vpMappedService {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/count?${filter}`);
     }
 
-    getStats() {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/stats`);
+    getStats(username: string =  null) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/stats?username=${username}`);
     }
 
     createOrUpdate(update: boolean, poolId: string, vpmap: vpMapped) {

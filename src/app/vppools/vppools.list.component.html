@@ -60,6 +60,17 @@
         <td>{{stats.confirmed}}</td>
       </tr>
 
+
+      <tr *ngIf="currentUser">
+        <td>
+          <label>
+            <input formControlName="mappedPoolStatus" type="radio" value="Mine" (change)="setStatusLoadPools('Mine')" class="radio-button-justify-left" />
+            <span>My Data</span>
+          </label>
+        </td>
+        <td>{{stats.mine}}</td>
+      </tr>
+
       <tr *ngIf="userIsAdmin">
         <td><label>
             <input formControlName="mappedPoolStatus" type="radio" value="Eliminated" (change)="setStatusLoadPools('Eliminated')" class="radio-button-justify-left" />

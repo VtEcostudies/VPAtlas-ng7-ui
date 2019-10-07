@@ -8,11 +8,14 @@ import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { visitDialogText} from '@app/dialogBox/visitDialogText';
+import { environment } from '@environments/environment';
 
 @Component({templateUrl: '../vpvisit/vpvisit.create.component.html'})
 export class vpViewComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
+    currentUser = null;
     userIsAdmin = false;
+    userIsOwner = false;
     visitObserverForm: FormGroup = this.formBuilder.group({});
     visitPoolMappedForm: FormGroup = this.formBuilder.group({});
     visitLocationForm: FormGroup = this.formBuilder.group({});
@@ -45,7 +48,7 @@ export class vpViewComponent implements OnInit {
     mapShowing = true; //flag to show/hide map (NO LONGER USED)
     visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
     showImage = false;
-    s3PhotoBucket = 'vpatlas.photos';
+    s3PhotoBucket = environment.s3PhotoBucket; //used in html links
 
     constructor(
         private formBuilder: FormBuilder,
@@ -59,9 +62,9 @@ export class vpViewComponent implements OnInit {
         private townService: vtInfoService
     ) {
       if (this.authenticationService.currentUserValue) {
-        let currentUser = this.authenticationService.currentUserValue.user;
-        console.log('vppools.view.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
-        this.userIsAdmin = currentUser.userrole == 'admin';
+        this.currentUser = this.authenticationService.currentUserValue.user;
+        console.log('vppools.view.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+        this.userIsAdmin = this.currentUser.userrole == 'admin';
       } else {
         this.userIsAdmin = false;
       }
@@ -413,6 +416,7 @@ export class vpViewComponent implements OnInit {
                 this.pools = data.rows[0]; //sets map data
                 this.visit = data.rows[0]; //sets form data
                 this.poolId = this.visit.poolId; //needed for photos
+                this.userIsOwner = (this.currentUser.username === this.visit.visitUserName);
                 this.setFormValues();
                 this.dataLoading = false;
                 this.poolsLoading = false;
@@ -438,6 +442,7 @@ export class vpViewComponent implements OnInit {
                   this.pools = data.rows[0]; //sets map data
                   this.visit = data.rows[0]; // TODO: not sure what this means for a mapped-only pool...
                   this.visitId = this.visit.visitId; //needed for the display of photos
+                  //this.userIsOwner = (this.currentUser.username === this.pools.mappedByUser);
                   this.dataLoading = false;
                   this.poolsLoading = false;
               },
@@ -488,13 +493,4 @@ export class vpViewComponent implements OnInit {
     console.log('NOTE: PhotoFileEvent(e) - photos are NOT uploadable from View Visit');
   }
 
-  ImgMouseOver() {
-    if (this.visit.visitPoolPhoto) {
-      this.showImage = true;
-    }
-  }
-
-  ImgMouseOut() {
-    this.showImage = false;
-  }
 }

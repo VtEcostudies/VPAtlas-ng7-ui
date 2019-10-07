@@ -14,9 +14,8 @@ export class AwsS3Service {
   s3Info = null; //s3 bucket config info
   credentials = null;
   bucket = null;
-  basicBucketName = 'vpatlas.data';
-  photoBucketName = 'vpatlas.photos';
-  soundBucketName = 'vpatlas.sounds';
+  photoBucketName = environment.s3PhotoBucket;
+  soundBucketName = environment.s3SoundBucket;
 
   constructor(private http: HttpClient) {
     this.useBucket();
@@ -24,6 +23,9 @@ export class AwsS3Service {
 
   /*
   Get S3 bucket config and access from API
+  NOTE: We originally created the config under one bucket, and there
+  it remains. Until bucket configs become bucket-specific, leave that
+  default.
   */
   private getS3Info(bucketName='vpatlas.data') {
     return this.http.get<any>(`${environment.apiUrl}/aws/s3/bucket/${bucketName}`);
@@ -95,7 +97,7 @@ export class AwsS3Service {
   }
 
   /*
-  This should fail, now, because vpatlas user only has Object level permissions
+  createBucket() should fail, now, because vpatlas user only has Object level permissions
   on bucket vpatlas.data. To add bucket-level action permissions, go to that
   *bucket* in AWS and alter the 'Bucket Policy'. So far, have only figured out
   how to add like this:
@@ -110,10 +112,10 @@ export class AwsS3Service {
     "Resource": "arn:aws:s3:::vpatlas.data/*"
 }
   */
-  public createBucket(subBucket=null) {
+  public createBucket(topBucket='vpatlas.data', subBucket=null) {
     if (!subBucket) return null;
 
-    var bucketName = `vpatlas.data.${subBucket}`;
+    var bucketName = `${topBucket}.${subBucket}`;
 
     this.bucket = new S3({ apiVersion: '2006-03-01' });
     this.bucket.createBucket({Bucket: bucketName}, (err, data) => {

@@ -9,6 +9,8 @@ import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { visitDialogText } from '@app/dialogBox/visitDialogText';
 import { AwsS3Service } from '@app/_services';
+import { environment } from '@environments/environment';
+
 //need these next 2 to manipulate the DOM directly
 import { Inject }  from '@angular/core';
 import { DOCUMENT } from '@angular/common';
@@ -17,7 +19,9 @@ import { DOCUMENT } from '@angular/common';
 export class vpVisitCreateComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
     filter = ''; //pool search filter for API loadMappedPools query
+    currentUser = null;
     userIsAdmin = false;
+    userIsOwner = false;
     visitObserverForm: FormGroup = this.formBuilder.group({});
     visitPoolMappedForm: FormGroup = this.formBuilder.group({});
     visitLocationForm: FormGroup = this.formBuilder.group({});
@@ -51,7 +55,7 @@ export class vpVisitCreateComponent implements OnInit {
     showImage = false; //flag to show pool photo over top of map on 1st page
     uploading = false; //image uploading flag
     uProgress = 0;
-    s3PhotoBucket = 'vpatlas.photos';
+    s3PhotoBucket = environment.s3PhotoBucket; //used in html links
 
     constructor(
         private formBuilder: FormBuilder,
@@ -67,9 +71,9 @@ export class vpVisitCreateComponent implements OnInit {
         @Inject(DOCUMENT) document
     ) {
         if (this.authenticationService.currentUserValue) {
-          let currentUser = this.authenticationService.currentUserValue.user;
-          console.log('vpvisit.create.component.ngOnInit | currentUser.userrole:', currentUser.userrole);
-          this.userIsAdmin = currentUser.userrole == 'admin';
+          this.currentUser = this.authenticationService.currentUserValue.user;
+          console.log('vpvisit.create.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
+          this.userIsAdmin = this.currentUser.userrole == 'admin';
         } else {
           this.userIsAdmin = false;
           // redirect to visit search if user not logged-in
@@ -486,7 +490,13 @@ export class vpVisitCreateComponent implements OnInit {
                 //console.log('vpvisit.create.component.LoadVisitData result:', data);
                 this.visit = data.rows[0];
                 this.poolId = data.rows[0].poolId;
-                this.locMarker = {latitude: this.visit.latitude, longitude: this.visit.longitude, poolId: this.visit.poolId};
+                this.locMarker = {
+                  latitude: this.visit.latitude,
+                  longitude: this.visit.longitude,
+                  poolId: this.visit.poolId,
+                  visitPoolPhoto: this.visit.visitPoolPhoto
+                };
+                this.userIsOwner = (this.currentUser.username === this.visit.visitUserName);
                 this.setFormValues();
                 this.dataLoading = false;
               },
@@ -547,6 +557,7 @@ export class vpVisitCreateComponent implements OnInit {
                   this.locMarker = data.rows[0];
                   this.visitLocationForm.controls['visitLatitude'].setValue(this.locMarker.latitude);
                   this.visitLocationForm.controls['visitLongitude'].setValue(this.locMarker.longitude);
+                  this.userIsOwner = (this.currentUser.username === this.locMarker.mappedByUser);
                   this.dataLoading = false;
               },
               error => {
@@ -783,9 +794,11 @@ export class vpVisitCreateComponent implements OnInit {
     if (this.update) {
       msgTxt = `to Visit ${this.visitId}`
       navUrl = `/pools/visit/view/${this.visitId}`;
+/*
     } else if (this.poolId) {
       msgTxt = `of a New Visit to Pool ID ${this.poolId}`;
       navUrl = `/pools/mapped/view/${this.poolId}`;
+*/
     } else {
       msgTxt = `of a New Visit to a New Pool`;
       navUrl = `/pools/list`;
