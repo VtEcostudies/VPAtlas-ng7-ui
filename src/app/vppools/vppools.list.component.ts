@@ -87,7 +87,7 @@ export class vpListComponent implements OnInit {
         this.filterForm.get("monitoredPool").setValue(true);
         console.log('setStatusLoadPools | monitoredPool', this.filterForm.value.monitoredPool);
       } else if (status=="Mine"){
-        this.filterForm.get("userName").setValue(this.currentUser.username);
+        this.filterForm.get("userName").setValue(this.currentUser ? this.currentUser.username : null);
         console.log('setStatusLoadPools | myPools', this.filterForm.value.userName);
       }
 
@@ -289,7 +289,7 @@ export class vpListComponent implements OnInit {
     */
     async loadPoolStats() {
       //this.loading = true;
-      this.vpMappedService.getStats(this.currentUser.username)
+      this.vpMappedService.getStats(this.currentUser ? this.currentUser.username : null)
           .pipe(first())
           .subscribe(
               data => {
