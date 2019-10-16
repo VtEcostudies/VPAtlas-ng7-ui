@@ -11,6 +11,7 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 export class vpMapViewComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
+    update = false;
     vpMappedForm: FormGroup;
     vpLandOwnForm: FormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
@@ -19,6 +20,8 @@ export class vpMapViewComponent implements OnInit {
     towns = [];
     townCount = 0;
     dataLoading = false;
+    submitted = false;
+    permission = false;
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pool: vpMapped = new vpMapped(); //data to plot pool on map
     mapMarker = false; //flag to show/hide a moveable mapMarker. In view mode, this is always false.
@@ -96,6 +99,8 @@ export class vpMapViewComponent implements OnInit {
       this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
       this.vpMappedForm.controls['mappedLandownerPermission'].setValue(this.pool.mappedLandownerPermission);
 
+      this.permission = this.pool.mappedLandownerPermission;
+
       this.vpLandOwnForm.controls['mappedLandownerName'].setValue(this.pool.mappedLandownerName);
       this.vpLandOwnForm.controls['mappedLandownerAddress'].setValue(this.pool.mappedLandownerAddress);
       //this.vpLandOwnForm.controls['mappedLandownerTown'].setValue(this.pool.mappedLandownerTown);
@@ -130,6 +135,12 @@ export class vpMapViewComponent implements OnInit {
                   this.dataLoading = false; //this forces a map update, which plots a point
               });
     }
+
+    // convenience getter for easy access to form fields
+    get f() { return this.vpMappedForm.controls; }
+
+    // convenience getter for easy access to form fields
+    get l() { return this.vpLandOwnForm.controls; }
 
     cancelMappedPool() {
       this.router.navigate(['/pools/mapped/list']);
