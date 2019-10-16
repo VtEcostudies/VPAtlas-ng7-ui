@@ -507,13 +507,6 @@ export class vpVisitCreateComponent implements OnInit {
     }
 
     /*
-    This callback will update the map by showing the selected Pool ID, somehow.
-    */
-    visitPoolIdChanged(e) {
-      //console.log(this.visitLocationForm.value.visitPoolId);
-    }
-
-    /*
      This is called in response to a click on one of the radio buttons for the
      column visitPoolMapped.
     */
@@ -575,9 +568,7 @@ export class vpVisitCreateComponent implements OnInit {
     CreateMappedPool() {
       var mappedPool = <any>{};
 
-      this.submitted = true;
-
-      //console.log(`vpvisit.create.CreateMappedPool`);
+      this.alertService.clear();
 
       //Parts of the Observer form are disabled. Use getRawValue() to retrieve any value.
       mappedPool.mappedByUser = this.visitObserverForm.getRawValue().visitUserName;
@@ -610,6 +601,7 @@ export class vpVisitCreateComponent implements OnInit {
         return;
       }
 
+      this.submitted = true;
       this.dataLoading = true;
       this.vpMappedService.create(mappedPool)
           .pipe(first())
@@ -639,7 +631,7 @@ export class vpVisitCreateComponent implements OnInit {
         //console.log(`vpvisit.create.CreateVisit`);
         console.dir(this.visitObserverForm.getRawValue());
 
-        this.submitted = true;
+        this.alertService.clear();
 
         //kluge to get around disabled fields not being included in form values
         //and not having an easy validator for requiring visitUser = logon user
@@ -752,8 +744,7 @@ export class vpVisitCreateComponent implements OnInit {
           Object.assign(objAll, {"visitPoolPhoto":this.visit.visitPoolPhoto});
         }
 
-        //console.log('CreateVisit'); console.dir(objAll);
-
+        this.submitted = true;
         this.dataLoading = true;
         this.vpVisitService.createOrUpdate(this.update, this.visitId, objAll)
             .pipe(first())
@@ -829,11 +820,21 @@ export class vpVisitCreateComponent implements OnInit {
     }
   }
 
+  /*
+  Alter this behavior as follows:
+  - Exact-match plain text
+  - Partial-match with wildcard character (*)
+  */
   private FilterByPoolId() {
     this.filter = '';
-    const poolId = this.visitLocationForm.value.visitPoolId;
-    //console.log('vpvisit.create.component.FilterByPoolId', poolId);
-    this.filter = `mappedPoolId|LIKE=%${poolId}%`;
+    var poolId = this.visitLocationForm.value.visitPoolId;
+    var wildCh = poolId.length > 0 ? poolId[poolId.length - 1] :null;
+    console.log('vpvisit.create.component.FilterByPoolId', poolId, wildCh);
+    this.filter = `mappedPoolId=${poolId}`;
+    if (!poolId || wildCh === "*") {
+      poolId = poolId.substring(0, poolId.length - 1);
+      this.filter = `mappedPoolId|LIKE=${poolId}%`;
+    }
     this.poolId = null;
     this.loadMappedPools(this.filter);
   }
@@ -849,6 +850,7 @@ export class vpVisitCreateComponent implements OnInit {
   }
 
   private async loadMappedPools(filter='') {
+    this.alertService.clear();
     this.poolsLoading = true;
     await this.FilterHiddenPools();
     //console.log('vpvisit.create.component.loadMappedPools', this.filter);

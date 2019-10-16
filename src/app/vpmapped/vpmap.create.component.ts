@@ -30,6 +30,8 @@ export class vpMapCreateComponent implements OnInit {
     poolUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = true; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
+    itemType = "Mapped Pool";
+    viewOnly = false; //flag that this is edit-mode (update or create)
 
     constructor(
         private formBuilder: FormBuilder,
@@ -229,7 +231,7 @@ export class vpMapCreateComponent implements OnInit {
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
-        this.vpMappedForm.value.mappedTownId = this.vpMappedForm.value.mappedTown.townId;
+        this.vpMappedForm.get("mappedTownId").setValue(this.vpMappedForm.value.mappedTown.townId);
 
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {

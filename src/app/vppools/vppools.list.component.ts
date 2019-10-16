@@ -131,9 +131,11 @@ export class vpListComponent implements OnInit {
           this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `logical${++i}=(`;
-        this.filter += `&mappedPoolId|LIKE=%${this.f.poolId.value}%`;
+        //this.filter += `&mappedPoolId|LIKE=%${this.f.poolId.value}%`;
+        this.filter += `&mappedPoolId=${this.f.poolId.value}`; //exact match
         this.filter += `&logical${++i}=OR`;
-        this.filter += `&visitPoolId|LIKE=%${this.f.poolId.value}%`;
+        //this.filter += `&visitPoolId|LIKE=%${this.f.poolId.value}%`;
+        this.filter += `&visitPoolId=${this.f.poolId.value}`;
         this.filter += `&logical${++i}=)`;
       }
 

@@ -11,9 +11,15 @@ you may enter that value in the 'Pool ID' text box.</p>
 to the location on the map where the pool is located.</p>`,
     visitPoolId: `
 <h3><u>Pool ID</u></h3>
-<p>Type a valid Pool ID and press <b><u>Enter</u></b> to search for that pool in the database.<br>
-Pool IDs are <em>case-sensitive</em>.</p>
-<p>If you don't know the Pool ID, search for it on the map, and click a pool to fill it in.</p>`,
+<p>
+Type a valid Pool ID to search for that pool in the database.<br>
+Pool IDs are <em>case-sensitive</em>.
+</p>
+<p>
+If you wish to search for all pools matching some value, use a trailing asterisk (*):<br><br>
+eg. 'KWN*'.
+</p>
+<p>If you don't know the Pool ID, search for it on the map, and click a pool to fill-in this field.</p>`,
   visitObserverUserName: `
 <h3><u>Visit Observer</u></h3>
 <p>Enter the username of the person who visited the Pool in the field.</p>
