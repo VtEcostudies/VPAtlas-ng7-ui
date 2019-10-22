@@ -416,10 +416,10 @@ export class vpViewComponent implements OnInit {
                 this.pools = data.rows[0]; //sets map data
                 this.visit = data.rows[0]; //sets form data
                 this.poolId = this.visit.poolId; //needed for photos
-                this.userIsOwner = (this.currentUser.username === this.visit.visitUserName);
                 this.setFormValues();
                 this.dataLoading = false;
                 this.poolsLoading = false;
+                this.userIsOwner = !this.currentUser ? false : (this.currentUser.username === this.visit.visitUserName);
               },
               error => {
                   this.alertService.error(error);

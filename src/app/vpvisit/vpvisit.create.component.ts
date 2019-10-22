@@ -496,9 +496,9 @@ export class vpVisitCreateComponent implements OnInit {
                   poolId: this.visit.poolId,
                   visitPoolPhoto: this.visit.visitPoolPhoto
                 };
-                this.userIsOwner = (this.currentUser.username === this.visit.visitUserName);
                 this.setFormValues();
                 this.dataLoading = false;
+                this.userIsOwner = !this.currentUser ? false : (this.currentUser.username === this.visit.visitUserName);
               },
               error => {
                   this.alertService.error(error);
