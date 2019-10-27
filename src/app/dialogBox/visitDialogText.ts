@@ -20,13 +20,18 @@ If you wish to search for all pools matching some value, use a trailing asterisk
 eg. 'KWN*'.
 </p>
 <p>If you don't know the Pool ID, search for it on the map, and click a pool to fill-in this field.</p>`,
-  visitObserverUserName: `
+    visitObserverUserName: `
 <h3><u>Visit Observer</u></h3>
 <p>Enter the username of the person who visited the Pool in the field.</p>
 <p>This value can be a VPAtlas user, or the free text name of a person not yet registered in VPAtlas.</p>`,
     visitPoolPhoto: `
-<h3><u>Pool Photo</u></h3>
-<p>Select a photo of the pool to be uploaded.</p>`,
+<h3><u>Pool Photos</u></h3>
+<p>Select a photo of the pool to be uploaded.</p>
+<p>One Pool Photo is allowed per Visit. In the future, VPAtlas will allow multiple Pool Photos per Visit.</p>
+<p>Please select a photo that best represents the entire pool.</p>
+<p>NOTE: You must Save a NEW Pool and a NEW Visit before uploading photos. (Saving a NEW pool<br>
+generates a Pool ID, Saving a NEW Visit generates a Visit ID. Both IDs are required to identify, <br>
+store, and retrieve Pool Photos.)</p>`,
     visitDate:`
 <h3><u>Date</u></h3>
 <p>Please enter the date when you recorded information about this pool.</p>
@@ -87,7 +92,10 @@ to aid in verifying that you located the pool in question.</p>`,
 <p>Please enter the method used to determine the Lat/Lon values for this pool's location.</p>
 <p>If you navigated to this pool using a GPS and recorded those coordinates, select 'GPS'.</p>
 <p>If you found the pool on a map, then used landmarks or dead-reckoning to locate and visit<br>
-the pool, please select the type of map used.</p>
+the pool, please select the type of map you used.</p>
+<p>If you visited a pool but did not record the location of that pool, then used VPAtlas to move<br>
+the Map Marker (at right) to a remembered location, please select 'VPAtlas Map Marker'.
+</p>
 `,
 
 //page 2 Landowner-Info
@@ -355,8 +363,17 @@ count or an estimate.</p>`,
 an actual count or an estimate.</p>`,
     visitPhotoUpload: `
 <h3><u>Photo Upload</u></h3>
-<p>Please upload a photograph of the entire pool AND photographs of each indicator species present
-(egg masses, tadpoles, metamorphs or adults).</p>`,
+<p>Please upload photographs of each indicator species present (egg masses, tadpoles, metamorphs or adults).</p>
+<p>One Photo per species is allowed. In the future, VPAtlas will allow multiple Species Photos.</p>
+`,
+  visitPhotoLinks: `
+<h3><u>Photo Links</u></h3>
+<p>You may <i>link</i> to Species Photos as well as upload them.</p>
+<p>For example, you may have used iNaturalist to record Species Photos in the field, and wish
+to use those here. If so, please navigate to iNaturalist, capture a link to either the observation
+or the photo, and paste that value here.</p>
+<p>One link per species is allowed. In the future, VPAtlas will allow multiple Species links.</p>
+`,
     visitSpeciesNotes: `
 <h3><u>Indicator Species Notes</u></h3>
 <p>Use this column to enter any comments on the species present or the Photo ID#s. Please name each photograph

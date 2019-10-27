@@ -124,12 +124,14 @@
       <table class="table table-sm"> <!-- odd discovery: table without <tr>, <td> does nice things -->
         <th style="width: 50%;"></th>
         <th style="width: 50%;"></th>
+<!--
         <tr class="form-group">
           <td for="visitId">Visit ID</td>
           <td>
             <input (change)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
           </td>
         </tr>
+-->
         <tr class="form-group">
           <td for="poolId">Pool ID</td>
           <td>
@@ -190,7 +192,7 @@
           <thead>
             <tr>
                 <th class="body-scroll-align-columns">Pool</th>
-                <th class="body-scroll-align-columns">Mapped By</th>
+                <th class="body-scroll-align-columns">Mapped User</th>
                 <th class="body-scroll-align-columns">Mapped Town</th>
                 <th class="body-scroll-align-columns">Method</th>
                 <th class="body-scroll-align-columns">Status</th>

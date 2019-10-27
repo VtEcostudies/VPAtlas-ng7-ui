@@ -223,6 +223,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitWoodFrogEgg: [],
         visitWoodFrogEggHow: [],
         visitWoodFrogPhoto: [],
+        //visitWoodFrogLink: [], //an idea that is to come
         visitWoodFrogNotes: [],
 
         visitSpsAdults: [],
@@ -266,8 +267,6 @@ export class vpVisitCreateComponent implements OnInit {
         visitFish:[],
         visitFishCount: [],
         //visitFishSize:[], //legacy data. no longer used.
-
-        visitPoolPhoto: [],
       });
 
       this.formControlValueChanged();
@@ -333,6 +332,8 @@ export class vpVisitCreateComponent implements OnInit {
       //2c Landowner Contact Information - add in vpvisit.alter.sql
       this.visitLocationForm.controls['visitUserIsLandowner'].setValue(this.visit.visitUserIsLandowner);
       this.visitLocationForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
+      this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
+
       //console.log('vpvisit.create.setFormValues | visitLandownerPermission: ', this.visit.visitLandownerPermission);
       if (this.visit.visitLandownerPermission) {
         //console.log('vpvisit.create.setFormValues | visitLandowner: ', this.visit.visitLandowner);
@@ -439,8 +440,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitFishCount'].setValue(this.visit.visitFishCount);
       //this.visitIndicatorSpeciesForm.controls['visitFishSize'].setValue(this.visit.visitFishSize);
 
-      this.visitIndicatorSpeciesForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
-
+      console.dir(this.visitIndicatorSpeciesForm.controls);
     }
 
     onVisitPageSelect(visitPageIndex) {
@@ -455,6 +455,9 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitUpdateLocation = visitLoc;
       this.visitLocationForm.controls['visitLatitude'].setValue(visitLoc.lat);
       this.visitLocationForm.controls['visitLongitude'].setValue(visitLoc.lng);
+      if (!this.visitLocationForm.value.visitCoordSource) { //set this automatically the 1st time
+        this.visitLocationForm.controls['visitCoordSource'].setValue('VPAtlas Map Marker');
+      }
     }
 
     /*
@@ -567,6 +570,7 @@ export class vpVisitCreateComponent implements OnInit {
     */
     CreateMappedPool() {
       var mappedPool = <any>{};
+      this.submitted = true; //this must go at the top - used by alertservice
 
       this.alertService.clear();
 
@@ -593,7 +597,11 @@ export class vpVisitCreateComponent implements OnInit {
       mappedPool.mappedLandownerPhone = this.visitLocationForm.value.visitLandownerPhone;
       mappedPool.mappedLandownerEmail = this.visitLocationForm.value.visitLandownerEmail;
 
-      //console.log(`vpvisit.create.CreateMappedPool | mappedPool:`, mappedPool);
+      if (this.visitObserverForm.invalid) {
+        console.log(`visitObserverForm.invalid`);
+        this.setPage(0);
+        return;
+      }
 
       if (this.visitLocationForm.invalid) {
         console.log(`visitLocationForm.invalid`);
@@ -601,7 +609,6 @@ export class vpVisitCreateComponent implements OnInit {
         return;
       }
 
-      this.submitted = true;
       this.dataLoading = true;
       this.vpMappedService.create(mappedPool)
           .pipe(first())
@@ -627,11 +634,12 @@ export class vpVisitCreateComponent implements OnInit {
     //validate fields and create the visit
     CreateVisit() {
         var objAll:any = {}; //target object to copy all form-object data to for submitting to API
+        this.submitted = true; //this must go at the top - used by alertservice
+
+        this.alertService.clear();
 
         //console.log(`vpvisit.create.CreateVisit`);
         console.dir(this.visitObserverForm.getRawValue());
-
-        this.alertService.clear();
 
         //kluge to get around disabled fields not being included in form values
         //and not having an easy validator for requiring visitUser = logon user
@@ -744,7 +752,6 @@ export class vpVisitCreateComponent implements OnInit {
           Object.assign(objAll, {"visitPoolPhoto":this.visit.visitPoolPhoto});
         }
 
-        this.submitted = true;
         this.dataLoading = true;
         this.vpVisitService.createOrUpdate(this.update, this.visitId, objAll)
             .pipe(first())

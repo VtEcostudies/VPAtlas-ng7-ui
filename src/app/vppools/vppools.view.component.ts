@@ -238,8 +238,6 @@ export class vpViewComponent implements OnInit {
         visitFish:[],
         visitFishCount: [],
         //visitFishSize:[], //legacy data. no longer used.
-
-        visitPoolPhoto: [],
       });
 
       //disable all at the formGroup level for viewing only
@@ -281,6 +279,7 @@ export class vpViewComponent implements OnInit {
       this.visitLocationForm.controls['visitUserIsLandowner'].setValue(this.visit.visitUserIsLandowner);
       this.visitLocationForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
       this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
+      this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
       this.permission = this.visit.visitLandownerPermission; //flag view to display landowner info
       if (this.visit.visitLandowner) {
         this.visitLandOwnForm.controls['visitLandownerName'].setValue(this.visit.visitLandowner.visitLandownerName);
@@ -383,7 +382,6 @@ export class vpViewComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitFishCount'].setValue(this.visit.visitFishCount);
       //this.visitIndicatorSpeciesForm.controls['visitFishSize'].setValue(this.visit.visitFishSize);
 
-      this.visitIndicatorSpeciesForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
 
     }
 

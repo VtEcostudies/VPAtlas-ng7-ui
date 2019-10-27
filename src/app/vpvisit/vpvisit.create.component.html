@@ -120,7 +120,7 @@
           Please enter the Pool ID below, or select a Pool on the map.
         </label>
         <label *ngIf="mapped.visitPoolMapped.value=='false' && !poolId && !visitId" style="color: blue;">
-          Please locate the marker on the map or enter Lat/Lon below.
+          Please drag the marker on the map or enter Lat/Lon below.
         </label>
       </div>
   </div>
@@ -279,6 +279,7 @@
       <!--
         visitNavMethod - radio button
       -->
+    <span *ngIf="mapped.visitPoolMapped.value=='true'">
       <div>
         <label><b>What navigation method was used?</b></label>
         <html-dialog-app [htmlContent]="visitDialogText.visitNavMethod"></html-dialog-app>
@@ -302,6 +303,7 @@
             <input type="text" formControlName="visitNavMethodOther" class="form-control"/>
           </label>
       </div>
+    </span>
 
   <div class="row">
     <div class="col-4">
@@ -319,7 +321,7 @@
         visitLocationComments
       -->
       <div class="form-group">
-          <label for="visitLocationComments">Comments:</label>
+          <label for="visitLocationComments">Location Comments:</label>
           <html-dialog-app [htmlContent]="visitDialogText.visitLocationComments"></html-dialog-app>
           <textarea style="height:40px;" rows="1" formControlName="visitLocationComments" class="form-control"> </textarea>
       </div>
@@ -334,17 +336,19 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId && !!visitId"
               type="file" style="display:none;" formControlName="visitPoolPhoto"
               (change)="PhotoFileEvent($event)" size="15" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1" target="_blank">
-            <img id="imgPoolThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1"
-              style="display:inline-block; height:30px; width:30px; margin-left: 0px;"
-            />
-          </a>
+          <span *ngIf="!!locate.visitPoolPhoto.value && !!poolId && !!visitId">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1" target="_blank">
+              <img id="imgPoolThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"
+              />
+            </a>
+          </span>
           <!-- this doesn't work
           <progress *ngIf="uploading" style="position:relative;width:100%;" [value]="uProgress" [max]="100"></progress>
            -->
@@ -408,6 +412,10 @@
           <label>
             <input type="radio" value="VT ANR Mapping website" formControlName="visitCoordSource" class="form-control radio-button-horiz" />
             <span>VT ANR Mapping website</span>
+          </label>
+          <label>
+            <input type="radio" value="VPAtlas Map Marker" formControlName="visitCoordSource" class="form-control radio-button-horiz" />
+            <span>VPAtlas Map Marker</span>
           </label>
       </div>
 <!--    </div> <!-- col -->
@@ -819,7 +827,7 @@
       <label><b>4e) Vegetation:</b></label>
       <html-dialog-app [htmlContent]="visitDialogText.visitVegetation"></html-dialog-app>
         <!-- visitPoolTrees -->
-        <label for="visitPoolTrees" class="leading-label">Trees:</label>
+        <label for="visitPoolTrees" class="leading-label">Canopy Cover:</label>
         <input type="text" size="1" formControlName="visitPoolTrees" class="form-control" />
         <label for="visitPoolTrees" class="trailing-label">%</label>
         <!-- visitPoolShrubs -->
@@ -913,9 +921,14 @@
       <th>Egg Mass Method
         <html-dialog-app [htmlContent]="visitDialogText.visitEggMassMethod"></html-dialog-app>
       </th>
-      <th>Photo Upload
+      <th>Photos
         <html-dialog-app [htmlContent]="visitDialogText.visitPhotoUpload"></html-dialog-app>
       </th>
+<!-- started this but too much work (multiple db fields needed) for late Alpha effort. Beta.
+      <th>Links
+        <html-dialog-app [htmlContent]="visitDialogText.visitPhotoLinks"></html-dialog-app>
+      </th>
+-->
       <th>Notes
         <html-dialog-app [htmlContent]="visitDialogText.visitSpeciesNotes"></html-dialog-app>
       </th>
@@ -944,12 +957,14 @@
               (change)="PhotoFileEvent($event,'WoodFrog')" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1" target="_blank">
-            <img id="imgWoodFrogThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
+          <span *ngIf="!!indSpc.visitWoodFrogPhoto.value">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1" target="_blank">
+              <img id="imgWoodFrogThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1"
+                style="display:inline-block; max-height:30px; max-width:30px;"
+              />
+            </a>
+          </span>
         </div>
       </td> <!-- Photo object -->
 
@@ -978,12 +993,14 @@
               (change)="PhotoFileEvent($event,'Sps')" size="15" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1" target="_blank">
-            <img id="imgSpsThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
+          <span *ngIf="!!indSpc.visitSpsPhoto.value">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1" target="_blank">
+              <img id="imgSpsThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1"
+                style="display:inline-block; max-height:30px; max-width:30px;"
+              />
+            </a>
+            </span>
         </div>
       </td> <!-- Photo object Sps -->
 
@@ -1011,12 +1028,14 @@
               (change)="PhotoFileEvent($event,'Jesa')" size="15" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1" target="_blank">
-            <img id="imgJesaThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
+          <span *ngIf="!!indSpc.visitSpsPhoto.value">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1" target="_blank">
+              <img id="imgJesaThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1"
+                style="display:inline-block; max-height:30px; max-width:30px;"
+              />
+            </a>
+          </span>
         </div>
       </td> <!-- Photo object Jesa -->
       <td><input type="text" formControlName="visitJesaNotes" size="30" class="form-control" /></td>
@@ -1043,12 +1062,14 @@
               (change)="PhotoFileEvent($event,'Bssa')" size="15" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1" target="_blank">
-            <img id="imgBssaThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
+          <span *ngIf="!!indSpc.visitBssaPhoto.value">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1" target="_blank">
+              <img id="imgBssaThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1"
+                style="display:inline-block; max-height:30px; max-width:30px;"
+              />
+            </a>
+          </span>
         </div>
       </td> <!-- Photo object Bssa -->
       <td><input type="text" formControlName="visitBssaNotes" size="30" class="form-control" /></td>
@@ -1070,12 +1091,14 @@
               (change)="PhotoFileEvent($event,'FairyShrimp')" size="15" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1" target="_blank">
-            <img id="imgFairyShrimpThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
+          <span *ngIf="!!indSpc.visitFairyShrimpPhoto.value">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1" target="_blank">
+              <img id="imgFairyShrimpThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1"
+                style="display:inline-block; max-height:30px; max-width:30px;"
+              />
+            </a>
+          </span>
         </div>
       </td> <!-- Photo object FairyShrimp -->
       <td><input type="text" formControlName="visitFairyShrimpNotes" size="30" class="form-control" /></td>
@@ -1097,12 +1120,14 @@
               (change)="PhotoFileEvent($event,'FingerNailClams')" size="15" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1" target="_blank">
-            <img id="imgFingerNailClamsThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
+          <span *ngIf="!!indSpc.visitFingerNailClamsPhoto.value">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1" target="_blank">
+              <img id="imgFingerNailClamsThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1"
+                style="display:inline-block; max-height:30px; max-width:30px;"
+              />
+            </a>
+          </span>
         </div>
       </td> <!-- Photo object FingerNailClams -->
       <td><input type="text" formControlName="visitFingerNailClamsNotes" size="30" class="form-control" /></td>
@@ -1126,12 +1151,14 @@
               (change)="PhotoFileEvent($event,'SpeciesOther')" size="15" class="form-control"
               />
           </label>
-          <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1" target="_blank">
-            <img id="imgSpeciesOtherThumb"
-              src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
+          <span *ngIf="!!indSpc.visitSpeciesOtherPhoto.value">
+            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1" target="_blank">
+              <img id="imgSpeciesOtherThumb"
+                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1"
+                style="display:inline-block; max-height:30px; max-width:30px;"
+              />
+            </a>
+          </span>
         </div>
       </td> <!-- Photo object SpeciesOther -->
       <td><input type="text" formControlName="visitSpeciesOtherNotes" size="30" class="form-control" /></td>
