@@ -142,6 +142,8 @@ export class vpVisitCreateComponent implements OnInit {
         visitPoolMapped: [{value: this.poolId != null ? 'true' : null, disabled: this.poolId != null || this.visitId != null}, Validators.required], //if poolId was passed to form, visitPoolMapped is TRUE
       });
 
+      if (!!this.visitPoolMappedForm.value.visitPoolMapped) {this.itemType = "Visit Mapped Pool";}
+
       this.visitLocationForm = this.formBuilder.group({
         //2a Vernal Pool Location Information
         //if poolId was passed to form, visitPoolId is disabled
@@ -440,7 +442,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitFishCount'].setValue(this.visit.visitFishCount);
       //this.visitIndicatorSpeciesForm.controls['visitFishSize'].setValue(this.visit.visitFishSize);
 
-      console.dir(this.visitIndicatorSpeciesForm.controls);
+      //console.dir(this.visitIndicatorSpeciesForm.controls);
     }
 
     onVisitPageSelect(visitPageIndex) {
@@ -517,7 +519,7 @@ export class vpVisitCreateComponent implements OnInit {
       //console.log(this.visitLocationForm.value.visitPoolMapped);
       //console.log(this.visitPoolMappedForm.value.visitPoolMapped);
       this.poolId = null;
-      if (this.visitPoolMappedForm.value.visitPoolMapped == 'true') {
+      if (this.visitPoolMappedForm.value.visitPoolMapped === 'true') {
         this.visitLocationForm.enable();
         this.visitLocationForm.controls['visitPoolId'].setValue('');
         this.visitLocationForm.controls['visitPoolId'].enable();
@@ -527,8 +529,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.filter = '';
         this.loadMappedPools();
       }
-      //if (this.visitLocationForm.value.visitPoolMapped == 'false') {
-      if (this.visitPoolMappedForm.value.visitPoolMapped == 'false') {
+      if (this.visitPoolMappedForm.value.visitPoolMapped === 'false') {
         this.visitLocationForm.enable();
         this.visitLocationForm.controls['visitPoolId'].setValue('NEW*');
         this.visitLocationForm.controls['visitPoolId'].disable();
