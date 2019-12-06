@@ -146,6 +146,14 @@ export class LeafletComponent implements OnInit, OnChanges {
       maxNativeZoom: 20,
       maxZoom: 20
     } as any);
+  esriWorld = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      id: 'esri.world ',
+      name: 'ESRI Imagery',
+      zIndex: 0,
+      maxNativeZoom: 20,
+      maxZoom: 20,
+      attribution: 'Tiles &copy; Esri' // &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+    } as any);
   esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
       id: 'esri.topo',
       name: 'ESRI Topo Map',
@@ -163,7 +171,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     } as any);
 
     baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-    baseLayers = [this.esriTopo, this.openTopo, this.googleSat, this.streets, this.light]; //make esriTopo default b/c openTopo often loads slowly
+    baseLayers = [this.esriTopo, this.esriWorld, this.openTopo, this.googleSat, this.streets, this.light]; //make esriTopo default b/c openTopo often loads slowly
 
 
   constructor(
