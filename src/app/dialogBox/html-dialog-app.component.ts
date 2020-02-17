@@ -1,5 +1,6 @@
 import { Component, Input, Inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+//import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SecurityContext } from '@angular/core';
 import { HtmlDialog } from './html-dialog.component';

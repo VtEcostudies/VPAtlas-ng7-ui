@@ -85,7 +85,7 @@ import { HtmlDialog, HtmlDialogApp } from './dialogBox';
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-
+        //{ provide: MAT_DIALOG_DATA, useClass: HtmlDialog, multi: true }, //bugfix attempt: ERROR TypeError: "this._portalOutlet is undefined"
         // provider used to create fake backend
         //fakeBackendProvider
     ],
@@ -94,6 +94,7 @@ import { HtmlDialog, HtmlDialogApp } from './dialogBox';
       DialogBox,
       DialogBoxDialog,
       HtmlDialog,
+      //HtmlDialogApp //bugfix attempt: ERROR TypeError: "this._portalOutlet is undefined"
     ]
 })
 
