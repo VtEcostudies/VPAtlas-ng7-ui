@@ -20,5 +20,9 @@
       "@app/*": ["src/app/*"],
       "@environments/*": ["src/environments/*"]
     }
-  }
+  },
+  "angularCompilerOptions": {
+    "enableIvy": true,
+    "allowEmptyCodegenFiles": true
+}
 }

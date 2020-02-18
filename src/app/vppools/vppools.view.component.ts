@@ -9,6 +9,7 @@ import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { visitDialogText} from '@app/dialogBox/visitDialogText';
 import { environment } from '@environments/environment';
+import { ModalService } from '@app/_modal';
 
 @Component({templateUrl: '../vpvisit/vpvisit.create.component.html'})
 export class vpViewComponent implements OnInit {
@@ -49,6 +50,8 @@ export class vpViewComponent implements OnInit {
     visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
     showImage = false;
     s3PhotoBucket = environment.s3PhotoBucket; //used in html links
+    modalText: string;
+    modalTitle: string;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -59,7 +62,8 @@ export class vpViewComponent implements OnInit {
         private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
         private vpPoolsService: vpPoolsService,
-        private townService: vtInfoService
+        private townService: vtInfoService,
+        private modalService: ModalService
     ) {
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
@@ -90,6 +94,18 @@ export class vpViewComponent implements OnInit {
         this.router.navigate(['/pools/list']);
       }
     } //end ngOnInit
+
+    openModal(id: string, infoId=null) {
+        //another way to set modal content - use static definitions in html tag
+        this.modalTitle='Info'; //this can be a value passed to this function
+        this.modalText=infoId;
+        console.log('infoId', infoId);
+        this.modalService.open(id, visitDialogText[infoId]);
+    }
+
+    closeModal(id: string) {
+        this.modalService.close(id);
+    }
 
     async createFormControls() { //Create formcontrols within formgroups
 

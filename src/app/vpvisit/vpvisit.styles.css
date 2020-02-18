@@ -1,0 +1,13 @@
+/* styles just for the info button... */
+i {
+  color: #5882FA;
+  height: 15px;
+  width: 15px;
+  font-size: 15px;
+  position: relative;
+  vertical-align: middle;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  padding-left: 3px;
+}

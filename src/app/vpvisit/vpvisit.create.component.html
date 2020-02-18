@@ -54,6 +54,14 @@
   </div> <!-- col -->
 </div> <!-- row -->
 
+<jw-modal id="custom-modal-1">
+  <!--
+    <h3>{{modalTitle}}</h3>
+    <input type="text" [(ngModel)]="modalText" />
+  -->
+    <button (click)="closeModal('custom-modal-1');">Close</button>
+</jw-modal>
+
 <form [formGroup]="visitObserverForm">
   <div class="row">
     <div class="col-2">
@@ -78,7 +86,7 @@
     -->
     <div class="form-group">
         <label for="visitObserverUserName">Observer</label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitObserverUserName"></html-dialog-app>
+        <i (click)="openModal('custom-modal-1', 'visitObserverUserName')" class="fa fa-info-circle no-margins link"></i>
         <input type="text" size="10" formControlName="visitObserverUserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitObserverUserName.errors }" />
         <div *ngIf="submitted && observ.visitObserverUserName.errors" class="invalid-feedback">
             <div *ngIf="observ.visitObserverUserName.errors.required">Visit Observer is required</div>
@@ -112,7 +120,7 @@
       -->
       <div class="form-inline">
         <label><b>2a) Vernal Pool Location Info:</b></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitPoolMapped"></html-dialog-app>
+        <i (click)="openModal('custom-modal-1', 'visitPoolMapped')" class="fa fa-info-circle no-margins link"></i>
         <label *ngIf="mapped.visitPoolMapped.value==null && !poolId && !visitId" style="color: red;">
           Please begin by selecting one option below.
         </label>
@@ -157,7 +165,7 @@
           -->
           <div class="form-group form-inline">
             <label for="visitPoolId">Pool ID</label>
-            <html-dialog-app [htmlContent]="visitDialogText.visitPoolId"></html-dialog-app>
+            <i (click)="openModal('custom-modal-1', 'visitPoolId')" class="fa fa-info-circle no-margins link"></i>
             <input type="text" size="10" (change)="FilterByPoolId()" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
             <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
                 <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>

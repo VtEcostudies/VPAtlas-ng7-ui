@@ -6,6 +6,7 @@ import { vpVisit } from '@app/_models';
 import { AlertService, AuthenticationService, vpVisitService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import { LeafletComponent } from '@app/_components/leaflet.component';
+import { ModalService } from '@app/_modal';
 
 @Component({templateUrl: 'vpvisit.view.component.html'})
 export class vpVisitViewComponent implements OnInit {
@@ -17,6 +18,8 @@ export class vpVisitViewComponent implements OnInit {
     visit: any = new vpVisit(); //cast thype to any to prevent typeScript build errors on fields not in vpVisit
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     itemType = 'Visit';
+    modalText: string;
+    modalTitle: string;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -24,7 +27,8 @@ export class vpVisitViewComponent implements OnInit {
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
-        private vpVisitService: vpVisitService
+        private vpVisitService: vpVisitService,
+        private modalService: ModalService
     ) {}
 
     ngOnInit() {
@@ -35,6 +39,18 @@ export class vpVisitViewComponent implements OnInit {
       } else { this.userIsAdmin = false;}
       console.log('vpvisit.view.ngOnInit | route.snapshot params: ', this.route.snapshot.params.visitId);
       this.loadPage(this.route.snapshot.params.visitId);
+    }
+
+    openModal(id: string, infoId=null) {
+        //another way to set modal content - use static definitions in html tag
+        this.modalTitle='Info'; //this can be a value passed to this function
+        this.modalText=infoId;
+        console.log('infoId', infoId);
+        this.modalService.open(id, null);
+    }
+
+    closeModal(id: string) {
+        this.modalService.close(id);
     }
 
     loadPage(visitId) {

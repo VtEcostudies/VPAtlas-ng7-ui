@@ -10,12 +10,16 @@ import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { visitDialogText } from '@app/dialogBox/visitDialogText';
 import { AwsS3Service } from '@app/_services';
 import { environment } from '@environments/environment';
+import { ModalService } from '@app/_modal';
 
 //need these next 2 to manipulate the DOM directly
 import { Inject }  from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
-@Component({templateUrl: 'vpvisit.create.component.html'})
+@Component({
+  templateUrl: 'vpvisit.create.component.html',
+  styleUrls: ['vpvisit.styles.css']
+})
 export class vpVisitCreateComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
     filter = ''; //pool search filter for API loadMappedPools query
@@ -56,6 +60,8 @@ export class vpVisitCreateComponent implements OnInit {
     uploading = false; //image uploading flag
     uProgress = 0;
     s3PhotoBucket = environment.s3PhotoBucket; //used in html links
+    modalText: string;
+    modalTitle: string;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -68,6 +74,7 @@ export class vpVisitCreateComponent implements OnInit {
         private vpPoolsService: vpPoolsService,
         private townService: vtInfoService,
         private s3: AwsS3Service,
+        private modalService: ModalService,
         @Inject(DOCUMENT) document
     ) {
         if (this.authenticationService.currentUserValue) {
@@ -110,6 +117,18 @@ export class vpVisitCreateComponent implements OnInit {
         }
       }
     } //end ngOnInit
+
+    openModal(id: string, infoId=null) {
+        //another way to set modal content - use static definitions in html tag
+        this.modalTitle='Info'; //this can be a value passed to this function
+        this.modalText=infoId;
+        console.log('infoId', infoId);
+        this.modalService.open(id, visitDialogText[infoId]);
+    }
+
+    closeModal(id: string) {
+        this.modalService.close(id);
+    }
 
     async createFormControls() { //Create formcontrols within formgroups
 
