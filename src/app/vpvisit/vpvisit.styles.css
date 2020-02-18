@@ -1,5 +1,5 @@
-/* styles just for the info button... */
-i {
+/* styles just for the font-awesome info button... */
+i.fa-info-circle {
   color: #5882FA;
   height: 15px;
   width: 15px;

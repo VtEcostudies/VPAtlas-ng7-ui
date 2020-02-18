@@ -4,17 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-//uncomment next, comment following, bugfix attempt: ERROR TypeError: "this._portalOutlet is undefined"
-import { MatDialogModule, MatDialog } from '@angular/material';
-/*
-import {
-  MatButtonModule,
-  MatDialogModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatInputModule
-} from '@angular/material';
-*/
 // used to create fake backend
 // NOTE: this could be used as a local database option
 import { fakeBackendProvider } from './_helpers';
@@ -43,8 +32,6 @@ import { vpVisitCreateComponent } from './vpvisit';
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
 
-import { DialogBox, DialogBoxDialog } from './dialogBox';
-import { HtmlDialog, HtmlDialogApp } from './dialogBox';
 import { ModalModule } from './_modal';
 
 @NgModule({
@@ -55,7 +42,7 @@ import { ModalModule } from './_modal';
         FormsModule,
         HttpClientModule,
         routing,
-        MatDialogModule,
+        //MatDialogModule,
         ModalModule
     ],
     //@add_component_here
@@ -66,16 +53,11 @@ import { ModalModule } from './_modal';
         LoginComponent,
         RegisterComponent,
         AdminComponent,
+        LeafletComponent,
 
         vpMapListComponent,
         vpMapViewComponent,
         vpMapCreateComponent,
-
-        LeafletComponent,
-        DialogBox,
-        DialogBoxDialog,
-        HtmlDialog,
-        HtmlDialogApp,
 
         vpVisitListComponent,
         vpVisitViewComponent,
@@ -90,12 +72,7 @@ import { ModalModule } from './_modal';
         //fakeBackendProvider // provider used to create fake backend
     ],
     bootstrap: [AppComponent],
-    entryComponents: [
-      //DialogBox,
-      //DialogBoxDialog,
-      //HtmlDialog,
-      //HtmlDialogApp //bugfix attempt: ERROR TypeError: "this._portalOutlet is undefined"
-    ]
+    entryComponents: []
 })
 
 export class AppModule { }

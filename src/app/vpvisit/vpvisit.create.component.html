@@ -54,12 +54,12 @@
   </div> <!-- col -->
 </div> <!-- row -->
 
-<jw-modal id="custom-modal-1">
+<jw-modal id="vpvisit_help_info">
   <!--
     <h3>{{modalTitle}}</h3>
     <input type="text" [(ngModel)]="modalText" />
   -->
-    <button (click)="closeModal('custom-modal-1');">Close</button>
+    <button (click)="closeModal('vpvisit_help_info');">Close</button>
 </jw-modal>
 
 <form [formGroup]="visitObserverForm">
@@ -86,7 +86,7 @@
     -->
     <div class="form-group">
         <label for="visitObserverUserName">Observer</label>
-        <i (click)="openModal('custom-modal-1', 'visitObserverUserName')" class="fa fa-info-circle no-margins link"></i>
+        <i (click)="openModal('vpvisit_help_info', 'visitObserverUserName')" class="fa fa-info-circle no-margins link"></i>
         <input type="text" size="10" formControlName="visitObserverUserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && observ.visitObserverUserName.errors }" />
         <div *ngIf="submitted && observ.visitObserverUserName.errors" class="invalid-feedback">
             <div *ngIf="observ.visitObserverUserName.errors.required">Visit Observer is required</div>
@@ -120,7 +120,7 @@
       -->
       <div class="form-inline">
         <label><b>2a) Vernal Pool Location Info:</b></label>
-        <i (click)="openModal('custom-modal-1', 'visitPoolMapped')" class="fa fa-info-circle no-margins link"></i>
+        <i (click)="openModal('vpvisit_help_info', 'visitPoolMapped')" class="fa fa-info-circle no-margins link"></i>
         <label *ngIf="mapped.visitPoolMapped.value==null && !poolId && !visitId" style="color: red;">
           Please begin by selecting one option below.
         </label>
@@ -165,7 +165,7 @@
           -->
           <div class="form-group form-inline">
             <label for="visitPoolId">Pool ID</label>
-            <i (click)="openModal('custom-modal-1', 'visitPoolId')" class="fa fa-info-circle no-margins link"></i>
+            <i (click)="openModal('vpvisit_help_info', 'visitPoolId')" class="fa fa-info-circle no-margins link"></i>
             <input type="text" size="10" (change)="FilterByPoolId()" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
             <div *ngIf="submitted && locate.visitPoolId.errors" class="invalid-feedback">
                 <div *ngIf="locate.visitPoolId.errors.required">Visit Pool ID is required</div>
@@ -178,7 +178,7 @@
           -->
           <div class="form-group form-inline">
               <label for="visitDate">Visit Date</label>
-              <html-dialog-app [htmlContent]="visitDialogText.visitDate"></html-dialog-app>
+              <i (click)="openModal('vpvisit_help_info', 'visitDate')" class="fa fa-info-circle no-margins link"></i>
               <!--
                NOTE: format must be YYYY-MM-DD to set value of input type="date" from code.
                Oddly, setting the default date in that format does not alter is default Date
@@ -197,7 +197,7 @@
           -->
           <div class="form-group form-inline float-right">
               <label for="visitTown">Town</label>
-              <html-dialog-app [htmlContent]="visitDialogText.visitTown"></html-dialog-app>
+              <i (click)="openModal('vpvisit_help_info', 'visitTown')" class="fa fa-info-circle no-margins link"></i>
               <select [compareWith]="compareTownFn" formControlName="visitTown" class="form-control">
                 <option *ngFor="let town of towns" [ngValue]="town">
                   {{ town.townName }}
@@ -215,7 +215,7 @@
       <div class="row">
       <div class="col-4">
       <label><b>Was the pool located?</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitLocatePool"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitLocatePool')" class="fa fa-info-circle no-margins link"></i>
       <div class="form-group form-inline">
         <label>
          <input type="radio" value="true" formControlName="visitLocatePool" class="form-control radio-button-horiz" />
@@ -234,7 +234,7 @@
 
       <div class="col-8">
       <label><b>How certain are you that you were in the correct Location?</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitCertainty"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitCertainty')" class="fa fa-info-circle no-margins link"></i>
       <div class="form-group form-inline">
           <label>
             <input type="radio" value="Certain" formControlName="visitCertainty" class="form-control radio-button-horiz" />
@@ -259,7 +259,7 @@
       -->
       <div>
         <label><b>Please estimate the location uncertainty of this pool in yards:</b></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitLocationUncertainty"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitLocationUncertainty')" class="fa fa-info-circle no-margins link"></i>
       </div>
       <div class="form-group form-inline">
           <label>
@@ -290,7 +290,7 @@
     <span *ngIf="mapped.visitPoolMapped.value=='true'">
       <div>
         <label><b>What navigation method was used?</b></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitNavMethod"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitNavMethod')" class="fa fa-info-circle no-margins link"></i>
       </div>
       <div class="form-group form-inline">
           <label>
@@ -320,7 +320,7 @@
       -->
       <div class="form-group">
           <label for="visitDirections">Brief directions to pool:</label>
-          <html-dialog-app [htmlContent]="visitDialogText.visitDirections"></html-dialog-app>
+          <i (click)="openModal('vpvisit_help_info', 'visitDirections')" class="fa fa-info-circle no-margins link"></i>
           <textarea style="height:40px;" rows="1" formControlName="visitDirections" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
@@ -330,7 +330,7 @@
       -->
       <div class="form-group">
           <label for="visitLocationComments">Location Comments:</label>
-          <html-dialog-app [htmlContent]="visitDialogText.visitLocationComments"></html-dialog-app>
+          <i (click)="openModal('vpvisit_help_info', 'visitLocationComments')" class="fa fa-info-circle no-margins link"></i>
           <textarea style="height:40px;" rows="1" formControlName="visitLocationComments" class="form-control"> </textarea>
       </div>
     </div> <!-- col -->
@@ -338,7 +338,7 @@
     <div class="col-4">
       <div class="form-group">
         <label>Photo:</label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitPoolPhoto"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitPoolPhoto')" class="fa fa-info-circle no-margins link"></i>
 
         <div class="form-inline">
           <label class="btn btn-primary btn-file">
@@ -369,7 +369,7 @@
 
   <div>
     <label><b>2b) Location of Pool</b></label>
-    <html-dialog-app [htmlContent]="visitDialogText.visitLocationOfPool"></html-dialog-app>
+    <i (click)="openModal('vpvisit_help_info', 'visitLocationOfPool')" class="fa fa-info-circle no-margins link"></i>
   </div>
   <div class="row">
     <div class="col-6">
@@ -378,7 +378,7 @@
       -->
       <div class="form-group form-inline">
           <label for="visitLatitude" class="leading-label">Latitude/Northing</label>
-          <html-dialog-app [htmlContent]="visitDialogText.visitLatitude"></html-dialog-app>
+          <i (click)="openModal('vpvisit_help_info', 'visitLatitude')" class="fa fa-info-circle no-margins link"></i>
           <input type="text" formControlName="visitLatitude" size="15" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitLatitude.errors }" />
           <div *ngIf="submitted && locate.visitLatitude.errors" class="invalid-feedback">
               <div *ngIf="locate.visitLatitude.errors.required">Visit Latitude is required</div>
@@ -391,7 +391,7 @@
       -->
       <div class="form-group form-inline">
           <label for="visitLongitude" class="leading-label" >Longitude/Easting</label>
-          <html-dialog-app [htmlContent]="visitDialogText.visitLongitude"></html-dialog-app>
+          <i (click)="openModal('vpvisit_help_info', 'visitLongitude')" class="fa fa-info-circle no-margins link"></i>
           <input type="text" formControlName="visitLongitude" size="15" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitLongitude.errors }" />
           <div *ngIf="submitted && locate.visitLongitude.errors" class="invalid-feedback">
               <div *ngIf="locate.visitLongitude.errors.required">Visit Longitude is required</div>
@@ -402,7 +402,7 @@
 
       <div>
         <label><b>Source of Pool Coordinates</b></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitCoordSource"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitCoordSource')" class="fa fa-info-circle no-margins link"></i>
       </div>
       <div class="form-group form-inline">
           <label>
@@ -468,7 +468,7 @@
         <!-- visitUserIsLandowner -->
         <div class="form-group form-inline">
             <label for="visitUserIsLandowner">Are you the landowner?</label>&nbsp;
-            <html-dialog-app [htmlContent]="visitDialogText.visitUserIsLandowner"></html-dialog-app>
+            <i (click)="openModal('vpvisit_help_info', 'visitUserIsLandowner')" class="fa fa-info-circle no-margins link"></i>
             <input type="checkbox" formControlName="visitUserIsLandowner" />&nbsp;
             <label>Yes</label>
         </div>
@@ -476,7 +476,7 @@
         <!-- visitLandownerPermission -->
         <div class="form-group form-inline">
             <label for="visitLandownerPermission">Do you have Landowner Permission to map this pool?</label>&nbsp;
-            <html-dialog-app [htmlContent]="visitDialogText.visitLandownerPermission"></html-dialog-app>
+            <i (click)="openModal('vpvisit_help_info', 'visitLandownerPermission')" class="fa fa-info-circle no-margins link"></i>
             <input type="checkbox" formControlName="visitLandownerPermission" />&nbsp;
             <label>Yes</label>
         </div>
@@ -551,7 +551,7 @@
   -->
   <div class="form-group form-inline">
       <label for="visitVernalPool">Is this a Vernal Pool?</label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitVernalPool"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitVernalPool')" class="fa fa-info-circle no-margins link"></i>
       <label>
         <input type="radio" value="Yes" formControlName="visitVernalPool" class="form-control radio-button-horiz" />
         <span>Yes</span>
@@ -567,7 +567,7 @@
   </div>
   <div>
     <label><b>3a) Pool Type</b></label>
-    <html-dialog-app [htmlContent]="visitDialogText.visitPoolType"></html-dialog-app>
+    <i (click)="openModal('vpvisit_help_info', 'visitPoolType')" class="fa fa-info-circle no-margins link"></i>
   </div>
   <!--
     visitPoolType - radio button
@@ -577,37 +577,37 @@
         <input type="radio" value="Isolated Forest Depression" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Isolated Forest Depression</span>
       </label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitIsolatedForestDepression"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitIsolatedForestDepression')" class="fa fa-info-circle no-margins link"></i>
 
       <label>
         <input type="radio" value="Floodplain Depression" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Floodplain Depression</span>
       </label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitFloodplainDepression"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitFloodplainDepression')" class="fa fa-info-circle no-margins link"></i>
 
       <label>
         <input type="radio" value="Manmade" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Manmade (impoundment, quarry, excavated pond, etc.)</span>
       </label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitManmadeImpoundmentQuarryEtc"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitManmadeImpoundmentQuarryEtc')" class="fa fa-info-circle no-margins link"></i>
 
       <label>
         <input type="radio" value="Isolated Non-Forest Depression" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Isolated Non-Forest Depression</span>
       </label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitIsolatedNonForestDepression"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitIsolatedNonForestDepression')" class="fa fa-info-circle no-margins link"></i>
 
       <label>
         <input type="radio" value="Pool associated with larger wetland complex" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Pool associated with larger wetland complex</span>
       </label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitPoolAssociatedWithLargerWetlandComplex"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitPoolAssociatedWithLargerWetlandComplex')" class="fa fa-info-circle no-margins link"></i>
 
       <label>
         <input type="radio" value="Other" formControlName="visitPoolType" class="form-control radio-button-horiz" />
         <span>Other:</span>
       </label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitPoolTypeOther"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitPoolTypeOther')" class="fa fa-info-circle no-margins link"></i>
       <input type="text" value="" formControlName="visitPoolTypeOther" class="form-control" />
 
   </div>
@@ -619,7 +619,7 @@
   -->
   <div class="form-group form-inline">
       <label for="visitInletType">Type of Inlet (an inlet is a seasonal or permanent channel providing water into pool)</label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitInletType"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitInletType')" class="fa fa-info-circle no-margins link"></i>
       <label>
         <input type="radio" value="No Inlet" formControlName="visitInletType" class="form-control radio-button-horiz" />
         <span>No Inlet</span>
@@ -638,7 +638,7 @@
     -->
     <div class="form-group form-inline">
         <label for="visitOutletType">Type of Outlet (an outlet is a seasonal or permanent channel draining water from pool)</label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitOutletType"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitOutletType')" class="fa fa-info-circle no-margins link"></i>
         <label>
           <input type="radio" value="No Outlet" formControlName="visitOutletType" class="form-control radio-button-horiz" />
           <span>No Outlet</span>
@@ -655,7 +655,7 @@
 
     <div>
       <label><b>3c) Surrounding Habitat (within 250 feet of pool)</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitSurroundingHabitat"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitSurroundingHabitat')" class="fa fa-info-circle no-margins link"></i>
     </div>
 <div class="row">
   <div class="col-6">
@@ -664,7 +664,7 @@
     -->
     <div class="form-group form-inline">
         <label for="visitForestUpland"><b>Forested Upland:</b></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitForestUpland"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitForestUpland')" class="fa fa-info-circle no-margins link"></i>
         <label>
           <input type="radio" value="Deciduous" formControlName="visitForestUpland" class="form-control radio-button-horiz" />
           <span>Deciduous</span>
@@ -685,7 +685,7 @@
     -->
     <div class="form-group form-inline">
         <label for="visitForestCondition"><b>Forest Condition:</b></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitForestCondition"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitForestCondition')" class="fa fa-info-circle no-margins link"></i>
         <label>
           <input type="radio" value="Undisturbed" formControlName="visitForestCondition" class="form-control radio-button-horiz" />
           <span>Undisturbed</span>
@@ -750,7 +750,7 @@
   </div>
   <div>
     <label><b>4a) Approximate Maximum Pool Depth:</b></label>
-    <html-dialog-app [htmlContent]="visitDialogText.visitMaxDepth"></html-dialog-app>
+    <i (click)="openModal('vpvisit_help_info', 'visitMaxDepth')" class="fa fa-info-circle no-margins link"></i>
   </div>
   <!-- visitMaxDepth - radio button -->
   <div class="form-group form-inline">
@@ -782,7 +782,7 @@
   <!-- visitWaterLevelObs - radio button -->
   <div class="form-group form-inline">
       <label><b>4b) Water Level at Time of Survey:</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitWaterLevelObs"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitWaterLevelObs')" class="fa fa-info-circle no-margins link"></i>
       <label>
         <input type="radio" value="Full" formControlName="visitWaterLevelObs" class="form-control radio-button-horiz" />
         <span>Full</span>
@@ -802,7 +802,7 @@
     </div>
     <div>
       <label><b>4c) Hydroperiod (select the likely hydroperiod)</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitHydroPeriod"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitHydroPeriod')" class="fa fa-info-circle no-margins link"></i>
     </div>
     <!-- Hydroperiod -->
     <div class="form-group form-inline">
@@ -822,7 +822,7 @@
     <!-- visitMaxWidth -->
     <div class="form-group form-inline">
       <label><b>4d) Approximate size of pool (at maximum capacity):</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitApproxSizeofPool"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitApproxSizeofPool')" class="fa fa-info-circle no-margins link"></i>
         <label for="visitMaxWidth" class="leading-label">Width:</label>
         <input type="text" size="3" formControlName="visitMaxWidth" class="form-control" />
         <label for="visitMaxWidth" class="trailing-label">(ft)</label>
@@ -833,7 +833,7 @@
     </div>
     <div class="form-group form-inline">
       <label><b>4e) Vegetation:</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitVegetation"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitVegetation')" class="fa fa-info-circle no-margins link"></i>
         <!-- visitPoolTrees -->
         <label for="visitPoolTrees" class="leading-label">Canopy Cover:</label>
         <input type="text" size="1" formControlName="visitPoolTrees" class="form-control" />
@@ -854,7 +854,7 @@
     <!-- visitSubstrate: radio button -->
     <div class="form-group form-inline">
       <label><b>4f) Substrate:</b></label>
-      <html-dialog-app [htmlContent]="visitDialogText.visitSubstrate"></html-dialog-app>
+      <i (click)="openModal('vpvisit_help_info', 'visitSubstrate')" class="fa fa-info-circle no-margins link"></i>
         <label>
           <input type="radio" value="Leaf litter" formControlName="visitSubstrate" class="form-control radio-button-horiz" />
           <span>Leaf litter</span>
@@ -880,7 +880,7 @@
       <!-- Pool Disturbance -->
       <div>
         <label><b>4g) Pool Disturbance (check all that apply)</b></label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitDisturbance"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitDisturbance')" class="fa fa-info-circle no-margins link"></i>
       </div>
       <div class="form-group form-inline">
           <label>
@@ -915,30 +915,30 @@
   <table class="table table-striped table-sm table-responsive">
     <tr>
       <th>Species Obseserved
-        <html-dialog-app [htmlContent]="visitDialogText.visitSpeciesObserved"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitSpeciesObserved')" class="fa fa-info-circle no-margins link"></i>
       </th>
       <th>Adults
-        <html-dialog-app [htmlContent]="visitDialogText.visitAdults"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitAdults')" class="fa fa-info-circle no-margins link"></i>
       </th>
       <th>Tadpoles / Larvae
-        <html-dialog-app [htmlContent]="visitDialogText.visitTadpolesLarvae"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitTadpolesLarvae')" class="fa fa-info-circle no-margins link"></i>
       </th>
       <th>Egg Mass Number
-        <html-dialog-app [htmlContent]="visitDialogText.visitEggMassNumber"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitEggMassNumber')" class="fa fa-info-circle no-margins link"></i>
       </th>
       <th>Egg Mass Method
-        <html-dialog-app [htmlContent]="visitDialogText.visitEggMassMethod"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitEggMassMethod')" class="fa fa-info-circle no-margins link"></i>
       </th>
       <th>Photos
-        <html-dialog-app [htmlContent]="visitDialogText.visitPhotoUpload"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitPhotoUpload')" class="fa fa-info-circle no-margins link"></i>
       </th>
 <!-- started this but too much work (multiple db fields needed) for late Alpha effort. Beta.
       <th>Links
-        <html-dialog-app [htmlContent]="visitDialogText.visitPhotoLinks"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitPhotoLinks')" class="fa fa-info-circle no-margins link"></i>
       </th>
 -->
       <th>Notes
-        <html-dialog-app [htmlContent]="visitDialogText.visitSpeciesNotes"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitSpeciesNotes')" class="fa fa-info-circle no-margins link"></i>
       </th>
     </tr>
 
@@ -1183,7 +1183,7 @@
   <div class="form-group form-inline">
       <label>
         <span>Were Fish Observed?</span>
-        <html-dialog-app [htmlContent]="visitDialogText.visitFish"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitFish')" class="fa fa-info-circle no-margins link"></i>
         <input type="checkbox" formControlName="visitFish" class="form-control radio-button-horiz"  />
         <span>Yes</span>
       </label>
@@ -1192,7 +1192,7 @@
           ---
         </label>
         <label>How Many Fish?</label>
-        <html-dialog-app [htmlContent]="visitDialogText.visitFishCount"></html-dialog-app>
+        <i (click)="openModal('vpvisit_help_info', 'visitFishCount')" class="fa fa-info-circle no-margins link"></i>
         <label>
           <input type="radio" value="<10" formControlName="visitFishCount" class="form-control radio-button-horiz" />
           <span><10</span>

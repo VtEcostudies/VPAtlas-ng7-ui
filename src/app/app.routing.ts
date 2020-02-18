@@ -21,9 +21,6 @@ import { vpVisitCreateComponent } from './vpvisit';
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
 
-import { DialogBox } from './dialogBox';
-import { HtmlDialog } from './dialogBox';
-
 //@add_component_here
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
@@ -47,9 +44,6 @@ const appRoutes: Routes = [
     //new UI/UX combining 'Mapped Pools' and 'Pool Visits'
     { path: 'pools/list', component: vpListComponent },
     { path: 'pools/view/:poolId', component: vpViewComponent },
-
-    { path: 'dialog', component: DialogBox },
-    { path: 'htmldialog', component: HtmlDialog },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' } //comment this to debug
