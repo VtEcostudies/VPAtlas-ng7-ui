@@ -29,6 +29,10 @@ export class UserService {
         return this.http.post(`${environment.apiUrl}/users/reset`, email);
     }
 
+    verify(token: Object) {
+        return this.http.post(`${environment.apiUrl}/users/verify`, token);
+    }
+
     confirm(confirm: Object) {
         return this.http.post(`${environment.apiUrl}/users/confirm`, confirm);
     }

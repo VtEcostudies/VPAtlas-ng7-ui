@@ -12,6 +12,7 @@ export class ConfirmComponent implements OnInit {
     loading = false;
     submitted = false;
     token = null;
+    invalid = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -36,10 +37,26 @@ export class ConfirmComponent implements OnInit {
           console.log('query params', params);
           this.token = params.token;
         });
+
+      this.verify();
     }
 
     // convenience getter for easy access to form fields
     get f() { return this.confirmForm.controls; }
+
+    verify() {
+        this.userService.verify({token:this.token})
+            .pipe(first())
+            .subscribe(
+                data => {
+                  //do nothing
+                },
+                error => {
+                    this.alertService.error(error);
+                    this.loading = false;
+                    this.invalid = true;
+                });
+    }
 
     confirm() {
         this.submitted = true;
@@ -55,7 +72,7 @@ export class ConfirmComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
-                    this.alertService.success('Password update successful', true);
+                    this.alertService.success('Password update successful. Please login.', true);
                     this.router.navigate(['/login']);
                 },
                 error => {
