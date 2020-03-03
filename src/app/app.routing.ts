@@ -3,6 +3,8 @@
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
+import { ResetComponent } from './reset_confirm';
+import { ConfirmComponent } from './reset_confirm';
 import { AdminComponent } from './admin';
 import { AuthGuard } from './_guards';
 
@@ -27,6 +29,8 @@ const appRoutes: Routes = [
     //{ path: '', component: vpListComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
+    { path: 'reset', component: ResetComponent },
+    { path: 'confirm', component: ConfirmComponent },
     { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
 
     { path: 'pools/mapped/list', component: vpMapListComponent },

@@ -17,6 +17,8 @@ import { JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
+import { ResetComponent } from './reset_confirm';
+import { ConfirmComponent } from './reset_confirm';
 import { AdminComponent } from './admin';
 
 import { LeafletComponent } from './_components'; //hope to replace vpMapLeafletComponent later
@@ -52,6 +54,8 @@ import { ModalModule } from './_modal';
         HomeComponent,
         LoginComponent,
         RegisterComponent,
+        ResetComponent,
+        ConfirmComponent,
         AdminComponent,
         LeafletComponent,
 

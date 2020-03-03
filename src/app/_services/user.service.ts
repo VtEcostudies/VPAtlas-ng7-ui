@@ -25,6 +25,14 @@ export class UserService {
         return this.http.post(`${environment.apiUrl}/users/register`, user);
     }
 
+    reset(email: Object) {
+        return this.http.post(`${environment.apiUrl}/users/reset`, email);
+    }
+
+    confirm(confirm: Object) {
+        return this.http.post(`${environment.apiUrl}/users/confirm`, confirm);
+    }
+
     update(user: User) {
         return this.http.put(`${environment.apiUrl}/users/${user.id}`, user);
     }
