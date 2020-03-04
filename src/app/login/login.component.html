@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-4 offset-4">
+  <div *ngIf="!invalid" class="col-4 offset-4">
     <h2>VPAtlas Login</h2>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
@@ -23,5 +23,15 @@
             <a routerLink="/reset" class="btn btn-link">Forgot password?</a>
         </div>
     </form>
+  </div>
+  <div *ngIf="invalid" class="col-4 offset-4">
+    <h2>The registration token is invalid. Please try again.</h2>
+    <p>
+      Something went wrong with this registration token.
+      Please try to log in with your most recent password,
+      or reset your password again.
+    </p>
+    <a routerLink="/login" class="btn btn-link">Login</a>
+    <a routerLink="/reset" class="btn btn-link">Reset password</a>
   </div>
 </div>

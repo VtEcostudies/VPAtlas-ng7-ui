@@ -5,16 +5,20 @@
       <th>First Name</th>
       <th>Last Name</th>
       <th>Email</th>
+      <th>Alias</th>
+      <th>Status</th>
       <th>Role</th>
     </tr>
     <tr *ngFor="let user of users">
-        <td>{{user.username}} </td>
+        <td>
+          <a [routerLink]="['/user/profile/view/', user.id]" class="btn btn-link">{{user.username}}</a>
+        </td>
         <td>{{user.firstname}} </td>
         <td>{{user.lastname}}</td>
         <td>{{user.email}}</td>
+        <td>{{user.alias}}</td>
+        <td>{{user.status}}</td>
         <td>{{user.userrole}}</td>
-        <!--
-        <td><a (click)="deleteUser(user.id)" class="text-danger">Delete</a></td>
-        -->
+        <td *ngIf="user.id!=0 && user.id!=currentUser.user.id"><a (click)="deleteUser(user.id)" class="text-danger">Delete</a></td>
     </tr>
 </table>

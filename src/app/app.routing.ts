@@ -30,7 +30,8 @@ const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'reset', component: ResetComponent },
-    { path: 'confirm', component: ConfirmComponent },
+    { path: 'confirm/registration', component: LoginComponent },
+    { path: 'confirm/reset', component: ConfirmComponent },
     { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
 
     { path: 'pools/mapped/list', component: vpMapListComponent },

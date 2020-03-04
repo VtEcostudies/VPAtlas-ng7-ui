@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { User, Auth } from '@app/_models';
-import { UserService, AuthenticationService } from '@app/_services';
+import { AlertService, UserService, AuthenticationService } from '@app/_services';
 
 @Component({ templateUrl: 'admin.component.html' })
 export class AdminComponent implements OnInit, OnDestroy {
@@ -13,7 +13,8 @@ export class AdminComponent implements OnInit, OnDestroy {
 
     constructor(
         private authenticationService: AuthenticationService,
-        private userService: UserService
+        private userService: UserService,
+        private alertService: AlertService
     ) {
         this.currentUserSubscription = this.authenticationService.currentUser.subscribe(user => {
             this.currentUser = user;
@@ -30,15 +31,23 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
 
     deleteUser(id: number) {
-        this.userService.delete(id).pipe(first()).subscribe(() => {
-            this.loadAllUsers()
-        });
+        this.userService.delete(id).pipe(first()).subscribe(
+          data => {
+              this.alertService.success('Delete successful', true);
+              this.loadAllUsers()
+          },
+          error => {
+              this.alertService.error(error);
+          });
     }
 
     private loadAllUsers() {
         this.userService.getAll().pipe(first()).subscribe(users => {
             //console.log('admin.component.loadAllUsers | users:', users)
             this.users = users;
+        }),
+        (error => {
+          console.log(error);
         });
     }
 }

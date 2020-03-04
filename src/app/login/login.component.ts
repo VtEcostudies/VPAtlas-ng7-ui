@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AppComponent } from '@app/app.component';
 
-import { AlertService, AuthenticationService } from '@app/_services';
+import { AlertService, UserService, AuthenticationService } from '@app/_services';
 
 @Component({templateUrl: 'login.component.html'})
 export class LoginComponent implements OnInit {
@@ -12,6 +12,8 @@ export class LoginComponent implements OnInit {
     loading = false;
     submitted = false;
     returnUrl: string;
+    invalid = false;
+    token = null;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -19,6 +21,7 @@ export class LoginComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
+        private userService: UserService,
         private appComponent: AppComponent
     ) {
         // redirect to home if already logged in
@@ -35,10 +38,33 @@ export class LoginComponent implements OnInit {
 
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+        this.route.queryParams.subscribe(params => {
+            console.log('query params', params);
+            this.token = params.token;
+          });
+
+        if (this.token) this.verify();
     }
 
     // convenience getter for easy access to form fields
     get f() { return this.loginForm.controls; }
+
+    //verify a registration token is valid
+    verify() {
+        this.userService.verify({token:this.token})
+            .pipe(first())
+            .subscribe(
+                data => {
+                  //do nothing
+                  console.log('Registration confirmation token verified.')
+                },
+                error => {
+                    this.alertService.error(error);
+                    this.loading = false;
+                    this.invalid = true;
+                });
+    }
 
     onSubmit() {
         this.submitted = true;
@@ -49,7 +75,7 @@ export class LoginComponent implements OnInit {
         }
 
         this.loading = true;
-        this.authenticationService.login(this.f.username.value, this.f.password.value)
+        this.authenticationService.login(this.f.username.value, this.f.password.value, this.token)
             .pipe(first())
             .subscribe(
                 data => {
