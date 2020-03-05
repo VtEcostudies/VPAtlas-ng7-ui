@@ -24,10 +24,6 @@ export class LoginComponent implements OnInit {
         private userService: UserService,
         private appComponent: AppComponent
     ) {
-        // redirect to home if already logged in
-        if (this.authenticationService.currentUserValue) {
-            this.router.navigate(['/']);
-        }
     }
 
     ngOnInit() {
@@ -44,7 +40,17 @@ export class LoginComponent implements OnInit {
             this.token = params.token;
           });
 
-        if (this.token) this.verify();
+        if (this.token) {
+          this.verify();
+          if (this.authenticationService.currentUserValue) {
+              this.authenticationService.logout();
+          }
+        } else {
+          // redirect to home if already logged in
+          if (this.authenticationService.currentUserValue) {
+              this.router.navigate(['/']);
+          }
+        }
     }
 
     // convenience getter for easy access to form fields

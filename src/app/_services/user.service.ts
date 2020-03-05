@@ -37,6 +37,10 @@ export class UserService {
         return this.http.post(`${environment.apiUrl}/users/confirm`, confirm);
     }
 
+    new_email(id:number, email: Object) {
+        return this.http.post(`${environment.apiUrl}/users/new_email/${id}`, email);
+    }
+
     update(user: User) {
         return this.http.put(`${environment.apiUrl}/users/${user.id}`, user);
     }

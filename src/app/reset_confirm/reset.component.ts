@@ -32,6 +32,7 @@ export class ResetComponent implements OnInit {
 
     reset() {
         this.submitted = true;
+        this.alertService.clear();
 
         // stop here if form is invalid
         if (this.resetForm.invalid) {
