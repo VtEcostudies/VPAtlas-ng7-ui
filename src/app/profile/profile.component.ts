@@ -3,19 +3,20 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { User, Auth } from '@app/_models';
 import { AlertService, UserService, AuthenticationService } from '@app/_services';
 
 @Component({ templateUrl: 'profile.component.html' })
 export class ProfileComponent implements OnInit, OnDestroy {
     profileForm: FormGroup;
+    currentUserSubscription: Subscription;
     currentUser = null;
     userIsAdmin = false;
-    proUser = {id:'',email:'',username:'',userrole:''};
+    proUser: User = new User();
     new_email = false; //flag a new_email when email changes
     loading = false;
     submitted = false;
+    roles = ['user','admin'];
 
     constructor(
         private formBuilder: FormBuilder,
@@ -25,13 +26,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private userService: UserService,
         private alertService: AlertService
     ) {
-      if (this.authenticationService.currentUserValue) {
-        this.currentUser = this.authenticationService.currentUserValue.user;
-        this.userIsAdmin = this.currentUser.userrole == 'admin';
-      }
+      this.currentUserSubscription = this.authenticationService.currentUser.subscribe(user => {
+        this.currentUser = user;
+        if (this.currentUser) {
+          this.userIsAdmin = this.currentUser.user.userrole == 'admin';
+        }
+      });
     }
 
-    ngOnInit() {
+    async ngOnInit() {
       this.profileForm = this.formBuilder.group({
           id: [''],
           username: ['', Validators.required],
@@ -41,10 +44,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
           middleName: [''],
           credentials: [''],
           alias: [''],
-          userrole: ['']
+          userrole: [''],
+          status: ['']
       });
 
-      this.loadProUser(this.route.snapshot.params.userId);
+      await this.loadProUser(this.route.snapshot.params.userId);
     }
 
     ngOnDestroy() {
@@ -56,18 +60,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
     get f() { return this.profileForm.controls; }
 
     private loadProUser(userId) {
-        this.userService.getById(userId).pipe(first()).subscribe
-        (proUser => {
+
+        this.userService.getById(userId).pipe(first()).subscribe(
+        proUser => {
+            console.log('profile.component.ts::loadProUser|', proUser);
             this.proUser = proUser;
+            //iterate over object keys and set form values
             Object.keys(this.proUser).forEach(key => {
               if (key in this.profileForm.value) {
-                console.log('key', key, this.proUser[key]);
+                //console.log('key', key, this.proUser[key]);
                 this.profileForm.controls[key].setValue(this.proUser[key]);
               }
             })
         }),
         (error => {
-          console.log(error);
+          console.log('profile.component.ts::loadProUser() |', error);
+          this.alertService.error(error);
         });
     }
 
@@ -79,13 +87,30 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
         if (this.profileForm.value["email"] != this.proUser.email) {
           this.new_email = true;
-          if (confirm(
+          if (!confirm(
 `You have changed your email address. This requires an email confirmation
 process. Are you sure you want to change your email address?`)) {
-          } else {
             return;
+          } else {
+            if (!confirm(
+`You have elected to change your email address. Are you certain that
+${this.profileForm.value["email"]} is your correct email address?
+An incorrect email address will require administrator assistance to correct.`
+            )) {
+              return;
+            }
           }
         }
+
+        //make sure 'Alias' has curly-brackets around values for array-type
+        var alias = this.profileForm.value['alias'];
+        //console.log('alias', alias);
+        if (typeof alias === 'string') {
+          this.profileForm.controls['alias'].setValue('{'+alias+'}'); //must use .setValue(); this is how to save arrays
+          console.log('form value', this.profileForm.controls['alias']);
+        }
+
+        console.log(this.profileForm.value);
 
         this.loading = true;
         this.userService.update(this.profileForm.value)
@@ -99,7 +124,7 @@ process. Are you sure you want to change your email address?`)) {
                       .subscribe(
                           data => {
                             this.alertService.success(`A new_email token was sent to ${this.profileForm.value["email"]}.`, true);
-                            if (this.currentUser.id == this.profileForm.value["id"]) {
+                            if (this.currentUser.user.id == this.profileForm.value["id"]) {
                               this.authenticationService.logout();
                             } else {
                               this.loading=false;
@@ -119,5 +144,8 @@ process. Are you sure you want to change your email address?`)) {
                     this.alertService.error(error);
                     this.loading=false;
                 });
+    }
+    cancel() {
+      this.router.navigate(['/admin']);
     }
 }

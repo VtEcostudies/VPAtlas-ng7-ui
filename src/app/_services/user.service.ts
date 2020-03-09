@@ -18,7 +18,10 @@ export class UserService {
     }
 
     getById(id: number) {
-        return this.http.get<User>(`${environment.apiUrl}/users/${id}`);
+        //return this.http.get<User>(`${environment.apiUrl}/users/${id}`);
+        var ret = this.http.get<User>(`${environment.apiUrl}/users/${id}`);
+        console.log('user.service.ts::getById', ret);
+        return ret;
     }
 
     register(user: User) {

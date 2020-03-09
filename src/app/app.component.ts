@@ -6,7 +6,8 @@ import { User, Auth } from './_models';
 
 @Component({ selector: 'app', templateUrl: 'app.component.html' })
 export class AppComponent {
-    currentUser: Auth;
+    userSubscription = null;
+    currentUser: Auth; //type Auth is {token: string, user: User}
     userIsAdmin = false;
     vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';
     vceIconPath = '../assets/images/vce_favicon.png';
@@ -16,8 +17,18 @@ export class AppComponent {
         private router: Router,
         private authenticationService: AuthenticationService
     ) {
-        this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+        this.currentUserSubscription = this.authenticationService.currentUser.subscribe(user => {
+          this.currentUser = user;
+          if (this.currentUser) {
+            this.userIsAdmin = this.currentUser.user.userrole == 'admin';
+          }
+        });
         this.onLogin();
+    }
+
+    ngOnDestroy() {
+        // unsubscribe to ensure no memory leaks
+        this.currentUserSubscription.unsubscribe();
     }
 
     //call this on login to update navbar elements
@@ -32,4 +43,9 @@ export class AppComponent {
         this.authenticationService.logout();
         this.router.navigate(['/']);
     }
+
+    profile() {
+      this.router.navigate([`/user/profile/view/${this.currentUser.user.id}`]);
+    }
+
 }

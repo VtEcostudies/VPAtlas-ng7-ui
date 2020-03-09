@@ -21,6 +21,6 @@
         <td>{{user.status}}</td>
         <td>{{user.userrole}}</td>
         <td>{{user.updatedAt}}</td>
-        <td *ngIf="user.id!=0 && user.id!=currentUser.user.id"><a (click)="deleteUser(user.id)" class="text-danger">Delete</a></td>
+        <td *ngIf="user.id!=0 && user.id!=currentUser.user.id"><a (click)="deleteUser(user.id, user.username)" class="text-danger">Delete</a></td>
     </tr>
 </table>

@@ -40,12 +40,13 @@ export class LoginComponent implements OnInit {
             this.token = params.token;
           });
 
-        if (this.token) {
-          this.verify();
-          if (this.authenticationService.currentUserValue) {
+        if (this.token) { //incoming token (registration or new_email)
+          console.log('login.component.ts::ngOnInit | token detected')
+          this.verify(); //verify token is still valid
+          if (this.authenticationService.currentUserValue) { //log the user out
               this.authenticationService.logout();
           }
-        } else {
+        } else { //normal login procedure
           // redirect to home if already logged in
           if (this.authenticationService.currentUserValue) {
               this.router.navigate(['/']);
@@ -56,7 +57,7 @@ export class LoginComponent implements OnInit {
     // convenience getter for easy access to form fields
     get f() { return this.loginForm.controls; }
 
-    //verify a registration token is valid
+    //verify a reset/registration/new_email token is valid
     verify() {
         this.userService.verify({token:this.token})
             .pipe(first())
