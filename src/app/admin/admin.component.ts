@@ -36,6 +36,12 @@ export class AdminComponent implements OnInit, OnDestroy {
         this.currentUserSubscription.unsubscribe();
     }
 
+    addUser() {
+      if (this.userIsAdmin) {
+        this.router.navigate(['user/profile/create']);
+      }
+    }
+
     deleteUser(id: number, username: string) {
       if (confirm(`Are you sure you want to delete the user '${username}'?'`)) {
         this.userService.delete(id).pipe(first()).subscribe(

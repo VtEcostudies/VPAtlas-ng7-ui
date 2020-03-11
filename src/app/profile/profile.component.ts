@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User, Auth } from '@app/_models';
 import { AlertService, UserService, AuthenticationService } from '@app/_services';
+import { MustMatch } from '@app/_helpers/must-match.validator';
 
 @Component({ templateUrl: 'profile.component.html' })
 export class ProfileComponent implements OnInit, OnDestroy {
@@ -13,6 +14,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     currentUser = null;
     userIsAdmin = false;
     proUser: User = new User();
+    new_user = false; //flag new uwer creation
     new_email = false; //flag a new_email when email changes
     email_reset = false; //flag that a new_email token/email was successfully sent
     loading = false;
@@ -34,12 +36,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.userIsAdmin = this.currentUser.user.userrole == 'admin';
         }
       });
+
+      //route params define behavior /view/:id /update/:id /create
     }
 
     async ngOnInit() {
+      this.alertService.clear();
+      
+      this.new_user = this.route.snapshot.params.userId?false:true;
+
       //NOTE: do not disable form fields until after their values are set
       this.profileForm = this.formBuilder.group({
-          id: [''],
+          id: [null],
           username: ['', Validators.required],
           email: ['', [Validators.required, Validators.email]],
           firstname: ['', Validators.required],
@@ -48,10 +56,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
           credentials: [''],
           alias: [''],
           userrole: [''],
-          status: ['']
+          status: [''],
+          password: ['',[Validators.required]],
+          confirmPassword: ['',[Validators.required]]
+      }, {
+          validator: MustMatch('password', 'confirmPassword')
       });
 
-      await this.loadProUser(this.route.snapshot.params.userId);
+      if (this.new_user) {
+        this.profileForm.controls["id"].disable();
+      } else {
+        this.profileForm.controls["password"].disable();
+        this.profileForm.controls["confirmPassword"].disable();
+        await this.loadProUser(this.route.snapshot.params.userId);
+      }
     }
 
     ngOnDestroy() {
@@ -80,11 +98,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
               this.profileForm.controls['userrole'].disable();
               this.profileForm.controls['status'].disable();
             }
-        }),
-        (error => {
+        },
+        error => {
           console.log('profile.component.ts::loadProUser() |', error);
           this.alertService.error(error);
         });
+    }
+
+    save() {
+      if (this.new_user) {
+        this.create();
+      } else {
+        this.update();
+      }
     }
 
     update() {
@@ -93,16 +119,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
         // stop here if form is invalid
         if (this.profileForm.invalid) {return;}
 
-        if (this.profileForm.value["email"] != this.proUser.email) {
+        if (this.profileForm.value["email"] != this.proUser.email && this.proUser.id) {
           this.new_email = true;
           if (!confirm(
-`You have changed your email address. This requires an email confirmation
-process. Are you sure you want to change your email address?`)) {
+`You have changed the user account email address. This requires an email confirmation
+process. Are you sure you want to change the account email address?`)) {
             return;
           } else {
             if (!confirm(
-`You have elected to change your email address. Are you certain that
-${this.profileForm.value["email"]} is your correct email address?
+`You have elected to use a new email address. Are you certain that
+${this.profileForm.value["email"]} is the correct email address?
 An incorrect email address will require administrator assistance to correct.`
             )) {
               return;
@@ -154,6 +180,32 @@ An incorrect email address will require administrator assistance to correct.`
                     this.loading=false;
                 });
     }
+
+    create() {
+      this.submitted = true;
+
+      // stop here if form is invalid
+      if (this.profileForm.invalid) {return;}
+
+      var alias = this.profileForm.value['alias'];
+      if (alias.charAt(0) != '{' && alias.slice(-1) != '}') {
+        this.profileForm.controls['alias'].setValue('{'+alias+'}'); //must use .setValue(); this is how to save arrays
+      }
+
+      this.loading = true;
+      this.userService.register(this.profileForm.value)
+          .pipe(first())
+          .subscribe(
+              data => {
+                this.loading=false;
+                this.router.navigate(['/admin']);
+              },
+              error => {
+                  this.alertService.error(error);
+                  this.loading=false;
+              });
+    }
+
     cancel() {
       this.router.navigate(['/admin']);
     }

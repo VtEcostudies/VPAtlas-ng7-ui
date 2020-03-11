@@ -1,10 +1,11 @@
 <div *ngIf="!email_reset">
   <div class="row">
     <div class="col-8 offset-2">
-      <h2>User Profile for {{proUser.username}}</h2>
+      <h2 *ngIf="!new_user">User Profile for {{proUser.username}}</h2>
+      <h2 *ngIf="new_user">New User</h2>
     </div>
   </div>
-  <form [formGroup]="profileForm" (ngSubmit)="update()">
+  <form [formGroup]="profileForm" (ngSubmit)="save()">
     <div class="row">
       <div class="col-4 offset-2">
         <div class="form-group">
@@ -53,9 +54,6 @@
                 {{ role }}
               </option>
             </select>
-            <!--
-            <input [readonly]="!userIsAdmin" type="text" formControlName="userrole" class="form-control" />
-            -->
         </div>
         <div class="form-group">
             <label for="status">Status</label>
@@ -64,9 +62,22 @@
                 {{ status }}
               </option>
             </select>
-            <!--
-            <input [readonly]="!userIsAdmin" type="text" formControlName="status" class="form-control" />
-            -->
+        </div>
+        <div *ngIf='userIsAdmin && new_user' class="form-group">
+            <label for="password">Password</label>
+            <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+            <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                <div *ngIf="f.password.errors.required">Password is required</div>
+                <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+            </div>
+        </div>
+        <div *ngIf='userIsAdmin && new_user' class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+            <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
+            </div>
         </div>
       </div> <!-- col -->
     </div> <!-- row -->
@@ -86,7 +97,7 @@
   <p>
     A new email confirmation was successfully sent. Please go to your
     email and click the VPAtlas confirmation link to complete the process.
-
+  </p><p>
     This token expires in 1 hour.
   </p>
   <a routerLink="/" class="btn btn-link">Return to Home page</a>

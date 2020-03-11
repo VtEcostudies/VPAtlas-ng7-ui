@@ -36,6 +36,8 @@ const appRoutes: Routes = [
     { path: 'confirm/reset', component: ConfirmComponent },
     { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
     { path: 'user/profile/view/:userId', component: ProfileComponent },
+    { path: 'user/profile/update/:userId', component: ProfileComponent },
+    { path: 'user/profile/create', component: ProfileComponent },
 
     { path: 'pools/mapped/list', component: vpMapListComponent },
     { path: 'pools/mapped/view/:mappedPoolId', component: vpMapViewComponent },
