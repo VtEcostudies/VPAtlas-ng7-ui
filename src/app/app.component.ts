@@ -1,12 +1,12 @@
 ﻿import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { Subscription } from 'rxjs';
 import { AuthenticationService } from './_services';
 import { User, Auth } from './_models';
 
 @Component({ selector: 'app', templateUrl: 'app.component.html' })
 export class AppComponent {
-    userSubscription = null;
+    currentUserSubscription: Subscription;
     currentUser: Auth; //type Auth is {token: string, user: User}
     userIsAdmin = false;
     vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';

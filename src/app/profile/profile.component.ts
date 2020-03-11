@@ -14,9 +14,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     userIsAdmin = false;
     proUser: User = new User();
     new_email = false; //flag a new_email when email changes
+    email_reset = false; //flag that a new_email token/email was successfully sent
     loading = false;
     submitted = false;
     roles = ['user','admin'];
+    statuses = ['registration', 'reset', 'new_email', 'confirmed', 'invalid'];
 
     constructor(
         private formBuilder: FormBuilder,
@@ -35,6 +37,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
+      //NOTE: do not disable form fields until after their values are set
       this.profileForm = this.formBuilder.group({
           id: [''],
           username: ['', Validators.required],
@@ -72,6 +75,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 this.profileForm.controls[key].setValue(this.proUser[key]);
               }
             })
+            //NOTE: disable form fields after their values are set
+            if (!this.userIsAdmin) {
+              this.profileForm.controls['userrole'].disable();
+              this.profileForm.controls['status'].disable();
+            }
         }),
         (error => {
           console.log('profile.component.ts::loadProUser() |', error);
@@ -124,10 +132,11 @@ An incorrect email address will require administrator assistance to correct.`
                       .subscribe(
                           data => {
                             this.alertService.success(`A new_email token was sent to ${this.profileForm.value["email"]}.`, true);
+                            this.loading=false;
                             if (this.currentUser.user.id == this.profileForm.value["id"]) {
                               this.authenticationService.logout();
+                              this.email_reset=true;
                             } else {
-                              this.loading=false;
                               this.router.navigate(['/admin']);
                             }
                           },

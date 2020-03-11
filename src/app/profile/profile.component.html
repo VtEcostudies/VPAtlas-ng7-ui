@@ -1,74 +1,93 @@
-<div class="row">
-  <div class="col-8 offset-2">
-    <h2>User Profile for {{proUser.username}}</h2>
-  </div>
-</div>
-<form [formGroup]="profileForm" (ngSubmit)="update()">
+<div *ngIf="!email_reset">
   <div class="row">
-    <div class="col-4 offset-2">
-      <div class="form-group">
-          <label for="username">Username</label>
-          <input [readonly]="!userIsAdmin" type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-          <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-              <div *ngIf="f.username.errors.required">Username is required</div>
-          </div>
-      </div>
-      <div class="form-group">
-          <label for="email">email</label>
-          <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
-          <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-              <div *ngIf="f.email.errors.required">email is required</div>
-              <div *ngIf="f.email.errors.email">invalid email format</div>
-          </div>
-      </div>
-      <div class="form-group">
-          <label for="firstname">First Name</label>
-          <input type="text" formControlName="firstname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstname.errors }" />
-          <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
-              <div *ngIf="f.firstname.errors.required">First Name is required</div>
-          </div>
-      </div>
-      <div class="form-group">
-          <label for="lastname">Last Name</label>
-          <input type="text" formControlName="lastname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastname.errors }" />
-          <div *ngIf="submitted && f.lastname.errors" class="invalid-feedback">
-              <div *ngIf="f.lastname.errors.required">Last Name is required</div>
-          </div>
-      </div>
-      <div class="form-group">
-          <label for="middlename">Middle Name</label>
-          <input type="text" formControlName="middleName" class="form-control" />
-      </div>
-  </div> <!-- col -->
-  <div class="col-4">
-      <div class="form-group">
-          <label for="alias">Alias eg. 'Jim,Jack'</label>
-          <input [readonly]="!userIsAdmin" type="text" formControlName="alias" class="form-control" />
-      </div>
-      <div class="form-group">
-          <label for="userrole">Role</label>
-          <select formControlName="userrole" class="form-control">
-            <option *ngFor="let role of roles" [ngValue]="role">
-              {{ role }}
-            </option>
-          </select>
-          <!--
-          <input [readonly]="!userIsAdmin" type="text" formControlName="userrole" class="form-control" />
-          -->
-      </div>
-      <div class="form-group">
-          <label for="status">Status</label>
-          <input [readonly]="!userIsAdmin" type="text" formControlName="status" class="form-control" />
-      </div>
-    </div> <!-- col -->
-  </div> <!-- row -->
-  <div class="row">
-    <div class="col-4 offset-6">
-      <div class="form-group">
-        <button [disabled]="loading" class="btn btn-primary">Save</button>
-        <img *ngIf="loading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-        <a (click)="cancel()" class="btn btn-link">Cancel</a>
-      </div>
+    <div class="col-8 offset-2">
+      <h2>User Profile for {{proUser.username}}</h2>
     </div>
   </div>
-</form>
+  <form [formGroup]="profileForm" (ngSubmit)="update()">
+    <div class="row">
+      <div class="col-4 offset-2">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input [readonly]="!userIsAdmin" type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+            <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                <div *ngIf="f.username.errors.required">Username is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">email</label>
+            <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                <div *ngIf="f.email.errors.required">email is required</div>
+                <div *ngIf="f.email.errors.email">invalid email format</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="firstname">First Name</label>
+            <input type="text" formControlName="firstname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstname.errors }" />
+            <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
+                <div *ngIf="f.firstname.errors.required">First Name is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="lastname">Last Name</label>
+            <input type="text" formControlName="lastname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastname.errors }" />
+            <div *ngIf="submitted && f.lastname.errors" class="invalid-feedback">
+                <div *ngIf="f.lastname.errors.required">Last Name is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="middlename">Middle Name</label>
+            <input type="text" formControlName="middleName" class="form-control" />
+        </div>
+    </div> <!-- col -->
+    <div class="col-4">
+        <div class="form-group">
+            <label for="alias">Alias eg. 'Jim,Jack'</label>
+            <input [readonly]="!userIsAdmin" type="text" formControlName="alias" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="userrole">Role</label>
+            <select formControlName="userrole" class="form-control">
+              <option *ngFor="let role of roles" [ngValue]="role">
+                {{ role }}
+              </option>
+            </select>
+            <!--
+            <input [readonly]="!userIsAdmin" type="text" formControlName="userrole" class="form-control" />
+            -->
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select formControlName="status" class="form-control">
+              <option *ngFor="let status of statuses" [ngValue]="status">
+                {{ status }}
+              </option>
+            </select>
+            <!--
+            <input [readonly]="!userIsAdmin" type="text" formControlName="status" class="form-control" />
+            -->
+        </div>
+      </div> <!-- col -->
+    </div> <!-- row -->
+    <div class="row">
+      <div class="col-4 offset-6">
+        <div class="form-group">
+          <button [disabled]="loading" class="btn btn-primary">Save</button>
+          <img *ngIf="loading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+          <a (click)="cancel()" class="btn btn-link">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div *ngIf="email_reset" class="col-4 offset-4">
+  <h2>VPAtlas new email confirmation sent.</h2>
+  <p>
+    A new email confirmation was successfully sent. Please go to your
+    email and click the VPAtlas confirmation link to complete the process.
+
+    This token expires in 1 hour.
+  </p>
+  <a routerLink="/" class="btn btn-link">Return to Home page</a>
+</div>
