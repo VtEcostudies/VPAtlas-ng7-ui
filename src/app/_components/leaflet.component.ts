@@ -60,8 +60,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   scaleControl = L.control.scale({position: 'topright'});
   layerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});//null;
   zoomControl = L.control.zoom({position: 'topright'});
-  cursorLat = null; //value for map display of cursor latitue location on map
-  cursorLng = null; //value for map display of cursor longitude location on map
+  cursorLat = 0; //value for map display of cursor latitue location on map
+  cursorLng = 0; //value for map display of cursor longitude location on map
   zoomLevel = 0; //global value that tracks the map zoomLevel
   /*
     https://leafletjs.com/reference-1.5.0.html#domevent eg. L.DomEvent.on(div, 'click', e => onDivClick(e))
@@ -158,8 +158,8 @@ export class LeafletComponent implements OnInit, OnChanges {
       id: 'esri.topo',
       name: 'ESRI Topo Map',
       zIndex: 0,
-      maxNativeZoom: 20,
-      maxZoom: 20,
+      maxNativeZoom: 19,
+      maxZoom: 19,
       attribution: 'Tiles &copy; Esri' // &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
     } as any);
   openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
@@ -204,8 +204,8 @@ export class LeafletComponent implements OnInit, OnChanges {
                zoomControl: false,
                maxZoom: 20,
                minZoom: 1,
-               center: this.vtCenter,
-               zoom: 8
+               center: this.uxValuesService.getZoomCenter(), //prevZoomCenter[0],
+               zoom: this.uxValuesService.getZoomLevel() //prevZoomLevel[0]
              });
 
     //this.scaleControl.setPosition('topright');
@@ -256,7 +256,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     event fires when the page's data changes.
   */
   async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    //console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
+    console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
     //console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     await this.clearPools();
     if (this.mapPoints) {
@@ -328,6 +328,10 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }
 
+  zoomPrevious() {
+    this.map.setView()
+  }
+
   onBaseLayerChange(e) {
     //find the array index of the baseLayer that was chosen from the envent value
     var index = this.baseLayers.findIndex(elm => {
@@ -336,19 +340,23 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     //console.log(`onBaseLayerChange | name: ${e.name} | index: ${index}`);
 
-    this.uxValuesService.setBaseLayer(index);
+    this.uxValuesService.baseLayerIndex = index;
   }
 
   //respond to map zoom: set plotted pool radius relative to zoom level and update all points
-  onZoomEnd(e) {
+  async onZoomEnd(e) {
     this.zoomLevel = this.map.getZoom();
-    this.SetPointZoomRadius();
+    this.uxValuesService.prevZoomLevel[0] = this.map.getZoom();
+    this.uxValuesService.prevZoomCenter[0] = this.map.getCenter();
+    this.uxValuesService.addPrevZoom(this.map.getZoom(), this.map.getCenter());
+    await this.SetPointZoomRadius();
     this.setEachPointRadius();
   }
 
   //set the class value of plotted pool radius relative to zoom level
   async SetPointZoomRadius() {
-    this.cmRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
+    //this.cmRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
+    this.cmRadius = Math.floor(this.zoomLevel/2);
     //console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'cmRadius', this.cmRadius);
   }
 
@@ -357,7 +365,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     var i=0;
     this.cmGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
       //if (++i < 10) {console.log('leaflet.component.setEachPointRadius', cmLayer)}
-      radius = this.GetRadiusForPool(cmLayer.options); //we hang pool properties on each plotted pool shape for use here
+      radius = this.GetRadiusForPool(cmLayer.options); //we hung pool properties on each plotted pool shape for use here
       cmLayer.setRadius(radius);
     });
   }
@@ -676,10 +684,10 @@ export class LeafletComponent implements OnInit, OnChanges {
       }
 
       /*
-        // TODO: set the shapeMarker's shape based upon
-        - access/permission?
-        - mappedPoolStatus?
-        - Visit Data.
+        Set the shapeMarker's shape based upon
+        - Pool Status
+        - Visit Data
+        - Monitored or Not.
         See https://github.com/rowanwins/Leaflet.SvgShapeMarkers
         for options, shapes, etc.
       */
