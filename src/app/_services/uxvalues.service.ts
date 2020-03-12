@@ -12,6 +12,9 @@ export class uxValuesService {
     prevZoomLevel = [8];
     prevZoomCenter = [this.vtCenter];
     zoomIndex = 0;
+    zoomCount = 0;
+    zoomUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
+    moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
 
     constructor() {
       this.baseLayerIndex = 0; //default value
@@ -19,24 +22,48 @@ export class uxValuesService {
     }
 
     addPrevZoom(level, center) {
-      this.prevZoomLevel.push(level);
-      this.prevZoomCenter.push(center);
+      if (this.zoomUI) {
+        console.log('addPrevZoom');
+        this.prevZoomLevel.push(level);
+        this.prevZoomCenter.push(center);
+        this.zoomIndex = this.prevZoomLevel.length-1;
+        this.zoomCount = this.prevZoomLevel.length-1;
+      }
     }
 
-    zoomNext() {
-      this.zoomIndex=this.zoomIndex>0?this.zoomIndex--:0;
+    addPrevMove(level, center) {
+      if (this.moveUI) {
+        console.log('addPrevMove');
+        this.prevZoomLevel.push(level);
+        this.prevZoomCenter.push(center);
+        this.zoomIndex = this.prevZoomLevel.length-1;
+        this.zoomCount = this.prevZoomLevel.length-1;
+      }
     }
 
-    zoomPrev() {
+    zoomPrev(map: L.map) {
+      this.zoomUI=false;
+      this.moveUI=false;
+      this.zoomIndex--;
+      if (this.zoomIndex < 0) this.zoomIndex = 0;
+      map.setView(this.getZoomCenter(), this.getZoomLevel());
+    }
+
+    zoomNext(map: L.map) {
+      this.zoomUI=false;
+      this.moveUI=false;
       this.zoomIndex++;
-      if (this.zoomIndex > this.prevZoomLevel.length) this.zoomIndex = this.prevZoomLevel.length;
+      if (this.zoomIndex > this.prevZoomLevel.length-1) this.zoomIndex = this.prevZoomLevel.length-1;
+      map.setView(this.getZoomCenter(), this.getZoomLevel());
     }
 
     getZoomLevel() {
+      //console.log('getZoomLevel', this.zoomIndex, this.prevZoomLevel[this.zoomIndex])
       return this.prevZoomLevel[this.zoomIndex];
     }
 
     getZoomCenter() {
+      //console.log('getZoomCenter', this.zoomIndex, this.prevZoomCenter[this.zoomIndex])
       return this.prevZoomCenter[this.zoomIndex];
     }
 }

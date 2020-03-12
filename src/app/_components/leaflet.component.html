@@ -7,23 +7,22 @@
   </div>
 
   <div *ngIf="itemType!='Home'" class="row">
-    <div class="col-2">
+    <div class="col-4">
       <button (click)="zoomExtents($event)" class="topmost btn btn-link">Zoom to Pools</button>
     </div>
-    <!--
-    <div class="col-2">
-      <label class="topmost text-input-block">Lat</label>
-      <input class="topmost text-input-block" value="{{cursorLat}}" disabled=true size="6" />
-    </div>
-    <div class="col-2">
-      <label class="topmost text-input-block">Lon</label>
-      <input class="topmost text-input-block" value="{{cursorLng}}" disabled=true size="7" />
-    </div>
-    -->
   </div>
+
   <div *ngIf="itemType!='Home'" class="row">
-    <div class="col-2">
+    <div class="col-4">
       <button (click)="zoomVermont($event)" class="topmost btn btn-link">Zoom Vermont</button>
+    </div>
+  </div>
+
+  <div *ngIf="itemType!='Home'" class="row">
+    <div class="col-4">
+      <button (click)="zoomPrev($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Prev</button>
+      <button (click)="zoomNext($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Next</button>
+      <button (click)="zoomStats=!zoomStats" class="topmost btn btn-link">({{uxValuesService.zoomIndex}}/{{uxValuesService.zoomCount}})</button>
     </div>
   </div>
   <!--
@@ -34,42 +33,58 @@
   </div>
   -->
   <div *ngIf="itemType!='Home'" class="row">
-    <div class="col-2">
+    <div class="col-1">
       <table class="table table-sm topmost">
         <tr>
           <td style="width: 15%;">Lat</td>
           <td style="width: 85%;">
-            <input value="{{cursorLat.toFixed(6)}}" disabled=true size="7" />
+            <!--<input value="{{cursorLat.toFixed(6)}}" disabled=true size="7" />-->
+            {{cursorLat.toFixed(6)}}
           </td>
         </tr>
         <tr>
           <td style="width: 15%;">Lon</td>
           <td style="width: 85%;">
-            <input value="{{cursorLng.toFixed(6)}}" disabled=true size="7" />
+            <!--<input value="{{cursorLng.toFixed(6)}}" disabled=true size="7" />-->
+            {{cursorLng.toFixed(6)}}
           </td>
         </tr>
-        <tr>
-          <td style="width: 15%;">Zoom</td>
-          <td style="width: 85%;">
-            <input value="{{zoomLevel}}" disabled=true size="1" />
-          </td>
-        </tr>
-        <tr>
-          <td style="width: 15%;">Idx</td>
-          <td style="width: 85%;">
-            <input value="{{uxValuesService.zoomIndex}}" disabled=true size="1" />
-          </td>
-        </tr>
-
-<!--
-        <tr>
-          <td style="width: 15%;">Rad</td>
-          <td style="width: 85%;">
-            <input value="{{cmRadius}}" disabled=true size="1" />
-          </td>
-        </tr>
--->
       </table>
+      <div *ngIf="zoomStats">
+        <table class="table table-sm topmost">
+          <tr>
+            <td style="width: 15%;">Zlvl</td>
+            <td style="width: 85%;">
+              {{zoomLevel}}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 15%;">Zctr</td>
+            <td style="width: 85%;">
+              {{zoomCenter.lat.toFixed(6)}}
+              {{zoomCenter.lng.toFixed(6)}}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 15%;">Rad</td>
+            <td style="width: 85%;">
+              {{cmRadius}}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 15%;">Zidx</td>
+            <td style="width: 85%;">
+              {{uxValuesService.zoomIndex}}
+            </td>
+          </tr>
+          <tr>
+            <td style="width: 15%;">Zcnt</td>
+            <td style="width: 85%;">
+              {{uxValuesService.zoomCount}}
+            </td>
+          </tr>
+        </table>
+      </div> <!-- ngIf=zoomStats -->
     </div>
   </div>
 </div>

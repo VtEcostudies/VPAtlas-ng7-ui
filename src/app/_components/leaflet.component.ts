@@ -63,6 +63,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   cursorLat = 0; //value for map display of cursor latitue location on map
   cursorLng = 0; //value for map display of cursor longitude location on map
   zoomLevel = 0; //global value that tracks the map zoomLevel
+  zoomCenter = this.vtCenter; //global value that tracks the map zoomCenter
+  zoomStatus = false; //flag to show zoom stats
   /*
     https://leafletjs.com/reference-1.5.0.html#domevent eg. L.DomEvent.on(div, 'click', e => onDivClick(e))
     https://leafletjs.com/reference-1.5.0.html#domutil
@@ -204,8 +206,8 @@ export class LeafletComponent implements OnInit, OnChanges {
                zoomControl: false,
                maxZoom: 20,
                minZoom: 1,
-               center: this.uxValuesService.getZoomCenter(), //prevZoomCenter[0],
-               zoom: this.uxValuesService.getZoomLevel() //prevZoomLevel[0]
+               center: this.uxValuesService.getZoomCenter(),
+               zoom: this.uxValuesService.getZoomLevel()
              });
 
     //this.scaleControl.setPosition('topright');
@@ -240,6 +242,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.map.on("baselayerchange", e => this.onBaseLayerChange(e));
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
+    this.map.on("moveend", e => this.onMoveEnd(e));
 
     //this.map.on("click", e => this.onMapClick(e)); //when used for plotting a point, this causes problems
 
@@ -256,7 +259,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     event fires when the page's data changes.
   */
   async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
+    //console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
     //console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     await this.clearPools();
     if (this.mapPoints) {
@@ -274,20 +277,15 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }
 
-  zoomMarker(event=null) {
-    if (event) {
-      event.stopPropagation();
-    }
+  zoomMarker(e=null) {
+    if (e) {e.stopPropagation();}
     if (this.mapMarker) {
       this.map.setView(this.marker._latlng, 15);
     }
   }
 
-  zoomExtents(event=null) {
-
-    if (event) {
-      event.stopPropagation();
-    }
+  zoomExtents(e=null) {
+    if (e) {e.stopPropagation();}
 
     if (this.map) {
       /*
@@ -308,28 +306,28 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }
 
-  zoomVermont(event=null) {
-    if (event) {
-      event.stopPropagation();
-    }
-
+  zoomVermont(e=null) {
+    if (e) {e.stopPropagation();}
     if (this.map) {
       this.map.setView(this.vtCenter, 8);
     }
   }
 
-  zoomVermontLeft(event=null) {
-    if (event) {
-      event.stopPropagation();
-    }
-
+  zoomVermontLeft(e=null) {
+    if (e) {e.stopPropagation();}
     if (this.map) {
       this.map.setView(this.vtCenterLeft, 8);
     }
   }
 
-  zoomPrevious() {
-    this.map.setView()
+  async zoomPrev(e=null) {
+    if (e) {e.stopPropagation();}
+    this.uxValuesService.zoomPrev(this.map);
+  }
+
+  async zoomNext(e=null) {
+    if (e) {e.stopPropagation();}
+    this.uxValuesService.zoomNext(this.map);
   }
 
   onBaseLayerChange(e) {
@@ -340,23 +338,35 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     //console.log(`onBaseLayerChange | name: ${e.name} | index: ${index}`);
 
-    this.uxValuesService.baseLayerIndex = index;
+    this.uxValuesService.baseLayerIndex = index; //assign saved value of baselayer for consistency across reloads
+
+    this.map.options.maxZoom = this.baseLayers[index].maxZoom;
   }
 
   //respond to map zoom: set plotted pool radius relative to zoom level and update all points
   async onZoomEnd(e) {
+    console.log('onZoomEnd', e.zoomPrev, e.zoomNext);
     this.zoomLevel = this.map.getZoom();
-    this.uxValuesService.prevZoomLevel[0] = this.map.getZoom();
-    this.uxValuesService.prevZoomCenter[0] = this.map.getCenter();
-    this.uxValuesService.addPrevZoom(this.map.getZoom(), this.map.getCenter());
+    this.zoomCenter = this.map.getCenter();
+    await this.uxValuesService.addPrevZoom(this.map.getZoom(), this.map.getCenter());
     await this.SetPointZoomRadius();
-    this.setEachPointRadius();
+    await this.setEachPointRadius();
+    this.uxValuesService.zoomUI=true;
+  }
+
+  //respond to map move: save map center and update displayed value
+  async onMoveEnd(e) {
+    console.log('onMoveEnd');
+    this.zoomCenter = this.map.getCenter();
+    //NOTE: too hard to make this work - invokes a 2nd addPrevMove event.
+    //await this.uxValuesService.addPrevMove(this.map.getZoom(), this.map.getCenter());
+    this.uxValuesService.moveUI=true;
   }
 
   //set the class value of plotted pool radius relative to zoom level
   async SetPointZoomRadius() {
     //this.cmRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
-    this.cmRadius = Math.floor(this.zoomLevel/2);
+    this.cmRadius = Math.floor(this.zoomLevel/3);
     //console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'cmRadius', this.cmRadius);
   }
 
