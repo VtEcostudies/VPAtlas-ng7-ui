@@ -41,7 +41,7 @@ export class uxValuesService {
       }
     }
 
-    zoomPrev(map: L.map) {
+    zoomPrev(map) {
       this.zoomUI=false;
       this.moveUI=false;
       this.zoomIndex--;
@@ -49,7 +49,7 @@ export class uxValuesService {
       map.setView(this.getZoomCenter(), this.getZoomLevel());
     }
 
-    zoomNext(map: L.map) {
+    zoomNext(map) {
       this.zoomUI=false;
       this.moveUI=false;
       this.zoomIndex++;
