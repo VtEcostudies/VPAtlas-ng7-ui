@@ -54,6 +54,7 @@ export class vpMapCreateComponent implements OnInit {
     }
 
     ngOnInit() {
+      this.authenticationService.check();
 
       //get mappedPoolId from route params and load pool data from db
       console.log('vpmap.create.ngOnInit route.snapshot params: ', this.route.snapshot.params.mappedPoolId);

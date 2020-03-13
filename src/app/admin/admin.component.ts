@@ -27,6 +27,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.authenticationService.check();
         if (this.userIsAdmin) {this.loadAllUsers();}
         else {this.router.navigate(['/']);}
     }

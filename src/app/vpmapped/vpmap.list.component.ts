@@ -42,6 +42,7 @@ export class vpMapListComponent implements OnInit {
     get f() { return this.filterForm.controls; }
 
     ngOnInit() {
+      this.authenticationService.check();
       console.log('vpmap.list.ngOnInit');
       //these are the pool search filter fields
       this.filterForm = this.formBuilder.group({

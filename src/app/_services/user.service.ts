@@ -28,6 +28,10 @@ export class UserService {
         return this.http.post(`${environment.apiUrl}/users/register`, user);
     }
 
+    check() {
+        return this.http.post(`${environment.apiUrl}/users/check`, {});
+    }
+
     reset(email: Object) {
         return this.http.post(`${environment.apiUrl}/users/reset`, email);
     }

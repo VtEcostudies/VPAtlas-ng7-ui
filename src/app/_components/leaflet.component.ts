@@ -251,6 +251,10 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.marker.on("moveend", e => this.onMarkerMoveEnd(e));
 
     this.map.addControl(new this.legendControl(this.map));
+
+    if (this.itemType === "Home") {
+      this.zoomVermontLeft();
+    }
   }
 
   /*
@@ -498,21 +502,23 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       default:
       case 'Pools/Visits':
-        if (this.userIsAdmin) {
-          //text += `<div><a href="pools/mapped/update/${obj.poolId}">Edit Mapped Pool ${obj.poolId}</a></div>`;
-        }
         if (obj.visitId) {
           text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
         } else {
           //text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
         }
+        if (this.currentUser) {
+          text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
+        }
         if (this.userIsAdmin ||
-          ((this.currentUser && (this.currentUser.username === obj.mappedByUser || this.currentUser.username === obj.visitUserName)))
+          (this.currentUser &&
+           (this.currentUser.username === obj.mappedByUser ||
+            this.currentUser.username === obj.visitUserName))
           ) {
           if (obj.visitId) {
             text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
           }
-          text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
+          //text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         }
         if (obj.visitPoolPhoto) {
           text += `<div>

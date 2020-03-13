@@ -77,6 +77,7 @@ export class vpVisitCreateComponent implements OnInit {
         private modalService: ModalService,
         @Inject(DOCUMENT) document
     ) {
+        this.authenticationService.check();
         if (this.authenticationService.currentUserValue) {
           this.currentUser = this.authenticationService.currentUserValue.user;
           console.log('vpvisit.create.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);

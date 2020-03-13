@@ -41,8 +41,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
+      this.authenticationService.check();
+
       this.alertService.clear();
-      
+
       this.new_user = this.route.snapshot.params.userId?false:true;
 
       //NOTE: do not disable form fields until after their values are set
