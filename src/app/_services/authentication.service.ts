@@ -5,7 +5,7 @@ import { first, map } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 import { User, Auth } from '@app/_models';
-import { UserService } from '@app/_services';
+//import { UserService } from '@app/_services';
 
 @Injectable({ providedIn: 'root' })
 
@@ -15,7 +15,7 @@ export class AuthenticationService {
 
     constructor(
       private http: HttpClient,
-      private userService: UserService
+      //private userService: UserService
     ) {
         this.currentUserSubject = new BehaviorSubject<Auth>(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
@@ -44,14 +44,15 @@ export class AuthenticationService {
     */
     check() {
       if (this.currentUser) {
-        this.userService.check()
+        //this.userService.check()
+        this.http.post(`${environment.apiUrl}/users/check`, {})
         .pipe(first())
         .subscribe(res => {
           console.log('authentication.service.ts::check | API /users/check | SUCCESS', res);
         }, err => {
           console.log('authentication.service.ts::check | API /users/check | ERROR', err);
           this.logout();
-        })
+        });
       }
     }
 
