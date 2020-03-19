@@ -2,7 +2,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
 //import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
-import { AuthenticationService, uxValuesService } from '@app/_services';
+import { AuthenticationService } from '@app/_services';
+import { UxValuesService } from '@app/_services';
 import { vpMappedEventInfo } from '@app/_models';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
@@ -55,6 +56,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   @Output() markerSelect = new EventEmitter<vpMappedEventInfo>(); //when a circleMarker is selected, send mapped pool info events to listeners
   itemLoc: L.LatLng = null; //store the location of the marker on the screen, passed with events to listeners, etc.
   itemInfo: vpMappedEventInfo = new vpMappedEventInfo(); //store a marker's extended info, passed with events to listeners
+  mapByClick = false; //flag to allow mapping new pools by click (default is by drag only)
   public map = null;
   marker = null;
   scaleControl = L.control.scale({position: 'topright'});
@@ -177,7 +179,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
 
   constructor(
-    private uxValuesService: uxValuesService,
+    private uxValuesService: UxValuesService,
     private authenticationService: AuthenticationService,
     ) {
     /*
@@ -201,6 +203,12 @@ export class LeafletComponent implements OnInit, OnChanges {
       //console.log('vpvisit.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
+
+    //getting errors of an 'already initialized map'.
+    var container = L.DomUtil.get("map");
+    if (container != null) {
+      container._leaflet_id = null;
+    }
 
     this.map = new L.Map("map", {
                zoomControl: false,
@@ -239,7 +247,8 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.baseLayers[this.baseLayer].addTo(this.map);
 
-    this.map.on("baselayerchange", e => this.onBaseLayerChange(e));
+    this.map.on("baselayerchange", e => this.OnBaseLayerChangeMapOverlayAdd(e));
+    this.map.on("overlayadd", e => this.OnMapOverlayAdd(e));
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
     this.map.on("moveend", e => this.onMoveEnd(e));
@@ -334,22 +343,28 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.uxValuesService.zoomNext(this.map);
   }
 
-  onBaseLayerChange(e) {
+  OnBaseLayerChangeMapOverlayAdd(e) {
     //find the array index of the baseLayer that was chosen from the envent value
     var index = this.baseLayers.findIndex(elm => {
       return elm == e.layer;
     });
-
-    //console.log(`onBaseLayerChange | name: ${e.name} | index: ${index}`);
-
+    //console.log(`OnBaseLayerChangeMapOverlayAdd | name: ${e.name} | index: ${index}`);
     this.uxValuesService.baseLayerIndex = index; //assign saved value of baselayer for consistency across reloads
+    this.map.options.maxZoom = this.baseLayers[index].maxZoom; //set map maxZoom based on baseLayer maxZoom
+  }
 
-    this.map.options.maxZoom = this.baseLayers[index].maxZoom;
+  /*
+    Fired when an overlay is selected through a layer control. We send all overlays
+    to the back so that point markers remain clickable, in the foreground.
+  */
+  OnMapOverlayAdd(e) {
+    console.log('OnMapOverlayAdd', e);
+    e.layer.bringToBack();
   }
 
   //respond to map zoom: set plotted pool radius relative to zoom level and update all points
   async onZoomEnd(e) {
-    console.log('onZoomEnd', e.zoomPrev, e.zoomNext);
+    //console.log('onZoomEnd', e.zoomPrev, e.zoomNext);
     this.zoomLevel = this.map.getZoom();
     this.zoomCenter = this.map.getCenter();
     await this.uxValuesService.addPrevZoom(this.map.getZoom(), this.map.getCenter());
@@ -360,7 +375,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   //respond to map move: save map center and update displayed value
   async onMoveEnd(e) {
-    console.log('onMoveEnd');
+    //console.log('onMoveEnd');
     this.zoomCenter = this.map.getCenter();
     //NOTE: too hard to make this work - invokes a 2nd addPrevMove event.
     //await this.uxValuesService.addPrevMove(this.map.getZoom(), this.map.getCenter());
@@ -385,18 +400,23 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   onMapClick(e) { //this is no longer used for mapping a pool (disabled)
-    //console.log("leaflet.onMapClick | event: ", e);
-    this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
-    this.marker.setLatLng(this.itemLoc);
-    this.markerUpdate.emit(this.itemLoc);
-    //this.map.panTo(this.itemLoc);
-    //this.map.setView(this.itemLoc, 18);
-    //console.log("leaflet.onMapClick | itemLoc: ", this.itemLoc);
-    this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
-                             Lat: ${this.itemLoc.lat}<br>
-                             Lng: ${this.itemLoc.lng}`);
+    console.log("leaflet.onMapClick | event: ", e);
+    if (this.mapMarker && this.mapByClick) {
+      this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
+      this.marker.setLatLng(this.itemLoc);
+      this.markerUpdate.emit(this.itemLoc);
+      //this.map.panTo(this.itemLoc);
+      //this.map.setView(this.itemLoc, 18);
+      //console.log("leaflet.onMapClick | itemLoc: ", this.itemLoc);
+      this.marker.bindTooltip(`Pool ID: ${this.mapValues.poolId}<br>
+                               Lat: ${this.itemLoc.lat}<br>
+                               Lng: ${this.itemLoc.lng}`);
+     }
   }
 
+  /*
+    This is where we handle the location of a newly mapped pool.
+  */
   onMarkerMoveEnd(e) {
     //console.log("leaflet.onMarkerMoveEnd | event: ", e);
     this.itemLoc = L.latLng(e.target._latlng.lat, e.target._latlng.lng);
@@ -421,7 +441,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     use e.sourceTarget to append functions like bindPopup
   */
   onCircleGroupClick(e) {
-    //console.log("leaflet.onCircleGroupClick | event: ", e);
+    console.log("leaflet.onCircleGroupClick | event: ", e);
     //console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
     //console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
     const index = e.sourceTarget.options.index;
@@ -578,12 +598,15 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.cmLLArr = [];
   }
 
+  /*
+    Original idea from Alex to set the radius based upon mappedLocationUncertainty.
+    This is not curerntly implemented, but should be easily done.
+  */
   private GetRadiusForPool(objPool:any) {
     var radius = this.cmRadius;
 
     return radius;
-
-    //set the radius based upon mappedLocationUncertainty
+/*
     switch (objPool.mappedLocationUncertainty) {
       case null:
       case '10':
@@ -599,6 +622,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         break;
     }
     return radius;
+*/
   }
 
   async plotPoolMarker(vpool) {

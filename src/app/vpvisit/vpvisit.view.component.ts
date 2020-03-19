@@ -31,14 +31,14 @@ export class vpVisitViewComponent implements OnInit {
         private modalService: ModalService
     ) {}
 
-    ngOnInit() {
+    async ngOnInit() {
       if (this.authenticationService.currentUserValue) {
         this.visitUser = this.authenticationService.currentUserValue.user;
         console.log('vpvisit.view.ngOnInit() | currentUser.userrole:', this.visitUser.userrole);
         this.userIsAdmin = this.visitUser.userrole == 'admin';
       } else { this.userIsAdmin = false;}
       console.log('vpvisit.view.ngOnInit | route.snapshot params: ', this.route.snapshot.params.visitId);
-      this.loadPage(this.route.snapshot.params.visitId);
+      await this.loadPage(this.route.snapshot.params.visitId);
     }
 
     openModal(id: string, infoId=null) {

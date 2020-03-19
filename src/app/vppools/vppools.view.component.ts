@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vpPoolsService, vtInfoService } from '@app/_services';
+import { UxValuesService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
@@ -59,6 +60,7 @@ export class vpViewComponent implements OnInit {
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
+        private uxValuesService: UxValuesService,
         private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
         private vpPoolsService: vpPoolsService,
@@ -88,6 +90,7 @@ export class vpViewComponent implements OnInit {
 
       if (this.visitId) { //view an existing visit - load all initial values and display
         await this.loadPoolVisit(this.visitId);
+        this.setPage(this.uxValuesService.visitPageIndex); //navigate to the previous pool page
       } else if (this.poolId) {
         await this.LoadMappedPool(this.poolId);
       } else { //redirect to pool list
@@ -211,6 +214,7 @@ export class vpViewComponent implements OnInit {
         visitWoodFrogEgg: [],
         visitWoodFrogEggHow: [],
         visitWoodFrogPhoto: [],
+        visitWoodFrogiNat: [],
         visitWoodFrogNotes: [],
 
         visitSpsAdults: [],
@@ -218,6 +222,7 @@ export class vpViewComponent implements OnInit {
         visitSpsEgg: [],
         visitSpsEggHow: [],
         visitSpsPhoto: [],
+        visitSpsiNat: [],
         visitSpsNotes: [],
 
         visitJesaAdults: [],
@@ -225,6 +230,7 @@ export class vpViewComponent implements OnInit {
         visitJesaEgg: [],
         visitJesaEggHow: [],
         visitJesaPhoto: [],
+        visitJesaiNat: [],
         visitJesaNotes: [],
 
         visitBssaAdults: [],
@@ -232,14 +238,17 @@ export class vpViewComponent implements OnInit {
         visitBssaEgg: [],
         visitBssaEggHow: [],
         visitBssaPhoto: [],
+        visitBssaiNat: [],
         visitBssaNotes: [],
 
         visitFairyShrimp: [],
         visitFairyShrimpPhoto: [],
+        visitFairyShrimpiNat: [],
         visitFairyShrimpNotes: [],
 
         visitFingerNailClams: [],
         visitFingerNailClamsPhoto: [],
+        visitFingerNailClamsiNat: [],
         visitFingerNailClamsNotes: [],
 
         //visitSpeciesOther1: [], //legacy data. no longer used
@@ -247,6 +256,7 @@ export class vpViewComponent implements OnInit {
         visitSpeciesOtherName: [],
         visitSpeciesOtherCount: [],
         visitSpeciesOtherPhoto: [],
+        visitSpeciesOtheriNat: [],
         visitSpeciesOtherNotes: [],
 
         visitSpeciesComments: [],
@@ -297,7 +307,7 @@ export class vpViewComponent implements OnInit {
       this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
       this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
       this.permission = this.visit.visitLandownerPermission; //flag view to display landowner info
-      if (this.visit.visitLandowner) {
+      if (this.visit.visitLandowner && (this.userIsAdmin || this.currentUser.username==this.visit.visitUserName)) {
         this.visitLandOwnForm.controls['visitLandownerName'].setValue(this.visit.visitLandowner.visitLandownerName);
         this.visitLandOwnForm.controls['visitLandownerAddress'].setValue(this.visit.visitLandowner.visitLandownerAddress);
         //this.visitLandOwnForm.controls['visitLandownerTown'].setValue(this.visit.visitLandowner.visitLandownerTown);
@@ -353,6 +363,7 @@ export class vpViewComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogEgg'].setValue(this.visit.visitWoodFrogEgg);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogEggHow'].setValue(this.visit.visitWoodFrogEggHow);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogPhoto'].setValue(this.visit.visitWoodFrogPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogiNat'].setValue(this.visit.visitWoodFrogiNat);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogNotes'].setValue(this.visit.visitWoodFrogNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitSpsAdults'].setValue(this.visit.visitSpsAdults);
@@ -360,6 +371,7 @@ export class vpViewComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitSpsEgg'].setValue(this.visit.visitSpsEgg);
       this.visitIndicatorSpeciesForm.controls['visitSpsEggHow'].setValue(this.visit.visitSpsEggHow);
       this.visitIndicatorSpeciesForm.controls['visitSpsPhoto'].setValue(this.visit.visitSpsPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitSpsiNat'].setValue(this.visit.visitSpsiNat);
       this.visitIndicatorSpeciesForm.controls['visitSpsNotes'].setValue(this.visit.visitSpsNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitJesaAdults'].setValue(this.visit.visitJesaAdults);
@@ -367,6 +379,7 @@ export class vpViewComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitJesaEgg'].setValue(this.visit.visitJesaEgg);
       this.visitIndicatorSpeciesForm.controls['visitJesaEggHow'].setValue(this.visit.visitJesaEggHow);
       this.visitIndicatorSpeciesForm.controls['visitJesaPhoto'].setValue(this.visit.visitJesaPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitJesaiNat'].setValue(this.visit.visitJesaiNat);
       this.visitIndicatorSpeciesForm.controls['visitJesaNotes'].setValue(this.visit.visitJesaNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitBssaAdults'].setValue(this.visit.visitBssaAdults);
@@ -374,14 +387,17 @@ export class vpViewComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitBssaEgg'].setValue(this.visit.visitBssaEgg);
       this.visitIndicatorSpeciesForm.controls['visitBssaEggHow'].setValue(this.visit.visitBssaEggHow);
       this.visitIndicatorSpeciesForm.controls['visitBssaPhoto'].setValue(this.visit.visitBssaPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitBssaiNat'].setValue(this.visit.visitBssaiNat);
       this.visitIndicatorSpeciesForm.controls['visitBssaNotes'].setValue(this.visit.visitBssaNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimp'].setValue(this.visit.visitFairyShrimp);
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimpPhoto'].setValue(this.visit.visitFairyShrimpPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitFairyShrimpiNat'].setValue(this.visit.visitFairyShrimpiNat);
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimpNotes'].setValue(this.visit.visitFairyShrimpNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClams'].setValue(this.visit.visitFingerNailClams);
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsPhoto'].setValue(this.visit.visitFingerNailClamsPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsiNat'].setValue(this.visit.visitFingerNailClamsiNat);
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsNotes'].setValue(this.visit.visitFingerNailClamsNotes);
 
       //this.visitIndicatorSpeciesForm.controls['visitSpeciesOther1'].setValue(this.visit.visitSpeciesOther1);
@@ -390,6 +406,7 @@ export class vpViewComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherName'].setValue(this.visit.visitSpeciesOtherName);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherCount'].setValue(this.visit.visitSpeciesOtherCount);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherPhoto'].setValue(this.visit.visitSpeciesOtherPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitSpeciesOtheriNat'].setValue(this.visit.visitSpeciesOtheriNat);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherNotes'].setValue(this.visit.visitSpeciesOtherNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitSpeciesComments'].setValue(this.visit.visitSpeciesComments);
@@ -397,13 +414,12 @@ export class vpViewComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitFish'].setValue(this.visit.visitFish);
       this.visitIndicatorSpeciesForm.controls['visitFishCount'].setValue(this.visit.visitFishCount);
       //this.visitIndicatorSpeciesForm.controls['visitFishSize'].setValue(this.visit.visitFishSize);
-
-
     }
 
     onVisitPageSelect(visitPageIndex) {
       this.visitPage.index = visitPageIndex;
-      //console.log('onVisitPageSelect', this.visitPage);
+      console.log('vpvisit.view.onVisitPageSelect', this.visitPage.index);
+      this.uxValuesService.visitPageIndex = visitPageIndex;
     }
 
     // convenience getters for easy access to form fields
@@ -492,10 +508,23 @@ export class vpViewComponent implements OnInit {
     return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
   }
 
+  ToEditMode() {
+    this.router.navigate([`/pools/visit/update/${this.visitId}`]);
+  }
+
   nextPage(direction) {
     this.visitPage.index += direction;
     if (this.visitPage.index < 0) this.visitPage.index = 0;
     if (this.visitPage.index > this.visitPage.values.length-1) this.visitPage.index = this.visitPage.values.length-1;
+    if (this.visitPage.index===1 && (!this.userIsAdmin && !this.userIsOwner)) this.visitPage.index += direction;
+    console.log('vpvisit.view.nextPage', this.visitPage.index);
+    this.uxValuesService.visitPageIndex = this.visitPage.index;
+  }
+
+  setPage(page) {
+    this.visitPage.index = page;
+    console.log('vpvisit.view.setPage', this.visitPage.index);
+    this.uxValuesService.visitPageIndex = this.visitPage.index;
   }
 
   cancelVisit() {

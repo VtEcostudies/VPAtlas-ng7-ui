@@ -79,8 +79,6 @@ export class vpVisit {
     visitSpeciesOther2: string = '';
     visitSpeciesOtherName: string = '';
     visitSpeciesOtherCount: string = '';
-    visitSpeciesOtherPhoto: string = '';
-    visitSpeciesOtherNotes: string = '';
     visitSpeciesComments: string = '';
     visitFish: number = 0.0;
     visitFishCount: number = 0.0;
@@ -93,18 +91,31 @@ export class vpVisit {
     visitCreatedAt: any = '';
     visitUpdatedAt: any = '';
     visitFishSize: string = '';
+
     visitWoodFrogPhoto: string = '';
-    visitWoodFrogNotes: string = '';
     visitSpsPhoto: string = '';
-    visitSpsNotes: string = '';
     visitJesaPhoto: string = '';
-    visitJesaNotes: string = '';
     visitBssaPhoto: string = '';
-    visitBssaNotes: string = '';
     visitFairyShrimpPhoto: string = '';
-    visitFairyShrimpNotes: string = '';
     visitFingerNailClamsPhoto: string = '';
+    visitSpeciesOtherPhoto: string = '';
+
+    visitWoodFrogiNat: string = '';
+    visitSpsiNat: string = '';
+    visitJesaiNat: string = '';
+    visitBssaiNat: string = '';
+    visitFairyShrimpiNat: string = '';
+    visitFingerNailClamsiNat: string = '';
+    visitSpeciesOtheriNat: string = '';
+
+    visitWoodFrogNotes: string = '';
+    visitSpsNotes: string = '';
+    visitJesaNotes: string = '';
+    visitBssaNotes: string = '';
+    visitFairyShrimpNotes: string = '';
     visitFingerNailClamsNotes: string = '';
+    visitSpeciesOtherNotes: string = '';
+
     poolId: string = '';
     latitude: number = 43.916944;
     longitude: number = -72.668056;

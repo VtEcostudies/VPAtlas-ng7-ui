@@ -37,6 +37,8 @@ import { vpViewComponent } from './vppools';
 
 import { ModalModule } from './_modal';
 
+import { UxValuesService } from './_services';
+
 @NgModule({
     imports: [
         BrowserModule,

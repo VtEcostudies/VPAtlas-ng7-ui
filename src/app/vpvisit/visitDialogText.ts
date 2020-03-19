@@ -374,6 +374,14 @@ to use those here. If so, please navigate to iNaturalist, capture a link to eith
 or the photo, and paste that value here.</p>
 <p>One link per species is allowed. In the future, VPAtlas will allow multiple Species links.</p>
 `,
+visitiNatLinks: `
+<h3><u>Indicator Species iNaturalist URL</u></h3>
+<p>Use this column to associate iNaturalist observations of vernal pool species Observed in the
+field.</p>
+<p>Please copy the iNaturalist URL from your browser's address-bar, and paste that value here.</p>
+<p>One iNat URL/link per species is allowed. If you wish to associate multiple photos per link,
+please do that within iNaturalist.</p>
+`,
     visitSpeciesNotes: `
 <h3><u>Indicator Species Notes</u></h3>
 <p>Use this column to enter any notes or comments on the species present.</p>`,

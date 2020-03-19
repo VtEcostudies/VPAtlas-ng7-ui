@@ -1,29 +1,30 @@
 ﻿import { Injectable } from '@angular/core';
+/*
 import "leaflet";
 import "leaflet-svg-shape-markers";
 declare let L;
+*/
+@Injectable({ providedIn: 'root' }) //this makes a service single-instance?
 
-@Injectable({ providedIn: 'root' })
-
-export class uxValuesService {
-    vtCenter = new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
-    baseLayerIndex = -1;
-    pointColorIndex = -1;
-    prevZoomLevel = [8];
-    prevZoomCenter = [this.vtCenter];
-    zoomIndex = 0;
-    zoomCount = 0;
-    zoomUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
-    moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
+export class UxValuesService {
+    public vtCenter = {lat:43.916944,lng:-72.668056}; //new L.LatLng(43.916944, -72.668056); //VT geo center, downtown Randolph
+    public baseLayerIndex = 0;
+    public pointColorIndex = 0;
+    public prevZoomLevel = [8];
+    public prevZoomCenter = [this.vtCenter];
+    public zoomIndex = 0;
+    public zoomCount = 0;
+    public zoomUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
+    public moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
+    public visitPageIndex = 0;
 
     constructor() {
-      this.baseLayerIndex = 0; //default value
-      this.pointColorIndex = 0; //default value
+      //console.log('***********UxValuesService CONSTRUCTOR*********** | visitPageIndex', this.visitPageIndex);
     }
 
     addPrevZoom(level, center) {
       if (this.zoomUI) {
-        console.log('addPrevZoom');
+        //console.log('addPrevZoom');
         this.prevZoomLevel.push(level);
         this.prevZoomCenter.push(center);
         this.zoomIndex = this.prevZoomLevel.length-1;
@@ -33,7 +34,7 @@ export class uxValuesService {
 
     addPrevMove(level, center) {
       if (this.moveUI) {
-        console.log('addPrevMove');
+        //console.log('addPrevMove');
         this.prevZoomLevel.push(level);
         this.prevZoomCenter.push(center);
         this.zoomIndex = this.prevZoomLevel.length-1;

@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vpPoolsService, vtInfoService } from '@app/_services';
+import { UxValuesService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
@@ -34,11 +35,11 @@ export class vpVisitCreateComponent implements OnInit {
     visitPoolCharacteristicsForm: FormGroup = this.formBuilder.group({});
     visitIndicatorSpeciesForm:FormGroup = this.formBuilder.group({});
     visitPage = {index: 0, values: [
-                  {name:"Pool-Location"},
-                  {name:"Landowner-Info"},
-                  {name:"Field-Verification"},
-                  {name:"Pool-Characteristics"},
-                  {name:"Indicator-Species"}
+                  {name:"Pool-Location", enabled:true},
+                  {name:"Landowner-Info", enabled:(this.userIsAdmin||this.userIsOwner)},
+                  {name:"Field-Verification", enabled:true},
+                  {name:"Pool-Characteristics", enabled:true},
+                  {name:"Indicator-Species", enabled:true}
                 ]};
     towns = [];
     townCount = 0;
@@ -69,6 +70,8 @@ export class vpVisitCreateComponent implements OnInit {
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
+        private uxValuesService: UxValuesService,
+        //@Inject(UxValuesService) uxValuesService,
         private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
         private vpPoolsService: vpPoolsService,
@@ -82,10 +85,9 @@ export class vpVisitCreateComponent implements OnInit {
           this.currentUser = this.authenticationService.currentUserValue.user;
           console.log('vpvisit.create.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
           this.userIsAdmin = this.currentUser.userrole == 'admin';
-        } else {
+        } else { //user not logged-in
           this.userIsAdmin = false;
-          // redirect to visit search if user not logged-in
-          this.router.navigate(['/visits/visit/list']);
+          this.router.navigate(['/visits/visit/list']); // redirect to visit search if user not logged-in
         }
       this.loadTowns();
     }
@@ -101,6 +103,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.mapMarker = true;
         await this.createFormControls();
         await this.LoadVisitData(this.visitId);
+        this.setPage(this.uxValuesService.visitPageIndex);
       } else { //create a new visit - set a few necessary initial values
         this.update = false;
         this.mapMarker = false;
@@ -245,7 +248,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitWoodFrogEgg: [],
         visitWoodFrogEggHow: [],
         visitWoodFrogPhoto: [],
-        //visitWoodFrogLink: [], //an idea that is to come
+        visitWoodFrogiNat: [],
         visitWoodFrogNotes: [],
 
         visitSpsAdults: [],
@@ -253,6 +256,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitSpsEgg: [],
         visitSpsEggHow: [],
         visitSpsPhoto: [],
+        visitSpsiNat: [],
         visitSpsNotes: [],
 
         visitJesaAdults: [],
@@ -260,6 +264,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitJesaEgg: [],
         visitJesaEggHow: [],
         visitJesaPhoto: [],
+        visitJesaiNat: [],
         visitJesaNotes: [],
 
         visitBssaAdults: [],
@@ -267,14 +272,17 @@ export class vpVisitCreateComponent implements OnInit {
         visitBssaEgg: [],
         visitBssaEggHow: [],
         visitBssaPhoto: [],
+        visitBssaiNat: [],
         visitBssaNotes: [],
 
         visitFairyShrimp: [],
         visitFairyShrimpPhoto: [],
+        visitFairyShrimpiNat: [],
         visitFairyShrimpNotes: [],
 
         visitFingerNailClams: [],
         visitFingerNailClamsPhoto: [],
+        visitFingerNailClamsiNat: [],
         visitFingerNailClamsNotes: [],
 
         //visitSpeciesOther1: [], //legacy data. no longer used
@@ -282,6 +290,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitSpeciesOtherName: [],
         visitSpeciesOtherCount: [],
         visitSpeciesOtherPhoto: [],
+        visitSpeciesOtheriNat: [],
         visitSpeciesOtherNotes: [],
 
         visitSpeciesComments: [],
@@ -417,6 +426,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogEgg'].setValue(this.visit.visitWoodFrogEgg);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogEggHow'].setValue(this.visit.visitWoodFrogEggHow);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogPhoto'].setValue(this.visit.visitWoodFrogPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitWoodFrogiNat'].setValue(this.visit.visitWoodFrogiNat);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogNotes'].setValue(this.visit.visitWoodFrogNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitSpsAdults'].setValue(this.visit.visitSpsAdults);
@@ -424,6 +434,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitSpsEgg'].setValue(this.visit.visitSpsEgg);
       this.visitIndicatorSpeciesForm.controls['visitSpsEggHow'].setValue(this.visit.visitSpsEggHow);
       this.visitIndicatorSpeciesForm.controls['visitSpsPhoto'].setValue(this.visit.visitSpsPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitSpsiNat'].setValue(this.visit.visitSpsiNat);
       this.visitIndicatorSpeciesForm.controls['visitSpsNotes'].setValue(this.visit.visitSpsNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitJesaAdults'].setValue(this.visit.visitJesaAdults);
@@ -431,6 +442,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitJesaEgg'].setValue(this.visit.visitJesaEgg);
       this.visitIndicatorSpeciesForm.controls['visitJesaEggHow'].setValue(this.visit.visitJesaEggHow);
       this.visitIndicatorSpeciesForm.controls['visitJesaPhoto'].setValue(this.visit.visitJesaPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitJesaiNat'].setValue(this.visit.visitJesaiNat);
       this.visitIndicatorSpeciesForm.controls['visitJesaNotes'].setValue(this.visit.visitJesaNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitBssaAdults'].setValue(this.visit.visitBssaAdults);
@@ -438,14 +450,17 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitBssaEgg'].setValue(this.visit.visitBssaEgg);
       this.visitIndicatorSpeciesForm.controls['visitBssaEggHow'].setValue(this.visit.visitBssaEggHow);
       this.visitIndicatorSpeciesForm.controls['visitBssaPhoto'].setValue(this.visit.visitBssaPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitBssaiNat'].setValue(this.visit.visitBssaiNat);
       this.visitIndicatorSpeciesForm.controls['visitBssaNotes'].setValue(this.visit.visitBssaNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimp'].setValue(this.visit.visitFairyShrimp);
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimpPhoto'].setValue(this.visit.visitFairyShrimpPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitFairyShrimpiNat'].setValue(this.visit.visitFairyShrimpiNat);
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimpNotes'].setValue(this.visit.visitFairyShrimpNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClams'].setValue(this.visit.visitFingerNailClams);
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsPhoto'].setValue(this.visit.visitFingerNailClamsPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsiNat'].setValue(this.visit.visitFingerNailClamsiNat);
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsNotes'].setValue(this.visit.visitFingerNailClamsNotes);
 
       //this.visitIndicatorSpeciesForm.controls['visitSpeciesOther1'].setValue(this.visit.visitSpeciesOther1);
@@ -454,6 +469,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherName'].setValue(this.visit.visitSpeciesOtherName);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherCount'].setValue(this.visit.visitSpeciesOtherCount);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherPhoto'].setValue(this.visit.visitSpeciesOtherPhoto);
+      this.visitIndicatorSpeciesForm.controls['visitSpeciesOtheriNat'].setValue(this.visit.visitSpeciesOtheriNat);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherNotes'].setValue(this.visit.visitSpeciesOtherNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitSpeciesComments'].setValue(this.visit.visitSpeciesComments);
@@ -467,7 +483,8 @@ export class vpVisitCreateComponent implements OnInit {
 
     onVisitPageSelect(visitPageIndex) {
       this.visitPage.index = visitPageIndex;
-      //console.log('onVisitPageSelect', this.visitPage);
+      console.log('vpvisit.create.onVisitPageSelect', this.visitPage.index);
+      this.uxValuesService.visitPageIndex = visitPageIndex;
     }
 
     /*
@@ -796,14 +813,23 @@ export class vpVisitCreateComponent implements OnInit {
                 });
     }
 
+    /*
+    Go forward or backward in page direction
+    */
     nextPage(direction) {
       this.visitPage.index += direction;
       if (this.visitPage.index < 0) this.visitPage.index = 0;
       if (this.visitPage.index > this.visitPage.values.length-1) this.visitPage.index = this.visitPage.values.length-1;
+      if (this.visitPage.index===1 && (!this.userIsAdmin && !this.userIsOwner)) this.visitPage.index += direction;
+      console.log('vpvisit.create.nextPage', this.visitPage.index);
+      this.uxValuesService.visitPageIndex = this.visitPage.index;
     }
 
     setPage(page) {
+      console.log('setPage', page);
       this.visitPage.index = page;
+      console.log('vpvisit.create.setPage', this.visitPage.index);
+      this.uxValuesService.visitPageIndex = this.visitPage.index;
     }
 
   cancelVisit() {

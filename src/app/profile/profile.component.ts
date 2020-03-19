@@ -41,7 +41,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-      this.authenticationService.check();
+      this.authenticationService.check()
+        .catch(error => {
+          console.log('profile.component.ts::ngOntInit | authenticationService.check() ERROR', error);
+          this.router.navigate(['/login']);
+        })
 
       this.alertService.clear();
 

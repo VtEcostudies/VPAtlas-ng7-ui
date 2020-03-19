@@ -5,7 +5,6 @@ import { first, map } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 import { User, Auth } from '@app/_models';
-//import { UserService } from '@app/_services';
 
 @Injectable({ providedIn: 'root' })
 
@@ -43,17 +42,22 @@ export class AuthenticationService {
       Only use this to check for an expired token on pages requiring authentication.
     */
     check() {
-      if (this.currentUser) {
-        //this.userService.check()
-        this.http.post(`${environment.apiUrl}/users/check`, {})
-        .pipe(first())
-        .subscribe(res => {
-          console.log('authentication.service.ts::check | API /users/check | SUCCESS', res);
-        }, err => {
-          console.log('authentication.service.ts::check | API /users/check | ERROR', err);
-          this.logout();
-        });
-      }
+      return new Promise((resolve, reject) => {
+        if (this.currentUser) {
+          this.http.post(`${environment.apiUrl}/users/check`, {})
+          .pipe(first())
+          .subscribe(res => {
+            console.log('authentication.service.ts::check | API /users/check | SUCCESS', res);
+            resolve({"message": "valid token"});
+          }, err => {
+            console.log('authentication.service.ts::check | API /users/check | ERROR', err);
+            reject({"message": "token INVALID"});
+            this.logout();
+          });
+        } else {
+          resolve({"message": "valid token"});
+        }
+      });
     }
 
     logout() {
