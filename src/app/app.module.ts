@@ -77,6 +77,7 @@ import { UxValuesService } from './_services';
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        UxValuesService
         //fakeBackendProvider // provider used to create fake backend
     ],
     bootstrap: [AppComponent],

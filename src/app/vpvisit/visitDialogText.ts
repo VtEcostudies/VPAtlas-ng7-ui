@@ -376,7 +376,7 @@ or the photo, and paste that value here.</p>
 `,
 visitiNatLinks: `
 <h3><u>Indicator Species iNaturalist URL</u></h3>
-<p>Use this column to associate iNaturalist observations of vernal pool species Observed in the
+<p>Use this column to associate iNaturalist observations of vernal pool species observed in the
 field.</p>
 <p>Please copy the iNaturalist URL from your browser's address-bar, and paste that value here.</p>
 <p>One iNat URL/link per species is allowed. If you wish to associate multiple photos per link,

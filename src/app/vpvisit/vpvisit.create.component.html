@@ -932,7 +932,7 @@
       <th>Photos
         <i (click)="openModal('vpvisit_help_info', 'visitPhotoUpload')" class="fa fa-info-circle no-margins link"></i>
       </th>
-      <th>iNat URL
+      <th>iNaturalist Observation URL
         <i (click)="openModal('vpvisit_help_info', 'visitiNatLinks')" class="fa fa-info-circle no-margins link"></i>
       </th>
       <th>Notes
@@ -975,15 +975,12 @@
       </td> <!-- Photo object -->
       <td> <!-- iNat object -->
         <div class="form-inline">
-        <input type="text" formControlName="visitWoodFrogiNat" size="10" class="form-control" />
-        <span *ngIf="!!indSpc.visitWoodFrogiNat.value">
-          <a href="https://www.inaturalist.org/observations/{{indSpc.visitWoodFrogiNat.value}}" target="_blank">
-            <img id="imgWoodFrogiNat"
-              src="https://api.inaturalist.org/v1/observations/{{indSpc.visitWoodFrogiNat.value}}.results.photos.url"
-              style="display:inline-block; max-height:30px; max-width:30px;"
-            />
-          </a>
-        </span>
+          <input type="text" formControlName="visitWoodFrogiNat" size="10" class="form-control" />
+          <span *ngIf="!!indSpc.visitWoodFrogiNat.value">
+            <a href="{{indSpc.visitWoodFrogiNat.value}}" target="_blank">
+              <img id="imgWoodFrogiNat" src="https://static.inaturalist.org/sites/1-favicon.png?1573071870" style="display:inline-block; max-height:30px; max-width:30px;"/>
+            </a>
+          </span>
         </div>
       </td> <!-- iNat object -->
       <td><input type="text" formControlName="visitWoodFrogNotes" size="30" class="form-control" /></td>
@@ -1021,8 +1018,16 @@
             </span>
         </div>
       </td> <!-- Photo object Sps -->
-
-      <td><input type="text" formControlName="visitSpsiNat" size="30" class="form-control" /></td>
+      <td> <!-- iNat object -->
+        <div class="form-inline">
+          <input type="text" formControlName="visitSpsiNat" size="10" class="form-control" />
+          <span *ngIf="!!indSpc.visitSpsiNat.value">
+            <a href="{{indSpc.visitSpsiNat.value}}" target="_blank">
+              <img id="imgWoodFrogiNat" src="https://static.inaturalist.org/sites/1-favicon.png?1573071870" style="display:inline-block; max-height:30px; max-width:30px;"/>
+            </a>
+          </span>
+        </div>
+      </td> <!-- iNat object -->
       <td><input type="text" formControlName="visitSpsNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1057,7 +1062,16 @@
           </span>
         </div>
       </td> <!-- Photo object Jesa -->
-      <td><input type="text" formControlName="visitJesaiNat" size="30" class="form-control" /></td>
+      <td> <!-- iNat object -->
+        <div class="form-inline">
+          <input type="text" formControlName="visitJesaiNat" size="10" class="form-control" />
+          <span *ngIf="!!indSpc.visitJesaiNat.value">
+            <a href="{{indSpc.visitJesaiNat.value}}" target="_blank">
+              <img id="imgWoodFrogiNat" src="https://static.inaturalist.org/sites/1-favicon.png?1573071870" style="display:inline-block; max-height:30px; max-width:30px;"/>
+            </a>
+          </span>
+        </div>
+      </td> <!-- iNat object -->
       <td><input type="text" formControlName="visitJesaNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1092,7 +1106,16 @@
           </span>
         </div>
       </td> <!-- Photo object Bssa -->
-      <td><input type="text" formControlName="visitBssaiNat" size="30" class="form-control" /></td>
+      <td> <!-- iNat object -->
+        <div class="form-inline">
+          <input type="text" formControlName="visitBssaiNat" size="10" class="form-control" />
+          <span *ngIf="!!indSpc.visitBssaiNat.value">
+            <a href="{{indSpc.visitBssaiNat.value}}" target="_blank">
+              <img id="imgWoodFrogiNat" src="https://static.inaturalist.org/sites/1-favicon.png?1573071870" style="display:inline-block; max-height:30px; max-width:30px;"/>
+            </a>
+          </span>
+        </div>
+      </td> <!-- iNat object -->
       <td><input type="text" formControlName="visitBssaNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1122,7 +1145,16 @@
           </span>
         </div>
       </td> <!-- Photo object FairyShrimp -->
-      <td><input type="text" formControlName="visitFairyShrimpiNat" size="30" class="form-control" /></td>
+      <td> <!-- iNat object -->
+        <div class="form-inline">
+          <input type="text" formControlName="visitFairyShrimpiNat" size="10" class="form-control" />
+          <span *ngIf="!!indSpc.visitFairyShrimpiNat.value">
+            <a href="{{indSpc.visitFairyShrimpiNat.value}}" target="_blank">
+              <img id="imgWoodFrogiNat" src="https://static.inaturalist.org/sites/1-favicon.png?1573071870" style="display:inline-block; max-height:30px; max-width:30px;"/>
+            </a>
+          </span>
+        </div>
+      </td> <!-- iNat object -->
       <td><input type="text" formControlName="visitFairyShrimpNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1152,7 +1184,16 @@
           </span>
         </div>
       </td> <!-- Photo object FingerNailClams -->
-      <td><input type="text" formControlName="visitFingerNailClamsiNat" size="30" class="form-control" /></td>
+      <td> <!-- iNat object -->
+        <div class="form-inline">
+          <input type="text" formControlName="visitFingerNailClamsiNat" size="10" class="form-control" />
+          <span *ngIf="!!indSpc.visitFingerNailClamsiNat.value">
+            <a href="{{indSpc.visitFingerNailClamsiNat.value}}" target="_blank">
+              <img id="imgWoodFrogiNat" src="https://static.inaturalist.org/sites/1-favicon.png?1573071870" style="display:inline-block; max-height:30px; max-width:30px;"/>
+            </a>
+          </span>
+        </div>
+      </td> <!-- iNat object -->
       <td><input type="text" formControlName="visitFingerNailClamsNotes" size="30" class="form-control" /></td>
     </tr>
 
@@ -1184,7 +1225,16 @@
           </span>
         </div>
       </td> <!-- Photo object SpeciesOther -->
-      <td><input type="text" formControlName="visitSpeciesOtheriNat" size="30" class="form-control" /></td>
+      <td> <!-- iNat object -->
+        <div class="form-inline">
+          <input type="text" formControlName="visitSpeciesOtheriNat" size="10" class="form-control" />
+          <span *ngIf="!!indSpc.visitSpeciesOtheriNat.value">
+            <a href="{{indSpc.visitSpeciesOtheriNat.value}}" target="_blank">
+              <img id="imgWoodFrogiNat" src="https://static.inaturalist.org/sites/1-favicon.png?1573071870" style="display:inline-block; max-height:30px; max-width:30px;"/>
+            </a>
+          </span>
+        </div>
+      </td> <!-- iNat object -->
       <td><input type="text" formControlName="visitSpeciesOtherNotes" size="30" class="form-control" /></td>
     </tr>
     <tr>
