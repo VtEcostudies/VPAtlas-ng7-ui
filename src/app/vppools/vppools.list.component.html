@@ -1,8 +1,16 @@
+<jw-modal id="vppools_help_info">
+  <!--
+    <h3>{{modalTitle}}</h3>
+    <input type="text" [(ngModel)]="modalText" />
+  -->
+    <button (click)="closeModal('vppools_help_info');">Close</button>
+</jw-modal>
 
 <div class="row">
   <div class="col-2 content-left-border-right">
-    <h4><u>Vernal Pool Atlas</u></h4>
-
+    <h4><u>Vernal Pool Atlas</u>
+    <i (click)="openModal('vppools_help_info', 'radioSearch')" class="fa fa-info-circle no-margins link"></i>
+    </h4>
 <form [formGroup]="filterForm">
 
     <fieldset id="poolStatus"> <!-- for radio-button grouping -->
@@ -113,7 +121,9 @@
 
 </form>
 
-    <h4><u>Search Pools/Visits</u></h4>
+    <h4><u>Search Pools/Visits</u>
+      <i (click)="openModal('vppools_help_info', 'searchFilters')" class="fa fa-info-circle no-margins link"></i>
+    </h4>
     <!--
     There's a performance issue here with search filters:
     - use keyup if the result set is small (<100)

@@ -21,6 +21,10 @@ import { vpVisitListComponent } from './vpvisit';
 import { vpVisitViewComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
 
+import { vpReviewListComponent } from './vpreview';
+import { vpReviewViewComponent } from './vpreview';
+import { vpReviewCreateComponent } from './vpreview';
+
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
 
@@ -54,6 +58,12 @@ const appRoutes: Routes = [
     //new UI/UX combining 'Mapped Pools' and 'Pool Visits'
     { path: 'pools/list', component: vpListComponent },
     { path: 'pools/view/:poolId', component: vpViewComponent },
+
+    { path: 'review/list', component: vpReviewListComponent, canActivate: [AuthGuard] },
+    { path: 'review/view/:reviewId', component: vpReviewViewComponent, canActivate: [AuthGuard] },
+    { path: 'review/create', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
+    { path: 'review/create/:visitId', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
+    { path: 'review/update/:reviewId', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' } //comment this to debug

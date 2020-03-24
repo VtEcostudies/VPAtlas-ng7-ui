@@ -32,6 +32,10 @@ import { vpVisitListComponent } from './vpvisit';
 import { vpVisitViewComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
 
+import { vpReviewListComponent } from './vpreview';
+import { vpReviewViewComponent } from './vpreview';
+import { vpReviewCreateComponent } from './vpreview';
+
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
 
@@ -47,7 +51,6 @@ import { UxValuesService } from './_services';
         FormsModule,
         HttpClientModule,
         routing,
-        //MatDialogModule,
         ModalModule
     ],
     //@add_component_here
@@ -70,6 +73,10 @@ import { UxValuesService } from './_services';
         vpVisitListComponent,
         vpVisitViewComponent,
         vpVisitCreateComponent,
+
+        vpReviewListComponent,
+        vpReviewViewComponent,
+        vpReviewCreateComponent,
 
         vpListComponent,
         vpViewComponent,

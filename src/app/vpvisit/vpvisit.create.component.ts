@@ -8,9 +8,9 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
-import { visitDialogText } from '@app/vpvisit/visitDialogText';
 import { AwsS3Service } from '@app/_services';
 import { environment } from '@environments/environment';
+import { visitDialogText } from '@app/vpvisit/visitDialogText';
 import { ModalService } from '@app/_modal';
 
 //need these next 2 to manipulate the DOM directly
@@ -71,7 +71,6 @@ export class vpVisitCreateComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
         private uxValuesService: UxValuesService,
-        //@Inject(UxValuesService) uxValuesService,
         private vpMappedService: vpMappedService,
         private vpVisitService: vpVisitService,
         private vpPoolsService: vpPoolsService,

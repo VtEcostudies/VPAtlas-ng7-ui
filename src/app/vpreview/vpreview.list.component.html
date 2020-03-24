@@ -1,0 +1,57 @@
+<form [formGroup]="filterForm">
+  <div class="row">
+    <div class="col-3">
+      ﻿<h3><u>VPAtlas Reviews</u></h3>
+      Count: {{count}}
+    </div>
+
+    <div class="form-group col-2">
+      <label>User</label>
+      <input (change)="LoadReviews()" type="text" formControlName="userName" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Visit ID</label>
+      <input (change)="LoadReviews()" type="text" formControlName="visitId" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Pool ID</label>
+      <input (change)="LoadReviews()" type="text" formControlName="poolId" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>QA Person</label>
+      <input (change)="LoadReviews()" type="text" formControlName="QAPerson" class="form-control"/>
+    </div>
+
+  </div>
+</form>
+
+<div class="row">
+<table class="table table-striped">
+    <tr>
+      <th>Review ID</th>
+      <th>User</th>
+      <th>Visit ID</th>
+      <th>Pool ID</th>
+      <th>QA Code</th>
+      <th>QA Alt</th>
+      <th>QA Person</th>
+      <th>QA Date</th>
+      <th>Pool Status</th>
+      <th>Updated</th>
+    </tr>
+    <tr *ngFor="let review of reviews">
+        <td>
+          <a [routerLink]="['/review/view/', review.reviewId]" class="btn btn-link">{{review.reviewId}}</a>
+        </td>
+        <td>{{review.reviewUserName}}</td>
+        <td>{{review.reviewVisitId}}</td>
+        <td>{{review.reviewPoolId}}</td>
+        <td>{{review.reviewQACode}}</td>
+        <td>{{review.reviewQAAlt}}</td>
+        <td>{{review.reviewQAPerson}}</td>
+        <td>{{review.reviewQADate}}</td>
+        <td>{{review.reviewPoolStatus}}</td>
+        <td>{{review.reviewUpdatedAt}}</td>
+    </tr>
+</table>
+</div> <!-- row -->

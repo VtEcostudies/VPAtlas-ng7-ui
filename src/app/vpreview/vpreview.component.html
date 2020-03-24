@@ -1,0 +1,154 @@
+<jw-modal id="vpatlas_help_info">
+    <button (click)="closeModal('vpatlas_help_info');">Close</button>
+</jw-modal>
+
+<div class="row">
+  <div class="col-4">
+    <div *ngIf="view" style="display:inline-block;">
+      <h5><b>View Vernal Pool Review '{{reviewId}}'</b></h5>
+    </div>
+    <div *ngIf="update" style="display:inline-block;colo">
+      <h5><b>Edit Vernal Pool Review {{reviewId}}</b></h5>
+    </div>
+    <div *ngIf="create" style="display:inline-block;colo">
+      <h5><b>Add New Vernal Pool Review</b></h5>
+    </div>
+  </div> <!-- col -->
+
+  <div class="col-8">
+  </div> <!-- col -->
+</div> <!-- row -->
+
+
+<form [formGroup]="reviewForm">
+  <div class="row">
+    <div class="col-2">
+      <!-- reviewId -->
+      <div class="form-group">
+          <label for="reviewId">Review ID</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewId')" class="fa fa-info-circle no-margins link"></i>
+          <input type="text" size="10" formControlName="reviewId" class="form-control" />
+      </div>
+    </div>
+
+    <div class="col-2">
+      <div class="form-group">
+          <label for="reviewUserName">User</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewUserName')" class="fa fa-info-circle no-margins link"></i>
+          <input type="text" size="10" formControlName="reviewUserName" class="form-control" />
+      </div>
+    </div> <!-- col -->
+
+    <div class="col-2">
+      <div class="form-group">
+        <label for="reviewVisitId">Visit ID</label>
+        <i (click)="openModal('vpatlas_help_info', 'reviewVisitId')" class="fa fa-info-circle no-margins link"></i>
+        <input type="text" size="10" formControlName="reviewVisitId" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewVisitId.errors }" />
+        <div *ngIf="submitted && r.reviewVisitId.errors" class="invalid-feedback">
+            <div *ngIf="r.reviewVisitId.errors.required">Visit ID is required</div>
+        </div>
+      </div>
+    </div> <!-- col -->
+
+    <div class="col-2">
+      <div class="form-group">
+        <label>Pool ID</label>
+        <i (click)="openModal('vpatlas_help_info', 'reviewPoolId')" class="fa fa-info-circle no-margins link"></i>
+        <input type="text" size="10" formControlName="reviewPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewVisitId.errors }" />
+        <div *ngIf="submitted && r.reviewPoolId.errors" class="invalid-feedback">
+            <div *ngIf="r.reviewPoolId.errors.required">Pool ID is required</div>
+        </div>
+      </div>
+    </div> <!-- col -->
+
+    <div class="col-4">
+      <!--
+          reviewQADate
+      -->
+      <div class="form-group col-7">
+          <label for="reviewQADate">QA Date</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewQADate')" class="fa fa-info-circle no-margins link"></i>
+          <!--
+           NOTE: format must be YYYY-MM-DD to set value of input type="date" from code.
+           Oddly, setting the default date in that format does not alter is default Date
+           format, which is MM / DD / YYYY.
+          -->
+          <input type="date" formControlName="reviewQADate" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewQADate.errors }" />
+          <div *ngIf="submitted && r.reviewQADate.errors" class="invalid-feedback">
+              <div *ngIf="r.reviewQADate.errors.required">Review Date is required</div>
+              <div *ngIf="r.reviewQADate.errors.date">Review Date must be a valid date in the format MM/DD/YYYY</div>
+          </div>
+      </div>
+    </div> <!-- col -->
+
+    <div class="col-2">
+      <div class="form-group">
+          <label >QA Code</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewQACode')" class="fa fa-info-circle no-margins link"></i>
+          <select formControlName="reviewQACode" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewVisitId.errors }">
+            <option *ngFor="let code of QACodes" [ngValue]="code">
+              {{ code }}
+            </option>
+          </select>
+          <div *ngIf="submitted && r.reviewQACode.errors" class="invalid-feedback">
+              <div *ngIf="r.reviewQACode.errors.required">QA Code is required</div>
+          </div>
+      </div>
+    </div>
+
+    <div class="col-2">
+      <div class="form-group">
+          <label >QA Alt</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewQAAlt')" class="fa fa-info-circle no-margins link"></i>
+          <input type="text" size="10" formControlName="reviewQAAlt" class="form-control" />
+      </div>
+    </div>
+
+    <div class="col-2">
+      <div class="form-group">
+          <label >QA Person</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewQAPerson')" class="fa fa-info-circle no-margins link"></i>
+          <input type="text" size="10" formControlName="reviewQAPerson" class="form-control" />
+      </div>
+    </div>
+
+    <div class="col-2">
+      <div class="form-group">
+          <label >QA Notes</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewQANotes')" class="fa fa-info-circle no-margins link"></i>
+          <textarea rows="1" formControlName="reviewQANotes" class="form-control"></textarea>
+      </div>
+    </div>
+
+    <div class="col-2">
+      <div class="form-group">
+          <label >Pool Status</label>
+          <i (click)="openModal('vpatlas_help_info', 'reviewPoolStatus')" class="fa fa-info-circle no-margins link"></i>
+          <select formControlName="reviewPoolStatus" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewVisitId.errors }">
+            <option *ngFor="let status of statuses" [ngValue]="status">
+              {{ status }}
+            </option>
+          </select>
+          <div *ngIf="submitted && r.reviewPoolStatus.errors" class="invalid-feedback">
+              <div *ngIf="r.reviewPoolStatus.errors.required">Pool Status is required</div>
+          </div>
+      </div>
+    </div>
+
+  </div> <!-- row -->
+</form> <!-- reviewReviewForm -->
+
+<!--
+  Action buttons
+-->
+<div class="form-group form-inline">
+    <button [disabled]="(!r.reviewVisitId)" *ngIf="update || create" class="btn btn-primary" (click)="CreateReview()">
+      Save</button>
+    <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+    <button *ngIf="update && userIsAdmin" (click)="DeleteReview()" [disabled]="dataLoading" class="btn">
+      Delete</button>
+    <button *ngIf="!update && userIsAdmin && reviewId" class="btn btn-primary" (click)="ToEditMode()">
+      Edit</button>
+    <button (click)="CancelReview()" class="btn">
+      Cancel</button>
+</div>

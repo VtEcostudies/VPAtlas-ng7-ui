@@ -508,6 +508,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       case 'Visit':
         text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
         if (this.userIsAdmin) {
+          text += `<div><a href="review/create/${obj.visitId}">Review Visit ${obj.visitId}</a></div>`;
           text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId}</a></div>`;
           text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
         }
@@ -529,6 +530,9 @@ export class LeafletComponent implements OnInit, OnChanges {
         }
         if (this.currentUser) {
           text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
+        }
+        if (this.userIsAdmin && obj.visitId) {
+          text += `<div><a href="review/create/${obj.visitId}">Review Visit ${obj.visitId}</a></div>`;
         }
         if (this.userIsAdmin ||
           (this.currentUser &&

@@ -66,6 +66,17 @@
               </div>
             </li>
 
+            <li class="nav-item dropdown" *ngIf="userIsAdmin">
+              <a class="nav-link dropdown-toggle"
+                id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Review
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" routerLink="/review/list">List Reviews</a>
+                <a class="dropdown-item" routerLink="/review/create">Add Review</a>
+              </div>
+            </li>
+
             <li class="nav-item" *ngIf="userIsAdmin" >
               <a class="nav-item nav-link" routerLink="/admin" >Admin</a>
             </li>

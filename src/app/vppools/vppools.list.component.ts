@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, UserService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
 import { vpMapped, vpVisit } from '@app/_models';
+import { poolsDialogText } from '@app/vppools/dialogText';
+import { ModalService } from '@app/_modal';
 
 //@add_component_here
 @Component({templateUrl: 'vppools.list.component.html'})
@@ -30,7 +32,8 @@ export class vpListComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
         private vpMappedService: vpMappedService,
-        private vpPoolsService: vpPoolsService
+        private vpPoolsService: vpPoolsService,
+        private modalService: ModalService
     ) {
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
@@ -58,6 +61,15 @@ export class vpListComponent implements OnInit {
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
       await this.loadPools(1);
+    }
+
+    openModal(id: string, infoId=null) {
+        console.log('id, infoId', id, infoId);
+        this.modalService.open(id, poolsDialogText[infoId]);
+    }
+
+    closeModal(id: string) {
+        this.modalService.close(id);
     }
 
     //how to handle UI changes from checkbox input when NOT a formControl in a formGroup:
