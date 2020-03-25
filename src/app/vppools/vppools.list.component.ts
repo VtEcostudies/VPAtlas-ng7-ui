@@ -211,7 +211,7 @@ export class vpListComponent implements OnInit {
         }
       }
 
-      //hidden field, populated from code
+      //hidden field, populated from code: 'visited'
       console.log('getFilter | visitedPool', this.f.visitedPool.value);
       if (this.f.visitedPool.value == true) {
         if (this.filter) {
@@ -226,14 +226,7 @@ export class vpListComponent implements OnInit {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `reviewId=null&logical${++i}=AND&visitId|!=NULL`;
-        /*
-        this.filter += `logical${++i}=(`;
-        this.filter += `&mappedtown."townName"|LIKE=%${this.f.town.value}%`;
-        this.filter += `&logical${++i}=OR`;
-        this.filter += `&visittown."townName"|LIKE=%${this.f.town.value}%`;
-        this.filter += `&logical${++i}=)`;
-        */
+        this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
       }
 
       /*

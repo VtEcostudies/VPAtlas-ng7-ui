@@ -260,8 +260,10 @@
 
                 <span *ngIf="userIsAdmin&&pool.reviewId">
                   <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
-                    <a [routerLink]="['/review/view/', pool.reviewId]" class="btn btn-link">{{pool.reviewId}}</a>
-                    <a [routerLink]="['/review/create/', pool.visitId]" class="btn btn-link">+</a>
+                    <a [routerLink]="['/review/view/', pool.reviewId]" title="Edit Review {{pool.reviewId}}"
+                    >{{pool.reviewId}}</a>
+                    <a [routerLink]="['/review/create/', pool.visitId]" title="Add Review of Visit {{pool.visitId}}"
+                    >(+)</a>
                   </td>
                   <td class="vert-aligned body-scroll-align-columns">{{pool.reviewUserName}}</td>
                 </span>
