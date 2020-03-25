@@ -226,7 +226,7 @@ export class vpListComponent implements OnInit {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
+        this.filter += `reviewId=null&logical${++i}=AND&visitId|!=NULL`;
         /*
         this.filter += `logical${++i}=(`;
         this.filter += `&mappedtown."townName"|LIKE=%${this.f.town.value}%`;
