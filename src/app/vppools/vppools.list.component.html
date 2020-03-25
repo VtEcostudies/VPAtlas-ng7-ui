@@ -81,6 +81,14 @@
 
       <tr *ngIf="userIsAdmin">
         <td><label>
+            <input formControlName="mappedPoolStatus" type="radio" value="Review" (change)="setStatusLoadPools('Review')" class="radio-button-justify-left" />
+            <span>Review</span>
+        </label></td>
+        <td>{{stats.review}}</td>
+      </tr>
+
+      <tr *ngIf="userIsAdmin">
+        <td><label>
             <input formControlName="mappedPoolStatus" type="radio" value="Eliminated" (change)="setStatusLoadPools('Eliminated')" class="radio-button-justify-left" />
             <span>Eliminated</span>
         </label></td>
@@ -215,6 +223,11 @@
                 <th class="body-scroll-align-columns">Vernal Pool?</th>
                 <th class="body-scroll-align-columns">Visit Lat</th>
                 <th class="body-scroll-align-columns">Visit Lng</th>
+
+                <span *ngIf="userIsAdmin">
+                <th class="body-scroll-align-columns">Review</th>
+                <th class="body-scroll-align-columns">User (Review)</th>
+                </span>
               </tr>
           </thead>
           <!--
@@ -244,6 +257,20 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLatitude}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLongitude}}</td>
+
+                <span *ngIf="userIsAdmin&&pool.reviewId">
+                  <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                    <a [routerLink]="['/review/view/', pool.reviewId]" class="btn btn-link">{{pool.reviewId}}</a>
+                    <a [routerLink]="['/review/create/', pool.visitId]" class="btn btn-link">+</a>
+                  </td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.reviewUserName}}</td>
+                </span>
+                <span *ngIf="userIsAdmin&&!pool.reviewId">
+                  <td class="vert-aligned body-scroll-align-columns">
+                    <a [routerLink]="['/review/create/', pool.visitId]" class="btn btn-link">Add</a>
+                  </td>
+                  <td class="vert-aligned body-scroll-align-columns"></td>
+                </span>
             </tr>
           </tbody>
         </div>

@@ -509,7 +509,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
         if (this.userIsAdmin) {
           text += `<div><a href="review/create/${obj.visitId}">Review Visit ${obj.visitId}</a></div>`;
-          text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId}</a></div>`;
+          //text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId}</a></div>`;
           text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
         }
         break;
@@ -523,31 +523,24 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       default:
       case 'Pools/Visits':
+        if (this.userIsAdmin && obj.visitId) {
+          text += `<div><a href="review/create/${obj.visitId}">Add Review for Visit ${obj.visitId}</a></div>`;
+        }
+        if (this.userIsAdmin && obj.reviewId) {
+          text += `<div><a href="review/view/${obj.reviewId}">View Review ${obj.reviewId} for Visit ${obj.visitId}</a></div>`;
+        }
         if (obj.visitId) {
+          /*
+          if (this.userIsAdmin||(this.currentUser&&(this.currentUser.username===obj.mappedByUser||this.currentUser.username===obj.visitUserName))) {
+            text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
+          }*/
           text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
-        } else {
-          //text += `<div><a href="pools/mapped/view/${obj.poolId}">View Pool ${obj.poolId}</a></div>`;
         }
         if (this.currentUser) {
           text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         }
-        if (this.userIsAdmin && obj.visitId) {
-          text += `<div><a href="review/create/${obj.visitId}">Review Visit ${obj.visitId}</a></div>`;
-        }
-        if (this.userIsAdmin ||
-          (this.currentUser &&
-           (this.currentUser.username === obj.mappedByUser ||
-            this.currentUser.username === obj.visitUserName))
-          ) {
-          if (obj.visitId) {
-            text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
-          }
-          //text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
-        }
         if (obj.visitPoolPhoto) {
-          text += `<div>
-                  <a href="${obj.visitPoolPhoto}" target="_blank">View Pool Photo</a>
-                  </div>`;
+          text += `<div><a href="${obj.visitPoolPhoto}" target="_blank">View Pool Photo</a></div>`;
         }
         break;
     }
@@ -589,11 +582,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     //text += '</div>'; //div container-fluid
 
     return text;
-  }
-
-  // TODO: remember what this was for. Use it or lose it!
-  createVisitForPool(poolId) {
-    //console.log('createVisitForPool', poolId);
   }
 
   async clearPools() {
@@ -686,7 +674,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (!Array.isArray(vpools)) {vpools = [vpools];}
 
-    if (vpools.length < 20) {this.cmRadius = 5;}
+    //if (vpools.length < 20) {this.cmRadius = 5;}
 
     this.SetPointZoomRadius(); //adjust cmRadius to current zoomLevel
 

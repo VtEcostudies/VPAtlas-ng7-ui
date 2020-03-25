@@ -21,9 +21,8 @@ export class vpReviewCreateComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
     userIsOwner = false;
+    returnUrl = null;
     reviewForm: FormGroup = this.formBuilder.group({});
-    towns = [];
-    townCount = 0;
     dataLoading = false; //flag that the form data is loading
     submitted = false; //flag that the form was submitted to create/update a visit
     review: any = {};
@@ -64,7 +63,7 @@ export class vpReviewCreateComponent implements OnInit {
         private vpVisitService: vpVisitService,
         private modalService: ModalService
     ) {
-        this.authenticationService.check();
+        this.authenticationService.check().catch(err => {console.log('authService.check error in vpreview.create.')});
         if (this.authenticationService.currentUserValue) {
           this.currentUser = this.authenticationService.currentUserValue.user;
           this.userIsAdmin = this.currentUser.userrole == 'admin';
@@ -79,6 +78,8 @@ export class vpReviewCreateComponent implements OnInit {
       this.reviewId = this.route.snapshot.params.reviewId;
       this.visitId = this.route.snapshot.params.visitId;
       this.poolId = this.route.snapshot.params.poolId;
+
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
 
       if (this.reviewId) { //update an existing visit - set all initial values in setFormValues()
         this.update = true;
@@ -180,7 +181,7 @@ export class vpReviewCreateComponent implements OnInit {
         var objAll:any = {}; //target object to copy all form-object data to for submitting to API
         this.submitted = true; //this must go at the top - used by alertservice
 
-        if (this.reviewForm.invalid) {return;}
+        if (this.reviewForm.invalid) {console.log('reviewForm is invalid.'); return;}
 
         this.alertService.clear();
 
@@ -199,7 +200,6 @@ export class vpReviewCreateComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
-                    //console.log(`vpveview.create=>data:`, data);
                     if (this.update) {
                       this.alertService.success(`Successfully updated Vernal Pool Review ${this.reviewId}.`, true);
                     } else {
@@ -208,7 +208,7 @@ export class vpReviewCreateComponent implements OnInit {
                     this.dataLoading = false;
                     if (data.rows[0]) {this.reviewId = data.rows[0].reviewId;}
                     else {this.reviewId = this.reviewForm.value.reviewId}
-                    this.router.navigate([`/pools/visit/view/${this.reviewId}`]);
+                    this.router.navigate([this.returnUrl]); //[`/review/view/${this.reviewId}`]);
                 },
                 error => {
                     this.alertService.error(error);
@@ -225,7 +225,7 @@ export class vpReviewCreateComponent implements OnInit {
       navUrl = `/review/view/${this.reviewId}`;
     } else {
       msgTxt = `of a New Review`;
-      navUrl = `/review/list`;
+      navUrl = this.returnUrl; //`/review/list`;
     }
 
     if (confirm(`Are you sure you want to cancel edits ${msgTxt}?`)) {
@@ -243,7 +243,7 @@ export class vpReviewCreateComponent implements OnInit {
             data => {
                 //console.log(`vpveview.create.deleteReview=>data:`, data);
                 this.alertService.success('Successfully deleted Vernal Pool Visit.', true);
-                this.router.navigate([`/pools/visit/list`]);
+                this.router.navigate([this.returnUrl]);
             },
             error => {
                 //console.log(`vpveview.create.deleteReview=>error: `, error);

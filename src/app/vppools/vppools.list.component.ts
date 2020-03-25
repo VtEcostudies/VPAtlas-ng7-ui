@@ -56,6 +56,7 @@ export class vpListComponent implements OnInit {
           mappedMethod: [''],
           mappedPoolStatus: ['All'],
           visitedPool: [],
+          review: [],
           monitoredPool: []
       });
       await this.loadPoolStats();
@@ -91,6 +92,7 @@ export class vpListComponent implements OnInit {
       this.filterForm.get("visitedPool").setValue(false);
       this.filterForm.get("monitoredPool").setValue(false);
       this.filterForm.get("userName").setValue(null);
+      this.filterForm.get("review").setValue(false);
 
       if (status=="Visited") {
         this.filterForm.get("visitedPool").setValue(true);
@@ -101,6 +103,9 @@ export class vpListComponent implements OnInit {
       } else if (status=="Mine"){
         this.filterForm.get("userName").setValue(this.currentUser ? this.currentUser.username : null);
         console.log('setStatusLoadPools | myPools', this.filterForm.value.userName);
+      } else if (status=="Review") {
+        this.filterForm.get("review").setValue(true);
+        console.log('setStatusLoadPools | review', this.filterForm.value.review);
       }
 
       this.loadPools();
@@ -195,7 +200,8 @@ export class vpListComponent implements OnInit {
         if (this.f.mappedPoolStatus.value!="All" &&
             this.f.mappedPoolStatus.value!="Visited" &&
             this.f.mappedPoolStatus.value!="Monitored" &&
-            this.f.mappedPoolStatus.value!="Mine"
+            this.f.mappedPoolStatus.value!="Mine" &&
+            this.f.mappedPoolStatus.value!="Review"
           ) {
           if (this.filter) {
             this.filter += `&logical${++i}=AND&`;
@@ -212,6 +218,22 @@ export class vpListComponent implements OnInit {
           this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `visitPoolId|!=NULL`;
+      }
+
+      //hidden field, populated from code: 'review'
+      console.log('getFilter | review', this.f.review.value);
+      if (this.f.review.value == true) {
+        if (this.filter) {
+          this.filter += `&logical${++i}=AND&`;
+        }
+        this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
+        /*
+        this.filter += `logical${++i}=(`;
+        this.filter += `&mappedtown."townName"|LIKE=%${this.f.town.value}%`;
+        this.filter += `&logical${++i}=OR`;
+        this.filter += `&visittown."townName"|LIKE=%${this.f.town.value}%`;
+        this.filter += `&logical${++i}=)`;
+        */
       }
 
       /*
