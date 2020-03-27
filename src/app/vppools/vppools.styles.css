@@ -1,0 +1,30 @@
+.pools-table-div {
+  display: inline-block;
+  height: 550px;
+  overflow: auto
+}
+
+.pools-table-div th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0; /*must be zero for sticky to work*/
+  background: lightgray;
+}
+
+.pools-table-div td {
+  font-size: 14px;
+}
+
+
+.pools-table-div th, td {
+  padding: .1em .1em;
+}
+
+
+.pools-table-div table tr {
+  color: #212121;
+}
+
+.pools-table-div table tr:nth-child(odd) {
+  background-color: #BBDEFB;
+}

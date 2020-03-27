@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpReviewService, vpVisitService } from '@app/_services';
-import { UxValuesService } from '@app/_services';
+import { UxValuesService } from '@app/_global';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
 import { vpVisit } from '@app/_models';

@@ -8,6 +8,10 @@ import { pgApiResults  } from '@app/_models';
 export class vpPoolsService {
     constructor(private http: HttpClient) { }
 
+    getUpdated(timestamp: string, filter: string) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/updated?timestamp=${timestamp}&${filter}`);
+    }
+
     getAll(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools?${filter}`);
     }

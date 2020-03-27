@@ -41,7 +41,7 @@ import { vpViewComponent } from './vppools';
 
 import { ModalModule } from './_modal';
 
-import { UxValuesService } from './_services';
+import { UxValuesService } from './_global';
 
 @NgModule({
     imports: [

@@ -37,7 +37,7 @@
         </td>
         <td>{{stats.total}}</td>
       </tr>
-
+<!--
       <tr>
         <td>
           <label>
@@ -67,7 +67,7 @@
         </td>
         <td>{{stats.confirmed}}</td>
       </tr>
-
+-->
 
       <tr *ngIf="currentUser">
         <td>
@@ -86,7 +86,7 @@
         </label></td>
         <td>{{stats.review}}</td>
       </tr>
-
+<!--
       <tr *ngIf="userIsAdmin">
         <td><label>
             <input formControlName="mappedPoolStatus" type="radio" value="Eliminated" (change)="setStatusLoadPools('Eliminated')" class="radio-button-justify-left" />
@@ -102,7 +102,7 @@
         </label></td>
         <td>{{stats.duplicate}}</td>
       </tr>
-
+-->
       <tr *ngIf="userIsAdmin">
         <td>
           <label>
@@ -153,19 +153,19 @@
         <tr class="form-group">
           <td for="poolId">Pool ID</td>
           <td>
-            <input (change)="loadPools(1)" type="text"  formControlName="poolId" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" type="text"  formControlName="poolId" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
           <td for="userName">User</td>
           <td>
-            <input (change)="loadPools(1)" formControlName="userName" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="userName" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
           <td for="town">Town</td>
           <td>
-            <input (change)="loadPools(1)" formControlName="town" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="town" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
@@ -204,9 +204,10 @@
         </span>
       </div>
 
-      <div *ngIf="!mapView" class="container-fluid">
-        <table class="table table-sm table-responsive vce-table-sm" style="width:105%">
-          <div style="height:550px; overflow:auto;">
+      <!-- <div *ngIf="!mapView" class="container-fluid"> -->
+      <div *ngIf="!mapView">
+        <div class="pools-table-div"> <!-- style="display: inline-block; height:550px; overflow:auto;"> -->
+        <table> <!-- class="table table-sm table-responsive"> responsive mucks overflow, etc. -->
           <thead>
             <tr>
                 <th class="body-scroll-align-columns">Pool ID</th>
@@ -226,13 +227,10 @@
 
                 <span *ngIf="userIsAdmin">
                 <th class="body-scroll-align-columns">Review</th>
-                <th class="body-scroll-align-columns">User (Review)</th>
+                <th class="body-scroll-align-columns">User(Review)</th>
                 </span>
-              </tr>
+            </tr>
           </thead>
-          <!--
-          <div style="width: 100%; height: 550px; overflow: scroll;">
-          -->
           <tbody>
             <tr *ngFor="let pool of pools">
                 <!--
@@ -258,7 +256,7 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLatitude}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLongitude}}</td>
 
-                <span *ngIf="userIsAdmin&&pool.reviewId">
+                <span *ngIf="userIsAdmin&&pool.visitId&&pool.reviewId">
                   <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
                     <a [routerLink]="['/review/view/', pool.reviewId]" title="Edit Review {{pool.reviewId}}"
                     >{{pool.reviewId}}</a>
@@ -267,7 +265,7 @@
                   </td>
                   <td class="vert-aligned body-scroll-align-columns">{{pool.reviewUserName}}</td>
                 </span>
-                <span *ngIf="userIsAdmin&&!pool.reviewId">
+                <span *ngIf="userIsAdmin&&pool.visitId&&!pool.reviewId">
                   <td class="vert-aligned body-scroll-align-columns">
                     <a [routerLink]="['/review/create/', pool.visitId]" class="btn btn-link">Add</a>
                   </td>
@@ -275,8 +273,8 @@
                 </span>
             </tr>
           </tbody>
-        </div>
         </table>
+      </div>
       </div>
 
       <div *ngIf="mapView">

@@ -2,7 +2,6 @@
 export * from './authentication.service';
 export * from './user.service';
 export * from './vpmapped.service';
-export * from './uxvalues.service';
 export * from './towns.service';
 export * from './vpreview.service';
 export * from './vpvisit.service';

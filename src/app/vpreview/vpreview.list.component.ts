@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, AuthenticationService, UxValuesService } from '@app/_services';
-import { vpReviewService } from '@app/_services';
+import { AlertService, AuthenticationService, vpReviewService } from '@app/_services';
+import { UxValuesService } from '@app/_global';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({

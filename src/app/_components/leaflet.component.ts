@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange
 //import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
 import { AuthenticationService } from '@app/_services';
-import { UxValuesService } from '@app/_services';
+import { UxValuesService } from '@app/_global';
 import { vpMappedEventInfo } from '@app/_models';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
@@ -60,13 +60,15 @@ export class LeafletComponent implements OnInit, OnChanges {
   public map = null;
   marker = null;
   scaleControl = L.control.scale({position: 'topright'});
-  layerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});//null;
+  layerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});
   zoomControl = L.control.zoom({position: 'topright'});
+  poolControl = L.control.layers(null, null, { collapsed: false, position: 'bottomleft'}); //pool groups as layers
   cursorLat = 0; //value for map display of cursor latitue location on map
   cursorLng = 0; //value for map display of cursor longitude location on map
   zoomLevel = 0; //global value that tracks the map zoomLevel
   zoomCenter = this.vtCenter; //global value that tracks the map zoomCenter
   zoomStatus = false; //flag to show zoom stats
+
   /*
     https://leafletjs.com/reference-1.5.0.html#domevent eg. L.DomEvent.on(div, 'click', e => onDivClick(e))
     https://leafletjs.com/reference-1.5.0.html#domutil
@@ -112,7 +114,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   }); // end legendControl
 
   //printControl = LP.control.browserPrint();
-  myRenderer = L.canvas({ padding: 0.5 }); //we cannot use canvas renderer with the shapeMarker plugin. hope we don't need it.
+  //myRenderer = L.canvas({ padding: 0.5 }); //we cannot use canvas renderer with the shapeMarker plugin. hope we don't need it.
   //https://www.w3schools.com/colors/colors_names.asp
   potentialColors = ["Orange"];
   probableColors = ["Cyan"];
@@ -120,7 +122,18 @@ export class LeafletComponent implements OnInit, OnChanges {
   eliminatedColors = ["Black"];
   monitoredColors = ["LightSteelBlue"];
   cmLLArr = []; //array of shapeMarkers (originally native circleMarkers) 1:1 with mapPoints values
-  cmGroup = L.featureGroup(); //enhanced layerGroup that contains all plotted shapeMarkers
+  allGroup = L.featureGroup(); //enhanced layerGroup that contains all plotted shapeMarkers
+  potnGroup = L.featureGroup();
+  probGroup = L.featureGroup();
+  confGroup = L.featureGroup();
+  elimGroup = L.featureGroup();
+  duplGroup = L.featureGroup();
+/*
+  mineGroup = L.featureGroup();
+  revuGroup = L.featureGroup();
+  visiGroup = L.featureGroup();
+  moniGroup = L.featureGroup();
+*/
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
   cmClrCnt = this.cmColors.length; //(this.cmColors).length();
@@ -221,22 +234,50 @@ export class LeafletComponent implements OnInit, OnChanges {
     //this.scaleControl.setPosition('topright');
     this.scaleControl.addTo(this.map);
 
-    //this.layerControl = L.control.layers(null, null, { collapsed: true }).addTo(this.map);
+    //layerControl is baseLayers control
     this.layerControl.addTo(this.map);
-
     for (var i=0;i<this.baseLayers.length;i++) {
       //note: get around TypeScript type-checking by accessing non-declared object .properties in
       //the following way: as ['property']['sub-property'], not array[i].property.sub-property.
       this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
 
+    //poolControl - show/hide pools by status or type
+    this.poolControl.addTo(this.map);
+    //this.poolControl.addOverlay(this.allGroup, "All Pools"); this.allGroup.addTo(this.map);
+    this.poolControl.addOverlay(this.potnGroup, "Potential"); this.potnGroup.addTo(this.map);
+    this.poolControl.addOverlay(this.probGroup, "Probable"); this.probGroup.addTo(this.map);
+    this.poolControl.addOverlay(this.confGroup, "Confirmed"); this.confGroup.addTo(this.map);
+    if (this.userIsAdmin) {
+      this.poolControl.addOverlay(this.duplGroup, "Duplicate"); //this.duplGroup.addTo(this.map);
+      this.poolControl.addOverlay(this.elimGroup, "Eliminated"); //this.elimGroup.addTo(this.map);
+    }
+    /*
+    if (this.currentUser) {
+      this.poolControl.addOverlay(this.mineGroup, "My Data");
+      this.poolControl.addOverlay(this.visiGroup, "Visited");
+    }
+    if (this.userIsAdmin) {
+      this.poolControl.addOverlay(this.revuGroup, "Review");
+      this.poolControl.addOverlay(this.moniGroup, "Monitored");
+    }
+    */
+    //always add allGroup - now we may want both point and moveable marker at the same time
+    //this.allGroup.on("click", e => this.onCircleGroupClick(e));
+    this.potnGroup.on("click", e => this.onCircleGroupClick(e));
+    this.probGroup.on("click", e => this.onCircleGroupClick(e));
+    this.confGroup.on("click", e => this.onCircleGroupClick(e));
+    this.duplGroup.on("click", e => this.onCircleGroupClick(e));
+    this.elimGroup.on("click", e => this.onCircleGroupClick(e));
+/*
+    this.mineGroup.on("click", e => this.onCircleGroupClick(e));
+    this.visiGroup.on("click", e => this.onCircleGroupClick(e));
+    this.revuGroup.on("click", e => this.onCircleGroupClick(e));
+    this.moniGroup.on("click", e => this.onCircleGroupClick(e));
+*/
     if (this.mapMarker) {
       this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
     }
-
-    //always add cmGroup - now we may want both point and moveable marker at the same time
-    this.cmGroup.addTo(this.map); //a featureGroup of circleMarkers added in plotPoolShapes
-    this.cmGroup.on("click", e => this.onCircleGroupClick(e));
 
     //this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
@@ -308,7 +349,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         NOTE: We do NOT add the moveable marker to cmLLArr[].
       */
       if (this.cmLLArr.length > 1) { //change from > 0 to > 1 so we can custom-zoom to a single point
-        this.map.fitBounds(this.cmGroup.getBounds()); //for a single marker, max zoom is 10m - too close for basemaps
+        this.map.fitBounds(this.allGroup.getBounds()); //for a single marker, max zoom is 10m - too close for basemaps
       } else if (this.cmLLArr.length == 1) {
         this.map.setView(this.cmLLArr[0], 15); //zoomLevel 15 is 300m
       } else if (this.mapMarker) {
@@ -392,7 +433,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   //iterate through all plotted pools in the featureGroup and alter each radius
   setEachPointRadius(radius = this.cmRadius) {
     var i=0;
-    this.cmGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
+    this.allGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
       //if (++i < 10) {console.log('leaflet.component.setEachPointRadius', cmLayer)}
       radius = this.GetRadiusForPool(cmLayer.options); //we hung pool properties on each plotted pool shape for use here
       cmLayer.setRadius(radius);
@@ -586,7 +627,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   async clearPools() {
     //console.log('clearPools');
-    this.cmGroup.clearLayers();
+    this.allGroup.clearLayers();
     this.cmLLArr = [];
   }
 
@@ -668,13 +709,9 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     //console.log('leaflet.plotPoolShapes(',vpools,')');
 
-    //if (vpools === undefined) return;
-
     if (!vpools) return;
 
     if (!Array.isArray(vpools)) {vpools = [vpools];}
-
-    //if (vpools.length < 20) {this.cmRadius = 5;}
 
     this.SetPointZoomRadius(); //adjust cmRadius to current zoomLevel
 
@@ -748,9 +785,26 @@ export class LeafletComponent implements OnInit, OnChanges {
           mappedLocationUncertainty: vpools[i].mappedLocationUncertainty
       });
 
-      this.cmGroup.addLayer(shape); //add this marker to the current featureGroup, which is an ojbect with possibly multiple layerGroups by Pool Type or Status
+      this.allGroup.addLayer(shape); //add this marker to the current featureGroup, which is an object with possibly multiple layerGroups by Pool Type or Status
+      switch (vpools[i].mappedPoolStatus) {
+        case 'Duplicate':
+          this.duplGroup.addLayer(shape);
+          break;
+        case 'Eliminated':
+          this.elimGroup.addLayer(shape);
+          break;
+        case 'Confirmed':
+          this.confGroup.addLayer(shape);
+          break;
+        case 'Probable':
+          this.probGroup.addLayer(shape);
+          break;
+        case 'Potential':
+          this.potnGroup.addLayer(shape);
+          break;
+      }
 
-      this.cmLLArr.push(llLoc);
+      this.cmLLArr.push(llLoc); //this is used to scope zoom. redundant?
 
       var toolText = '';
       if (vpools[i].visitId) {
@@ -787,7 +841,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
     //console.log(`changeColor(${index})`);
 
-    this.cmGroup.eachLayer((layer: any) => {
+    this.allGroup.eachLayer((layer: any) => {
 
       layer.setStyle({color: this.cmColors[this.cmColor]})
     });

@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 
 import { User } from '@app/_models';
 import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
+import { UxValuesService } from '@app/_global';
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -25,7 +26,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         private alertService: AlertService,
         private authenticationService: AuthenticationService,
         private vpMappedService: vpMappedService,
-        private vpPoolsService: vpPoolsService
+        private vpPoolsService: vpPoolsService,
+        private uxValuesService: UxValuesService
     ) {
       /*
         API handles this UI route's (/home) API route calls (/pools/mapped)
@@ -42,11 +44,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
       //this.loadPoolStats(); //calls loadAllPools when done
-      this.loadPools(); //don't need stats on Home page anymore
+      //this.loadPools(); //don't need stats on Home page anymore
+      this.loadUpdated();
     }
 
     ngOnDestroy() {
       delete this.stats;
+      delete this.pools;
     }
 
     private loadPoolStats() {
@@ -56,7 +60,8 @@ export class HomeComponent implements OnInit, OnDestroy {
           .subscribe(
               data => {
                 this.stats = data.rows[0];
-                this.loadPools(); //chain data-loads together
+                //this.loadPools(); //chain data-loads together
+                this.loadUpdated();
                 //this.loading = false;
               },
               error => {
@@ -73,7 +78,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (status) {
         this.filter = `mappedPoolStatus=${status}`;
       }
-      this.loadPools();
+      //this.loadPools();
+      this.loadUpdated();
     }
 
     getFilter() {
@@ -101,5 +107,18 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.alertService.error(error);
                 this.loading = false;
               });
+    }
+
+    loadUpdated(type='all') {
+      console.log('home.component::loadUpdated');
+      this.loading = true;
+      this.uxValuesService.loadUpdated(type)
+        .then((data:any) => {
+          this.pools = data.pools;
+          this.loading = false;
+        })
+        .catch(err => {
+          this.loading = false;
+        })
     }
 }

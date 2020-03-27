@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vpPoolsService, vtInfoService } from '@app/_services';
-import { UxValuesService } from '@app/_services';
+import { UxValuesService } from '@app/_global';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import * as L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
@@ -563,7 +563,8 @@ export class vpVisitCreateComponent implements OnInit {
         this.mapMarker = false;
         this.mapPoints = true;
         this.filter = '';
-        this.loadMappedPools();
+        //this.loadMappedPools();
+        this.loadUpdated();
       }
       if (this.visitPoolMappedForm.value.visitPoolMapped === 'false') {
         this.visitLocationForm.enable();
@@ -573,7 +574,8 @@ export class vpVisitCreateComponent implements OnInit {
         this.mapMarker = true;
         this.mapPoints = true;
         this.filter = '';
-        this.loadMappedPools();
+        //this.loadMappedPools();
+        this.loadUpdated();
       }
     }
 
@@ -889,7 +891,8 @@ export class vpVisitCreateComponent implements OnInit {
       this.filter = `mappedPoolId|LIKE=${poolId}%`;
     }
     this.poolId = null;
-    this.loadMappedPools(this.filter);
+    //this.loadMappedPools(this.filter);
+    this.loadUpdated();
   }
 
   private async FilterHiddenPools() {
@@ -919,6 +922,20 @@ export class vpVisitCreateComponent implements OnInit {
               this.alertService.error(error);
               this.poolsLoading = false;
             });
+  }
+
+  loadUpdated() {
+    console.log('vpvisit.create.component::loadUpdated');
+    this.poolsLoading = true;
+    this.uxValuesService.loadUpdated()
+      .then((data:any) => {
+        this.pools = data.pools;
+        if (data.count == 1) {this.poolId = data.pools[0].poolId;}
+        this.poolsLoading = false;
+      })
+      .catch(err => {
+        this.poolsLoading = false;
+      });
   }
 
   async loadTowns() {

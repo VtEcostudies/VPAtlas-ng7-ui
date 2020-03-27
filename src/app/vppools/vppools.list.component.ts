@@ -2,13 +2,18 @@
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, UserService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
+import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
+import { UxValuesService } from '@app/_global';
 import { vpMapped, vpVisit } from '@app/_models';
 import { poolsDialogText } from '@app/vppools/dialogText';
 import { ModalService } from '@app/_modal';
+import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 //@add_component_here
-@Component({templateUrl: 'vppools.list.component.html'})
+@Component({
+  templateUrl: 'vppools.list.component.html',
+  styleUrls: ['vppools.styles.css']
+})
 export class vpListComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
@@ -20,7 +25,8 @@ export class vpListComponent implements OnInit {
     loadAllRec = true; //flag to load by page or to load all at once
     last = 1;
     count: number = 1;
-    filter = '';
+    filter: string = '';
+    search: object = {};
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools: vpMapped[] = []; //data array from db having lat and lon values to plot on map
     itemType = 'Pools/Visits'; //used by leaflet map to format popup content, etc.
@@ -31,6 +37,7 @@ export class vpListComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
+        private uxValuesService: UxValuesService,
         private vpMappedService: vpMappedService,
         private vpPoolsService: vpPoolsService,
         private modalService: ModalService
@@ -97,10 +104,10 @@ export class vpListComponent implements OnInit {
       if (status=="Visited") {
         this.filterForm.get("visitedPool").setValue(true);
         console.log('setStatusLoadPools | visitedPool', this.filterForm.value.visitedPool);
-      } else if (status=="Monitored"){
+      } else if (status=="Monitored") {
         this.filterForm.get("monitoredPool").setValue(true);
         console.log('setStatusLoadPools | monitoredPool', this.filterForm.value.monitoredPool);
-      } else if (status=="Mine"){
+      } else if (status=="Mine") {
         this.filterForm.get("userName").setValue(this.currentUser ? this.currentUser.username : null);
         console.log('setStatusLoadPools | myPools', this.filterForm.value.userName);
       } else if (status=="Review") {
@@ -111,13 +118,25 @@ export class vpListComponent implements OnInit {
       this.loadPools();
     }
 
+    getType() {
+      var type='all';
+      if (this.filterForm.value.visitedPool) type='visi';
+      if (this.filterForm.value.monitoredPool) type='moni';
+      if (this.filterForm.value.userName) type='mine';
+      if (this.filterForm.value.review) type='revu';
+      return type;
+    }
+
     loadPools(page=0) {
+      var type = this.getType()
       this.alertService.clear();
       if (this.loadAllRec) {
-        this.loadAll();
+        //this.loadAll();
+        this.loadUpdated(this.getType());
       } else {
         if (page) {this.page = page;}
-        this.loadPage(this.page);
+        //this.loadPage(this.page);
+        this.loadUpdated(this.getType(), this.page);
       }
     }
 
@@ -248,24 +267,31 @@ export class vpListComponent implements OnInit {
 
     firstPage() {
         this.page=1
-        this.loadPage(this.page);
+        //this.loadPage(this.page);
+        this.loadUpdated(this.getType(), this.page);
     }
 
     nextPage() {
-        this.loadPage(++this.page);
+        //this.loadPage(++this.page);
+        this.page++;
+        if (this.page > this.last) this.page = this.last;
+        this.loadUpdated(this.getType(), this.page);
     }
 
     prevPage() {
-      this.loadPage(--this.page);
+      //this.loadPage(--this.page);
+      this.page--; if (this.page < 1) this.page = 1;
+      this.loadUpdated(this.getType(), this.page);
     }
 
     lastPage() {
       this.page = this.last;
-      this.loadPage(this.page);
+      //this.loadPage(this.page);
+      this.loadUpdated(this.getType(), this.page);
     }
 
     setLast() {
-      this.last = this.count/this.pageSize;
+      this.last = this.count/this.uxValuesService.pageSize;
 
       if (this.last > Math.floor(this.last)) {
           this.last = Math.floor(this.last) + 1;
@@ -311,6 +337,34 @@ export class vpListComponent implements OnInit {
                 this.loading = false;
               });
 
+    }
+
+    /*
+      retrieve values of search filter items to pass to loadUpdated
+    */
+    getSearch() {
+      this.search={};
+      if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
+      if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
+      if (this.f.userName.value) this.search.userName=this.f.userName.value;
+      if (this.f.town.value) this.search.town=this.f.town.value;
+      if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
+    }
+
+    async loadUpdated(type='all', page=0) {
+      console.log('vppools.list.component::loadUpdated');
+      await this.getSearch();
+      this.loading = true;
+      this.uxValuesService.loadUpdated(type, this.search, page)
+        .then((data:any) => {
+          this.pools = data.pools;
+          this.count = data.count;
+          this.setLast();
+          this.loading = false;
+        })
+        .catch(err => {
+          this.loading = false;
+        })
     }
 
     /*
