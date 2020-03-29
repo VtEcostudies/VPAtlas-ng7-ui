@@ -18,6 +18,12 @@
     </div>
   </div>
 
+  <div *ngIf="itemType!='Home' && mapMarker" class="row">
+    <div class="col-4">
+      <button (click)="zoomMarker($event)" class="topmost btn btn-link">Zoom Marker</button>
+    </div>
+  </div>
+
   <div *ngIf="itemType!='Home'" class="row">
     <div class="col-4">
       <button (click)="zoomPrev($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Prev</button>

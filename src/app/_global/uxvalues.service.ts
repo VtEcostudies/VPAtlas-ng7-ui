@@ -1,23 +1,27 @@
 ﻿import { Injectable } from '@angular/core';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
-import { AuthenticationService, AlertService, vpPoolsService } from '@app/_services';
 import { first } from 'rxjs/operators';
+import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import { AuthenticationService, AlertService, vpPoolsService, vtInfoService } from '@app/_services';
+import { vtTown } from '@app/_models';
 
 @Injectable({ providedIn: 'root' }) //this makes a service single-instance?
 
 export class UxValuesService {
-  currentUser = null;
-  userIsAdmin = false;
-    public vtCenter = {lat:43.916944,lng:-72.668056};
+    currentUser = null;
+    userIsAdmin = false;
+
+    public visitPageIndex = 0;
     public baseLayerIndex = 0;
     public pointColorIndex = 0;
+
+    public vtCenter = {lat:43.916944,lng:-72.668056};
     public prevZoomLevel = [8];
     public prevZoomCenter = [this.vtCenter];
     public zoomIndex = 0;
     public zoomCount = 0;
     public zoomUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
     public moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
-    public visitPageIndex = 0;
+
     public pageSize = 12;
     public filter:string = '';
     public search:any = {};
@@ -28,10 +32,12 @@ export class UxValuesService {
       visi:{timestamp:Moment('1970-01-01').format(), pools:[], count:0},
       moni:{timestamp:Moment('1970-01-01').format(), pools:[], count:0}
       };
+    public towns:any = [];
 
     constructor(
       private authenticationService: AuthenticationService,
       private vpPoolsService: vpPoolsService,
+      private InfoService: vtInfoService,
       private alertService: AlertService
     ) {
       if (this.authenticationService.currentUserValue) {
@@ -96,7 +102,7 @@ export class UxValuesService {
 
     public async loadUpdated(type='all', search:any={}, page=0) {
       //console.log('uxvalues.service::loadUpdated | type', type);
-      //console.log(`uxvalues.service::loadUpdated(${type})`, this.data[type].timestamp, search);
+      console.log(`uxvalues.service::loadUpdated(${type})`, this.data[type].timestamp, search);
       this.search = search;
       await this.getFilter(type); //, search); only filter db results by type now that we have fast search here...
       return new Promise((resolve, reject) => {
@@ -279,5 +285,28 @@ export class UxValuesService {
     getZoomCenter() {
       //console.log('getZoomCenter', this.zoomIndex, this.prevZoomCenter[this.zoomIndex])
       return this.prevZoomCenter[this.zoomIndex];
+    }
+
+    loadTowns() {
+      this.InfoService.getTowns()
+          .pipe(first())
+          .subscribe(
+              data => {
+                //this.towns = data.rows;
+                var all = {townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null};
+                this.towns.push(all);
+                data.rows.forEach(row => {
+                  this.towns.push(row);
+                });
+              },
+              error => {
+                this.alertService.error(error);
+              });
+    }
+    //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
+    //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
+    compareTownFn(t1: vtTown, t2: vtTown) {
+      //console.log('vpvisit.create.compareTownFn t1:', t1, ' t2:', t2);
+      return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
     }
 }

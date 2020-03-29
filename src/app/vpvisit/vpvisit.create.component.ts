@@ -82,7 +82,6 @@ export class vpVisitCreateComponent implements OnInit {
         this.authenticationService.check();
         if (this.authenticationService.currentUserValue) {
           this.currentUser = this.authenticationService.currentUserValue.user;
-          console.log('vpvisit.create.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
           this.userIsAdmin = this.currentUser.userrole == 'admin';
         } else { //user not logged-in
           this.userIsAdmin = false;
@@ -482,7 +481,7 @@ export class vpVisitCreateComponent implements OnInit {
 
     onVisitPageSelect(visitPageIndex) {
       this.visitPage.index = visitPageIndex;
-      console.log('vpvisit.create.onVisitPageSelect', this.visitPage.index);
+      //console.log('vpvisit.create.onVisitPageSelect', this.visitPage.index);
       this.uxValuesService.visitPageIndex = visitPageIndex;
     }
 
@@ -822,14 +821,13 @@ export class vpVisitCreateComponent implements OnInit {
       if (this.visitPage.index < 0) this.visitPage.index = 0;
       if (this.visitPage.index > this.visitPage.values.length-1) this.visitPage.index = this.visitPage.values.length-1;
       if (this.visitPage.index===1 && (!this.userIsAdmin && !this.userIsOwner)) this.visitPage.index += direction;
-      console.log('vpvisit.create.nextPage', this.visitPage.index);
+      //console.log('vpvisit.create.nextPage', this.visitPage.index);
       this.uxValuesService.visitPageIndex = this.visitPage.index;
     }
 
     setPage(page) {
-      console.log('setPage', page);
       this.visitPage.index = page;
-      console.log('vpvisit.create.setPage', this.visitPage.index);
+      //console.log('vpvisit.create.setPage', this.visitPage.index);
       this.uxValuesService.visitPageIndex = this.visitPage.index;
     }
 

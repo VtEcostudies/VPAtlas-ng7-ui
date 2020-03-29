@@ -113,10 +113,10 @@
         <td>{{stats.visited}}</td>
       </tr>
 
-      <tr>
+      <tr *ngIf="false">
         <td>
           <label [ngClass]="{ 'disabled':true }">
-            <input disabled formControlName="mappedPoolStatus" type="radio" value="Monitored" class="radio-button-justify-left" />
+            <input formControlName="mappedPoolStatus" type="radio" value="Monitored" class="radio-button-justify-left" />
             <span [ngClass]="{ 'disabled':true }">Monitored</span>
           </label>
         </td>
@@ -165,7 +165,14 @@
         <tr class="form-group">
           <td for="town">Town</td>
           <td>
+            <!--
             <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="town" class="form-control"/>
+            -->
+            <select (change)="loadPools(1)" (keyup.delete)="clearTown()" [compareWith]="uxValuesService.compareTownFn" formControlName="town" class="form-control">
+              <option *ngFor="let town of uxValuesService.towns" [ngValue]="town">
+                {{ town.townName }}
+              </option>
+            </select>
           </td>
         </tr>
         <tr class="form-group">
@@ -187,17 +194,19 @@
     <!-- <div *ngIf="!loading"> -->
       <div class="row">
         <div> <!-- OMFG, all vertical alignment issues were due to different div levels!!! -->
-          <button (click)="checkBoxSetValue(true)" class="btn btn-link">{{count}} Records
-          </button>
-          <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle no-margins link"></i>
-          <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
-          <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
+          <button class="btn btn-link info-icon-padding">{{count}} Records</button>
+          <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle link"></i>
+          <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link info-icon-padding">Map View</button>
+          <button *ngIf="mapView" (click)="showTable()" class="btn btn-link info-icon-padding">Table View</button>
+          <i (click)="openModal('vppools_help_info', 'mapViewTableView')" class="fa fa-info-circle link"></i>
         </div>
-        <label class="btn btn-link vert-align-mid" style="vertical-align:bottom;">
+        <label class="btn btn-link info-icon-padding">
           <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" class="radio-button-justify-left"/>
           <span>Load All</span>
         </label>
-        <i (click)="openModal('vppools_help_info', 'loadAll', $event)" class="fa fa-info-circle no-margins link"></i>
+        <div>
+          <i (click)="openModal('vppools_help_info', 'loadAll')" class="fa fa-info-circle link info-icon"></i>
+        </div>
         <span *ngIf="!loadAllRec">
           <button (click)="firstPage()" class="btn btn-link">|< First</button>
           <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
@@ -210,8 +219,8 @@
       <!--
       https://stackoverflow.com/questions/11891065/css-only-scrollable-table-with-fixed-headers
       -->
-      <!-- <div *ngIf="!mapView" class="container-fluid"> -->
-      <div *ngIf="!mapView" class="container-fluid">
+      <div *ngIf="!loading">
+      <div *ngIf="!mapView"> <!-- <div *ngIf="!mapView" class="container-fluid"> -->
         <div class="pools-table-div"> <!-- style="display: inline-block; height:550px; overflow:auto;"> -->
         <table> <!-- class="table table-sm table-responsive"> responsive mucks overflow, etc. -->
           <thead>
@@ -291,7 +300,7 @@
         </app-map-comp>
       </div>
 
-    <!-- </div> --> <!-- loading -->
+    </div> <!-- loading -->
 
     <div *ngIf="loading" class="loading_overlay show_loading_overlay">
       <!-- <div class="center">{{seconds}}</div> -->

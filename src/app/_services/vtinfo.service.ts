@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
+
 class pgApiResult {
   command: string;
   rowCount: number;
@@ -18,5 +19,9 @@ export class vtInfoService {
 
     getTowns() {
         return this.http.get<pgApiResult>(`${environment.apiUrl}/vtinfo/towns`);
+    }
+
+    getCounties() {
+        return this.http.get<pgApiResult>(`${environment.apiUrl}/vtinfo/counties`);
     }
 }

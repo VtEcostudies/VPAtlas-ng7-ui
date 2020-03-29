@@ -22,7 +22,7 @@ export const poolsDialogText = {
   <p>
   You can further refine your Vernal Pool search by entering a Pool ID, a Username,
   a Town, or a Mapped Method.</p>
-  <p>Note: radio buttons, multiple search terms can be combined to filter pools
+  <p>Note: radio buttons can be comined with multiple search terms to filter pools
   by multiple criteria. Further refine the view using the pool status checkboxes
   on the map.</p>
   <ul>
@@ -38,9 +38,24 @@ export const poolsDialogText = {
   The Number of records displayed depends upon the view:
   </p>
   <ul>
-    <li>Radio Buttons: counts are the number of *Pools* displayed on the map.
-    <li>Table View: counts are for all records, including multiple Visits per pool. For example,
-    if a pool has 3 visits, Record Counts in Table View will be 3. In Map View, it will be 1.
+    <li>Radio Buttons: counts are the number of pools displayed on the map.</li>
+    <li>Records: a count of all records, including multiple visits per pool. For example,
+    if a pool has 3 visits, 'Records' will show a value of 3, while the pool-count will be 1.</li>
+  </ul>
+  `,
+  mapViewTableView:`
+  <h3><u>Map View / Table View</u></h3>
+  <p>
+  Map View vs. Table View
+  </p>
+  <ul>
+    <li>Map View: the map shows one 'point' per pool, which represents all data
+    associated with a pool - a mapping event, any visits to the pool, monitoring events, and more.
+    Map View is simplified.
+    </li>
+    <li>
+    Table View: For a more complete picture of the data for a pool, switch to Table View. In Table View,
+    you will see multiple rows for a Pool ID if there are multiple Visits to the pool.
     </li>
   </ul>
   `,
@@ -50,8 +65,8 @@ export const poolsDialogText = {
   Load all data at once, or paginate data. The Map View is fast enough to load all data at once.
   </p>
   <p>
-  The Table View is slower, especially when attempting to display nearly 5000 rows of data. Try
-  filtering results first, then Load All in Table View, if you want to see all records at once.
+  The Table View is slower, especially when attempting to display nearly 5000 rows of data.
+  If you want to see all records at once, try filtering results first, then Load All in Table View.
   </p>
   `
 }

@@ -62,24 +62,16 @@ export class PopupComponent {
   }
 
   ViewVisit() {
-    console.log('PopupComponent::ViewVisit()', this.poolObj.visitId)
-    if (this.poolObj.visitId)
-      this.router.navigate([`/pools/visit/view/${this.poolObj.visitId}`]);
+    if (this.poolObj.visitId) {this.router.navigate([`/pools/visit/view/${this.poolObj.visitId}`]);}
   }
   CreateVisit() {
-    console.log('PopupComponent::CreateVisit()', this.poolObj.poolId)
-    if (this.poolObj.poolId)
-      this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`]);
+    if (this.poolObj.poolId) {this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`]);}
   }
   ViewReview() {
-    console.log('PopupComponent::ViewReview()', this.poolObj.reviewId)
-    if (this.poolObj.reviewId)
-      this.router.navigate([`/review/view/${this.poolObj.reviewId}`]);
+    if (this.poolObj.reviewId) {this.router.navigate([`/review/view/${this.poolObj.reviewId}`]);}
   }
   CreateReview() {
-    console.log('PopupComponent::CreateReview()', this.poolObj.visitId)
-    if (this.poolObj.visitId)
-      this.router.navigate([`/review/create/${this.poolObj.visitId}`]);
+    if (this.poolObj.visitId) {this.router.navigate([`/review/create/${this.poolObj.visitId}`]);}
   }
 }
 
@@ -168,7 +160,6 @@ export class LeafletComponent implements OnInit, OnChanges {
   }); // end legendControl
 
   //printControl = LP.control.browserPrint();
-  //myRenderer = L.canvas({ padding: 0.5 }); //we cannot use canvas renderer with the shapeMarker plugin. hope we don't need it.
   //https://www.w3schools.com/colors/colors_names.asp
   potentialColors = ["Orange"];
   probableColors = ["Cyan"];
@@ -244,7 +235,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
     baseLayers = [this.esriTopo, this.esriWorld, this.openTopo, this.googleSat, this.streets, this.light]; //make esriTopo default b/c openTopo often loads slowly
 
-
   constructor(
     private uxValuesService: UxValuesService,
     private authenticationService: AuthenticationService,
@@ -260,11 +250,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.cmColor = this.uxValuesService.pointColorIndex;
 
     //console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
-
-    this.marker = L.marker(this.vtCenter, {
-                draggable: true,
-                autoPan: true
-              });
   } //constructor
 
   ngOnInit() {
@@ -273,18 +258,27 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
 
-    //getting errors of an 'already initialized map'.
+    /*
+      This resolves errors of an 'already initialized map'.
+      However, now we see page-loads with a blank map...
+    */
+    /*
     var container = L.DomUtil.get("map");
     if (container != null) {
       container._leaflet_id = null;
     }
-
+    */
     this.map = new L.Map("map", {
                zoomControl: false,
                maxZoom: 20,
                minZoom: 1,
                center: this.uxValuesService.getZoomCenter(),
                zoom: this.uxValuesService.getZoomLevel()
+             });
+
+   this.marker = L.marker(this.vtCenter, {
+               draggable: true,
+               autoPan: true
              });
 
     //this.scaleControl.setPosition('topright');
@@ -375,7 +369,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.mapPoints) {
       await this.plotPoolShapes(this.mapValues);
     }
-    if (this.mapMarker) {
+    if (this.mapMarker && this.marker) {
       this.marker.addTo(this.map);
       await this.plotPoolMarker(this.locMarker);
     }
@@ -389,7 +383,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   zoomMarker(e=null) {
     if (e) {e.stopPropagation();}
-    if (this.mapMarker) {
+    if (this.mapMarker && this.marker) {
       this.map.setView(this.marker._latlng, 15);
     }
   }
@@ -455,7 +449,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     to the back so that point markers remain clickable, in the foreground.
   */
   OnMapOverlayAdd(e) {
-    console.log('OnMapOverlayAdd', e);
+    //console.log('OnMapOverlayAdd', e);
     e.layer.bringToBack();
   }
 
@@ -497,7 +491,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   }
 
   onMapClick(e) { //this is no longer used for mapping a pool (disabled)
-    console.log("leaflet.onMapClick | event: ", e);
+    //console.log("leaflet.onMapClick | event: ", e);
     if (this.mapMarker && this.mapByClick) {
       this.itemLoc = L.latLng(e.latlng.lat, e.latlng.lng);
       this.marker.setLatLng(this.itemLoc);
@@ -538,7 +532,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     use e.sourceTarget to append functions like bindPopup
   */
   onCircleGroupClick(e) {
-    console.log("leaflet.onCircleGroupClick | event: ", e);
+    //console.log("leaflet.onCircleGroupClick | event: ", e);
     //console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
     //console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
     const index = e.sourceTarget.options.index;
@@ -719,6 +713,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.confGroup.clearLayers();
     this.duplGroup.clearLayers();
     this.elimGroup.clearLayers();
+    //delete this.cmLLArr;
     this.cmLLArr = [];
   }
 
@@ -862,7 +857,6 @@ export class LeafletComponent implements OnInit, OnChanges {
       */
       //shape = L.circleMarker(llLoc, <any> {
       shape = L.shapeMarker(llLoc, <any> {
-          //renderer: this.myRenderer, //works with circleMarker, doesn't work with shapeMarker
           shape: ptShape,
           radius: ptRadius, //applies to all shapes
           fillColor: ptColor, //interior color

@@ -38,7 +38,7 @@ export class vpListComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
-        private uxValuesService: UxValuesService,
+        public uxValuesService: UxValuesService,
         private vpMappedService: vpMappedService,
         private vpPoolsService: vpPoolsService,
         private modalService: ModalService
@@ -60,13 +60,14 @@ export class vpListComponent implements OnInit {
           visitId: [''],
           poolId: [''],
           userName: [''],
-          town: [''],
+          town: [{townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null}],
           mappedMethod: [''],
           mappedPoolStatus: ['All'],
           visitedPool: [],
           review: [],
           monitoredPool: []
       });
+      this.uxValuesService.loadTowns();
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
       await this.loadPools(1);
@@ -274,15 +275,15 @@ export class vpListComponent implements OnInit {
     }
 
     nextPage() {
-        //this.loadPage(++this.page);
         this.page++;
         if (this.page > this.last) this.page = this.last;
+        //this.loadPage(this.page);
         this.loadUpdated(this.getType(), this.page);
     }
 
     prevPage() {
-      //this.loadPage(--this.page);
       this.page--; if (this.page < 1) this.page = 1;
+      //this.loadPage(this.page);
       this.loadUpdated(this.getType(), this.page);
     }
 
@@ -338,7 +339,6 @@ export class vpListComponent implements OnInit {
                 this.alertService.error(error);
                 this.loading = false;
               });
-
     }
 
     /*
@@ -349,33 +349,24 @@ export class vpListComponent implements OnInit {
       if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
       if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
       if (this.f.userName.value) this.search.userName=this.f.userName.value;
-      if (this.f.town.value) this.search.town=this.f.town.value;
+      if (this.f.town.value && this.f.town.value.townName!='All') this.search.town=this.f.town.value.townName;
       if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
-    }
-
-    SetLoadingTimer() {
-      this.seconds = 0;
-      this.loading = setInterval(() => {this.seconds++}, 1000);
-    }
-    KillLoadingTimer() {
-      clearInterval(this.loading);
-      this.loading=null;
     }
 
     async loadUpdated(type='all', page=0) {
       //console.log('vppools.list.component::loadUpdated');
       await this.getSearch();
-      this.loading = true; //this.SetLoadingTimer();//
+      this.loading = true;
       this.uxValuesService.loadUpdated(type, this.search, page)
         .then((data:any) => {
           this.pools = data.pools;
           this.count = data.count;
           if (data.changed) this.loadPoolStats();
           this.setLast();
-          this.loading = false; //this.KillLoadingTimer(); //this.loading = false;
+          this.loading = false;
         })
         .catch(err => {
-          this.loading = false; //this.KillLoadingTimer(); //this.loading = false;
+          this.loading = false;
         })
     }
 
@@ -421,5 +412,10 @@ export class vpListComponent implements OnInit {
         await this.loadPools();
       }
       this.mapView = false;
+    }
+
+    clearTown() {
+      this.filterForm.get("town").setValue(null);
+      this.loadPools();
     }
 }
