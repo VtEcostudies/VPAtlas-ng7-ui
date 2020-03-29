@@ -50,6 +50,26 @@ export class UxValuesService {
       } else {
         this.data[type].timestamp = Moment().format();
         // TODO: update existing array with new data using array.filter like below
+        pools.forEach(row => {
+          var found = false;
+          console.log(`searching ${type} for ${row.mappedPoolId}/${row.visitId}/${row.reviewId}`);
+          this.data[type].pools.find((pool, index, arr) => {
+            var match = true;
+            match = match && (row.mappedPoolId==pool.mappedPoolId);
+            match = match && (row.visitId==pool.visitId);
+            match = match && (row.reviewId==pool.reviewId);
+            if (match) {
+              found = true; //flag that we found a match so we don't duplicate it.
+              console.log(`Found ${row.mappedPoolId}/${row.visitId}/${row.reviewId}. Updating.`);
+              this.data[type].pools[index] = row; //update row
+            }
+            return match;
+          })
+          if (!found) { //searched all rows for the current incoming value. not found. add it.
+            console.log(`Adding ${row.mappedPoolId}/${row.visitId}/${row.reviewId}`);
+            this.data[type].pools.push(row); //add row
+          }
+        });
       }
     }
 
@@ -62,13 +82,21 @@ export class UxValuesService {
       if (srch.mappedMethod) keep = keep&&(srch.mappedMethod==row.mappedMethod);
       if (srch.town) keep = keep&&((row.mappedTown&&srch.town==row.mappedTown.townName)||(row.visitTown&&srch.town==row.visitTown.townName));
       if (!this.userIsAdmin) keep = keep&&(row.mappedPoolStatus!='Eliminated')&&(row.mappedPoolStatus!='Duplicate');
-      //if (srch.revu) keep =
+      // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
+      // TODO: add review, monitored, etc. here and drop getFilter()... //if (srch.revu) keep =
+      if (row.mappedDateText) row.mappedDateText = Moment(row.mappedDateText).format('YYYY-MM-DD');
+      if (row.visitDate) row.visitDate = Moment(row.visitDate).format('YYYY-MM-DD');
+      if (row.reviewQADate) row.reviewQADate = Moment(row.reviewQADate).format('YYYY-MM-DD');
+      if (row.mappedLatitude) row.mappedLatitude = Number(row.mappedLatitude).toFixed(6);
+      if (row.mappedLongitude) row.mappedLongitude = Number(row.mappedLongitude).toFixed(6);
+      if (row.visitLatitude) row.visitLatitude = Number(row.visitLatitude).toFixed(6);
+      if (row.visitLongitude) row.visitLongitude = Number(row.visitLongitude).toFixed(6);
       return keep;
     }
 
     public async loadUpdated(type='all', search:any={}, page=0) {
-      console.log('uxvalues.service::loadUpdated | type', type);
-      console.log(`uxvalues.service::loadUpdated(${type})`, this.data[type].timestamp, search);
+      //console.log('uxvalues.service::loadUpdated | type', type);
+      //console.log(`uxvalues.service::loadUpdated(${type})`, this.data[type].timestamp, search);
       this.search = search;
       await this.getFilter(type); //, search); only filter db results by type now that we have fast search here...
       return new Promise((resolve, reject) => {
@@ -79,8 +107,9 @@ export class UxValuesService {
                   await this.updateData(type, data.rows);
                   var res = this.data[type].pools.filter(row => this.filterData(row));
                   var len = res.length;
-                  if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len});}
-                  else {resolve({pools:res, count:len});}
+                  var chg = this.data[type].pools.length == 0 && data.rowCount;
+                  if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
+                  else {resolve({pools:res, count:len, changed: chg});}
                 },
                 error => {
                   this.alertService.error(error);
@@ -203,7 +232,7 @@ export class UxValuesService {
         this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
       }
 
-      console.log('uxvalues.service.getfilter()', this.filter);
+      //console.log('uxvalues.service.getfilter()', this.filter);
     }
 
     addPrevZoom(level, center) {

@@ -22,7 +22,8 @@ import { ConfirmComponent } from './reset_confirm';
 import { AdminComponent } from './admin';
 import { ProfileComponent } from './profile';
 
-import { LeafletComponent } from './_components'; //hope to replace vpMapLeafletComponent later
+import { LeafletComponent } from './_components';
+import { PopupComponent } from './_components';
 
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
@@ -65,6 +66,7 @@ import { UxValuesService } from './_global';
         AdminComponent,
         ProfileComponent,
         LeafletComponent,
+        PopupComponent,
 
         vpMapListComponent,
         vpMapViewComponent,
@@ -88,7 +90,7 @@ import { UxValuesService } from './_global';
         //fakeBackendProvider // provider used to create fake backend
     ],
     bootstrap: [AppComponent],
-    entryComponents: []
+    entryComponents: [PopupComponent]
 })
 
 export class AppModule { }

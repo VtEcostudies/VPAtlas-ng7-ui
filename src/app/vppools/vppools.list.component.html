@@ -184,10 +184,12 @@
   </div> <!-- col-2 -->
 
   <div class="col-10">
-    <div *ngIf="!loading">
+    <!-- <div *ngIf="!loading"> -->
       <div class="row">
         <div> <!-- OMFG, all vertical alignment issues were due to different div levels!!! -->
-          <button (click)="checkBoxSetValue(true)" class="btn btn-link">{{count}} Records</button>
+          <button (click)="checkBoxSetValue(true)" class="btn btn-link">{{count}} Records
+          </button>
+          <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle no-margins link"></i>
           <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link">Map View</button>
           <button *ngIf="mapView" (click)="showTable()" class="btn btn-link">Table View</button>
         </div>
@@ -195,6 +197,7 @@
           <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" class="radio-button-justify-left"/>
           <span>Load All</span>
         </label>
+        <i (click)="openModal('vppools_help_info', 'loadAll', $event)" class="fa fa-info-circle no-margins link"></i>
         <span *ngIf="!loadAllRec">
           <button (click)="firstPage()" class="btn btn-link">|< First</button>
           <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
@@ -204,8 +207,11 @@
         </span>
       </div>
 
+      <!--
+      https://stackoverflow.com/questions/11891065/css-only-scrollable-table-with-fixed-headers
+      -->
       <!-- <div *ngIf="!mapView" class="container-fluid"> -->
-      <div *ngIf="!mapView">
+      <div *ngIf="!mapView" class="container-fluid">
         <div class="pools-table-div"> <!-- style="display: inline-block; height:550px; overflow:auto;"> -->
         <table> <!-- class="table table-sm table-responsive"> responsive mucks overflow, etc. -->
           <thead>
@@ -285,10 +291,10 @@
         </app-map-comp>
       </div>
 
-    </div> <!-- loading -->
+    <!-- </div> --> <!-- loading -->
 
-    <div *ngIf="loading">
-      ...Loading
+    <div *ngIf="loading" class="loading_overlay show_loading_overlay">
+      <!-- <div class="center">{{seconds}}</div> -->
     </div>
 
   </div><!-- col-10 -->

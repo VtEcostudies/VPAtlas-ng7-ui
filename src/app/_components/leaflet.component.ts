@@ -6,6 +6,11 @@ import { AuthenticationService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
 import { vpMappedEventInfo } from '@app/_models';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+//for angular popup
+import { Injector, ComponentFactoryResolver, ApplicationRef, ComponentRef, ChangeDetectorRef } from "@angular/core";
+import { Router } from '@angular/router';
+import './popup.component.css';
+//import { PopupComponent } from '@app/_components';
 
 //import * as L from "leaflet";
 //how to import leaflet module with extensions:
@@ -32,6 +37,55 @@ const iconDefault = icon({
 });
 Marker.prototype.options.icon = iconDefault;
 
+/*
+  Popup Component
+*/
+@Component({
+    selector: 'popup',
+    templateUrl: 'popup.component.html',
+    styleUrls: ['popup.component.css']
+})
+export class PopupComponent {
+  currentUser = null;
+  userIsAdmin = false;
+  userIsOwner = false; //not used here... yet.
+  poolObj: any = {};
+  constructor (
+    private authenticationService: AuthenticationService,
+    private router: Router
+  ) {
+    if (this.authenticationService.currentUserValue) {
+      this.currentUser = this.authenticationService.currentUserValue.user;
+      this.userIsAdmin = this.currentUser.userrole == 'admin';
+    }
+
+  }
+
+  ViewVisit() {
+    console.log('PopupComponent::ViewVisit()', this.poolObj.visitId)
+    if (this.poolObj.visitId)
+      this.router.navigate([`/pools/visit/view/${this.poolObj.visitId}`]);
+  }
+  CreateVisit() {
+    console.log('PopupComponent::CreateVisit()', this.poolObj.poolId)
+    if (this.poolObj.poolId)
+      this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`]);
+  }
+  ViewReview() {
+    console.log('PopupComponent::ViewReview()', this.poolObj.reviewId)
+    if (this.poolObj.reviewId)
+      this.router.navigate([`/review/view/${this.poolObj.reviewId}`]);
+  }
+  CreateReview() {
+    console.log('PopupComponent::CreateReview()', this.poolObj.visitId)
+    if (this.poolObj.visitId)
+      this.router.navigate([`/review/create/${this.poolObj.visitId}`]);
+  }
+}
+
+/*
+  Map Component
+*/
 @Component({
   selector: 'app-map-comp',
   templateUrl: 'leaflet.component.html',
@@ -194,6 +248,9 @@ export class LeafletComponent implements OnInit, OnChanges {
   constructor(
     private uxValuesService: UxValuesService,
     private authenticationService: AuthenticationService,
+    private injector: Injector,
+    private applRef: ApplicationRef,
+    private componentFactoryResolver: ComponentFactoryResolver
     ) {
     /*
       preserve baseLayer shown across page loads with outside service
@@ -213,7 +270,6 @@ export class LeafletComponent implements OnInit, OnChanges {
   ngOnInit() {
     if (this.authenticationService.currentUserValue) {
       this.currentUser = this.authenticationService.currentUserValue.user;
-      //console.log('vpvisit.leaflet.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
 
@@ -243,7 +299,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
 
     //poolControl - show/hide pools by status or type
-    this.poolControl.addTo(this.map);
+    if (this.itemType != 'Home') {this.poolControl.addTo(this.map);}
     //this.poolControl.addOverlay(this.allGroup, "All Pools"); this.allGroup.addTo(this.map);
     this.poolControl.addOverlay(this.potnGroup, "Potential"); this.potnGroup.addTo(this.map);
     this.poolControl.addOverlay(this.probGroup, "Probable"); this.probGroup.addTo(this.map);
@@ -488,13 +544,18 @@ export class LeafletComponent implements OnInit, OnChanges {
     const index = e.sourceTarget.options.index;
     const cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     const poolId = e.sourceTarget.options.poolId;
-    const popText = this.buildPopup(index);
+    const poolObj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
+
 
     if (this.itemType == 'Visit Mapped Pool') { //this is used to select a pool when creating a new visit
       this.itemInfo.latLng = cmLoc;
       this.itemInfo.poolId = poolId;
       this.markerSelect.emit(this.itemInfo);
     } else {
+      const popList = this.buildPopupList(index);
+      e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, popList)).openPopup();
+/*
+      const popText = this.buildPopup(index);
       const popShow = L.popup({
         className: 'leaflet-custom-popup',
       	maxHeight: 200,
@@ -502,41 +563,41 @@ export class LeafletComponent implements OnInit, OnChanges {
       }).setContent(popText);
 
       e.sourceTarget.bindPopup(popShow).openPopup();
+*/
     }
   }
 
+  /*
+    https://stackoverflow.com/questions/45091330/how-to-spawn-angular-4-component-inside-a-leaflet-markers-popup#45107300
+  */
+  private createLeafletPopup(poolObj:any = {}, popList:string = '') {
+      const factory = this.componentFactoryResolver.resolveComponentFactory(PopupComponent);
+      const compRef = factory.create(this.injector);
+
+      compRef.instance.poolObj = poolObj;
+
+      this.applRef.attachView(compRef.hostView);
+      compRef.onDestroy(() => {
+          this.applRef.detachView(compRef.hostView);
+      });
+
+      let div = document.createElement('div');
+      div.appendChild(compRef.location.nativeElement); //include html from popup.component.html
+
+      div.insertAdjacentHTML('beforeend', this.buildPopupList(poolObj));
+
+      compRef.changeDetectorRef.detectChanges(); //causes bubble to auto-size
+
+      return div;
+  }
+
   buildPopup(index) {
-    var obj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
+    var poolObj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
+    return this.buildPopupLinks(poolObj) + this.buildPopupList(poolObj);
+  }
+
+  buildPopupLinks(obj) {
     var text = '';
-    var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
-    var include = [ //an array of column names to include in the popup list of values from the db
-      'poolId',
-      'mappedLatitude',
-      'mappedLongitude',
-      'mappedTown',
-      'visitTown',
-      'mappedPoolStatus',
-      'mappedDateText',
-      'mappedDate',
-      'visitDate',
-      'mappedMethod',
-      'mappedByUser',
-      'visitUserName'
-    ];
-    var fieldName = {
-      'poolId':'Pool ID',
-      'mappedLatitude':'Mapped Latitude',
-      'mappedLongitude':'Mapped Longitude',
-      'mappedTown':'Mapped Town',
-      'visitTown':'Visit Town',
-      'mappedPoolStatus':'Pool Status',
-      'mappedDateText':'Date Mapped',
-      'mappedDate':'Date Mapped',
-      'visitDate':'Visit Date',
-      'mappedMethod':'Mapped Method',
-      'mappedByUser':'Mapped by User',
-      'visitUserName':'Visited by User'
-    }
 
     //Create action links at the top of the popup display based upon the context - 'itemType'
     switch (this.itemType) {
@@ -585,14 +646,41 @@ export class LeafletComponent implements OnInit, OnChanges {
         }
         break;
     }
+  }
 
-    //text += `<div class="container-fluid">`;
-    //text += `<div class="table-responsive">`;
-    //text += `<table class="table table-sm table-bordered">`;
-    //
+    buildPopupList(obj) {
+      var text = '';
+      var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
+      var include = [ //an array of column names to include in the popup list of values from the db
+        'poolId',
+        'mappedLatitude',
+        'mappedLongitude',
+        'mappedTown',
+        'visitTown',
+        'mappedPoolStatus',
+        'mappedDateText',
+        'mappedDate',
+        'visitDate',
+        'mappedMethod',
+        'mappedByUser',
+        'visitUserName'
+      ];
+      var fieldName = {
+        'poolId':'Pool ID',
+        'mappedLatitude':'Mapped Latitude',
+        'mappedLongitude':'Mapped Longitude',
+        'mappedTown':'Mapped Town',
+        'visitTown':'Visit Town',
+        'mappedPoolStatus':'Pool Status',
+        'mappedDateText':'Date Mapped',
+        'mappedDate':'Date Mapped',
+        'visitDate':'Visit Date',
+        'mappedMethod':'Mapped Method',
+        'mappedByUser':'Mapped by User',
+        'visitUserName':'Visited by User'
+      }
+
     /*
-      Bootstrap tables wreak havoc with viewport sizing and scrollbars. Abandon ship.
-
       It looks like the issue with the vertical scrollbar clipping table content happens
       when the table is the widest element, and content has vertical overflow. A hack
       solution is to force an element outside the table to be wider, which makes room
@@ -619,8 +707,6 @@ export class LeafletComponent implements OnInit, OnChanges {
       }
     });
     text += '</table>';
-    //text += '</div>'; //div table-responsive
-    //text += '</div>'; //div container-fluid
 
     return text;
   }
@@ -628,6 +714,11 @@ export class LeafletComponent implements OnInit, OnChanges {
   async clearPools() {
     //console.log('clearPools');
     this.allGroup.clearLayers();
+    this.potnGroup.clearLayers();
+    this.probGroup.clearLayers();
+    this.confGroup.clearLayers();
+    this.duplGroup.clearLayers();
+    this.elimGroup.clearLayers();
     this.cmLLArr = [];
   }
 
@@ -848,5 +939,4 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.uxValuesService.pointColorIndex = this.cmColor; //apply the change to the UX service to preserve value across page loads
   }
-
 }

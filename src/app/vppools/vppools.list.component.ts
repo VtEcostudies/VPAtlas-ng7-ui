@@ -18,7 +18,7 @@ export class vpListComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
     filterForm: FormGroup;
-    loading = false;
+    loading = null;
     stats = { total:0, total_data:0, potential:0, probable:0, confirmed:0, eliminated:0, duplicate:0, visited:0, monitored:0 }; //need a default to prevent pre-load errors?
     page = 1;
     pageSize = 10;
@@ -26,11 +26,12 @@ export class vpListComponent implements OnInit {
     last = 1;
     count: number = 1;
     filter: string = '';
-    search: object = {};
+    search: any = {};
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools: vpMapped[] = []; //data array from db having lat and lon values to plot on map
     itemType = 'Pools/Visits'; //used by leaflet map to format popup content, etc.
     mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
+    seconds = 0;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -71,7 +72,8 @@ export class vpListComponent implements OnInit {
       await this.loadPools(1);
     }
 
-    openModal(id: string, infoId=null) {
+    openModal(id: string, infoId=null, e=null) {
+        if (e) {e.stopPropagation();}
         console.log('id, infoId', id, infoId);
         this.modalService.open(id, poolsDialogText[infoId]);
     }
@@ -85,7 +87,7 @@ export class vpListComponent implements OnInit {
     //https://stackoverflow.com/questions/50697456/checkbox-not-working-in-angular-4
     //https://stackoverflow.com/questions/51453322/cant-uncheck-programatically-after-manual-check-on-a-checkbox-angular
     checkBoxValueChanged(e) {
-        console.log('checkBoxValueChanged: ', e.target.checked);
+        //console.log('checkBoxValueChanged: ', e.target.checked);
         this.loadAllRec = e.target.checked;
         this.loadPools();
     }
@@ -103,16 +105,16 @@ export class vpListComponent implements OnInit {
 
       if (status=="Visited") {
         this.filterForm.get("visitedPool").setValue(true);
-        console.log('setStatusLoadPools | visitedPool', this.filterForm.value.visitedPool);
+        //console.log('setStatusLoadPools | visitedPool', this.filterForm.value.visitedPool);
       } else if (status=="Monitored") {
         this.filterForm.get("monitoredPool").setValue(true);
-        console.log('setStatusLoadPools | monitoredPool', this.filterForm.value.monitoredPool);
+        //console.log('setStatusLoadPools | monitoredPool', this.filterForm.value.monitoredPool);
       } else if (status=="Mine") {
         this.filterForm.get("userName").setValue(this.currentUser ? this.currentUser.username : null);
-        console.log('setStatusLoadPools | myPools', this.filterForm.value.userName);
+        //console.log('setStatusLoadPools | myPools', this.filterForm.value.userName);
       } else if (status=="Review") {
         this.filterForm.get("review").setValue(true);
-        console.log('setStatusLoadPools | review', this.filterForm.value.review);
+        //console.log('setStatusLoadPools | review', this.filterForm.value.review);
       }
 
       this.loadPools();
@@ -231,7 +233,7 @@ export class vpListComponent implements OnInit {
       }
 
       //hidden field, populated from code: 'visited'
-      console.log('getFilter | visitedPool', this.f.visitedPool.value);
+      //console.log('getFilter | visitedPool', this.f.visitedPool.value);
       if (this.f.visitedPool.value == true) {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
@@ -240,7 +242,7 @@ export class vpListComponent implements OnInit {
       }
 
       //hidden field, populated from code: 'review'
-      console.log('getFilter | review', this.f.review.value);
+      //console.log('getFilter | review', this.f.review.value);
       if (this.f.review.value == true) {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
@@ -252,7 +254,7 @@ export class vpListComponent implements OnInit {
         filter hidden pools if user is not admin
         filter hidden pools for admins by default
       */
-      console.log('mappedPoolStatus', this.f.mappedPoolStatus.value);
+      //console.log('mappedPoolStatus', this.f.mappedPoolStatus.value);
       if (!this.userIsAdmin || (this.userIsAdmin && (this.f.mappedPoolStatus.value=="All" || this.f.visitedPool.value == true))) {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
@@ -262,7 +264,7 @@ export class vpListComponent implements OnInit {
         this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
       }
 
-      console.log('vppools.list.getfilter()', this.filter);
+      //console.log('vppools.list.getfilter()', this.filter);
     }
 
     firstPage() {
@@ -351,19 +353,29 @@ export class vpListComponent implements OnInit {
       if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
     }
 
+    SetLoadingTimer() {
+      this.seconds = 0;
+      this.loading = setInterval(() => {this.seconds++}, 1000);
+    }
+    KillLoadingTimer() {
+      clearInterval(this.loading);
+      this.loading=null;
+    }
+
     async loadUpdated(type='all', page=0) {
-      console.log('vppools.list.component::loadUpdated');
+      //console.log('vppools.list.component::loadUpdated');
       await this.getSearch();
-      this.loading = true;
+      this.loading = true; //this.SetLoadingTimer();//
       this.uxValuesService.loadUpdated(type, this.search, page)
         .then((data:any) => {
           this.pools = data.pools;
           this.count = data.count;
+          if (data.changed) this.loadPoolStats();
           this.setLast();
-          this.loading = false;
+          this.loading = false; //this.KillLoadingTimer(); //this.loading = false;
         })
         .catch(err => {
-          this.loading = false;
+          this.loading = false; //this.KillLoadingTimer(); //this.loading = false;
         })
     }
 
