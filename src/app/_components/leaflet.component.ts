@@ -68,7 +68,7 @@ export class PopupComponent {
     if (poolId) {this.router.navigate([`/pools/mapped/view/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   EditMapped(poolId) {
-    if (poolId) {this.router.navigate([`/pools/update/view/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (poolId) {this.router.navigate([`/pools/mapped/update/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   ViewVisit(visitId) {
     if (visitId) {this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
@@ -309,12 +309,12 @@ export class LeafletComponent implements OnInit, OnChanges {
     //poolControl - show/hide pools by status or type
     if (this.itemType != 'Home') {this.poolControl.addTo(this.map);}
     //this.poolControl.addOverlay(this.allGroup, "All Pools"); this.allGroup.addTo(this.map);
-    this.poolControl.addOverlay(this.potnGroup, "Potential"); this.potnGroup.addTo(this.map);
-    this.poolControl.addOverlay(this.probGroup, "Probable"); this.probGroup.addTo(this.map);
-    this.poolControl.addOverlay(this.confGroup, "Confirmed"); this.confGroup.addTo(this.map);
+    this.poolControl.addOverlay(this.potnGroup, `<span id="potnGroup">Potential</span>`); this.potnGroup.addTo(this.map);
+    this.poolControl.addOverlay(this.probGroup, `<span id="probGroup">Probable</span>`); this.probGroup.addTo(this.map);
+    this.poolControl.addOverlay(this.confGroup, `<span id="confGroup">Confirmed</span>`); this.confGroup.addTo(this.map);
     if (this.userIsAdmin) {
-      this.poolControl.addOverlay(this.duplGroup, "Duplicate"); //this.duplGroup.addTo(this.map);
-      this.poolControl.addOverlay(this.elimGroup, "Eliminated"); //this.elimGroup.addTo(this.map);
+      this.poolControl.addOverlay(this.duplGroup, `<span id="duplGroup">Duplicate</span>`); //this.duplGroup.addTo(this.map);
+      this.poolControl.addOverlay(this.elimGroup, `<span id="elimGroup">Eliminated</span>`); //this.elimGroup.addTo(this.map);
     }
     /*
     if (this.currentUser) {
@@ -690,7 +690,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         'poolId',
         'mappedLatitude',
         'mappedLongitude',
-        'mappedTown',
+        //'mappedTown',
         'visitTown',
         'mappedPoolStatus',
         'mappedDateText',
@@ -833,6 +833,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     var ptRadius = null;
     var ptColor = null; //color indicates pool status (optionally mappedConfidence)
     var ptShape = null; //shape indicates visit/no visit, permission
+    var ptCount = {potn:0, prob:0, conf:0, dupl:0, elim:0};
 
     //console.log('leaflet.plotPoolShapes(',vpools,')');
 
@@ -915,18 +916,23 @@ export class LeafletComponent implements OnInit, OnChanges {
       switch (vpools[i].mappedPoolStatus) {
         case 'Duplicate':
           this.duplGroup.addLayer(shape);
+          ptCount.dupl++;
           break;
         case 'Eliminated':
           this.elimGroup.addLayer(shape);
+          ptCount.elim++;
           break;
         case 'Confirmed':
           this.confGroup.addLayer(shape);
+          ptCount.conf++;
           break;
         case 'Probable':
           this.probGroup.addLayer(shape);
+          ptCount.prob++;
           break;
         case 'Potential':
           this.potnGroup.addLayer(shape);
+          ptCount.potn++;
           break;
       }
 
@@ -956,6 +962,23 @@ export class LeafletComponent implements OnInit, OnChanges {
       shape.bindTooltip(toolText);
 
     } // for loop over vpools[i]
+
+    //update point-counts in pool status menu by setting html innerHTML...
+    if (document.getElementById("potnGroup")) {
+        document.getElementById("potnGroup").innerHTML = `Potential (${ptCount.potn})`;
+    }
+    if (document.getElementById("probGroup")) {
+        document.getElementById("probGroup").innerHTML = `Probable (${ptCount.prob})`;
+    }
+    if (document.getElementById("confGroup")) {
+        document.getElementById("confGroup").innerHTML = `Confirmed (${ptCount.conf})`;
+    }
+    if (document.getElementById("duplGroup")) {
+        document.getElementById("duplGroup").innerHTML = `Duplicate (${ptCount.dupl})`;
+    }
+    if (document.getElementById("elimGroup")) {
+        document.getElementById("elimGroup").innerHTML = `Eliminated (${ptCount.elim})`;
+    }
   } // plotPoolShapes()
 
   changeColor(index=null) {
