@@ -9,25 +9,45 @@
         <tr class="form-group">
           <td for="mappedPoolId">Pool ID</td>
           <td>
-            <input (change)="loadPools(1)" type="text"  formControlName="mappedPoolId" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" type="text"  formControlName="mappedPoolId" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
           <td for="mappedByUser">User</td>
           <td>
-            <input (change)="loadPools(1)" formControlName="mappedByUser" class="form-control"/>
+            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="mappedByUser" class="form-control"/>
           </td>
         </tr>
+<!--
         <tr class="form-group">
           <td for="mappedTown">Town</td>
           <td>
             <input (change)="loadPools(1)" formControlName="mappedTown" class="form-control"/>
           </td>
         </tr>
+-->
+        <tr class="form-group">
+          <td for="mappedTown">Town</td>
+          <td>
+            <select (change)="loadPools(1)" (keyup.delete)="clearTown()" [compareWith]="uxValuesService.compareTownFn" formControlName="mappedTown" class="form-control">
+              <option *ngFor="let town of uxValuesService.towns" [ngValue]="town">
+                {{ town.townName }}
+              </option>
+            </select>
+          </td>
+        </tr>
+
         <tr class="form-group">
           <td for="mappedConfidence">Confidence</td>
           <td>
-            <input (change)="loadPools(1)" formControlName="mappedConfidence" class="form-control"/>
+            <select (change)="loadPools(1)" formControlName="mappedConfidence" class="form-control">
+              <option value="">All</option>
+              <option value="L">Low</option>
+              <option value="ML">Medium Low</option>
+              <option value="M">Medium</option>
+              <option value="MH">Medium High</option>
+              <option value="H">High</option>
+            </select>
           </td>
         </tr>
         <tr class="form-group">

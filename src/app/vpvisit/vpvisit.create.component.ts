@@ -52,7 +52,7 @@ export class vpVisitCreateComponent implements OnInit {
     visit: vpVisit = new vpVisit(); //not passed to map, used by the forms
     mapPoints = false; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
-    itemType = 'Visit'; //passed to map via [itemType]="itemType"
+    itemType = 'Edit Visit'; //passed to map via [itemType]="itemType"
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
@@ -79,18 +79,18 @@ export class vpVisitCreateComponent implements OnInit {
         private modalService: ModalService,
         @Inject(DOCUMENT) document
     ) {
-        this.authenticationService.check();
         if (this.authenticationService.currentUserValue) {
           this.currentUser = this.authenticationService.currentUserValue.user;
           this.userIsAdmin = this.currentUser.userrole == 'admin';
         } else { //user not logged-in
-          this.userIsAdmin = false;
           this.router.navigate(['/visits/visit/list']); // redirect to visit search if user not logged-in
         }
       this.loadTowns();
     }
 
     async ngOnInit() {
+      this.authenticationService.check();
+
       //get poolId or visitId or from route params and load visit data from db
       this.visitId = this.route.snapshot.params.visitId;
       this.poolId = this.route.snapshot.params.poolId;

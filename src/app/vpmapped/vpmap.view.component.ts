@@ -26,7 +26,7 @@ export class vpMapViewComponent implements OnInit {
     pool: vpMapped = new vpMapped(); //data to plot pool on map
     mapMarker = false; //flag to show/hide a moveable mapMarker. In view mode, this is always false.
     locMarker = null; //data to locate moveable mapMmarker, passed to map via [locMarker]="locMarker" - null when mapMarker not shown.
-    itemType = "Mapped Pool";
+    itemType = "View Mapped Pool";
     viewOnly = true; //flag that this is view-mode
 
     constructor(
@@ -36,14 +36,19 @@ export class vpMapViewComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
         private vpMappedService: vpMappedService
-    ) {}
-
-    ngOnInit() {
+    ) {
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
-        console.log('vpmap.view.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
         this.userIsAdmin = this.currentUser.userrole == 'admin';
-      } else { this.userIsAdmin = false;}
+      } else {
+        // redirect to pool search if user not logged-in
+        this.router.navigate(['/pools/mapped/list']);
+      }
+    }
+
+    ngOnInit() {
+      this.authenticationService.check();
+
       console.log('vpmap.view.compoenent.ngOnInit | route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
       this.pool.mappedTown = {townName:"Unknown", townId:0, townCountyId:0, townCentroid:null, townBorder:null}; //kluge to get around issue with class object vpMapped
 
@@ -141,6 +146,10 @@ export class vpMapViewComponent implements OnInit {
 
     // convenience getter for easy access to form fields
     get l() { return this.vpLandOwnForm.controls; }
+
+    ToEditMode() {
+      this.router.navigate([`/pools/mapped/update/${this.pool.mappedPoolId}`]);
+    }
 
     cancelMappedPool() {
       this.router.navigate(['/pools/mapped/list']);

@@ -30,7 +30,7 @@ export class vpMapCreateComponent implements OnInit {
     poolUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = true; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
-    itemType = "Mapped Pool";
+    itemType = "Edit Mapped Pool";
     viewOnly = false; //flag that this is edit-mode (update or create)
 
     constructor(
@@ -46,7 +46,6 @@ export class vpMapCreateComponent implements OnInit {
         this.currentUser = this.authenticationService.currentUserValue.user;
         this.userIsAdmin = this.currentUser.userrole == 'admin';
       } else {
-        this.userIsAdmin = false;
         // redirect to pool search if user not logged-in
         this.router.navigate(['/pools/mapped/list']);
       }

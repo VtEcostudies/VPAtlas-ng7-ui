@@ -50,6 +50,7 @@ export class PopupComponent {
   currentUser = null;
   userIsAdmin = false;
   userIsOwner = false; //not used here... yet.
+  itemType = 'Visit';
   poolObj: any = {};
   visits: any = [];
   reviews: any = [];
@@ -61,11 +62,15 @@ export class PopupComponent {
       this.currentUser = this.authenticationService.currentUserValue.user;
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     }
-
   }
 
+  ViewMapped(poolId) {
+    if (poolId) {this.router.navigate([`/pools/mapped/view/${poolId}`]);}
+  }
+  EditMapped(poolId) {
+    if (poolId) {this.router.navigate([`/pools/update/view/${poolId}`]);}
+  }
   ViewVisit(visitId) {
-    console.log(`popup.component.ViewVisit(${visitId})`);
     if (visitId) {this.router.navigate([`/pools/visit/view/${visitId}`]);}
   }
   CreateVisit() {
@@ -597,6 +602,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       compRef.instance.poolObj = poolObj;
       compRef.instance.visits = data.visits;
       compRef.instance.reviews = data.reviews;
+      compRef.instance.itemType = this.itemType;
 
       this.applRef.attachView(compRef.hostView);
       compRef.onDestroy(() => {
@@ -637,16 +643,19 @@ export class LeafletComponent implements OnInit, OnChanges {
           text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
         }
         break;
-      case 'Mapped Pool':
+      case 'List Mapped Pool':
         text += `<div><a href="pools/mapped/view/${obj.poolId}">View Mapped Pool ${obj.poolId}</a></div>`;
+        text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
+        break;
+      case 'View Mapped Pool':
         if (this.userIsAdmin) {
           text += `<div><a href="pools/mapped/update/${obj.poolId}">Edit Mapped Pool ${obj.poolId}</a></div>`;
-          text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         }
+        text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
         break;
 
       default:
-      case 'Pools/Visits':
+      case 'List Pools/Visits':
         if (this.userIsAdmin && obj.visitId) {
           text += `<div><a href="review/create/${obj.visitId}">Add Review for Visit ${obj.visitId}</a></div>`;
         }

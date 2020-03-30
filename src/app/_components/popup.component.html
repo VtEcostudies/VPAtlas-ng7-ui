@@ -1,16 +1,53 @@
-<div *ngFor="let visit of visits">
-  <button (click)="ViewVisit(visit)" class="btn btn-link">View Visit {{visit}}</button>
-</div>
-<div *ngIf="currentUser">
-  <button (click)="CreateVisit()" class="btn btn-link">Add Visit for Pool {{poolObj.poolId}}</button>
-</div>
-<div *ngIf="userIsAdmin">
-  <div *ngFor="let review of reviews">
-    <button (click)="ViewReview(review)" class="btn btn-link">View Review {{review}}</button>
+<!--
+  case 'Visit New Pool':
+    //don't add links to the top - they just click on the point to get info about it
+  case 'Visit Mapped Pool':
+    //don't add links to the top - they just click on the point to select it
+
+  case 'List Mapped Pool':
+  case 'View Mapped Pool':
+  case 'Edit Mapped Pool':
+
+  case 'List Pools/Visits':
+  case 'View Visit':
+  case 'Edit Visit':
+-->
+<div *ngIf="itemType=='List Pools/Visits'">
+  <div *ngFor="let visit of visits">
+    <button (click)="ViewVisit(visit)" class="btn btn-link">View Visit {{visit}}</button>
+  </div>
+  <div *ngIf="currentUser">
+    <button (click)="CreateVisit()" class="btn btn-link">Add Visit for Pool {{poolObj.poolId}}</button>
+  </div>
+  <div *ngIf="userIsAdmin">
+    <div *ngFor="let review of reviews">
+      <button (click)="ViewReview(review)" class="btn btn-link">View Review {{review}}</button>
+    </div>
+  </div>
+  <div *ngIf="userIsAdmin">
+    <div *ngFor="let visit of visits">
+      <button (click)="CreateReview(visit)" class="btn btn-link">Add Review for Visit {{visit}}</button>
+    </div>
   </div>
 </div>
-<div *ngIf="userIsAdmin">
-  <div *ngFor="let visit of visits">
-    <button (click)="CreateReview(visit)" class="btn btn-link">Add Review for Visit {{visit}}</button>
+
+<!-- Viewing a single Visit. Edit Visit or View Review -->
+<div *ngIf="itemType=='View Visit'">
+  <div *ngIf="userIsAdmin||userIsOwner">
+    <button (click)="EditVisit(poolObj.visitId)" class="btn btn-link">Edit Visit {{poolObj.visitId}}</button>
+  </div>
+  <div *ngIf="userIsAdmin&&poolObj.reviewId">
+    <button (click)="ViewReview(poolObj.reviewId)" class="btn btn-link">View Review {{poolObj.reviewId}}</button>
+  </div>
+</div>
+
+<div *ngIf="itemType=='List Mapped Pool'">
+  <div *ngIf="userIsAdmin">
+    <button (click)="ViewMapped(poolObj.mappedPoolId)" class="btn btn-link">View Mapped Pool {{poolObj.mappedPoolId}}</button>
+  </div>
+</div>
+<div *ngIf="itemType=='View Mapped Pool'">
+  <div *ngIf="userIsAdmin">
+    <button (click)="EditMapped(poolObj.mappedPoolId)" class="btn btn-link">Edit Mapped Pool {{poolObj.mappedPoolId}}</button>
   </div>
 </div>

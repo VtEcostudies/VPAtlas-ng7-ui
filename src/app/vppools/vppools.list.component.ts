@@ -407,7 +407,7 @@ export class vpListComponent implements OnInit {
     }
 
     async showTable() {
-      if (this.loadAllRec == true) { //combined UX table view is very slow - don't allow 'Load All'
+      if (this.loadAllRec == true) { //table view is slow - don't default to 'Load All'
         this.loadAllRec = false;
         await this.loadPools();
       }

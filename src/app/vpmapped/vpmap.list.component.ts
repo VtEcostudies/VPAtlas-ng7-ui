@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, UserService, AuthenticationService, vpMappedService } from '@app/_services';
+import { UxValuesService } from '@app/_global';
 
 //import { vpMapped } from '@app/_models';
 //import { pgFields, pgApiResults  } from '@app/_models';
@@ -20,7 +21,7 @@ export class vpMapListComponent implements OnInit {
     filter = '';
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools = []; //data array from db
-    itemType = 'Mapped Pool';
+    itemType = 'List Mapped Pool';
     //pools: vpMapped = [];
     //pgApi: pgApiResults;
     mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
@@ -29,13 +30,17 @@ export class vpMapListComponent implements OnInit {
         private formBuilder: FormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
+        private uxValuesService: UxValuesService,
         private alertService: AlertService,
         private vpMappedService: vpMappedService
     ) {
-        // redirect to home if user not logged in - the API can't handle no-token access (yet)
-        if (!this.authenticationService.currentUserValue) {
-            //this.router.navigate(['/login']);
-        }
+      if (this.authenticationService.currentUserValue) {
+        this.currentUser = this.authenticationService.currentUserValue.user;
+        this.userIsAdmin = this.currentUser.userrole == 'admin';
+      } else {
+        // redirect to home if user not logged-in
+        this.router.navigate(['/']);
+      }
     }
 
     // convenience getter for easy access to form fields
@@ -48,10 +53,11 @@ export class vpMapListComponent implements OnInit {
       this.filterForm = this.formBuilder.group({
           mappedPoolId: [''],
           mappedByUser: [''],
-          mappedTown: [''],
+          mappedTown: [{townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null}],
           mappedMethod: [''],
           mappedConfidence: ['']
       });
+      this.uxValuesService.loadTowns();
       //and load page 1
       this.loadPools(1);
     }
@@ -85,21 +91,21 @@ export class vpMapListComponent implements OnInit {
       var i = 0;
 
       if (this.f.mappedPoolId.value) {
-        this.filter += `mappedPoolId|LIKE=%${this.f.mappedPoolId.value}%`;
+        this.filter += `mappedPoolId=${this.f.mappedPoolId.value}`;
       }
 
       if (this.f.mappedByUser.value) {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `mappedByUser|LIKE=%${this.f.mappedByUser.value}%`;
+        this.filter += `mappedByUser=${this.f.mappedByUser.value}`;
       }
 
-      if (this.f.mappedTown.value) {
+      if (this.f.mappedTown.value && this.f.mappedTown.value.townName != 'All') {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `vptown."townName"|LIKE=%${this.f.mappedTown.value}%`;
+        this.filter += `vptown."townName"=${this.f.mappedTown.value.townName}`;
       }
 
       if (this.f.mappedConfidence.value) {
@@ -193,10 +199,23 @@ export class vpMapListComponent implements OnInit {
     }
 
     showMap() {
+      if (this.loadAllRec == false) {
+        this.loadAllRec = true;
+        this.loadPools();
+      }
       this.mapView = true;
     }
 
     showTable() {
+      if (this.loadAllRec == true) { //table view is slow - don't default to 'Load All'
+        this.loadAllRec = false;
+        this.loadPools();
+      }
       this.mapView = false;
+    }
+
+    clearTown() {
+      this.filterForm.get("mappedTown").setValue(null);
+      this.loadPools();
     }
 }
