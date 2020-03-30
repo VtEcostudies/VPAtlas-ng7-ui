@@ -21,7 +21,7 @@ export class vpReviewCreateComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
     userIsOwner = false;
-    returnUrl = null;
+    returnUrl = '/review/list';
     reviewForm: FormGroup = this.formBuilder.group({});
     dataLoading = false; //flag that the form data is loading
     submitted = false; //flag that the form was submitted to create/update a visit
@@ -74,12 +74,14 @@ export class vpReviewCreateComponent implements OnInit {
     }
 
     async ngOnInit() {
+      // get return url from route parameters or default to '/review/list'
+      console.log('vpreview.create.copmonenent | returnUrl:', this.route.snapshot.queryParams);
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
+
       //get poolId, visitId or reviewId or from route params and load visit data from db
       this.reviewId = this.route.snapshot.params.reviewId;
       this.visitId = this.route.snapshot.params.visitId;
       this.poolId = this.route.snapshot.params.poolId;
-
-      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
 
       if (this.reviewId) { //update an existing visit - set all initial values in setFormValues()
         this.update = true;
@@ -208,7 +210,7 @@ export class vpReviewCreateComponent implements OnInit {
                     this.dataLoading = false;
                     if (data.rows[0]) {this.reviewId = data.rows[0].reviewId;}
                     else {this.reviewId = this.reviewForm.value.reviewId}
-                    this.router.navigate([this.returnUrl]); //[`/review/view/${this.reviewId}`]);
+                    this.router.navigate([this.returnUrl]);
                 },
                 error => {
                     this.alertService.error(error);
@@ -225,7 +227,7 @@ export class vpReviewCreateComponent implements OnInit {
       navUrl = `/review/view/${this.reviewId}`;
     } else {
       msgTxt = `of a New Review`;
-      navUrl = this.returnUrl; //`/review/list`;
+      navUrl = this.returnUrl;
     }
 
     if (confirm(`Are you sure you want to cancel edits ${msgTxt}?`)) {
@@ -242,7 +244,7 @@ export class vpReviewCreateComponent implements OnInit {
         .subscribe(
             data => {
                 //console.log(`vpveview.create.deleteReview=>data:`, data);
-                this.alertService.success('Successfully deleted Vernal Pool Visit.', true);
+                this.alertService.success('Successfully deleted Vernal Pool Review.', true);
                 this.router.navigate([this.returnUrl]);
             },
             error => {
