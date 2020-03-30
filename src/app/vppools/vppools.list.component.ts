@@ -29,7 +29,7 @@ export class vpListComponent implements OnInit {
     search: any = {};
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools: vpMapped[] = []; //data array from db having lat and lon values to plot on map
-    itemType = 'Pools/Visits'; //used by leaflet map to format popup content, etc.
+    itemType = 'List Pools/Visits'; //used by leaflet map to format popup content, etc.
     mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
     seconds = 0;
 

@@ -50,7 +50,7 @@ export class PopupComponent {
   currentUser = null;
   userIsAdmin = false;
   userIsOwner = false; //not used here... yet.
-  itemType = 'Visit';
+  itemType = '';
   poolObj: any = {};
   visits: any = [];
   reviews: any = [];
@@ -65,22 +65,27 @@ export class PopupComponent {
   }
 
   ViewMapped(poolId) {
-    if (poolId) {this.router.navigate([`/pools/mapped/view/${poolId}`]);}
+    if (poolId) {this.router.navigate([`/pools/mapped/view/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   EditMapped(poolId) {
-    if (poolId) {this.router.navigate([`/pools/update/view/${poolId}`]);}
+    if (poolId) {this.router.navigate([`/pools/update/view/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   ViewVisit(visitId) {
-    if (visitId) {this.router.navigate([`/pools/visit/view/${visitId}`]);}
+    if (visitId) {this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+  }
+  EditVisit(visitId) {
+    if (visitId) {this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   CreateVisit() {
-    if (this.poolObj.poolId) {this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`]);}
+    if (this.poolObj.poolId) {
+      this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`], { queryParams: { returnUrl: this.router.url }} );
+    }
   }
   ViewReview(reviewId) {
-    if (reviewId) {this.router.navigate([`/review/view/${reviewId}`]);}
+    if (reviewId) {this.router.navigate([`/review/view/${reviewId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   CreateReview(visitId) {
-    if (visitId) {this.router.navigate([`/review/create/${visitId}`]);}
+    if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
 }
 
@@ -548,7 +553,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     const cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     const poolId = e.sourceTarget.options.poolId;
     const poolObj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
-
 
     if (this.itemType == 'Visit Mapped Pool') { //this is used to select a pool when creating a new visit
       this.itemInfo.latLng = cmLoc;

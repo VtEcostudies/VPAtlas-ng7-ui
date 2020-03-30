@@ -11,6 +11,8 @@ import { UxValuesService } from '@app/_global';
 //@add_component_here
 @Component({templateUrl: 'vpmap.list.component.html'})
 export class vpMapListComponent implements OnInit {
+    currentUser = null;
+    userIsAdmin = false;
     filterForm: FormGroup;
     loading = false;
     page = 1;
@@ -30,7 +32,7 @@ export class vpMapListComponent implements OnInit {
         private formBuilder: FormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
-        private uxValuesService: UxValuesService,
+        public uxValuesService: UxValuesService,
         private alertService: AlertService,
         private vpMappedService: vpMappedService
     ) {

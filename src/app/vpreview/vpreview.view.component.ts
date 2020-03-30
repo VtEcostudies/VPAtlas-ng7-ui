@@ -20,6 +20,7 @@ export class vpReviewViewComponent implements OnInit {
   currentUser = null;
   userIsAdmin = false;
   userIsOwner = false;
+  returnUrl = '/review/list';
   reviewForm: FormGroup = this.formBuilder.group({});
   towns = [];
   townCount = 0;
@@ -71,6 +72,10 @@ export class vpReviewViewComponent implements OnInit {
     }
 
     async ngOnInit() {
+      // get return url from route parameters or default to '/review/list'
+      console.log('vpreview.view.copmonenent | returnUrl:', this.route.snapshot.queryParams);
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
+
       this.reviewId = this.route.snapshot.params.reviewId;
 
       await this.createFormControls();
@@ -146,6 +151,6 @@ export class vpReviewViewComponent implements OnInit {
     }
 
     CancelReview() {
-      this.router.navigate(['/review/list']);
+      this.router.navigate([this.returnUrl]);
     }
 }

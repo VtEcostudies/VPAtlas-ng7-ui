@@ -102,6 +102,7 @@ export class vpVisitCreateComponent implements OnInit {
         await this.LoadVisitData(this.visitId);
         this.setPage(this.uxValuesService.visitPageIndex);
       } else { //create a new visit - set a few necessary initial values
+        this.poolsLoading = true; //need to flip this value to show the map
         this.update = false;
         this.mapMarker = false;
         this.visit.visitId = 0;
@@ -116,6 +117,7 @@ export class vpVisitCreateComponent implements OnInit {
           this.mapMarker =  true;
           await this.LoadMappedPool(this.poolId);
         }
+        this.poolsLoading = false; //need to flip this value to show the map
       }
     } //end ngOnInit
 
@@ -595,6 +597,7 @@ export class vpVisitCreateComponent implements OnInit {
                   this.visitLocationForm.controls['visitLongitude'].setValue(this.locMarker.longitude);
                   this.userIsOwner = (this.currentUser.username === this.locMarker.mappedByUser);
                   this.dataLoading = false;
+                  this.poolsLoading = false;
               },
               error => {
                   //console.log(`vpvisit.LoadMappedPool=>error: ${error}`);
