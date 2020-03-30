@@ -12,6 +12,10 @@ export class vpPoolsService {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/updated?timestamp=${timestamp}&${filter}`);
     }
 
+    getReview(timestamp: string, filter: string) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/review?timestamp=${timestamp}&${filter}`);
+    }
+
     getAll(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools?${filter}`);
     }
@@ -25,11 +29,11 @@ export class vpPoolsService {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/count?${filter}`);
     }
 
-    getByPoolId(id: number) {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/poolId/${id}`);
+    getByPoolId(poolId: string) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/poolId/${poolId}`);
     }
 
-    getByVisitId(id: number) {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/visitId/${id}`);
+    getByVisitId(visitId: number) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/visitId/${visitId}`);
     }
 }

@@ -1,12 +1,16 @@
-<div *ngIf="poolObj.visitId">
-  <button (click)="ViewVisit()" class="btn btn-link">View Visit {{poolObj.visitId}}</button>
+<div *ngFor="let visit of visits">
+  <button (click)="ViewVisit(visit)" class="btn btn-link">View Visit {{visit}}</button>
 </div>
 <div *ngIf="currentUser">
   <button (click)="CreateVisit()" class="btn btn-link">Add Visit for Pool {{poolObj.poolId}}</button>
 </div>
-<div *ngIf="userIsAdmin && poolObj.reviewId">
-  <button (click)="ViewReview()" class="btn btn-link">View Review {{poolObj.reviewId}}</button>
+<div *ngIf="userIsAdmin">
+  <div *ngFor="let review of reviews">
+    <button (click)="ViewReview(review)" class="btn btn-link">View Review {{review}}</button>
+  </div>
 </div>
-<div *ngIf="userIsAdmin && poolObj.visitId">
-  <button (click)="CreateReview()" class="btn btn-link">Add Review for Visit {{poolObj.visitId}}</button>
+<div *ngIf="userIsAdmin">
+  <div *ngFor="let visit of visits">
+    <button (click)="CreateReview(visit)" class="btn btn-link">Add Review for Visit {{visit}}</button>
+  </div>
 </div>

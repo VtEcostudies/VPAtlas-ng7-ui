@@ -93,10 +93,10 @@ export class UxValuesService {
       if (row.mappedDateText) row.mappedDateText = Moment(row.mappedDateText).format('YYYY-MM-DD');
       if (row.visitDate) row.visitDate = Moment(row.visitDate).format('YYYY-MM-DD');
       if (row.reviewQADate) row.reviewQADate = Moment(row.reviewQADate).format('YYYY-MM-DD');
-      if (row.mappedLatitude) row.mappedLatitude = Number(row.mappedLatitude).toFixed(6);
-      if (row.mappedLongitude) row.mappedLongitude = Number(row.mappedLongitude).toFixed(6);
-      if (row.visitLatitude) row.visitLatitude = Number(row.visitLatitude).toFixed(6);
-      if (row.visitLongitude) row.visitLongitude = Number(row.visitLongitude).toFixed(6);
+      if (row.mappedLatitude) row.mappedLatitude = Number(row.mappedLatitude).toFixed(5);
+      if (row.mappedLongitude) row.mappedLongitude = Number(row.mappedLongitude).toFixed(5);
+      if (row.visitLatitude) row.visitLatitude = Number(row.visitLatitude).toFixed(5);
+      if (row.visitLongitude) row.visitLongitude = Number(row.visitLongitude).toFixed(5);
       return keep;
     }
 
@@ -106,21 +106,22 @@ export class UxValuesService {
       this.search = search;
       await this.getFilter(type); //, search); only filter db results by type now that we have fast search here...
       return new Promise((resolve, reject) => {
-        this.vpPoolsService.getUpdated(this.data[type].timestamp, this.filter)
-            .pipe(first())
-            .subscribe(
-                async data => {
-                  await this.updateData(type, data.rows);
-                  var res = this.data[type].pools.filter(row => this.filterData(row));
-                  var len = res.length;
-                  var chg = this.data[type].pools.length == 0 && data.rowCount;
-                  if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
-                  else {resolve({pools:res, count:len, changed: chg});}
-                },
-                error => {
-                  this.alertService.error(error);
-                  reject(error);
-                });
+        var result;
+        if (type=='revu') {result = this.vpPoolsService.getReview(this.data[type].timestamp, this.filter);}
+        else {result = this.vpPoolsService.getUpdated(this.data[type].timestamp, this.filter);}
+        result.pipe(first()).subscribe(
+            async data => {
+              await this.updateData(type, data.rows);
+              var res = this.data[type].pools.filter(row => this.filterData(row));
+              var len = res.length;
+              var chg = this.data[type].pools.length == 0 && data.rowCount;
+              if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
+              else {resolve({pools:res, count:len, changed: chg});}
+            },
+            error => {
+              this.alertService.error(error);
+              reject(error);
+            });
       });
     }
 

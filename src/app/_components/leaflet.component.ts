@@ -1,16 +1,17 @@
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
-//import * as $ from "jquery";
-//import * as LP from "leaflet.browser.print";
-import { AuthenticationService } from '@app/_services';
+import { AuthenticationService, vpPoolsService } from '@app/_services';
+import { first } from 'rxjs/operators';
 import { UxValuesService } from '@app/_global';
 import { vpMappedEventInfo } from '@app/_models';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+//import * as $ from "jquery";
+//import * as LP from "leaflet.browser.print";
+
 //for angular popup
 import { Injector, ComponentFactoryResolver, ApplicationRef, ComponentRef, ChangeDetectorRef } from "@angular/core";
 import { Router } from '@angular/router';
 import './popup.component.css';
-//import { PopupComponent } from '@app/_components';
 
 //import * as L from "leaflet";
 //how to import leaflet module with extensions:
@@ -50,6 +51,8 @@ export class PopupComponent {
   userIsAdmin = false;
   userIsOwner = false; //not used here... yet.
   poolObj: any = {};
+  visits: any = [];
+  reviews: any = [];
   constructor (
     private authenticationService: AuthenticationService,
     private router: Router
@@ -61,17 +64,18 @@ export class PopupComponent {
 
   }
 
-  ViewVisit() {
-    if (this.poolObj.visitId) {this.router.navigate([`/pools/visit/view/${this.poolObj.visitId}`]);}
+  ViewVisit(visitId) {
+    console.log(`popup.component.ViewVisit(${visitId})`);
+    if (visitId) {this.router.navigate([`/pools/visit/view/${visitId}`]);}
   }
   CreateVisit() {
     if (this.poolObj.poolId) {this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`]);}
   }
-  ViewReview() {
-    if (this.poolObj.reviewId) {this.router.navigate([`/review/view/${this.poolObj.reviewId}`]);}
+  ViewReview(reviewId) {
+    if (reviewId) {this.router.navigate([`/review/view/${reviewId}`]);}
   }
-  CreateReview() {
-    if (this.poolObj.visitId) {this.router.navigate([`/review/create/${this.poolObj.visitId}`]);}
+  CreateReview(visitId) {
+    if (visitId) {this.router.navigate([`/review/create/${visitId}`]);}
   }
 }
 
@@ -238,6 +242,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   constructor(
     private uxValuesService: UxValuesService,
     private authenticationService: AuthenticationService,
+    private vpPoolsService: vpPoolsService,
     private injector: Injector,
     private applRef: ApplicationRef,
     private componentFactoryResolver: ComponentFactoryResolver
@@ -262,12 +267,11 @@ export class LeafletComponent implements OnInit, OnChanges {
       This resolves errors of an 'already initialized map'.
       However, now we see page-loads with a blank map...
     */
-    /*
     var container = L.DomUtil.get("map");
     if (container != null) {
       container._leaflet_id = null;
     }
-    */
+
     this.map = new L.Map("map", {
                zoomControl: false,
                maxZoom: 20,
@@ -546,29 +550,53 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.itemInfo.poolId = poolId;
       this.markerSelect.emit(this.itemInfo);
     } else {
-      const popList = this.buildPopupList(index);
-      e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, popList)).openPopup();
-/*
-      const popText = this.buildPopup(index);
-      const popShow = L.popup({
-        className: 'leaflet-custom-popup',
-      	maxHeight: 200,
-        keepInView: true
-      }).setContent(popText);
+      this.LoadVisitReviewData(poolObj.poolId)
+        .then(data => {
+          const popList = this.buildPopupList(index);
+          e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, data, popList)).openPopup();
+          /*
+          const popText = this.buildPopup(index);
+          const popShow = L.popup({
+            className: 'leaflet-custom-popup',
+          	maxHeight: 200,
+            keepInView: true
+          }).setContent(popText);
 
-      e.sourceTarget.bindPopup(popShow).openPopup();
-*/
+          e.sourceTarget.bindPopup(popShow).openPopup();
+          */
+        }).catch(err => {console.log('Error loading review data for popup:', err);})
     }
+  }
+
+  LoadVisitReviewData(poolId) {
+    return new Promise((resolve, reject) => {
+      this.vpPoolsService.getByPoolId(poolId)
+        .pipe(first())
+        .subscribe(data => {
+          var visits = [], reviews = [];
+          data.rows.forEach(row => {
+            console.log(`pool:${row.poolId}/visit:${row.visitId}/review: ${row.reviewId}`);
+            if (row.visitId) visits.push(row.visitId);
+            if (row.reviewId) reviews.push(row.reviewId);
+            resolve ({visits:visits, reviews:reviews});
+          });
+        }, error => {
+          console.log('LoadVisitReviewData ERROR:', error);
+          reject ({visits:[], reviews:[]});
+        });
+    });
   }
 
   /*
     https://stackoverflow.com/questions/45091330/how-to-spawn-angular-4-component-inside-a-leaflet-markers-popup#45107300
   */
-  private createLeafletPopup(poolObj:any = {}, popList:string = '') {
+  private createLeafletPopup(poolObj:any = {}, data:any = {}, popList:string = '') {
       const factory = this.componentFactoryResolver.resolveComponentFactory(PopupComponent);
       const compRef = factory.create(this.injector);
 
       compRef.instance.poolObj = poolObj;
+      compRef.instance.visits = data.visits;
+      compRef.instance.reviews = data.reviews;
 
       this.applRef.attachView(compRef.hostView);
       compRef.onDestroy(() => {

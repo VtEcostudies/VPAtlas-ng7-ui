@@ -19,7 +19,15 @@ export class vpReviewService {
     getById(id: number) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/review/${id}`);
     }
+/*
+    getByVisitId(visitId: number) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/review/visitId/${visitId}`);
+    }
 
+    getByPoolId(poolId: string) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/review/poolId/${poolId}`);
+    }
+*/
     getCount(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/review/count?${filter}`);
     }

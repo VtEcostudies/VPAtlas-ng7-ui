@@ -69,7 +69,6 @@ export class vpViewComponent implements OnInit {
     ) {
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
-        console.log('vppools.view.component.ngOnInit | currentUser.userrole:', this.currentUser.userrole);
         this.userIsAdmin = this.currentUser.userrole == 'admin';
       } else {
         this.userIsAdmin = false;
@@ -294,7 +293,7 @@ export class vpViewComponent implements OnInit {
       this.visitLocationForm.controls['visitNavMethod'].setValue(this.visit.visitNavMethod);
       this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
-      console.log('vppools.view.setFormValues | visitTown: ', this.visit.visitTown);
+      //console.log('vppools.view.setFormValues | visitTown: ', this.visit.visitTown);
       this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown);
       this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
       //2b Location of Pool
@@ -418,7 +417,7 @@ export class vpViewComponent implements OnInit {
 
     onVisitPageSelect(visitPageIndex) {
       this.visitPage.index = visitPageIndex;
-      console.log('vpvisit.view.onVisitPageSelect', this.visitPage.index);
+      //console.log('vpvisit.view.onVisitPageSelect', this.visitPage.index);
       this.uxValuesService.visitPageIndex = visitPageIndex;
     }
 
@@ -436,13 +435,13 @@ export class vpViewComponent implements OnInit {
     async loadPoolVisit(visitId) {
       this.dataLoading = true;
       this.poolsLoading = true;
-      console.log('vppools.view.component.loadPage:', visitId);
+      //console.log('vppools.view.component.loadPage:', visitId);
       //this.vpPoolsService.getByVisitId(visitId)
       this.vpVisitService.getById(visitId)
           .pipe(first())
           .subscribe(
               data => {
-                console.log('vppools.view.component.loadPage result:', data);
+                //console.log('vppools.view.component.loadPage result:', data);
                 this.pools = data.rows[0]; //sets map data
                 this.visit = data.rows[0]; //sets form data
                 this.poolId = this.visit.poolId; //needed for photos
@@ -468,7 +467,7 @@ export class vpViewComponent implements OnInit {
           .pipe(first())
           .subscribe(
               data => {
-                  console.log(`vppools.LoadMappedPool=>data:`, data);
+                  //console.log(`vppools.LoadMappedPool=>data:`, data);
                   this.pools = data.rows[0]; //sets map data
                   this.visit = data.rows[0]; // TODO: not sure what this means for a mapped-only pool...
                   this.visitId = this.visit.visitId; //needed for the display of photos
@@ -477,7 +476,7 @@ export class vpViewComponent implements OnInit {
                   this.poolsLoading = false;
               },
               error => {
-                  console.log(`vppools.LoadMappedPool=>error: ${error}`);
+                  //console.log(`vppools.LoadMappedPool=>error: ${error}`);
                   this.alertService.error(error);
                   this.dataLoading = false;
                   this.poolsLoading = false;
@@ -517,13 +516,13 @@ export class vpViewComponent implements OnInit {
     if (this.visitPage.index < 0) this.visitPage.index = 0;
     if (this.visitPage.index > this.visitPage.values.length-1) this.visitPage.index = this.visitPage.values.length-1;
     if (this.visitPage.index===1 && (!this.userIsAdmin && !this.userIsOwner)) this.visitPage.index += direction;
-    console.log('vpvisit.view.nextPage', this.visitPage.index);
+    //console.log('vpvisit.view.nextPage', this.visitPage.index);
     this.uxValuesService.visitPageIndex = this.visitPage.index;
   }
 
   setPage(page) {
     this.visitPage.index = page;
-    console.log('vpvisit.view.setPage', this.visitPage.index);
+    //console.log('vpvisit.view.setPage', this.visitPage.index);
     this.uxValuesService.visitPageIndex = this.visitPage.index;
   }
 

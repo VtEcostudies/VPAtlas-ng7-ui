@@ -94,8 +94,7 @@ export class vpVisitCreateComponent implements OnInit {
       //get poolId or visitId or from route params and load visit data from db
       this.visitId = this.route.snapshot.params.visitId;
       this.poolId = this.route.snapshot.params.poolId;
-      //console.log('vpvisit.create.ngOnInit route.snapshot params: visitId:', this.visitId, 'poolId:', this.poolId);
-
+      console.log('vpvisit.create.ngOnInit route.snapshot params: visitId:', this.visitId, 'poolId:', this.poolId);
       if (this.visitId) { //update an existing visit - set all initial values in setFormValues()
         this.update = true;
         this.mapMarker = true;
@@ -124,7 +123,7 @@ export class vpVisitCreateComponent implements OnInit {
         //another way to set modal content - use static definitions in html tag
         this.modalTitle='Info'; //this can be a value passed to this function
         this.modalText=infoId;
-        console.log('infoId', infoId);
+        //console.log('infoId', infoId);
         this.modalService.open(id, visitDialogText[infoId]);
     }
 
@@ -522,6 +521,7 @@ export class vpVisitCreateComponent implements OnInit {
     */
     async LoadVisitData(visitId) {
       this.dataLoading = true;
+      this.poolsLoading = true;
       //console.log('vpvisit.create.component.LoadVisitData:', visitId);
       this.vpVisitService.getById(visitId)
           .pipe(first())
@@ -538,11 +538,13 @@ export class vpVisitCreateComponent implements OnInit {
                 };
                 this.setFormValues();
                 this.dataLoading = false;
+                this.poolsLoading = false;
                 this.userIsOwner = !this.currentUser ? false : (this.currentUser.username === this.visit.visitUserName);
               },
               error => {
                   this.alertService.error(error);
                   this.dataLoading = false;
+                  this.poolsLoading = false;
               });
     }
 
@@ -636,13 +638,13 @@ export class vpVisitCreateComponent implements OnInit {
       mappedPool.mappedLandownerEmail = this.visitLocationForm.value.visitLandownerEmail;
 
       if (this.visitObserverForm.invalid) {
-        console.log(`visitObserverForm.invalid`);
+        //console.log(`visitObserverForm.invalid`);
         this.setPage(0);
         return;
       }
 
       if (this.visitLocationForm.invalid) {
-        console.log(`visitLocationForm.invalid`);
+        //console.log(`visitLocationForm.invalid`);
         this.setPage(0);
         return;
       }
@@ -712,32 +714,32 @@ export class vpVisitCreateComponent implements OnInit {
 
         // stop here if form is invalid - navigate to the earliest page missing data
         if (this.visitObserverForm.invalid) {
-          console.log(`visitObserverForm.invalid`,this.visitObserverForm.invalid);
+          //console.log(`visitObserverForm.invalid`,this.visitObserverForm.invalid);
           this.setPage(0);
           return;
         }
         if (this.visitLocationForm.invalid) {
-          console.log(`visitLocationForm.invalid`,this.visitLocationForm.invalid);
+          //console.log(`visitLocationForm.invalid`,this.visitLocationForm.invalid);
           this.setPage(0);
           return;
         }
         if (this.visitLandOwnForm.enabled && this.visitLandOwnForm.invalid) {
-          console.log(`visitLandOwnForm.invalid`, this.visitLandOwnForm.invalid);
+          //console.log(`visitLandOwnForm.invalid`, this.visitLandOwnForm.invalid);
           this.setPage(1);
           return;
         }
         if (this.visitFieldVerificationForm.invalid) {
-          console.log(`visitFieldVerificationForm.invalid`,this.visitFieldVerificationForm.invalid);
+          //console.log(`visitFieldVerificationForm.invalid`,this.visitFieldVerificationForm.invalid);
           this.setPage(2);
           return;
         }
         if (this.visitPoolCharacteristicsForm.invalid) {
-          console.log(`visitPoolCharacteristicsForm.invalid`,this.visitPoolCharacteristicsForm.invalid);
+          //console.log(`visitPoolCharacteristicsForm.invalid`,this.visitPoolCharacteristicsForm.invalid);
           this.setPage(3);
           return;
         }
         if (this.visitIndicatorSpeciesForm.invalid) {
-          console.log(`visitIndicatorSpeciesForm.invalid`,this.visitIndicatorSpeciesForm.invalid);
+          //console.log(`visitIndicatorSpeciesForm.invalid`,this.visitIndicatorSpeciesForm.invalid);
           this.setPage(4);
           return;
         }
