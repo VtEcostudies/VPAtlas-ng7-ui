@@ -28,7 +28,7 @@
     <div class="col-4">
       <button (click)="zoomPrev($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Prev</button>
       <button (click)="zoomNext($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Next</button>
-      <button (click)="zoomStats=!zoomStats" class="topmost btn btn-link">({{uxValuesService.zoomIndex}}/{{uxValuesService.zoomCount}})</button>
+      <button (click)="uxValuesService.InitZoom()" class="topmost btn btn-link">({{uxValuesService.zoomIndex}}/{{uxValuesService.zoomCount}})</button>
     </div>
   </div>
   <!--

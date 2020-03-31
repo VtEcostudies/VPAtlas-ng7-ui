@@ -1,4 +1,5 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
+﻿import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -12,7 +13,13 @@ import { visitDialogText} from '@app/vpvisit/visitDialogText';
 import { environment } from '@environments/environment';
 import { ModalService } from '@app/_modal';
 
-@Component({templateUrl: '../vpvisit/vpvisit.create.component.html'})
+@Component({
+  selector: 'pool-data-view',
+  templateUrl: '../vpvisit/vpvisit.create.component.html'
+})
+
+@Injectable({providedIn: 'root'}) //this makes a component single-instance, which applies to services, as well.
+
 export class vpViewComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
     currentUser = null;
@@ -38,12 +45,13 @@ export class vpViewComponent implements OnInit {
     poolsLoading = false; //flag that mapped pools are loading pending a map update
     submitted = false; //flag that the form was submitted to create/update a visit
     permission = false; //flag that landowner permission was obtained. used to show/hide actions buttons
-    visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
+    @Input() reviewVisitId = null; //passed via @Input when this form is included as tag <pool-data-view/>
+    visitId = null; //visitId passed via routeParams- indicates a view/edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
     visit: vpVisit = new vpVisit(); //not passed to map, used by the forms
     mapPoints = false; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
-    itemType = 'View Visit'; //passed to map via [itemType]="itemType"
+    @Input() itemType = 'View Visit'; //passed to map via [itemType]="itemType"
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
@@ -74,9 +82,11 @@ export class vpViewComponent implements OnInit {
         this.userIsAdmin = false;
       }
       this.loadTowns();
+      console.log('*********@Input in vppools.view.componenet::constructor | reviewVistiId:', this.reviewVisitId);
     }
 
     async ngOnInit() {
+      console.log('*********@Input in vppools.view.componenet::ngOnInit | reviewVistiId:', this.reviewVisitId);
       //get poolId or visitId or from route params and load visit data from db
       this.visitId = this.route.snapshot.params.visitId;
       this.poolId = this.route.snapshot.params.poolId;
@@ -92,8 +102,11 @@ export class vpViewComponent implements OnInit {
         this.setPage(this.uxValuesService.visitPageIndex); //navigate to the previous pool page
       } else if (this.poolId) {
         await this.LoadMappedPool(this.poolId);
+      } else if (this.reviewVisitId) { //passed via @Input from vpreview.view or vpreview.create...
+        //this.itemType = 'Review Visit';
+        await this.loadPoolVisit(this.reviewVisitId);
       } else { //redirect to pool list
-        this.router.navigate(['/pools/list']);
+        //this.router.navigate(['/pools/list']);
       }
     } //end ngOnInit
 

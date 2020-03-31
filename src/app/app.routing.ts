@@ -60,6 +60,7 @@ const appRoutes: Routes = [
     { path: 'pools/view/:poolId', component: vpViewComponent },
 
     { path: 'review/list', component: vpReviewListComponent, canActivate: [AuthGuard] },
+    { path: 'review/list/:visitId', component: vpReviewListComponent, canActivate: [AuthGuard] },
     { path: 'review/view/:reviewId', component: vpReviewViewComponent, canActivate: [AuthGuard] },
     { path: 'review/create', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
     { path: 'review/create/:visitId', component: vpReviewCreateComponent, canActivate: [AuthGuard] },

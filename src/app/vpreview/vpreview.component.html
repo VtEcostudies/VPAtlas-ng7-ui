@@ -152,3 +152,10 @@
     <button (click)="CancelReview()" class="btn">
       Cancel</button>
 </div>
+<hr>
+<div *ngIf="!dataLoading">
+  <pool-data-view
+  [itemType]="itemType"
+  [reviewVisitId]="visitId"
+  ></pool-data-view>
+</div>

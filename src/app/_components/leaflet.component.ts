@@ -250,7 +250,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     baseLayers = [this.esriTopo, this.esriWorld, this.openTopo, this.googleSat, this.streets, this.light]; //make esriTopo default b/c openTopo often loads slowly
 
   constructor(
-    private uxValuesService: UxValuesService,
+    public uxValuesService: UxValuesService,
     private authenticationService: AuthenticationService,
     private vpPoolsService: vpPoolsService,
     private injector: Injector,
@@ -939,10 +939,10 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.cmLLArr.push(llLoc); //this is used to scope zoom. redundant?
 
       var toolText = '';
+      /* Don't indlue visitId in tooltip anymore.
       if (vpools[i].visitId) {
         toolText += `<div>Visit ${vpools[i].visitId}</div>`;
-
-      }
+      }*/
       toolText += `
             <div>Pool ${vpools[i].poolId}</div>
             <div>Status: ${vpools[i].mappedPoolStatus}</div>

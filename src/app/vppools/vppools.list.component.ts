@@ -398,6 +398,10 @@ export class vpListComponent implements OnInit {
       this.router.navigate([`/pools/mapped/view/${poolId}`]);
     }
 
+    GetVisitReviews(visitId) {
+      this.router.navigate([`review/list/${visitId}`], {queryParams:{returnUrl:this.router.url, visitId:visitId}});
+    }
+
     async showMap() {
       if (this.loadAllRec == false) {
         this.loadAllRec = true;

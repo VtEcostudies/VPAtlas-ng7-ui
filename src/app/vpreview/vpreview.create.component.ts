@@ -12,7 +12,8 @@ import { reviewDialogText } from '@app/vpreview/dialogText';
 import { ModalService } from '@app/_modal';
 
 @Component({
-  templateUrl: 'vpreview.component.html'
+  templateUrl: 'vpreview.component.html',
+  styleUrls: ['styles.css']
 })
 export class vpReviewCreateComponent implements OnInit {
     view = false;
@@ -25,6 +26,7 @@ export class vpReviewCreateComponent implements OnInit {
     reviewForm: FormGroup = this.formBuilder.group({});
     dataLoading = false; //flag that the form data is loading
     submitted = false; //flag that the form was submitted to create/update a visit
+    itemType = 'Review Visit';
     review: any = {};
     reviewId = null; //reviewId passed via routeParams- indicates an edit/update of an existing visit
     visitId = null;
@@ -74,6 +76,8 @@ export class vpReviewCreateComponent implements OnInit {
     }
 
     async ngOnInit() {
+      this.dataLoading = true;
+
       // get return url from route parameters or default to '/review/list'
       console.log('vpreview.create.copmonenent | returnUrl:', this.route.snapshot.queryParams);
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
@@ -147,7 +151,7 @@ export class vpReviewCreateComponent implements OnInit {
           .subscribe(
               data => {
                 this.review = data.rows[0];
-                this.visitId = data.rows[0].visitId;
+                this.visitId = data.rows[0].visitId; //this should trigger <pool-data-view> tag to load via @Input
                 this.poolId = data.rows[0].poolId;
                 this.setFormValues();
                 this.dataLoading = false;
@@ -165,6 +169,7 @@ export class vpReviewCreateComponent implements OnInit {
           .subscribe(
               data => {
                   this.visit = data.rows[0];
+                  this.visitId = this.visit.visitId; //this should trigger <pool-data-view> tag to load via @Input
                   this.poolId = this.visit.visitPoolId;
                   this.reviewForm.controls['reviewVisitId'].setValue(this.visit.visitId);
                   this.reviewForm.controls['reviewVisitId'].disable();
@@ -238,7 +243,7 @@ export class vpReviewCreateComponent implements OnInit {
   }
 
   DeleteReview() {
-    if (confirm(`Are you sure you want to delete visit ${this.review.reviewId}?`)) {
+    if (confirm(`Are you sure you want to delete Review ${this.review.reviewId}?`)) {
       this.vpVisitService.delete(this.review.reviewId)
         .pipe(first())
         .subscribe(

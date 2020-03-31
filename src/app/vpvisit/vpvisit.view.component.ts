@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -8,7 +9,10 @@ import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescrip
 import { LeafletComponent } from '@app/_components/leaflet.component';
 import { ModalService } from '@app/_modal';
 
-@Component({templateUrl: 'vpvisit.view.component.html'})
+@Component({
+  selector: 'visit-view',
+  templateUrl: 'vpvisit.view.component.html'
+})
 export class vpVisitViewComponent implements OnInit {
     visitUser = null;
     userIsAdmin = false;

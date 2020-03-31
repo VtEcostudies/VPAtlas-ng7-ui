@@ -9,9 +9,11 @@ import { ModalService } from '@app/_modal';
 import { environment } from '@environments/environment';
 import { reviewDialogText } from '@app/vpreview/dialogText';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import { vpVisitViewComponent } from '@app/vpvisit';
 
 @Component({
-  templateUrl: 'vpreview.component.html'
+  templateUrl: 'vpreview.component.html',
+  styleUrls: ['styles.css']
 })
 export class vpReviewViewComponent implements OnInit {
   view = true;
@@ -26,6 +28,7 @@ export class vpReviewViewComponent implements OnInit {
   townCount = 0;
   dataLoading = false; //flag that the form data is loading
   submitted = false; //flag that the form was submitted to create/update a visit
+  itemType = 'Review Visit';
   review: any = {};
   reviewId = null; //reviewId passed via routeParams- indicates an edit/update of an existing visit
   visitId = null;
@@ -72,8 +75,6 @@ export class vpReviewViewComponent implements OnInit {
     }
 
     async ngOnInit() {
-      // get return url from route parameters or default to '/review/list'
-      console.log('vpreview.view.copmonenent | returnUrl:', this.route.snapshot.queryParams);
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
 
       this.reviewId = this.route.snapshot.params.reviewId;
@@ -137,6 +138,7 @@ export class vpReviewViewComponent implements OnInit {
           .subscribe(
               data => {
                 this.review = data.rows[0];
+                this.visitId = this.review.reviewVisitId; //this triggers <pool-data-view> tag to load via @Input
                 this.setFormValues();
                 this.dataLoading = false;
               },

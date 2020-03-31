@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -47,12 +47,13 @@ export class vpVisitCreateComponent implements OnInit {
     poolsLoading = false; //flag that mapped pools are loading pending a map update
     submitted = false; //flag that the form was submitted to create/update a visit
     permission = false; //flag that landowner permission was obtained. used to show/hide actions buttons
+    @Input() reviewVisitId = null; //passed via @Input when this form is included as tag <pool-data-view/>
     visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
     visit: vpVisit = new vpVisit(); //not passed to map, used by the forms
     mapPoints = false; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
-    itemType = 'Edit Visit'; //passed to map via [itemType]="itemType"
+    @Input() itemType = 'Edit Visit'; //passed to map via [itemType]="itemType"
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values

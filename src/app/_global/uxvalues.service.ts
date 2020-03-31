@@ -7,12 +7,16 @@ import { vtTown } from '@app/_models';
 @Injectable({ providedIn: 'root' }) //this makes a service single-instance?
 
 export class UxValuesService {
-    currentUser = null;
-    userIsAdmin = false;
+    private currentUser = null;
+    private userIsAdmin = false;
 
     public visitPageIndex = 0;
     public baseLayerIndex = 0;
     public pointColorIndex = 0;
+    // TODO: enable these UX values
+    public poolTypeSelector = 'All';
+    public poolSearchValues = {poolId:null, userName:null, townName:null, mappedMethod:null};
+    public poolListViewType = 0; //0:Map View, 1:Table View
 
     public vtCenter = {lat:43.916944,lng:-72.668056};
     public prevZoomLevel = [8];
@@ -55,7 +59,7 @@ export class UxValuesService {
         this.data[type].count = pools.length;
       } else {
         this.data[type].timestamp = Moment().format();
-        // TODO: update existing array with new data using array.filter like below
+        //update existing array with new data
         pools.forEach(row => {
           var found = false;
           console.log(`searching ${type} for ${row.mappedPoolId}/${row.visitId}/${row.reviewId}`);
@@ -142,9 +146,30 @@ export class UxValuesService {
       this.filter = ''; //must clear first to undo filters
       var i = 0;
 
+      //visited pools
+      if (type == 'visi') {
+        if (this.filter) {
+          this.filter += `&logical${++i}=AND&`;
+        }
+        this.filter += `visitPoolId|!=NULL`;
+      }
+
+      //review pools
+      if (type == 'revu') {
+        if (this.filter) {
+          this.filter += `&logical${++i}=AND&`;
+        }
+        this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
+      }
+
+      if (type=='mine' && this.currentUser) {
+        search.username=this.currentUser.username;
+      }
+
       if (search.visitId) {
         this.filter += `visitId=${search.visitId}`;
       }
+      //this search item was removed from the form. leave the code in case it is revived.
       if (search.poolId) {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
@@ -155,8 +180,6 @@ export class UxValuesService {
         this.filter += `&visitPoolId=${search.poolId}`;
         this.filter += `&logical${++i}=)`;
       }
-
-      if (type=='mine' && this.currentUser) {search.username=this.currentUser.username;}
 
       if (search.username) {
         if (this.filter) {
@@ -187,47 +210,8 @@ export class UxValuesService {
         this.filter += `mappedMethod=${search.mappedMethod}`;
       }
 
-      //hidden field, populated from code
       /*
-        NOTE: there IS a way to send multiple values for one selector in http:
-        send multiple instances of that same field in the query param lists
-        node express parses them into an array for us. We are not using this
-        previously unknown feature, yet.
-      */
-      if (search.mappedPoolStatus) {
-        //exclude search items which are not pool statuses
-        if (search.mappedPoolStatus!="All" &&
-            search.mappedPoolStatus!="Visited" &&
-            search.mappedPoolStatus!="Monitored" &&
-            search.mappedPoolStatus!="Mine" &&
-            search.mappedPoolStatus!="Review"
-          ) {
-          if (this.filter) {
-            this.filter += `&logical${++i}=AND&`;
-          }
-          this.filter += `mappedPoolStatus=${search.mappedPoolStatus}`;
-          //this.filter += `mappedPoolStatus|IN=${search.mappedPoolStatus}`;
-        }
-      }
-
-      //visited pools
-      if (type == 'visi') {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `visitPoolId|!=NULL`;
-      }
-
-      //review pools
-      if (type == 'revu') {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
-      }
-
-      /*
-        filter hidden pools if user is not admin
+        filter hidden pools (duplicate, eliminated) if user is not admin
         this is not necessary with new map control UX
       */
       if (!this.userIsAdmin) {
@@ -286,6 +270,13 @@ export class UxValuesService {
     getZoomCenter() {
       //console.log('getZoomCenter', this.zoomIndex, this.prevZoomCenter[this.zoomIndex])
       return this.prevZoomCenter[this.zoomIndex];
+    }
+
+    InitZoom() {
+      this.prevZoomLevel = [8];
+      this.prevZoomCenter = [this.vtCenter];
+      this.zoomIndex = this.prevZoomLevel.length-1;
+      this.zoomCount = this.prevZoomLevel.length-1;
     }
 
     loadTowns() {

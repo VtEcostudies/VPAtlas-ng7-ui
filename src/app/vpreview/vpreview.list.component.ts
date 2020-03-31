@@ -14,6 +14,7 @@ export class vpReviewListComponent implements OnInit {
   currentUser = null;
   userIsAdmin = false;
   userIsOwner = false;
+  returnUrl = "/pools/list";
   reviews = [];
   count = 0;
   dataLoading = false;
@@ -39,11 +40,12 @@ export class vpReviewListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
     this.filterForm = this.formBuilder.group({
-        userName: [''],
-        visitId: [''],
-        poolId: [''],
-        QAPerson: ['']
+        userName: [this.route.snapshot.queryParams['userName']],
+        visitId: [this.route.snapshot.queryParams['visitId']],
+        poolId: [this.route.snapshot.queryParams['poolId']],
+        QAPerson: [this.route.snapshot.queryParams['QAPerson']]
       });
     this.LoadReviews();
   }
@@ -95,6 +97,17 @@ export class vpReviewListComponent implements OnInit {
       this.filter += `reviewQAPerson|LIKE=%${this.f.QAPerson.value}%`;
     }
     console.log(this.filter);
+  }
+
+  AddReview() {
+    if (this.f.visitId.value) {
+      this.router.navigate([`/review/create/${this.f.visitId.value}`], {queryParams:{returnUrl:this.router.url}});
+    } else {
+      this.router.navigate([`/review/create`], {queryParams:{returnUrl:this.router.url}});
+    }
+  }
+  Cancel() {
+    this.router.navigate([this.returnUrl]);
   }
 
 }

@@ -36,11 +36,15 @@
   <div *ngIf="userIsAdmin||userIsOwner">
     <button (click)="EditVisit(poolObj.visitId)" class="btn btn-link">Edit Visit {{poolObj.visitId}}</button>
   </div>
+  <div *ngIf="userIsAdmin">
+    <button (click)="CreateReview(poolObj.visitId)" class="btn btn-link">Add Review for Visit {{poolObj.visitId}}</button>
+  </div>
   <div *ngIf="userIsAdmin&&poolObj.reviewId">
     <button (click)="ViewReview(poolObj.reviewId)" class="btn btn-link">View Review {{poolObj.reviewId}}</button>
   </div>
 </div>
 
+<!-- Mapped pools. Simple UI to view/edit pools. -->
 <div *ngIf="itemType=='List Mapped Pool'">
   <div *ngIf="userIsAdmin">
     <button (click)="ViewMapped(poolObj.mappedPoolId)" class="btn btn-link">View Mapped Pool {{poolObj.mappedPoolId}}</button>
