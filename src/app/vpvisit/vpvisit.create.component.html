@@ -12,11 +12,11 @@
           <h5><b>Add NEW* Vernal Pool</b></h5>
         </div>
 
-        <div *ngIf="!update && itemType==='Visit' && poolId" style="display:inline-block;">
+        <div *ngIf="!update && itemType==='Edit Visit' && poolId" style="display:inline-block;">
           <h5><b>Add Data for Vernal Pool '{{poolId}}'</b></h5>
         </div>
 
-        <div *ngIf="update && itemType==='Visit'" style="display:inline-block;">
+        <div *ngIf="update && itemType==='Edit Visit'" style="display:inline-block;">
           <h5><b>Edit Vernal Pool Visit '{{visitId}}'</b></h5>
         </div>
 
@@ -24,7 +24,7 @@
           <h5><b>View Vernal Pool Visit '{{visitId}}'</b></h5>
         </div>
 
-        <div *ngIf="!update && itemType==='Visit'" style="display:inline-block;color:red;">
+        <div *ngIf="!update && itemType==='Edit Visit'" style="display:inline-block;color:red;">
           <h6><b>Please Begin by Selecting Mapped or NOT-Mapped in 2a below</b></h6>
         </div>
     </div>
@@ -348,7 +348,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId && !!visitId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId && !!visitId"
               type="file" style="display:none;" formControlName="visitPoolPhoto"
               (change)="PhotoFileEvent($event)" size="15" class="form-control"
               />
@@ -962,7 +962,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitWoodFrogPhoto"
               (change)="PhotoFileEvent($event,'WoodFrog')" class="form-control"
               />
@@ -1007,7 +1007,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitSpsPhoto"
               (change)="PhotoFileEvent($event,'Sps')" size="15" class="form-control"
               />
@@ -1051,7 +1051,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitJesaPhoto"
               (change)="PhotoFileEvent($event,'Jesa')" size="15" class="form-control"
               />
@@ -1095,7 +1095,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitBssaPhoto"
               (change)="PhotoFileEvent($event,'Bssa')" size="15" class="form-control"
               />
@@ -1134,7 +1134,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitFairyShrimpPhoto"
               (change)="PhotoFileEvent($event,'FairyShrimp')" size="15" class="form-control"
               />
@@ -1173,7 +1173,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitFingerNailClams"
               (change)="PhotoFileEvent($event,'FingerNailClams')" size="15" class="form-control"
               />
@@ -1214,7 +1214,7 @@
           <label class="btn btn-primary btn-file">
             <i class="fa fa-upload"></i>
             <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Visit') && !!poolId"
+            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
               type="file" style="display:none;" formControlName="visitSpeciesOtherPhoto"
               (change)="PhotoFileEvent($event,'SpeciesOther')" size="15" class="form-control"
               />
