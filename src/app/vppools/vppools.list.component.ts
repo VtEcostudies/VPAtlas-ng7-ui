@@ -118,7 +118,7 @@ export class vpListComponent implements OnInit {
         //console.log('setStatusLoadPools | review', this.filterForm.value.review);
       }
 
-      this.loadPools();
+      this.loadPools(1); //MUST init Page to 1 when changing dataset to avoid trying to show page=10 when only 3 pages.
     }
 
     getType() {

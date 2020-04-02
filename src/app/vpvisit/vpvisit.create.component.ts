@@ -57,6 +57,7 @@ export class vpVisitCreateComponent implements OnInit {
     visitUpdateLocation = new L.LatLng(43.6962, -72.3197);
     mapMarker = false; //flag to show marker, passed to map via [mapMarker]="mapMarker"- marker is moved to provide lat/long values via emitted events
     locMarker = null; //data to locate marker, passed to map via [locMarker]="locMarker"- marker location is plotted from these values
+    zoomTo = {option:'Vermont', value:{}}; //{option:'Custom',value:{center:{lat:43.916944, lng:-72.668056}, zoomLevel:8}};
     visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
     showImage = false; //flag to show pool photo over top of map on 1st page
     uploading = false; //image uploading flag
@@ -93,8 +94,8 @@ export class vpVisitCreateComponent implements OnInit {
       this.authenticationService.check();
 
       //get poolId or visitId or from route params and load visit data from db
-      this.visitId = this.route.snapshot.params.visitId;
-      this.poolId = this.route.snapshot.params.poolId;
+      this.visitId = this.route.snapshot.params.visitId; if (this.visitId) this.visitId=this.visitId.split('?')[0];
+      this.poolId = this.route.snapshot.params.poolId; if (this.poolId) this.poolId=this.poolId.split('?')[0];
       console.log('vpvisit.create.ngOnInit route.snapshot params: visitId:', this.visitId, 'poolId:', this.poolId);
       if (this.visitId) { //update an existing visit - set all initial values in setFormValues()
         this.update = true;
@@ -577,6 +578,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.itemType = "Visit New Pool";
         this.mapMarker = true;
         this.mapPoints = true;
+        this.zoomTo = {option:'Vermont', value:{}};
         this.filter = '';
         //this.loadMappedPools();
         this.loadUpdated();

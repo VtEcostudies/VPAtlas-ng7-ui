@@ -111,7 +111,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   @Input() mapMarker = false; //external flag to invoke the map with a moveable marker
   @Input() locMarker = null; //single object having .latitude and .longitude properties to locate the moveable marker
   @Input() update = false; //external flag that this is an edit/update, not a create instantition: plot the mapMarker location with mapValues data
-  @Input() zoomTo = {center: this.vtCenter, zoomLevel:8}; //external flag to set zoom/center of map
+  @Input() zoomTo = {option:'Vermont', value: {center: this.vtCenter, zoomLevel:8}}; //external flag to set zoom/center of map
   @Output() markerUpdate = new EventEmitter<L.LatLng>(); //when the mapMarker is moved or located, send LatLng map events to listeners
   @Output() markerSelect = new EventEmitter<vpMappedEventInfo>(); //when a circleMarker is selected, send mapped pool info events to listeners
   itemLoc: L.LatLng = null; //store the location of the marker on the screen, passed with events to listeners, etc.
@@ -122,7 +122,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   scaleControl = L.control.scale({position: 'topright'});
   layerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});
   zoomControl = L.control.zoom({position: 'topright'});
-  poolControl = L.control.layers(null, null, { collapsed: false, position: 'bottomleft'}); //pool groups as layers
+  poolControl = L.control.layers(null, null, { collapsed: false, position: 'bottomleft'}); //pool status feature groups
   cursorLat = 0; //value for map display of cursor latitue location on map
   cursorLng = 0; //value for map display of cursor longitude location on map
   zoomLevel = 0; //global value that tracks the map zoomLevel
@@ -393,6 +393,35 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.mapPoints && this.cmLLArr.length===1) { //zoom to a mapped point if it's the only feature
       this.zoomExtents();
     }
+    if (changes.zoomTo && changes.zoomTo.currentValue != changes.zoomTo.previousValue) {
+      //this.map.setView(changes.zoomTo.currentValue.center, changes.zoomTo.currentValue.zoomLevel);
+      switch (changes.zoomTo.currentValue.option) {
+        case 'Marker':
+          this.zoomMarker();
+          break;
+        case 'Vermont':
+          this.zoomVermont();
+          break;
+        case 'Extents':
+          this.zoomExtents();
+          break;
+        case 'Previous':
+          this.uxValuesService.zoomPrev(this.map);
+          break;
+        case 'Next':
+          this.uxValuesService.zoomNext(this.map);
+          break;
+        case 'Init':
+          this.uxValuesService.InitZoom();
+          break;
+        case 'Custom':
+          const value = changes.zoomTo.currentValue.value;
+          this.map.setView(value.center, value.zoomLevel);
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   zoomMarker(e=null) {
@@ -410,14 +439,25 @@ export class LeafletComponent implements OnInit, OnChanges {
         If there is an array of points, zoom to their bounds (if point are closely grouped, this could be zoomed too far).
         If there is a single point, center map on point and zoom to level 15 (300m)
         If there is just a marker, center map on marker and zoom to level 15 (300m)
-        NOTE: We do NOT add the moveable marker to cmLLArr[].
+
+        To zoom to visible points - use allGroup.eachLayer(layer) and map.hasLayer(layer)
       */
-      if (this.cmLLArr.length > 1) { //change from > 0 to > 1 so we can custom-zoom to a single point
-        this.map.fitBounds(this.allGroup.getBounds()); //for a single marker, max zoom is 10m - too close for basemaps
-      } else if (this.cmLLArr.length == 1) {
-        this.map.setView(this.cmLLArr[0], 15); //zoomLevel 15 is 300m
+      var zoomGroup = L.featureGroup();
+      var count = 0;
+      this.allGroup.eachLayer(layer => {
+        if (this.map.hasLayer(layer)) {
+          count++;
+          zoomGroup.addLayer(layer);
+        }
+      })
+      if (count == 1) {
+        this.map.fitBounds(zoomGroup.getBounds());
+        this.map.setZoom(15);
+      } else if (count > 1) {
+        this.map.fitBounds(zoomGroup.getBounds());
+        if (this.map.getZoom() > 15) {this.map.setZoom(15);}
       } else if (this.mapMarker) {
-        this.map.setView(this.marker._latlng, 15); //zommLevl 15 is 300m
+        this.map.setView(this.marker._latlng, 15); //zoomLevl 15 is 300m
       } else {
         this.zoomVermont();
       }
@@ -438,12 +478,12 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }
 
-  async zoomPrev(e=null) {
+  zoomPrev(e=null) {
     if (e) {e.stopPropagation();}
     this.uxValuesService.zoomPrev(this.map);
   }
 
-  async zoomNext(e=null) {
+  zoomNext(e=null) {
     if (e) {e.stopPropagation();}
     this.uxValuesService.zoomNext(this.map);
   }

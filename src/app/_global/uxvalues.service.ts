@@ -60,24 +60,33 @@ export class UxValuesService {
       } else {
         this.data[type].timestamp = Moment().format();
         //update existing array with new data
-        pools.forEach(row => {
-          var found = false;
-          console.log(`searching ${type} for ${row.mappedPoolId}/${row.visitId}/${row.reviewId}`);
-          this.data[type].pools.find((pool, index, arr) => {
-            var match = true;
-            match = match && (row.mappedPoolId==pool.mappedPoolId);
-            match = match && (row.visitId==pool.visitId);
-            match = match && (row.reviewId==pool.reviewId);
-            if (match) {
+        pools.forEach(upd => { //iterate over incoming rows, each as 'upd'
+          var found = false; //flag that the incoming row, 'upd' was found in this pass through 'old' pools
+          var match = {pool:false, visit:false, review:false}; //instantaneous match of the idxth element
+          var vpmap = [];
+          console.log(`searching ${type} for ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}`);
+          this.data[type].pools.find((old, idx, arr) => {
+            if (upd.mappedPoolId==old.mappedPoolId&&!old.visitId) {
+              console.log(`FOUND Existing VPMap[${old.mappedPoolId}]=${idx}`);
+              vpmap[old.mappedPoolId]=idx;}
+            match = {
+              pool: upd.mappedPoolId==old.mappedPoolId,
+              visit: upd.visitId==old.visitId,
+              review: upd.reviewId==old.reviewId};
+            if ((match.pool && match.visit && match.review)) {
               found = true; //flag that we found a match so we don't duplicate it.
-              console.log(`Found ${row.mappedPoolId}/${row.visitId}/${row.reviewId}. Updating.`);
-              this.data[type].pools[index] = row; //update row
+              console.log(`FOUND ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}. Updating.`);
+              this.data[type].pools[idx] = upd; //update row
             }
-            return match;
+            return found;
           })
           if (!found) { //searched all rows for the current incoming value. not found. add it.
-            console.log(`Adding ${row.mappedPoolId}/${row.visitId}/${row.reviewId}`);
-            this.data[type].pools.push(row); //add row
+            console.log(`Adding ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}`);
+            this.data[type].pools.push(upd); //add row
+          }
+          if (upd.visitId && vpmap[upd.mappedPoolId]) { //if new row has visit delete old row without...
+            console.log(`Deleting ${upd.mappedPoolId} from data.pools[${type}] at index ${vpmap[upd.mappedPoolId]}`);
+            delete this.data[type].pools[vpmap[upd.mappedPoolId]];
           }
         });
       }
@@ -118,7 +127,7 @@ export class UxValuesService {
               await this.updateData(type, data.rows);
               var res = this.data[type].pools.filter(row => this.filterData(row));
               var len = res.length;
-              var chg = this.data[type].pools.length == 0 && data.rowCount;
+              var chg = data.rowCount > 0;
               if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
               else {resolve({pools:res, count:len, changed: chg});}
             },
