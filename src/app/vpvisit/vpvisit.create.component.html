@@ -339,33 +339,44 @@
       </div>
     </div> <!-- col -->
 
-    <div class="col-4">
+    <div class="col-4"> <!-- photo upload stuff -->
+      <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enable...?
+      *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId && !!visitId"
+      -->
       <div class="form-group">
         <label>Pool Photo:</label>
         <i (click)="openModal('vpvisit_help_info', 'visitPoolPhoto')" class="fa fa-info-circle no-margins link"></i>
-
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
-            <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId && !!visitId"
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadSteps');">
+            <div><i class="fa fa-upload fa-ban disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
+            <div><i class="fa fa-upload"></i></div>
+            <input *ngIf="update"
               type="file" style="display:none;" formControlName="visitPoolPhoto"
               (change)="PhotoFileEvent($event)" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!locate.visitPoolPhoto.value && !!poolId && !!visitId">
-            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1" target="_blank">
-              <img id="imgPoolThumb"
-                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1"
+          <span *ngIf="uploading">
+            <!--<progress style="position:relative;width:100%;" [value]="uProgress" [max]="100"></progress>-->
+            <label class="loading"></label>
+          </span>
+          <!--
+          NOTE: we *can* create instantaneous updates to image links by using the form value instead of a
+          static link. The form value is set when the photo is uploaded. The key, here, is to set the tag's
+          link value in square brackets. eg. [href] and [src].
+
+          IMPORTANT NOTE: DO NOT USE THE FORM GETTER FUNCTION FOR img and href values. Use a class variable.
+          -->
+          <span *ngIf="visit.visitPoolPhoto && !uploading">
+            <a [href]="visit.visitPoolPhoto" target="_blank">
+              <img id="imgPoolPhoto"
+                [src]="visit.visitPoolPhoto"
                 style="display:inline-block; height:30px; width:30px; margin-left: 0px;"
               />
             </a>
           </span>
-          <!-- this doesn't work
-          <progress *ngIf="uploading" style="position:relative;width:100%;" [value]="uProgress" [max]="100"></progress>
-           -->
-        </div>
-
+          </div>
       </div> <!-- form-group -->
     </div> <!-- col -->
 
@@ -445,7 +456,6 @@
           [locMarker]="locMarker"
           [itemType]="itemType"
           [zoomTo]="zoomTo"
-          [zoomToMarker]="zoomToMarker"
           (markerUpdate)="markerLocationUpdate($event)"
           (markerSelect)="markerSelected($event)"
           >
@@ -457,8 +467,8 @@
       </div>
     </div> <!-- !showImage -->
     <div *ngIf="showImage"> <!-- image overlay -->
-      <img id="imgPoolPhoto"
-        src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Pool.1"
+      <img id="imgPoolPhotoOverlay"
+        [src]="visit.visitPoolPhoto"
         style="max-height:100%; max-width:100%;"
       />
     </div>
@@ -959,26 +969,38 @@
 
       </td>
 
-      <td> <!-- Photo object -->
+      <td> <!-- Photo object WoodFrog-->
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
-            <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadIndicators');">
+            <div><i class="fa fa-upload disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
+            <div><i class="fa fa-upload"></i></div>
+            <input *ngIf="update"
               type="file" style="display:none;" formControlName="visitWoodFrogPhoto"
-              (change)="PhotoFileEvent($event,'WoodFrog')" class="form-control"
+              (change)="PhotoFileEvent($event,'WoodFrog')" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!indSpc.visitWoodFrogPhoto.value">
+          <span *ngIf="uploading"><label class="loading"></label></span>
+          <span *ngIf="visit.visitWoodFrogPhoto && !uploading">
+            <a [href]="visit.visitWoodFrogPhoto" target="_blank">
+              <img
+                [src]="visit.visitWoodFrogPhoto"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"/>
+            </a>
+          </span>
+        <!--
+          <span *ngIf="indSpc.visitWoodFrogPhoto.value && !uploading">
             <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1" target="_blank">
               <img id="imgWoodFrogThumb"
                 src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/WoodFrog.1"
-                style="display:inline-block; max-height:30px; max-width:30px;"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"
               />
             </a>
           </span>
+        -->
         </div>
-      </td> <!-- Photo object -->
+      </td> <!-- Photo object WoodFrog-->
       <td> <!-- iNat object -->
         <div class="form-inline">
           <input type="text" formControlName="visitWoodFrogiNat" size="10" class="form-control" />
@@ -1006,22 +1028,24 @@
 
       <td> <!-- Photo object Sps -->
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadIndicators');">
+            <div><i class="fa fa-upload disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
             <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
+            <input *ngIf="update"
               type="file" style="display:none;" formControlName="visitSpsPhoto"
               (change)="PhotoFileEvent($event,'Sps')" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!indSpc.visitSpsPhoto.value">
-            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1" target="_blank">
-              <img id="imgSpsThumb"
-                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Sps.1"
-                style="display:inline-block; max-height:30px; max-width:30px;"
-              />
+          <span *ngIf="uploading"><label class="loading"></label></span>
+          <span *ngIf="visit.visitSpsPhoto && !uploading">
+            <a [href]="visit.visitSpsPhoto" target="_blank">
+              <img
+                [src]="visit.visitSpsPhoto"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"/>
             </a>
-            </span>
+          </span>
         </div>
       </td> <!-- Photo object Sps -->
       <td> <!-- iNat object -->
@@ -1050,20 +1074,22 @@
       </td>
       <td> <!-- Photo object Jesa -->
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
-            <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadIndicators');">
+            <div><i class="fa fa-upload disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
+            <div><i class="fa fa-upload"></i></div>
+            <input *ngIf="update"
               type="file" style="display:none;" formControlName="visitJesaPhoto"
               (change)="PhotoFileEvent($event,'Jesa')" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!indSpc.visitSpsPhoto.value">
-            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1" target="_blank">
-              <img id="imgJesaThumb"
-                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Jesa.1"
-                style="display:inline-block; max-height:30px; max-width:30px;"
-              />
+          <span *ngIf="uploading"><label class="loading"></label></span>
+          <span *ngIf="visit.visitJesaPhoto && !uploading">
+            <a [href]="visit.visitJesaPhoto" target="_blank">
+              <img
+                [src]="visit.visitJesaPhoto"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"/>
             </a>
           </span>
         </div>
@@ -1094,20 +1120,22 @@
       </td>
       <td> <!-- Photo object Bssa -->
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
-            <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadIndicators');">
+            <div><i class="fa fa-upload disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
+            <div><i class="fa fa-upload"></i></div>
+            <input *ngIf="update"
               type="file" style="display:none;" formControlName="visitBssaPhoto"
               (change)="PhotoFileEvent($event,'Bssa')" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!indSpc.visitBssaPhoto.value">
-            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1" target="_blank">
-              <img id="imgBssaThumb"
-                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/Bssa.1"
-                style="display:inline-block; max-height:30px; max-width:30px;"
-              />
+          <span *ngIf="uploading"><label class="loading"></label></span>
+          <span *ngIf="visit.visitBssaPhoto && !uploading">
+            <a [href]="visit.visitBssaPhoto" target="_blank">
+              <img
+                [src]="visit.visitBssaPhoto"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"/>
             </a>
           </span>
         </div>
@@ -1133,20 +1161,22 @@
       <td></td>
       <td> <!-- Photo object FairyShrimp -->
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
-            <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadIndicators');">
+            <div><i class="fa fa-upload disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
+            <div><i class="fa fa-upload"></i></div>
+            <input *ngIf="update"
               type="file" style="display:none;" formControlName="visitFairyShrimpPhoto"
               (change)="PhotoFileEvent($event,'FairyShrimp')" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!indSpc.visitFairyShrimpPhoto.value">
-            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1" target="_blank">
-              <img id="imgFairyShrimpThumb"
-                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FairyShrimp.1"
-                style="display:inline-block; max-height:30px; max-width:30px;"
-              />
+          <span *ngIf="uploading"><label class="loading"></label></span>
+          <span *ngIf="visit.visitFairyShrimpPhoto && !uploading">
+            <a [href]="visit.visitFairyShrimpPhoto" target="_blank">
+              <img
+                [src]="visit.visitFairyShrimpPhoto"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"/>
             </a>
           </span>
         </div>
@@ -1172,20 +1202,22 @@
       <td></td>
       <td> <!-- Photo object FingerNailClams -->
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
-            <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
-              type="file" style="display:none;" formControlName="visitFingerNailClams"
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadIndicators');">
+            <div><i class="fa fa-upload disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
+            <div><i class="fa fa-upload"></i></div>
+            <input *ngIf="update"
+              type="file" style="display:none;" formControlName="visitFingerNailClamsPhoto"
               (change)="PhotoFileEvent($event,'FingerNailClams')" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!indSpc.visitFingerNailClamsPhoto.value">
-            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1" target="_blank">
-              <img id="imgFingerNailClamsThumb"
-                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/FingerNailClams.1"
-                style="display:inline-block; max-height:30px; max-width:30px;"
-              />
+          <span *ngIf="uploading"><label class="loading"></label></span>
+          <span *ngIf="visit.visitFingerNailClamsPhoto && !uploading">
+            <a [href]="visit.visitFingerNailClamsPhoto" target="_blank">
+              <img
+                [src]="visit.visitFingerNailClamsPhoto"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"/>
             </a>
           </span>
         </div>
@@ -1213,20 +1245,22 @@
       <td></td>
       <td> <!-- Photo object SpeciesOther -->
         <div class="form-inline">
-          <label class="btn btn-primary btn-file">
-            <i class="fa fa-upload"></i>
-            <!-- had to use *ngIf on input to exclude file browser action. [disabled] flag is overridden by form-level enaable...? -->
-            <input *ngIf="(itemType==='Visit Mapped Pool' || itemType==='Edit Visit') && !!poolId"
+          <label *ngIf="!update" class="btn btn-primary btn-file btn-upload disabled" (click)="openModal('vpvisit_help_info', 'photoUploadIndicators');">
+            <div><i class="fa fa-upload disabled"></i></div>
+          </label>
+          <label *ngIf="update" class="btn btn-primary btn-file btn-upload">
+            <div><i class="fa fa-upload"></i></div>
+            <input *ngIf="update"
               type="file" style="display:none;" formControlName="visitSpeciesOtherPhoto"
               (change)="PhotoFileEvent($event,'SpeciesOther')" size="15" class="form-control"
               />
           </label>
-          <span *ngIf="!!indSpc.visitSpeciesOtherPhoto.value">
-            <a href="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1" target="_blank">
-              <img id="imgSpeciesOtherThumb"
-                src="https://s3.amazonaws.com/{{s3PhotoBucket}}/{{poolId}}/{{visitId}}/SpeciesOther.1"
-                style="display:inline-block; max-height:30px; max-width:30px;"
-              />
+          <span *ngIf="uploading"><label class="loading"></label></span>
+          <span *ngIf="visit.visitSpeciesOtherPhoto && !uploading">
+            <a [href]="visit.visitSpeciesOtherPhoto" target="_blank">
+              <img
+                [src]="visit.visitSpeciesOtherPhoto"
+                style="display:inline-block; height:30px; width:30px; margin-left: 0px;"/>
             </a>
           </span>
         </div>

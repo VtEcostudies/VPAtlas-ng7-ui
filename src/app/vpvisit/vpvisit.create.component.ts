@@ -364,7 +364,7 @@ export class vpVisitCreateComponent implements OnInit {
       //2c Landowner Contact Information - add in vpvisit.alter.sql
       this.visitLocationForm.controls['visitUserIsLandowner'].setValue(this.visit.visitUserIsLandowner);
       this.visitLocationForm.controls['visitLandownerPermission'].setValue(this.visit.visitLandownerPermission);
-      this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
+      //this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
 
       //console.log('vpvisit.create.setFormValues | visitLandownerPermission: ', this.visit.visitLandownerPermission);
       if (this.visit.visitLandownerPermission) {
@@ -426,7 +426,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogLarvae'].setValue(this.visit.visitWoodFrogLarvae);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogEgg'].setValue(this.visit.visitWoodFrogEgg);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogEggHow'].setValue(this.visit.visitWoodFrogEggHow);
-      this.visitIndicatorSpeciesForm.controls['visitWoodFrogPhoto'].setValue(this.visit.visitWoodFrogPhoto);
+      //this.visitIndicatorSpeciesForm.controls['visitWoodFrogPhoto'].setValue(this.visit.visitWoodFrogPhoto);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogiNat'].setValue(this.visit.visitWoodFrogiNat);
       this.visitIndicatorSpeciesForm.controls['visitWoodFrogNotes'].setValue(this.visit.visitWoodFrogNotes);
 
@@ -434,7 +434,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitSpsLarvae'].setValue(this.visit.visitSpsLarvae);
       this.visitIndicatorSpeciesForm.controls['visitSpsEgg'].setValue(this.visit.visitSpsEgg);
       this.visitIndicatorSpeciesForm.controls['visitSpsEggHow'].setValue(this.visit.visitSpsEggHow);
-      this.visitIndicatorSpeciesForm.controls['visitSpsPhoto'].setValue(this.visit.visitSpsPhoto);
+      //this.visitIndicatorSpeciesForm.controls['visitSpsPhoto'].setValue(this.visit.visitSpsPhoto);
       this.visitIndicatorSpeciesForm.controls['visitSpsiNat'].setValue(this.visit.visitSpsiNat);
       this.visitIndicatorSpeciesForm.controls['visitSpsNotes'].setValue(this.visit.visitSpsNotes);
 
@@ -442,7 +442,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitJesaLarvae'].setValue(this.visit.visitJesaLarvae);
       this.visitIndicatorSpeciesForm.controls['visitJesaEgg'].setValue(this.visit.visitJesaEgg);
       this.visitIndicatorSpeciesForm.controls['visitJesaEggHow'].setValue(this.visit.visitJesaEggHow);
-      this.visitIndicatorSpeciesForm.controls['visitJesaPhoto'].setValue(this.visit.visitJesaPhoto);
+      //this.visitIndicatorSpeciesForm.controls['visitJesaPhoto'].setValue(this.visit.visitJesaPhoto);
       this.visitIndicatorSpeciesForm.controls['visitJesaiNat'].setValue(this.visit.visitJesaiNat);
       this.visitIndicatorSpeciesForm.controls['visitJesaNotes'].setValue(this.visit.visitJesaNotes);
 
@@ -450,17 +450,17 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitBssaLarvae'].setValue(this.visit.visitBssaLarvae);
       this.visitIndicatorSpeciesForm.controls['visitBssaEgg'].setValue(this.visit.visitBssaEgg);
       this.visitIndicatorSpeciesForm.controls['visitBssaEggHow'].setValue(this.visit.visitBssaEggHow);
-      this.visitIndicatorSpeciesForm.controls['visitBssaPhoto'].setValue(this.visit.visitBssaPhoto);
+      //this.visitIndicatorSpeciesForm.controls['visitBssaPhoto'].setValue(this.visit.visitBssaPhoto);
       this.visitIndicatorSpeciesForm.controls['visitBssaiNat'].setValue(this.visit.visitBssaiNat);
       this.visitIndicatorSpeciesForm.controls['visitBssaNotes'].setValue(this.visit.visitBssaNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimp'].setValue(this.visit.visitFairyShrimp);
-      this.visitIndicatorSpeciesForm.controls['visitFairyShrimpPhoto'].setValue(this.visit.visitFairyShrimpPhoto);
+      //this.visitIndicatorSpeciesForm.controls['visitFairyShrimpPhoto'].setValue(this.visit.visitFairyShrimpPhoto);
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimpiNat'].setValue(this.visit.visitFairyShrimpiNat);
       this.visitIndicatorSpeciesForm.controls['visitFairyShrimpNotes'].setValue(this.visit.visitFairyShrimpNotes);
 
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClams'].setValue(this.visit.visitFingerNailClams);
-      this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsPhoto'].setValue(this.visit.visitFingerNailClamsPhoto);
+      //this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsPhoto'].setValue(this.visit.visitFingerNailClamsPhoto);
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsiNat'].setValue(this.visit.visitFingerNailClamsiNat);
       this.visitIndicatorSpeciesForm.controls['visitFingerNailClamsNotes'].setValue(this.visit.visitFingerNailClamsNotes);
 
@@ -469,7 +469,7 @@ export class vpVisitCreateComponent implements OnInit {
 
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherName'].setValue(this.visit.visitSpeciesOtherName);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherCount'].setValue(this.visit.visitSpeciesOtherCount);
-      this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherPhoto'].setValue(this.visit.visitSpeciesOtherPhoto);
+      //this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherPhoto'].setValue(this.visit.visitSpeciesOtherPhoto);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtheriNat'].setValue(this.visit.visitSpeciesOtheriNat);
       this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherNotes'].setValue(this.visit.visitSpeciesOtherNotes);
 
@@ -478,8 +478,6 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitIndicatorSpeciesForm.controls['visitFish'].setValue(this.visit.visitFish);
       this.visitIndicatorSpeciesForm.controls['visitFishCount'].setValue(this.visit.visitFishCount);
       //this.visitIndicatorSpeciesForm.controls['visitFishSize'].setValue(this.visit.visitFishSize);
-
-      //console.dir(this.visitIndicatorSpeciesForm.controls);
     }
 
     onVisitPageSelect(visitPageIndex) {
@@ -532,8 +530,10 @@ export class vpVisitCreateComponent implements OnInit {
           .subscribe(
               data => {
                 //console.log('vpvisit.create.component.LoadVisitData result:', data);
+                //this.pools = data.rows[0]; //sets map data
                 this.visit = data.rows[0];
                 this.poolId = data.rows[0].poolId;
+                console.log('VisitPoolPhoto', this.visit.visitPoolPhoto);
                 this.locMarker = {
                   latitude: this.visit.latitude,
                   longitude: this.visit.longitude,
@@ -795,6 +795,7 @@ export class vpVisitCreateComponent implements OnInit {
         }
 
         if (this.visit.visitPoolPhoto) {
+          //if (this.visit.visitPool)
           Object.assign(objAll, {"visitPoolPhoto":this.visit.visitPoolPhoto});
         }
 
@@ -972,7 +973,7 @@ export class vpVisitCreateComponent implements OnInit {
   Return the promise to the caller for use in handling success/failure.
   Note: the promise is the angular http promise that uses first().
   */
-  SavePhotoLink(type='Pool') {
+  SavePhotoLink(type='Pool', iter=1) {
     /*
     weird API/DB error trying to set the value of just one column:
     update vpvisit set ("visitPoolPhoto") = ($2) where "visitId"=$1 returning "visitId"
@@ -981,7 +982,7 @@ export class vpVisitCreateComponent implements OnInit {
     */
     var objUpd:any = {};
 
-    objUpd[`visit${type}Photo`] = this.ImgUrl();
+    objUpd[`visit${type}Photo`] = this.ImgUrl(type, iter);
     objUpd.visitIdLegacy = this.visit.visitIdLegacy;
 
     this.visit[`visit${type}Photo`] = objUpd[`visit${type}Photo`]; //set local variable for display update
@@ -1002,7 +1003,7 @@ export class vpVisitCreateComponent implements OnInit {
     var files = e.target.files;
     var file = e.target.files[0];
     var elemName = `img${type}Thumb`;
-    var elemImg: any = document.getElementById(elemName);
+    //var elemImg: any = document.getElementById(elemName);
     var confMsg = `Are you sure you want to upload ${file.name} for pool ${this.poolId}, visit ${this.visitId}`;
     if (type != 'Pool') {
       confMsg += ` species ${type}`
@@ -1011,7 +1012,7 @@ export class vpVisitCreateComponent implements OnInit {
 
     if (confirm(confMsg)) {
       this.uploading = true;
-      this.SavePhotoLink(type)
+      this.SavePhotoLink(type, iter)
         .pipe(first())
         .subscribe(
             data => {
@@ -1019,9 +1020,25 @@ export class vpVisitCreateComponent implements OnInit {
                 this.s3.uploadPhoto(file, this.poolId, this.visitId, type, iter, this.PhotoFileUploadProgress)
                   .then(data => {
                     console.log(`PhotoFileEvent.s3.uploadPhoto success:`, data);
+                    if (type == 'Pool') {
+                      this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.ImgUrl(type, iter));
+                    } else if (type == 'WoodFrog') {
+                      this.visitIndicatorSpeciesForm.controls[`visitWoodFrogPhoto`].setValue(this.ImgUrl(type, iter));
+                    } else if (type == 'Sps') {
+                      this.visitIndicatorSpeciesForm.controls[`visitSpsPhoto`].setValue(this.ImgUrl(type, iter));
+                    } else if (type == 'Jesa') {
+                      this.visitIndicatorSpeciesForm.controls[`visitJesaPhoto`].setValue(this.ImgUrl(type, iter));
+                    } else if (type == 'Bssa') {
+                      this.visitIndicatorSpeciesForm.controls[`visitBssaPhoto`].setValue(this.ImgUrl(type, iter));
+                    } else if (type == 'FairyShrimp') {
+                      this.visitIndicatorSpeciesForm.controls[`visitFairyShrimpPhoto`].setValue(this.ImgUrl(type, iter));
+                    } else if (type == 'FingerNailClams') {
+                      this.visitIndicatorSpeciesForm.controls[`visitFingerNailClamsPhoto`].setValue(this.ImgUrl(type, iter));
+                    } else if (type == 'SpeciesOther') {
+                      this.visitIndicatorSpeciesForm.controls[`visitSpeciesOtherPhoto`].setValue(this.ImgUrl(type, iter));
+                    }
+                    //elemImg.src = this.ImgUrl();
                     this.uploading = false;
-                    //this.visit.visitPoolPhoto = this.ImgUrl();
-                    elemImg.src = this.ImgUrl();
                   })
                   .catch(error => {
                     console.log(`PhotoFileEvent.s3.uploadPhoto error:`, error);

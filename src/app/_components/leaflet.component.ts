@@ -738,7 +738,8 @@ export class LeafletComponent implements OnInit, OnChanges {
         'visitDate',
         'mappedMethod',
         'mappedByUser',
-        'visitUserName'
+        'visitUserName',
+        'visitPoolPhoto'
       ];
       var fieldName = {
         'poolId':'Pool ID',
@@ -752,7 +753,8 @@ export class LeafletComponent implements OnInit, OnChanges {
         'visitDate':'Visit Date',
         'mappedMethod':'Mapped Method',
         'mappedByUser':'Mapped by User',
-        'visitUserName':'Visited by User'
+        'visitUserName':'Visited by User',
+        'visitPoolPhoto':'Pool Photo'
       }
 
     /*
@@ -776,6 +778,9 @@ export class LeafletComponent implements OnInit, OnChanges {
           text += `<tr><td>${fieldName[key]}</td><td>${Moment(obj[key]).format('MM/DD/YYYY@HH:MM')}</td></tr>`;
         } else if (key.includes('atitude') || key.includes('ongitude')) {
           text += `<tr><td>${fieldName[key]}</td><td>${Number(obj[key]).toFixed(5)}</td></tr>`;
+        } else if (key.includes('Photo')) {
+          if (obj[key].slice(0,5)=='https') {
+            text += `<tr><td>${fieldName[key]}</td><td><a href=${obj[key]}>Photo Link</a></td></tr>`;}
         } else {
           text += `<tr><td>${fieldName[key]}</td><td>${obj[key]}</td></tr>`;
         }
@@ -858,7 +863,7 @@ export class LeafletComponent implements OnInit, OnChanges {
                    Lat: ${Number(llLoc.lat).toFixed(5)}<br>
                    Lng: ${Number(llLoc.lng).toFixed(5)}<br>`;
 
-    if (vpool.visitPoolPhoto) {
+    if (vpool.visitPoolPhoto && vpool.visitPoolPhoto.includes('https')) {
       toolTip += `<img
                      src="${vpool.visitPoolPhoto}"
                      style="max-height: 100px; max-width: 100px;"
@@ -990,7 +995,7 @@ export class LeafletComponent implements OnInit, OnChanges {
             <div>Lon:${Number(vpools[i].longitude).toFixed(5)}</div>
             `;
       //Add image to bottom of toolTip if one is indicated in field visitPoolPhoto
-      if (vpools[i].visitPoolPhoto) {
+      if (vpools[i].visitPoolPhoto && vpools[i].visitPoolPhoto.includes('https')) {
         toolText += `<img
           src="${vpools[i].visitPoolPhoto}"
           style="max-height: 100px; max-width: 100px;"

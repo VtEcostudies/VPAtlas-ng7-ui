@@ -29,9 +29,43 @@ eg. 'KWN*'.
 <p>Select a photo of the pool to be uploaded.</p>
 <p>One Pool Photo is allowed per Visit. In the future, VPAtlas will allow multiple Pool Photos per Visit.</p>
 <p>Please select a photo that best represents the entire pool.</p>
-<p>NOTE: You must Save a NEW Pool and a NEW Visit before uploading photos. (Saving a NEW pool
-generates a Pool ID, Saving a NEW Visit generates a Visit ID. Both IDs are required to identify,
-store, and retrieve Pool Photos.)</p>`,
+<p><u><b>Note:</b></u> You must Save a NEW Pool and a NEW Visit before uploading photos. Please follow these steps
+to enable photo-upload for a NEW Pool/Visit:
+<ol>
+<li>Save NEW Pool. (Generates a NEW Pool ID.)</li>
+<li>Save NEW Visit. (Generates a NEW Visit ID.)</li>
+<li>Edit the Visit. (Edit button.)</li>
+<li>Upload photo. (Upload button.)</li>
+<li>Confirm photo selection. (Dialog box - OK.)</li>
+</ol>
+<p>
+Photo image links may take a few seconds to become active after upload. Image thumbnails attached to
+map icons will update after the map reloads.
+</p>`,
+photoUploadSteps: `
+<h3><u>Please Save, then Edit a Visit to Enable Photo Upload</u></h3>
+<p>To enable photo upload:</p>
+<ol>
+<li>Save NEW Pool. (Generates a NEW Pool ID.)</li>
+<li>Save NEW Visit. (Generates a NEW Visit ID.)</li>
+<li>Edit the Visit. (Edit button.)</li>
+<li>Upload photo. (Upload button.)</li>
+<li>Confirm photo selection. (Dialog box - OK.)</li>
+</ol>
+<p>
+The upload button will show a file dialog box where you can select a photo to be uploaded.
+</p>`,
+photoUploadIndicators: `
+<h3><u>Please Edit the Visit to Enable Photo Upload</u></h3>
+<p>To enable photo upload:</p>
+<ol>
+<li>Edit the Visit. (Edit button.)</li>
+<li>Upload photo. (Upload button.)</li>
+<li>Confirm photo selection. (Dialog box - OK.)</li>
+</ol>
+<p>
+The upload button will show a file dialog box where you can select a photo to be uploaded.
+</p>`,
     visitDate:`
 <h3><u>Date</u></h3>
 <p>Please enter the date when you recorded information about this pool.</p>
