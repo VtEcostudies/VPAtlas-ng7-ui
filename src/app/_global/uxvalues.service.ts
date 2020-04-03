@@ -30,11 +30,11 @@ export class UxValuesService {
     public filter:string = '';
     public search:any = {};
     public data:any = {
-      all:{timestamp:Moment('1970-01-01').format(), pools:[], count:0},
-      mine:{timestamp:Moment('1970-01-01').format(), pools:[], count:0},
-      revu:{timestamp:Moment('1970-01-01').format(), pools:[], count:0},
-      visi:{timestamp:Moment('1970-01-01').format(), pools:[], count:0},
-      moni:{timestamp:Moment('1970-01-01').format(), pools:[], count:0}
+      all:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
+      mine:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
+      revu:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
+      visi:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
+      moni:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0}
       };
     public towns:any = [];
 
@@ -52,13 +52,13 @@ export class UxValuesService {
     }
 
     updateData(type='all', pools:any) {
-      console.log('uxValuesService::updateData | incoming pool count:', pools.length);
+      console.log(`uxValues.service::updateData(${type}) | incoming data count:`, pools.length);
       if (this.data[type].pools.length == 0) { //initial load
-        this.data[type].timestamp = Moment().format();
+        this.data[type].timestamp = Moment.utc().format();
         this.data[type].pools = pools;
         this.data[type].count = pools.length;
       } else {
-        this.data[type].timestamp = Moment().format();
+        this.data[type].timestamp = Moment.utc().format();
         //update existing array with new data
         pools.forEach(upd => { //iterate over incoming rows, each as 'upd'
           var found = false; //flag that the incoming row, 'upd' was found in this pass through 'old' pools
@@ -114,10 +114,9 @@ export class UxValuesService {
     }
 
     public async loadUpdated(type='all', search:any={}, page=0) {
-      //console.log('uxvalues.service::loadUpdated | type', type);
-      console.log(`uxvalues.service::loadUpdated(${type})`, this.data[type].timestamp, search);
       this.search = search;
       await this.getFilter(type); //, search); only filter db results by type now that we have fast search here...
+      console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data[type].timestamp} | filter:${this.filter} | search:`, search);
       return new Promise((resolve, reject) => {
         var result;
         if (type=='revu') {result = this.vpPoolsService.getReview(this.data[type].timestamp, this.filter);}
