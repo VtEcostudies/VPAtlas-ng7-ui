@@ -9,7 +9,7 @@ import { vpMapped } from '@app/_models';
 import { vtTown } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 
-@Component({templateUrl: 'vpmap.create.component.html'})
+@Component({templateUrl: 'vpmap.component.html'})
 export class vpMapCreateComponent implements OnInit {
     update = false; //flag for html config that this is create (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
     currentUser = null;
@@ -17,7 +17,7 @@ export class vpMapCreateComponent implements OnInit {
     vpLandOwnForm: FormGroup;
     vpMappedForm: FormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
-    methods = ['Aerial', 'Known', 'Visited', 'Monitored']; //https://angular.io/api/forms/SelectControlValueAccessor
+    methods = ['Aerial', 'Known', 'Visit']; //https://angular.io/api/forms/SelectControlValueAccessor
     statuses = ['Potential', 'Probable', 'Confirmed', 'Eliminated', 'Duplicate'];
     towns = [];
     townCount = 0;

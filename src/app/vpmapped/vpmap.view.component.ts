@@ -7,7 +7,7 @@ import { vtTown } from '@app/_models';
 import { AlertService, AuthenticationService, vpMappedService } from '@app/_services';
 import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
-@Component({templateUrl: 'vpmap.create.component.html'})
+@Component({templateUrl: 'vpmap.component.html'})
 export class vpMapViewComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
@@ -15,7 +15,7 @@ export class vpMapViewComponent implements OnInit {
     vpMappedForm: FormGroup;
     vpLandOwnForm: FormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
-    methods = ['Aerial', 'Known', 'Visited', 'Monitored']; //https://angular.io/api/forms/SelectControlValueAccessor
+    methods = ['Aerial', 'Known', 'Visit']; //https://angular.io/api/forms/SelectControlValueAccessor
     statuses = ['Potential', 'Probable', 'Confirmed', 'Eliminated', 'Duplicate'];
     towns = [];
     townCount = 0;

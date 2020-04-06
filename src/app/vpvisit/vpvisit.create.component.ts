@@ -756,20 +756,26 @@ export class vpVisitCreateComponent implements OnInit {
         }
 
         //have to convert true/false radio buttons from string to boolean
-        this.visitPoolMappedForm.value.visitPoolMapped = this.visitPoolMappedForm.value.visitPoolMapped == 'true';
-        this.visitLocationForm.value.visitLocatePool = this.visitLocationForm.value.visitLocatePool == 'true';
+        this.visitPoolMappedForm.controls['visitPoolMapped'].setValue(this.visitPoolMappedForm.value.visitPoolMapped == 'true');
+        this.visitLocationForm.controls['visitLocatePool'].setValue(this.visitLocationForm.value.visitLocatePool == 'true');
         //amphibian adults must be counted. shrimp and clams are just 'present'. database column is text. convert to number or 'X'.
-        this.visitIndicatorSpeciesForm.value.visitWoodFrogAdults = Number(this.visitIndicatorSpeciesForm.value.visitWoodFrogAdults);
-        this.visitIndicatorSpeciesForm.value.visitSpsAdults = Number(this.visitIndicatorSpeciesForm.value.visitSpsAdults);
-        this.visitIndicatorSpeciesForm.value.visitJesaAdults = Number(this.visitIndicatorSpeciesForm.value.visitJesaAdults);
-        this.visitIndicatorSpeciesForm.value.visitBssaAdults = Number(this.visitIndicatorSpeciesForm.value.visitBssaAdults);
-        this.visitIndicatorSpeciesForm.value.visitFairyShrimp = this.visitIndicatorSpeciesForm.value.visitFairyShrimp ? 1 : 0;
-        this.visitIndicatorSpeciesForm.value.visitFingerNailClams = this.visitIndicatorSpeciesForm.value.visitFingerNailClams ? 1 : 0;
+        this.visitIndicatorSpeciesForm.controls['visitWoodFrogAdults'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitWoodFrogAdults));
+        this.visitIndicatorSpeciesForm.controls['visitSpsAdults'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitSpsAdults));
+        this.visitIndicatorSpeciesForm.controls['visitJesaAdults'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitJesaAdults));
+        this.visitIndicatorSpeciesForm.controls['visitBssaAdults'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitBssaAdults));
+        this.visitIndicatorSpeciesForm.controls['visitSpeciesOtherCount'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitSpeciesOtherCount));
+        this.visitIndicatorSpeciesForm.controls['visitWoodFrogEgg'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitWoodFrogEgg));
+        this.visitIndicatorSpeciesForm.controls['visitSpsEgg'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitSpsEgg));
+        this.visitIndicatorSpeciesForm.controls['visitJesaEgg'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitJesaEgg));
+        this.visitIndicatorSpeciesForm.controls['visitBssaEgg'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitBssaEgg));
+        //Fairy Shrimp / Fclams are 'present' or not. database column is integer. convert true/false to 1/0.
+        this.visitIndicatorSpeciesForm.controls['visitFairyShrimp'].setValue(this.visitIndicatorSpeciesForm.value.visitFairyShrimp ? 1 : 0);
+        this.visitIndicatorSpeciesForm.controls['visitFingerNailClams'].setValue(this.visitIndicatorSpeciesForm.value.visitFingerNailClams ? 1 : 0);
         //tadpoles/larvae are 'present' or not. database column is integer. convert true/false to 1/0.
-        this.visitIndicatorSpeciesForm.value.visitWoodFrogLarvae = this.visitIndicatorSpeciesForm.value.visitWoodFrogLarvae ? 1 : 0;
-        this.visitIndicatorSpeciesForm.value.visitSpsLarvae = this.visitIndicatorSpeciesForm.value.visitSpsLarvae ? 1 : 0;
-        this.visitIndicatorSpeciesForm.value.visitJesaLarvae = this.visitIndicatorSpeciesForm.value.visitJesaLarvae ? 1 : 0;
-        this.visitIndicatorSpeciesForm.value.visitBssaLarvae = this.visitIndicatorSpeciesForm.value.visitBssaLarvae ? 1 : 0;
+        this.visitIndicatorSpeciesForm.controls['visitWoodFrogLarvae'].setValue(this.visitIndicatorSpeciesForm.value.visitWoodFrogLarvae ? 1 : 0);
+        this.visitIndicatorSpeciesForm.controls['visitSpsLarvae'].setValue(this.visitIndicatorSpeciesForm.value.visitSpsLarvae ? 1 : 0);
+        this.visitIndicatorSpeciesForm.controls['visitJesaLarvae'].setValue(this.visitIndicatorSpeciesForm.value.visitJesaLarvae ? 1 : 0);
+        this.visitIndicatorSpeciesForm.controls['visitBssaLarvae'].setValue(this.visitIndicatorSpeciesForm.value.visitBssaLarvae ? 1 : 0);
 
         //visitObserverForm - some fields are disabled, so use getRawValue()
         Object.assign(objAll, this.visitObserverForm.getRawValue());
@@ -794,9 +800,17 @@ export class vpVisitCreateComponent implements OnInit {
           delete objAll.visitId;
         }
 
+        /* Photo URL Form Values have bugs, so we don't use form values. Instead we use class object 'this.visit.{value}'
+           to handle these values. This means we need to set the db object manually, here. */
         if (this.visit.visitPoolPhoto) {
-          //if (this.visit.visitPool)
           Object.assign(objAll, {"visitPoolPhoto":this.visit.visitPoolPhoto});
+          Object.assign(objAll, {"visitWoodFrogPhoto":this.visit.visitWoodFrogPhoto});
+          Object.assign(objAll, {"visitSpsPhoto":this.visit.visitSpsPhoto});
+          Object.assign(objAll, {"visitJesaPhoto":this.visit.visitJesaPhoto});
+          Object.assign(objAll, {"visitBssaPhoto":this.visit.visitBssaPhoto});
+          Object.assign(objAll, {"visitFairyShrimpPhoto":this.visit.visitFairyShrimpPhoto});
+          Object.assign(objAll, {"visitFingerNailClamsPhoto":this.visit.visitFingerNailClamsPhoto});
+          Object.assign(objAll, {"visitSpeciesOtherPhoto":this.visit.visitSpeciesOtherPhoto});
         }
 
         this.dataLoading = true;
@@ -987,7 +1001,7 @@ export class vpVisitCreateComponent implements OnInit {
 
     this.visit[`visit${type}Photo`] = objUpd[`visit${type}Photo`]; //set local variable for display update
 
-    console.log('SavePhotoLink', objUpd)
+    console.log('SavePhotoLink', objUpd);
 
     return this.vpVisitService.createOrUpdate(true, this.visitId, objUpd);
   }
@@ -1020,23 +1034,6 @@ export class vpVisitCreateComponent implements OnInit {
                 this.s3.uploadPhoto(file, this.poolId, this.visitId, type, iter, this.PhotoFileUploadProgress)
                   .then(data => {
                     console.log(`PhotoFileEvent.s3.uploadPhoto success:`, data);
-                    if (type == 'Pool') {
-                      this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.ImgUrl(type, iter));
-                    } else if (type == 'WoodFrog') {
-                      this.visitIndicatorSpeciesForm.controls[`visitWoodFrogPhoto`].setValue(this.ImgUrl(type, iter));
-                    } else if (type == 'Sps') {
-                      this.visitIndicatorSpeciesForm.controls[`visitSpsPhoto`].setValue(this.ImgUrl(type, iter));
-                    } else if (type == 'Jesa') {
-                      this.visitIndicatorSpeciesForm.controls[`visitJesaPhoto`].setValue(this.ImgUrl(type, iter));
-                    } else if (type == 'Bssa') {
-                      this.visitIndicatorSpeciesForm.controls[`visitBssaPhoto`].setValue(this.ImgUrl(type, iter));
-                    } else if (type == 'FairyShrimp') {
-                      this.visitIndicatorSpeciesForm.controls[`visitFairyShrimpPhoto`].setValue(this.ImgUrl(type, iter));
-                    } else if (type == 'FingerNailClams') {
-                      this.visitIndicatorSpeciesForm.controls[`visitFingerNailClamsPhoto`].setValue(this.ImgUrl(type, iter));
-                    } else if (type == 'SpeciesOther') {
-                      this.visitIndicatorSpeciesForm.controls[`visitSpeciesOtherPhoto`].setValue(this.ImgUrl(type, iter));
-                    }
                     //elemImg.src = this.ImgUrl();
                     this.uploading = false;
                   })

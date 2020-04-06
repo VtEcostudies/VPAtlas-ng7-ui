@@ -75,17 +75,17 @@ export class UxValuesService {
               review: upd.reviewId==old.reviewId};
             if ((match.pool && match.visit && match.review)) {
               found = true; //flag that we found a match so we don't duplicate it.
-              console.log(`FOUND ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}. Updating.`);
+              console.log(`FOUND ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}. UPDATING.`);
               this.data[type].pools[idx] = upd; //update row
             }
             return found;
           })
           if (!found) { //searched all rows for the current incoming value. not found. add it.
-            console.log(`Adding ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}`);
+            console.log(`ADDING ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}`);
             this.data[type].pools.push(upd); //add row
           }
           if (upd.visitId && vpmap[upd.mappedPoolId]) { //if new row has visit delete old row without...
-            console.log(`Deleting ${upd.mappedPoolId} from data.pools[${type}] at index ${vpmap[upd.mappedPoolId]}`);
+            console.log(`DELETING ${upd.mappedPoolId} from data.pools[${type}] at index ${vpmap[upd.mappedPoolId]}`);
             delete this.data[type].pools[vpmap[upd.mappedPoolId]];
           }
         });

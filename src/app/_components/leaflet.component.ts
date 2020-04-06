@@ -780,7 +780,7 @@ export class LeafletComponent implements OnInit, OnChanges {
           text += `<tr><td>${fieldName[key]}</td><td>${Number(obj[key]).toFixed(5)}</td></tr>`;
         } else if (key.includes('Photo')) {
           if (obj[key].slice(0,5)=='https') {
-            text += `<tr><td>${fieldName[key]}</td><td><a href=${obj[key]}>Photo Link</a></td></tr>`;}
+            text += `<tr><td>${fieldName[key]}</td><td><a href=${obj[key]} target="_blank">Photo Link</a></td></tr>`;}
         } else {
           text += `<tr><td>${fieldName[key]}</td><td>${obj[key]}</td></tr>`;
         }
