@@ -319,7 +319,7 @@ export class vpViewComponent implements OnInit {
       this.visitLocationForm.controls['visitLandowner'].setValue(this.visit.visitLandowner);
       this.visitLocationForm.controls['visitPoolPhoto'].setValue(this.visit.visitPoolPhoto);
       this.permission = this.visit.visitLandownerPermission; //flag view to display landowner info
-      if (this.visit.visitLandowner && (this.userIsAdmin || this.currentUser.username==this.visit.visitUserName)) {
+      if (this.visit.visitLandowner && (this.userIsAdmin || (this.currentUser && this.currentUser.username==this.visit.visitUserName))) {
         this.visitLandOwnForm.controls['visitLandownerName'].setValue(this.visit.visitLandowner.visitLandownerName);
         this.visitLandOwnForm.controls['visitLandownerAddress'].setValue(this.visit.visitLandowner.visitLandownerAddress);
         //this.visitLandOwnForm.controls['visitLandownerTown'].setValue(this.visit.visitLandowner.visitLandownerTown);
