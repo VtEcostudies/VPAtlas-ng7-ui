@@ -27,24 +27,15 @@ jw-modal {
 
           .jl-box {
             position: inherit;
-            width: 500px;
-            left: 45%;
+            width: 700px;
+            max-height: 70%; /* Height relative to view box. */
+            overflow: inherit; /* This - only this value - enables scrollbar. */
+            left: 35%;
             top: 90px;
             border-radius: 15px;
+            margin-right: 50px;
           }
 
-          .triangle-top-right:before {
-            content: "";
-            width: 0px;
-            height: 0px;
-            position: absolute;
-            border-left: 10px solid #fff;
-            border-right: 10px solid transparent;
-            border-top: 10px solid #fff;
-            border-bottom: 10px solid transparent;
-            right: -20px;
-            top: 0px;
-          }
     }
 
     .jw-modal-background {
@@ -66,5 +57,5 @@ jw-modal {
 
 body.jw-modal-open {
     /* body overflow is hidden to hide main scrollbar when modal window is open */
-    /* overflow: hidden;*/
+    overflow: hidden;
 }

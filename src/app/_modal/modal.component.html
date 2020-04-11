@@ -1,7 +1,10 @@
 ﻿<div class="jw-modal" [ngStyle]="{'top.px': divStyleTop, 'left.px': divStyleLeft}">
     <div class="jw-modal-body jl-box">
-        <div [innerHtml]="htmlContent"></div>
+        <div [innerHtml]="htmlContent">
+        </div>
+        <div>
         <ng-content></ng-content>
+        </div>
     </div>
 </div>
 <div class="jw-modal-background"></div>

@@ -127,7 +127,7 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   background-size: cover;
   position: relative;
   width: 100%;
-  height: 250px;
+  height: 350px;
 }
 
 /* For use with vce-banner-image. Place text in the middle of the image */

@@ -2,3 +2,7 @@
   padding: 1px;
   font-size: 12px;
 }
+
+.no-margin-rt {
+  margin-right:0px;
+}

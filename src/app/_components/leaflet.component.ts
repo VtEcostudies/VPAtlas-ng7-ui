@@ -38,8 +38,17 @@ const iconDefault = icon({
 });
 Marker.prototype.options.icon = iconDefault;
 
+import state from '../_geojson/Polygon_VT_State_Boundary.geo.json';
+import counties from '../_geojson/Polygon_VT_County_Boundaries.geo.json';
+import towns from '../_geojson/Polygon_VT_Town_Boundaries.geo.json';
+import biophysical from '../_geojson/Polygon_VT_Biophysical_Regions.geo.json';
+
 /*
-  Popup Component
+  Popup Component - this is used instead of the standard Leaflet popup because we
+  want to use Angular routing, not html href routing, to preserve uxValue across
+  page-loads. This allows us to keep the UX performant.
+
+  Use createLeafletPopup(...) to invoke.
 */
 @Component({
     selector: 'popup',
@@ -121,6 +130,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   marker = null;
   scaleControl = L.control.scale({position: 'topright'});
   layerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});
+  boundaryControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});
   zoomControl = L.control.zoom({position: 'topright'});
   poolControl = L.control.layers(null, null, { collapsed: false, position: 'bottomleft'}); //pool status feature groups
   cursorLat = 0; //value for map display of cursor latitue location on map
@@ -187,6 +197,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   confGroup = L.featureGroup();
   elimGroup = L.featureGroup();
   duplGroup = L.featureGroup();
+  bdryGroup = L.featureGroup(); //boundary overlays...
 /*
   mineGroup = L.featureGroup();
   revuGroup = L.featureGroup();
@@ -295,7 +306,6 @@ export class LeafletComponent implements OnInit, OnChanges {
                autoPan: true
              });
 
-    //this.scaleControl.setPosition('topright');
     this.scaleControl.addTo(this.map);
 
     //layerControl is baseLayers control
@@ -305,6 +315,12 @@ export class LeafletComponent implements OnInit, OnChanges {
       //the following way: as ['property']['sub-property'], not array[i].property.sub-property.
       this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
+    //boundaryControl is state, counties, towns, geoJson overlays...
+    this.addGeoJsonLayer(state, "State Boundary", this.boundaryControl, this.bdryGroup, false);
+    this.addGeoJsonLayer(counties, "County Boundaries", this.boundaryControl, this.bdryGroup, true);
+    this.addGeoJsonLayer(towns, "Town Boundaries", this.boundaryControl, this.bdryGroup, false);
+    this.addGeoJsonLayer(biophysical, "Biophysical Regions", this.boundaryControl, this.bdryGroup, false);
+    this.boundaryControl.addTo(this.map);
 
     //poolControl - show/hide pools by status or type
     if (this.itemType != 'Home') {this.poolControl.addTo(this.map);}
@@ -369,6 +385,79 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.itemType === "Home") {
       this.zoomVermontLeft();
     }
+  }
+
+  addGeoJsonLayer(data={"a":"a", "test":"test"}, layerName="Test", layerControl=null, layerGroup=null, addToMap=false) {
+    var layer = null;
+    layer = L.geoJSON(data, {
+        onEachFeature: this.onEachFeature,
+        style: this.onStyle,
+        name: layerName //IMPORTANT: this used to compare layers at ZIndex time
+    });
+    if (addToMap) {layer.addTo(this.map); layer.bringToBack();}
+    if (layerControl) {layerControl.addOverlay(layer, layerName);}
+    if (layerGroup) {layerGroup.addLayer(layer);}
+  }
+
+  onEachFeature(feature, layer) {
+    /*
+      layer.on('click', function (e) {
+          //console.log('click', e);
+      });
+      layer.on('mousemove', function (e) {
+        //console.log('mousemove', e);
+      });
+    */
+      if (feature.properties) {
+          var obj = feature.properties;
+          var props = '';
+          var links = '';
+          for (var key in obj) {
+            switch(key.substr(key.length - 4).toLowerCase()) { //last 4 characters of property
+              case 'name':
+                props += `${obj[key]}<br>`;
+                break;
+              case 'eoid':
+                //props += `${key}: ${obj[key]}<br>`;
+                break;
+              case 'type':
+                props += `${obj[key]}<br>`;
+                break;
+            }
+          }
+          if (props) {
+            layer.bindTooltip(props);
+            layer.on('click', function (e) {
+              e.sourceTarget.bindPopup(props).openPopup();
+            });
+          }
+      }
+  }
+
+  /*
+    Callback function to set style of added geoJson overlays on the Boundary Layer Control
+  */
+  onStyle(feature) {
+      if (feature.properties.BLOCK_TYPE) {
+        switch(feature.properties.BLOCK_TYPE) {
+          case 'PRIORITY':
+            return {color:"black", weight:1, fillOpacity:0.2, fillColor:"yellow"};
+            break;
+          case 'NONPRIOR':
+            return {color:"black", weight:1, fillOpacity:0.1, fillColor:"blue"};
+            break;
+        }
+      } else {
+        if (feature.properties.BIOPHYSRG1) { //biophysical regions
+          return {color:"red", weight:1, fillOpacity:0.1, fillColor:"red"};
+        } else if (feature.properties.CNTYNAME) { //counties
+          return {color:"yellow", weight:1, fillOpacity:0.1, fillColor:"yellow"};
+        } else if (feature.properties.TOWNNAME) { //towns
+          return {color:"blue", weight:1, fillOpacity:0.1, fillColor:"blue"};
+        } else {
+          return {color:"black", weight:1, fillOpacity:0.1, fillColor:"black"};
+        }
+      }
   }
 
   /*

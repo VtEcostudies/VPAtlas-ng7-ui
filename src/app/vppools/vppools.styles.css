@@ -81,3 +81,7 @@ alignment changes for info icons...
   padding-left: 5px;
   padding-top: 5px;
 }
+
+.no-margin-rt {
+  margin-right:0px;
+}

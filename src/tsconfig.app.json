@@ -2,8 +2,10 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/app",
-    "types": ["node"]
-  },
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+    },
   "files": [
     "main.ts",
     "polyfills.ts"

@@ -41,9 +41,13 @@ export class vpReviewListComponent implements OnInit {
 
   ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
+    //console.log('queryParams', this.route.snapshot.queryParams);
+    //console.log('params', this.route.snapshot.params);
+    var visitId = this.route.snapshot.params['visitId']; if (visitId) visitId=visitId.split('?')[0];
+    visitId = visitId ? visitId : this.route.snapshot.queryParams['visitId']
     this.filterForm = this.formBuilder.group({
         userName: [this.route.snapshot.queryParams['userName']],
-        visitId: [this.route.snapshot.queryParams['visitId']],
+        visitId: [visitId],
         poolId: [this.route.snapshot.queryParams['poolId']],
         QAPerson: [this.route.snapshot.queryParams['QAPerson']]
       });

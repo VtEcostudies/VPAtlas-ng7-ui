@@ -251,7 +251,9 @@
                 <!--
                 <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
                 -->
-                <td title="Add a visit for pool {{pool.mappedPoolId}}" class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <td title="Add a visit for pool {{pool.mappedPoolId}}" class="vert-aligned body-scroll-align-columns">
+                  <a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a>
+                </td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedTown.townName}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
@@ -260,7 +262,9 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedLongitude}}</td>
 
                 <span *ngIf="pool.visitId">
-                  <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a></td>
+                  <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
+                    <a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a>
+                  </td>
                 </span>
                 <span *ngIf="!pool.visitId">
                   <td class="vert-aligned body-scroll-align-columns"></td>
@@ -271,8 +275,9 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLatitude}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLongitude}}</td>
 
+                <!-- THIS CODE NEVER HIT BECAUSE WE DON'T LOAD REVIEWS WITH LISTED POOLS ANYMORE -->
                 <span *ngIf="userIsAdmin&&pool.visitId&&pool.reviewId">
-                  <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                  <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
                     <a [routerLink]="['/review/view/', pool.reviewId]" title="Edit Review {{pool.reviewId}}"
                     >{{pool.reviewId}}</a>
                     <a [routerLink]="['/review/create/', pool.visitId]" title="Add Review of Visit {{pool.visitId}}"
@@ -282,8 +287,10 @@
                 </span>
                 <span *ngIf="userIsAdmin&&pool.visitId&&!pool.reviewId">
                   <td class="vert-aligned body-scroll-align-columns">
-                    <!--<a [routerLink]="['/review/create/', pool.visitId]" class="btn btn-link">Add</a>-->
-                    <button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link">View/Add</button>
+                    <button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>
+                    <!--
+                    <a title="Open Reviews in new tab" [routerLink]="['/review/list/', pool.visitId]" target="_blank">(+)</a>
+                    -->
                   </td>
                 </span>
             </tr>

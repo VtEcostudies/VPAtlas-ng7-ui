@@ -399,7 +399,7 @@ export class vpListComponent implements OnInit {
     }
 
     GetVisitReviews(visitId) {
-      this.router.navigate([`review/list/${visitId}`], {queryParams:{returnUrl:this.router.url, visitId:visitId}});
+      this.router.navigate([`review/list/${visitId}`], {queryParams:{returnUrl:this.router.url}});
     }
 
     async showMap() {
