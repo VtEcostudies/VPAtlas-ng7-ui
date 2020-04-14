@@ -5,8 +5,8 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vpPoolsService, vtInfoService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
-import * as L from "leaflet";
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { visitDialogText} from '@app/vpvisit/visitDialogText';

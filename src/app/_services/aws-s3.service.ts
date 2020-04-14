@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { first } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 //import { AlertService } from '@app/_services';
-import * as AWS from 'aws-sdk';
-import * as S3 from 'aws-sdk/clients/s3';
+import AWS from 'aws-sdk'; //import * as AWS from 'aws-sdk';
+import S3 from 'aws-sdk/clients/s3';
 import { v4 } from 'uuid';
 
 @Injectable({

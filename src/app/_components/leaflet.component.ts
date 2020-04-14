@@ -4,7 +4,7 @@ import { AuthenticationService, vpPoolsService } from '@app/_services';
 import { first } from 'rxjs/operators';
 import { UxValuesService } from '@app/_global';
 import { vpMappedEventInfo } from '@app/_models';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 //import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
 
@@ -38,10 +38,10 @@ const iconDefault = icon({
 });
 Marker.prototype.options.icon = iconDefault;
 
-import state from '../_geojson/Polygon_VT_State_Boundary.geo.json';
-import counties from '../_geojson/Polygon_VT_County_Boundaries.geo.json';
-import towns from '../_geojson/Polygon_VT_Town_Boundaries.geo.json';
-import biophysical from '../_geojson/Polygon_VT_Biophysical_Regions.geo.json';
+import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
+import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
+import towns from '@app/_geojson/Polygon_VT_Town_Boundaries.geo.json';
+import biophysical from '@app/_geojson/Polygon_VT_Biophysical_Regions.geo.json';
 
 /*
   Popup Component - this is used instead of the standard Leaflet popup because we
@@ -129,7 +129,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   public map = null;
   marker = null;
   scaleControl = L.control.scale({position: 'topright'});
-  layerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});
+  baseLayerControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});
   boundaryControl = L.control.layers(null, null, { collapsed: true, position: 'topright'});
   zoomControl = L.control.zoom({position: 'topright'});
   poolControl = L.control.layers(null, null, { collapsed: false, position: 'bottomleft'}); //pool status feature groups
@@ -191,19 +191,20 @@ export class LeafletComponent implements OnInit, OnChanges {
   eliminatedColors = ["Black"];
   monitoredColors = ["LightSteelBlue"];
   cmLLArr = []; //array of shapeMarkers (originally native circleMarkers) 1:1 with mapPoints values
-  allGroup = L.featureGroup(); //enhanced layerGroup that contains all plotted shapeMarkers
-  potnGroup = L.featureGroup();
-  probGroup = L.featureGroup();
-  confGroup = L.featureGroup();
-  elimGroup = L.featureGroup();
-  duplGroup = L.featureGroup();
-  bdryGroup = L.featureGroup(); //boundary overlays...
-/*
-  mineGroup = L.featureGroup();
-  revuGroup = L.featureGroup();
-  visiGroup = L.featureGroup();
-  moniGroup = L.featureGroup();
-*/
+  allGroup = L.featureGroup(); //allGroup is not shown but used for zoomTo, etc.
+  potnGroup = L.featureGroup(null, {name:'Potential', id:'potential'});
+  probGroup = L.featureGroup(null, {name:'Probable', id:'probable'});
+  confGroup = L.featureGroup(null, {name:'Confirmed', id:'confirmed'});
+  elimGroup = L.featureGroup(null, {name:'Duplicate', id:'duplicate'});
+  duplGroup = L.featureGroup(null, {name:'Eliminated', id:'eliminated'});
+  statusGroups = [
+    {group:this.potnGroup, name:'Potential', id:'potential'},
+    {group:this.probGroup, name:'Probable', id:'probable'},
+    {group:this.confGroup, name:'Confirmed', id:'confirmed'},
+    {group:this.duplGroup, name:'Duplicate', id:'duplicate'},
+    {group:this.elimGroup, name:'Eliminated', id:'eliminated'}
+  ];
+  bdryGroup = L.featureGroup(); //boundary overlays. 'name' and 'id' are set in options when adding layers to group.
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
   cmClrCnt = this.cmColors.length; //(this.cmColors).length();
@@ -287,6 +288,8 @@ export class LeafletComponent implements OnInit, OnChanges {
     /*
       This resolves errors of an 'already initialized map'.
       However, now we see page-loads with a blank map...
+      Blank map issue resolved by wrapping the map tag <app-map-comp> in a 'loading' flag
+      so that each time a page is loaded, the map is hidden, then shown.
     */
     var container = L.DomUtil.get("map");
     if (container != null) {
@@ -308,56 +311,31 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.scaleControl.addTo(this.map);
 
-    //layerControl is baseLayers control
-    this.layerControl.addTo(this.map);
+    //baseLayerControl is baseLayers control
+    this.baseLayerControl.addTo(this.map);
     for (var i=0;i<this.baseLayers.length;i++) {
       //note: get around TypeScript type-checking by accessing non-declared object .properties in
       //the following way: as ['property']['sub-property'], not array[i].property.sub-property.
-      this.layerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
+      this.baseLayerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
     //boundaryControl is state, counties, towns, geoJson overlays...
-    this.addGeoJsonLayer(state, "State Boundary", this.boundaryControl, this.bdryGroup, false);
-    this.addGeoJsonLayer(counties, "County Boundaries", this.boundaryControl, this.bdryGroup, true);
-    this.addGeoJsonLayer(towns, "Town Boundaries", this.boundaryControl, this.bdryGroup, false);
-    this.addGeoJsonLayer(biophysical, "Biophysical Regions", this.boundaryControl, this.bdryGroup, false);
+    this.addGeoJsonLayer(state as any, "State Boundary", 'state', this.boundaryControl,  this.bdryGroup);
+    this.addGeoJsonLayer(counties as any, "County Boundaries", 'county', this.boundaryControl, this.bdryGroup);
+    this.addGeoJsonLayer(towns as any, "Town Boundaries", 'town', this.boundaryControl, this.bdryGroup);
+    this.addGeoJsonLayer(biophysical as any, "Biophysical Regions", 'biophysical', this.boundaryControl, this.bdryGroup);
     this.boundaryControl.addTo(this.map);
 
-    //poolControl - show/hide pools by status or type
+    //poolControl - show/hide pools by pool status
     if (this.itemType != 'Home') {this.poolControl.addTo(this.map);}
-    //this.poolControl.addOverlay(this.allGroup, "All Pools"); this.allGroup.addTo(this.map);
-    this.poolControl.addOverlay(this.potnGroup, `<span id="potnGroup">Potential</span>`); this.potnGroup.addTo(this.map);
-    this.poolControl.addOverlay(this.probGroup, `<span id="probGroup">Probable</span>`); this.probGroup.addTo(this.map);
-    this.poolControl.addOverlay(this.confGroup, `<span id="confGroup">Confirmed</span>`); this.confGroup.addTo(this.map);
+    this.addPoolStatusLayer(this.potnGroup);
+    this.addPoolStatusLayer(this.probGroup);
+    this.addPoolStatusLayer(this.confGroup);
     if (this.userIsAdmin) {
-      this.poolControl.addOverlay(this.duplGroup, `<span id="duplGroup">Duplicate</span>`); //this.duplGroup.addTo(this.map);
-      this.poolControl.addOverlay(this.elimGroup, `<span id="elimGroup">Eliminated</span>`); //this.elimGroup.addTo(this.map);
+      this.addPoolStatusLayer(this.duplGroup);
+      this.addPoolStatusLayer(this.elimGroup);
     }
-    /*
-    if (this.currentUser) {
-      this.poolControl.addOverlay(this.mineGroup, "My Data");
-      this.poolControl.addOverlay(this.visiGroup, "Visited");
-    }
-    if (this.userIsAdmin) {
-      this.poolControl.addOverlay(this.revuGroup, "Review");
-      this.poolControl.addOverlay(this.moniGroup, "Monitored");
-    }
-    */
-    //always add allGroup - now we may want both point and moveable marker at the same time
-    //this.allGroup.on("click", e => this.onCircleGroupClick(e));
-    this.potnGroup.on("click", e => this.onCircleGroupClick(e));
-    this.probGroup.on("click", e => this.onCircleGroupClick(e));
-    this.confGroup.on("click", e => this.onCircleGroupClick(e));
-    this.duplGroup.on("click", e => this.onCircleGroupClick(e));
-    this.elimGroup.on("click", e => this.onCircleGroupClick(e));
-/*
-    this.mineGroup.on("click", e => this.onCircleGroupClick(e));
-    this.visiGroup.on("click", e => this.onCircleGroupClick(e));
-    this.revuGroup.on("click", e => this.onCircleGroupClick(e));
-    this.moniGroup.on("click", e => this.onCircleGroupClick(e));
-*/
-    if (this.mapMarker) {
-      this.marker.addTo(this.map); //a single Marker added in plotPoolMarker
-    }
+
+    if (this.mapMarker) {this.marker.addTo(this.map);} //a single Marker added in plotPoolMarker
 
     //this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
@@ -368,8 +346,9 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.baseLayers[this.baseLayer].addTo(this.map);
 
-    this.map.on("baselayerchange", e => this.OnBaseLayerChangeMapOverlayAdd(e));
-    this.map.on("overlayadd", e => this.OnMapOverlayAdd(e));
+    this.map.on("baselayerchange", e => this.OnBaseLayerChange(e));
+    this.map.on("overlayadd", e => this.OnMapOverlayChange(e,1));
+    this.map.on("overlayremove", e => this.OnMapOverlayChange(e,0));
 
     this.map.on("zoomend", e => this.onZoomEnd(e));
     this.map.on("moveend", e => this.onMoveEnd(e));
@@ -387,27 +366,42 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }
 
-  addGeoJsonLayer(data={"a":"a", "test":"test"}, layerName="Test", layerControl=null, layerGroup=null, addToMap=false) {
+  addPoolStatusLayer(poolStatusGroup) {
+    //find poolStatusGroup index within our custom array by searching for the .group element
+    var idx = this.statusGroups.findIndex(elm => {
+      return elm.group == poolStatusGroup;
+    });
+    //console.log('addPoolStatusLayer found poolStatusGroup:', this.statusGroups[idx]);
+    //this method only works if we can assign options object to a featureGroup, which is so-far not possible
+    //this.poolControl.addOverlay(poolStatusGroup, `<span id="${poolStatusGroup.options.id}">${poolStatusGroup.options.name}</span>`);
+    //if (this.uxValuesService.overlaySelected[poolStatusGroup.options.id]) {poolStatusGroup.addTo(this.map);}
+    this.poolControl.addOverlay(poolStatusGroup, `<span id="${this.statusGroups[idx].id}">${this.statusGroups[idx].name}</span>`);
+    if (this.uxValuesService.overlaySelected[this.statusGroups[idx].id]) {poolStatusGroup.addTo(this.map);}
+    poolStatusGroup.on("click", e => this.onCircleGroupClick(e));
+  }
+
+  addGeoJsonLayer(data={"a":"a", "test":"test"}, layerName="Test", layerId='test', layerControl=null, layerGroup=null) {
     var layer = null;
     layer = L.geoJSON(data, {
         onEachFeature: this.onEachFeature,
         style: this.onStyle,
-        name: layerName //IMPORTANT: this used to compare layers at ZIndex time
+        bringToBack: true,
+        name: layerName, //IMPORTANT: this used to compare layers at ZIndex time
+        id: layerId //IMPORTANT: this used to set uxValues in OnMapOverlayChange
     });
-    if (addToMap) {layer.addTo(this.map); layer.bringToBack();}
     if (layerControl) {layerControl.addOverlay(layer, layerName);}
     if (layerGroup) {layerGroup.addLayer(layer);}
+    if (this.uxValuesService.overlaySelected[layerId]) {layer.addTo(this.map); layer.bringToBack();}
   }
 
   onEachFeature(feature, layer) {
-    /*
-      layer.on('click', function (e) {
-          //console.log('click', e);
+      layer.on("click", function (event) {
+          //console.log('click | event', event, '| layer', layer);
+          event.target._map.fitBounds(layer.getBounds());
       });
       layer.on('mousemove', function (e) {
         //console.log('mousemove', e);
       });
-    */
       if (feature.properties) {
           var obj = feature.properties;
           var props = '';
@@ -427,9 +421,11 @@ export class LeafletComponent implements OnInit, OnChanges {
           }
           if (props) {
             layer.bindTooltip(props);
-            layer.on('click', function (e) {
+            /*
+            layer.on("click", function (e) {
               e.sourceTarget.bindPopup(props).openPopup();
             });
+            */
           }
       }
   }
@@ -451,10 +447,10 @@ export class LeafletComponent implements OnInit, OnChanges {
         if (feature.properties.BIOPHYSRG1) { //biophysical regions
           return {color:"red", weight:1, fillOpacity:0.1, fillColor:"red"};
         } else if (feature.properties.CNTYNAME) { //counties
-          return {color:"yellow", weight:1, fillOpacity:0.1, fillColor:"yellow"};
+          return {color:"black", weight:1, fillOpacity:0.1, fillColor:"yellow"};
         } else if (feature.properties.TOWNNAME) { //towns
           return {color:"blue", weight:1, fillOpacity:0.1, fillColor:"blue"};
-        } else {
+        } else { //states and all others
           return {color:"black", weight:1, fillOpacity:0.1, fillColor:"black"};
         }
       }
@@ -510,6 +506,18 @@ export class LeafletComponent implements OnInit, OnChanges {
         default:
           break;
       }
+    }
+  }
+
+  zoomLatLon(e=null) {
+    if (e) {
+      const val = e.target.value.trim();
+      const reg = /\s*(?:;|,|:|\s|$)\s*/;
+      const arr = val.split(reg);
+      //console.log(arr);
+      const loc = L.latLng(arr[0], arr[1]);
+      const zum = arr[2]?arr[2]:15;
+      this.map.setView(loc, zum);
     }
   }
 
@@ -577,12 +585,12 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.uxValuesService.zoomNext(this.map);
   }
 
-  OnBaseLayerChangeMapOverlayAdd(e) {
+  OnBaseLayerChange(e) {
     //find the array index of the baseLayer that was chosen from the envent value
     var index = this.baseLayers.findIndex(elm => {
       return elm == e.layer;
     });
-    //console.log(`OnBaseLayerChangeMapOverlayAdd | name: ${e.name} | index: ${index}`);
+    //console.log(`OnBaseLayerChange | name: ${e.name} | index: ${index}`);
     this.uxValuesService.baseLayerIndex = index; //assign saved value of baselayer for consistency across reloads
     this.map.options.maxZoom = this.baseLayers[index].maxZoom; //set map maxZoom based on baseLayer maxZoom
   }
@@ -591,9 +599,21 @@ export class LeafletComponent implements OnInit, OnChanges {
     Fired when an overlay is selected through a layer control. We send all overlays
     to the back so that point markers remain clickable, in the foreground.
   */
-  OnMapOverlayAdd(e) {
-    //console.log('OnMapOverlayAdd', e);
-    e.layer.bringToBack();
+  OnMapOverlayChange(e, add=1) {
+    var overlayId = null;
+    //console.log('OnMapOverlayChange', e.layer.options, add);
+    if (e.layer.options.id) {overlayId = e.layer.options.id;}
+    else {
+      //find poolStatusGroup index within our custom array by searching for the .group element
+      var idx = this.statusGroups.findIndex(elm => {
+        return elm.group == e.layer;
+      });
+      //console.log('OnMapOverlayChange | statusGroups index found:', idx, this.statusGroups[idx]);
+      overlayId = this.statusGroups[idx].id;
+    }
+    this.uxValuesService.overlaySelected[overlayId] = add; //assign saved value of baselayer for consistency across reloads
+    //console.log(this.uxValuesService.overlaySelected);
+    if (e.layer.options.bringToBack) {e.layer.bringToBack();} //FeatureGroups can do this. LayerGroups cannot.
   }
 
   //respond to map zoom: set plotted pool radius relative to zoom level and update all points
@@ -677,7 +697,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   onCircleGroupClick(e) {
     //console.log("leaflet.onCircleGroupClick | event: ", e);
     //console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
-    //console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
+    console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
     const index = e.sourceTarget.options.index;
     const cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     const poolId = e.sourceTarget.options.poolId;
@@ -967,7 +987,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     var ptRadius = null;
     var ptColor = null; //color indicates pool status (optionally mappedConfidence)
     var ptShape = null; //shape indicates visit/no visit, permission
-    var ptCount = {potn:0, prob:0, conf:0, dupl:0, elim:0};
+    var ptCount = {potential:0, probable:0, confirmed:0, duplicate:0, eliminated:0}; //these must map to statusGroups ids...
 
     //console.log('leaflet.plotPoolShapes(',vpools,')');
 
@@ -1046,27 +1066,29 @@ export class LeafletComponent implements OnInit, OnChanges {
           mappedLocationUncertainty: vpools[i].mappedLocationUncertainty
       });
 
+      //shape.on("click", e => this.onCircleGroupClick(e)); //
+
       this.allGroup.addLayer(shape); //add this marker to the current featureGroup, which is an object with possibly multiple layerGroups by Pool Type or Status
       switch (vpools[i].mappedPoolStatus) {
         case 'Duplicate':
           this.duplGroup.addLayer(shape);
-          ptCount.dupl++;
+          ptCount.duplicate++;
           break;
         case 'Eliminated':
           this.elimGroup.addLayer(shape);
-          ptCount.elim++;
+          ptCount.eliminated++;
           break;
         case 'Confirmed':
           this.confGroup.addLayer(shape);
-          ptCount.conf++;
+          ptCount.confirmed++;
           break;
         case 'Probable':
           this.probGroup.addLayer(shape);
-          ptCount.prob++;
+          ptCount.probable++;
           break;
         case 'Potential':
           this.potnGroup.addLayer(shape);
-          ptCount.potn++;
+          ptCount.potential++;
           break;
       }
 
@@ -1098,21 +1120,12 @@ export class LeafletComponent implements OnInit, OnChanges {
     } // for loop over vpools[i]
 
     //update point-counts in pool status menu by setting html innerHTML...
-    if (document.getElementById("potnGroup")) {
-        document.getElementById("potnGroup").innerHTML = `Potential (${ptCount.potn})`;
-    }
-    if (document.getElementById("probGroup")) {
-        document.getElementById("probGroup").innerHTML = `Probable (${ptCount.prob})`;
-    }
-    if (document.getElementById("confGroup")) {
-        document.getElementById("confGroup").innerHTML = `Confirmed (${ptCount.conf})`;
-    }
-    if (document.getElementById("duplGroup")) {
-        document.getElementById("duplGroup").innerHTML = `Duplicate (${ptCount.dupl})`;
-    }
-    if (document.getElementById("elimGroup")) {
-        document.getElementById("elimGroup").innerHTML = `Eliminated (${ptCount.elim})`;
-    }
+    //local object ptCount must have values that map to statusGroups ids...
+    this.statusGroups.forEach((obj, idx) => {
+      if (document.getElementById(obj.id)) {
+          document.getElementById(obj.id).innerHTML = `${this.statusGroups[idx].name} (${ptCount[obj.id]})`;
+      }
+    });
   } // plotPoolShapes()
 
   changeColor(index=null) {

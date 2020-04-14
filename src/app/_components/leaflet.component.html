@@ -2,19 +2,26 @@
 
   <div *ngIf="itemType==='Home'" class="row">
     <div class="col-2">
-      <button (click)="zoomVermontLeft($event)" class="topmost btn btn-link">Zoom Vermont</button>
+      <button title="Zoom map to Vermont" (click)="zoomVermontLeft($event)" class="topmost btn btn-link">Zoom Vermont</button>
     </div>
   </div>
 
   <div *ngIf="itemType!='Home'" class="row">
     <div class="col-4">
-      <button (click)="zoomExtents($event)" class="topmost btn btn-link">Zoom to Pools</button>
+      <button title="Zoom map to visible pools" (click)="zoomExtents($event)" class="topmost btn btn-link">Zoom to Pools</button>
     </div>
   </div>
 
   <div *ngIf="itemType!='Home'" class="row">
     <div class="col-4">
       <button (click)="zoomVermont($event)" class="topmost btn btn-link">Zoom Vermont</button>
+    </div>
+  </div>
+
+  <div *ngIf="itemType=='List Pools/Visits'" class="row">
+    <div class="col-4">
+      <button title="Zoom to Latitude (42.375), Longitude (-72.439), optionally Zoom-level (1-20)" class="topmost btn btn-link no-margin-rt">LLZ:</button>
+      <input title="Zoom to Latitude, Longitude, optionally Zoom-level (1-20)" (keyup.enter)="zoomLatLon($event)" size="15" class="topmost no-margin-lt"/>
     </div>
   </div>
 
@@ -26,8 +33,8 @@
 
   <div *ngIf="itemType!='Home'" class="row">
     <div class="col-4">
-      <button (click)="zoomPrev($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Prev</button>
-      <button (click)="zoomNext($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Next</button>
+      <button title="Restore the previous zoom (center, zoom-level)" (click)="zoomPrev($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Prev</button>
+      <button title="Restore the next zoom (center, zoom-level)" (click)="zoomNext($event)" style="padding-right:0;margin-right:0;" class="topmost btn btn-link">Next</button>
       <button (click)="uxValuesService.InitZoom()" class="topmost btn btn-link">({{uxValuesService.zoomIndex}}/{{uxValuesService.zoomCount}})</button>
     </div>
   </div>

@@ -5,7 +5,7 @@ import { first } from 'rxjs/operators';
 import { vpMapped } from '@app/_models';
 import { vtTown } from '@app/_models';
 import { AlertService, AuthenticationService, vpMappedService } from '@app/_services';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({templateUrl: 'vpmap.component.html'})
 export class vpMapViewComponent implements OnInit {

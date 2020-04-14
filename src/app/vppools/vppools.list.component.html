@@ -17,62 +17,19 @@
     <table class="table table-sm">
       <th style="width: 70%;"></th>
       <th style="width: 30%;"></th>
-<!--
-      <tr *ngIf="userIsAdmin">
-        <td>
-          <label>
-            <input checked formControlName="mappedPoolStatus" type="radio" value="All" (change)="setStatusLoadPools('')" class="radio-button-justify-left" />
-            <span>All Data</span>
-          </label>
-        </td>
-        <td>{{stats.total_data}}</td>
-      </tr>
--->
       <tr>
         <td>
           <label>
-            <input checked formControlName="mappedPoolStatus" type="radio" value="All" (change)="setStatusLoadPools('')" class="radio-button-justify-left" />
+            <input checked formControlName="poolDataType" type="radio" value="All" (change)="setDataTypeLoadPools('')" class="radio-button-justify-left" />
             <span>All Pools</span>
           </label>
         </td>
         <td>{{stats.total}}</td>
       </tr>
-<!--
-      <tr>
-        <td>
-          <label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Potential" (change)="setStatusLoadPools('Potential')" class="radio-button-justify-left" />
-            <span>Potential</span>
-          </label>
-        </td>
-        <td>{{stats.potential}}</td>
-      </tr>
-
-      <tr>
-        <td>
-          <label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Probable" (change)="setStatusLoadPools('Probable')" class="radio-button-justify-left" />
-            <span>Probable</span>
-          </label>
-        </td>
-        <td>{{stats.probable}}</td>
-      </tr>
-
-      <tr>
-        <td>
-          <label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Confirmed" (change)="setStatusLoadPools('Confirmed')" class="radio-button-justify-left" />
-            <span>Confirmed</span>
-          </label>
-        </td>
-        <td>{{stats.confirmed}}</td>
-      </tr>
--->
-
       <tr *ngIf="currentUser">
         <td>
           <label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Mine" (change)="setStatusLoadPools('Mine')" class="radio-button-justify-left" />
+            <input formControlName="poolDataType" type="radio" value="Mine" (change)="setDataTypeLoadPools('Mine')" class="radio-button-justify-left" />
             <span>My Data</span>
           </label>
         </td>
@@ -81,32 +38,15 @@
 
       <tr *ngIf="userIsAdmin">
         <td><label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Review" (change)="setStatusLoadPools('Review')" class="radio-button-justify-left" />
+            <input formControlName="poolDataType" type="radio" value="Review" (change)="setDataTypeLoadPools('Review')" class="radio-button-justify-left" />
             <span>Review</span>
         </label></td>
         <td>{{stats.review}}</td>
       </tr>
-<!--
-      <tr *ngIf="userIsAdmin">
-        <td><label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Eliminated" (change)="setStatusLoadPools('Eliminated')" class="radio-button-justify-left" />
-            <span>Eliminated</span>
-        </label></td>
-        <td>{{stats.eliminated}}</td>
-      </tr>
-
-      <tr *ngIf="userIsAdmin">
-        <td><label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Duplicate" (change)="setStatusLoadPools('Duplicate')" class="radio-button-justify-left" />
-            <span>Duplicate</span>
-        </label></td>
-        <td>{{stats.duplicate}}</td>
-      </tr>
--->
       <tr *ngIf="userIsAdmin">
         <td>
           <label>
-            <input formControlName="mappedPoolStatus" type="radio" value="Visited" (change)="setStatusLoadPools('Visited')" class="radio-button-justify-left" />
+            <input formControlName="poolDataType" type="radio" value="Visited" (change)="setDataTypeLoadPools('Visited')" class="radio-button-justify-left" />
             <span>Visited</span>
           </label>
         </td>
@@ -116,7 +56,7 @@
       <tr *ngIf="false">
         <td>
           <label [ngClass]="{ 'disabled':true }">
-            <input formControlName="mappedPoolStatus" type="radio" value="Monitored" class="radio-button-justify-left" />
+            <input formControlName="poolDataType" type="radio" value="Monitored" class="radio-button-justify-left" />
             <span [ngClass]="{ 'disabled':true }">Monitored</span>
           </label>
         </td>
@@ -132,6 +72,7 @@
     <h4><u>Search Pools/Visits</u>
       <i (click)="openModal('vppools_help_info', 'searchFilters')" class="fa fa-info-circle no-margins link"></i>
     </h4>
+    <button (click)="ClearFilters()" class="btn btn-link">Clear Search Filters</button>
     <!--
     There's a performance issue here with search filters:
     - use keyup if the result set is small (<100)

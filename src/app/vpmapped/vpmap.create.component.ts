@@ -3,8 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vtInfoService } from '@app/_services';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
-import * as L from "leaflet";
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import L from "leaflet";
 import { vpMapped } from '@app/_models';
 import { vtTown } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';

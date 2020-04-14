@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { vpVisit } from '@app/_models';
 import { AlertService, AuthenticationService, vpVisitService } from '@app/_services';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import { LeafletComponent } from '@app/_components/leaflet.component';
 import { ModalService } from '@app/_modal';
 

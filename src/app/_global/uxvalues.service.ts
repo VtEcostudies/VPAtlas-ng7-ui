@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { first } from 'rxjs/operators';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import { AuthenticationService, AlertService, vpPoolsService, vtInfoService } from '@app/_services';
 import { vtTown } from '@app/_models';
 
@@ -10,13 +10,21 @@ export class UxValuesService {
     private currentUser = null;
     private userIsAdmin = false;
 
+    // Preserved UX values
     public visitPageIndex = 0;
     public baseLayerIndex = 0;
     public pointColorIndex = 0;
-    // TODO: enable these UX values
-    public poolTypeSelector = 'All';
-    public poolSearchValues = {poolId:null, userName:null, townName:null, mappedMethod:null};
+    public poolDataType = 'All'; //radio button selection
+    public filterPoolId = null;
+    public filterVisitId = null;
+    public filterUserName = null
+    public filterTown = {townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null};
+    public filterMappedMethod = "";
     public poolListViewType = 0; //0:Map View, 1:Table View
+    public overlaySelected = {'potential':1, 'probable':1, 'confirmed':1, 'duplicate':0, 'eliminated':0,
+                              'state':0, 'county':0, 'town':0, 'biophysical':0, 'parcel':0};
+    public mapView = true;
+    public loadAllRec = true;
 
     public vtCenter = {lat:43.916944,lng:-72.668056};
     public prevZoomLevel = [8];

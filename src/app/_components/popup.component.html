@@ -15,22 +15,22 @@
 <div *ngIf="itemType=='List Pools/Visits'">
   <div *ngFor="let visit of visits">
     <button (click)="ViewVisit(visit)" class="btn btn-link no-margin-rt no-margin-rt">View Visit {{visit}}</button>
-    <a [routerLink]="['/pools/visit/view/', visit]" title="View Visit in new tab" target="_blank">(+)</a>
+    <a [routerLink]="['/pools/visit/view/', visit]" title="View Visit in separate tab" target="_blank">(+)</a>
   </div>
   <div *ngIf="currentUser">
     <button (click)="CreateVisit()" class="btn btn-link no-margin-rt">Add Visit for Pool {{poolObj.poolId}}</button>
-    <a [routerLink]="['/pools/visit/create/', poolObj.poolId]" title="Add Visit in new tab" target="_blank">(+)</a>
+    <a [routerLink]="['/pools/visit/create/', poolObj.poolId]" title="Add Visit in separate tab" target="_blank">(+)</a>
   </div>
   <div *ngIf="userIsAdmin">
     <div *ngFor="let review of reviews">
       <button (click)="ViewReview(review)" class="btn btn-link no-margin-rt">View Review {{review}}</button>
-      <a [routerLink]="['/review/view/', review]" title="View Review in new tab" target="_blank">(+)</a>
+      <a [routerLink]="['/review/view/', review]" title="View Review in separate tab" target="_blank">(+)</a>
     </div>
   </div>
   <div *ngIf="userIsAdmin">
     <div *ngFor="let visit of visits">
       <button (click)="CreateReview(visit)" class="btn btn-link no-margin-rt">Add Review for Visit {{visit}}</button>
-      <a [routerLink]="['/review/create/', visit]" title="Add Review in new tab" target="_blank">(+)</a>
+      <a [routerLink]="['/review/create/', visit]" title="Add Review in separate tab" target="_blank">(+)</a>
     </div>
   </div>
 </div>
@@ -39,15 +39,15 @@
 <div *ngIf="itemType=='View Visit'">
   <div *ngIf="userIsAdmin||userIsOwner">
     <button (click)="EditVisit(poolObj.visitId)" class="btn btn-link no-margin-rt">Edit Visit {{poolObj.visitId}}</button>
-    <a [routerLink]="['/pools/visit/view/', poolObj.visitId]" title="Edit Visit in new tab" target="_blank">(+)</a>
+    <a [routerLink]="['/pools/visit/view/', poolObj.visitId]" title="Edit Visit in separate tab" target="_blank">(+)</a>
   </div>
   <div *ngIf="userIsAdmin">
     <button (click)="CreateReview(poolObj.visitId)" class="btn btn-link no-margin-rt">Add Review for Visit {{poolObj.visitId}}</button>
-    <a [routerLink]="['/review/create/', poolObj.visitId]" title="Add Review in new tab" target="_blank">(+)</a>
+    <a [routerLink]="['/review/create/', poolObj.visitId]" title="Add Review in separate tab" target="_blank">(+)</a>
   </div>
   <div *ngIf="userIsAdmin&&poolObj.reviewId">
     <button (click)="ViewReview(poolObj.reviewId)" class="btn btn-link no-margin-rt">View Review {{poolObj.reviewId}}</button>
-    <a [routerLink]="['/review/view/', poolObj.reviewId]" title="View Review in new tab" target="_blank">(+)</a>
+    <a [routerLink]="['/review/view/', poolObj.reviewId]" title="View Review in separate tab" target="_blank">(+)</a>
   </div>
 </div>
 
@@ -55,12 +55,12 @@
 <div *ngIf="itemType=='List Mapped Pool'">
   <div *ngIf="userIsAdmin">
     <button (click)="ViewMapped(poolObj.mappedPoolId)" class="btn btn-link no-margin-rt">View Mapped Pool {{poolObj.mappedPoolId}}</button>
-    <a [routerLink]="['/pools/mapped/view/', poolObj.mappedPoolId]" title="View Pool in new tab" target="_blank">(+)</a>
+    <a [routerLink]="['/pools/mapped/view/', poolObj.mappedPoolId]" title="View Pool in separate tab" target="_blank">(+)</a>
   </div>
 </div>
 <div *ngIf="itemType=='View Mapped Pool'">
   <div *ngIf="userIsAdmin">
     <button (click)="EditMapped(poolObj.mappedPoolId)" class="btn btn-link no-margin-rt">Edit Mapped Pool {{poolObj.mappedPoolId}}</button>
-    <a [routerLink]="['/pools/mapped/update/', poolObj.mappedPoolId]" title="Edit Pool in new tab" target="_blank">(+)</a>
+    <a [routerLink]="['/pools/mapped/update/', poolObj.mappedPoolId]" title="Edit Pool in separate tab" target="_blank">(+)</a>
   </div>
 </div>

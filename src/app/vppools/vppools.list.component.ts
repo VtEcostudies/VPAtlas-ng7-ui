@@ -7,7 +7,7 @@ import { UxValuesService } from '@app/_global';
 import { vpMapped, vpVisit } from '@app/_models';
 import { poolsDialogText } from '@app/vppools/dialogText';
 import { ModalService } from '@app/_modal';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 //@add_component_here
 @Component({
@@ -41,7 +41,7 @@ export class vpListComponent implements OnInit {
         public uxValuesService: UxValuesService,
         private vpMappedService: vpMappedService,
         private vpPoolsService: vpPoolsService,
-        private modalService: ModalService
+        private modalService: ModalService,
     ) {
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
@@ -57,16 +57,15 @@ export class vpListComponent implements OnInit {
     async ngOnInit() {
       //these are the pool search filter fields
       this.filterForm = this.formBuilder.group({
-          visitId: [''],
-          poolId: [''],
-          userName: [''],
-          town: [{townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null}],
-          mappedMethod: [''],
-          mappedPoolStatus: ['All'],
-          visitedPool: [],
-          review: [],
-          monitoredPool: []
+          poolDataType: [this.uxValuesService.poolDataType],
+          visitId: [this.uxValuesService.filterVisitId],
+          poolId: [this.uxValuesService.filterPoolId],
+          userName: [this.uxValuesService.filterUserName],
+          town: [this.uxValuesService.filterTown],
+          mappedMethod: [this.uxValuesService.filterMappedMethod]
       });
+      this.mapView = this.uxValuesService.mapView;
+      this.loadAllRec = this.uxValuesService.loadAllRec;
       this.uxValuesService.loadTowns();
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
@@ -88,51 +87,46 @@ export class vpListComponent implements OnInit {
     //https://stackoverflow.com/questions/50697456/checkbox-not-working-in-angular-4
     //https://stackoverflow.com/questions/51453322/cant-uncheck-programatically-after-manual-check-on-a-checkbox-angular
     checkBoxValueChanged(e) {
-        //console.log('checkBoxValueChanged: ', e.target.checked);
-        this.loadAllRec = e.target.checked;
-        this.loadPools();
+      //console.log('checkBoxValueChanged: ', e.target.checked);
+      this.loadAllRec = e.target.checked;
+      this.uxValuesService.loadAllRec = this.loadAllRec;
+      this.loadPools();
     }
 
     checkBoxSetValue(value=true) {
       this.loadAllRec = value;
+      this.uxValuesService.loadAllRec = this.loadAllRec;
       this.loadPools();
     }
 
-    setStatusLoadPools(status="") {
-      this.filterForm.get("visitedPool").setValue(false);
-      this.filterForm.get("monitoredPool").setValue(false);
+    setDataTypeLoadPools(dataType="") {
       this.filterForm.get("userName").setValue(null);
-      this.filterForm.get("review").setValue(false);
 
-      if (status=="Visited") {
-        this.filterForm.get("visitedPool").setValue(true);
-        //console.log('setStatusLoadPools | visitedPool', this.filterForm.value.visitedPool);
-      } else if (status=="Monitored") {
-        this.filterForm.get("monitoredPool").setValue(true);
-        //console.log('setStatusLoadPools | monitoredPool', this.filterForm.value.monitoredPool);
-      } else if (status=="Mine") {
+      if (dataType=="Mine") {
         this.filterForm.get("userName").setValue(this.currentUser ? this.currentUser.username : null);
-        //console.log('setStatusLoadPools | myPools', this.filterForm.value.userName);
-      } else if (status=="Review") {
-        this.filterForm.get("review").setValue(true);
-        //console.log('setStatusLoadPools | review', this.filterForm.value.review);
       }
+
+      this.uxValuesService.poolDataType = dataType;
 
       this.loadPools(1); //MUST init Page to 1 when changing dataset to avoid trying to show page=10 when only 3 pages.
     }
 
     getType() {
       var type='all';
-      if (this.filterForm.value.visitedPool) type='visi';
-      if (this.filterForm.value.monitoredPool) type='moni';
-      if (this.filterForm.value.userName) type='mine';
-      if (this.filterForm.value.review) type='revu';
+      if (this.f.poolDataType.value=="Visited") type='visi';
+      if (this.f.poolDataType.value=="Monitored") type='moni';
+      if (this.f.poolDataType.value=="Mine") type='mine';
+      if (this.f.poolDataType.value=="Review") type='revu';
       return type;
     }
 
     loadPools(page=0) {
-      var type = this.getType()
       this.alertService.clear();
+      this.uxValuesService.filterPoolId = this.f.poolId.value;
+      this.uxValuesService.filterVisitId = this.f.visitId.value;
+      this.uxValuesService.filterUserName = this.f.userName.value;
+      this.uxValuesService.filterTown = this.f.town.value;
+      this.uxValuesService.filterMappedMethod = this.f.mappedMethod.value;
       if (this.loadAllRec) {
         //this.loadAll();
         this.loadUpdated(this.getType());
@@ -141,131 +135,6 @@ export class vpListComponent implements OnInit {
         //this.loadPage(this.page);
         this.loadUpdated(this.getType(), this.page);
       }
-    }
-
-    /*
-      Construct an SQL WHERE clause search filter to be passed to vpvisit.services
-      to filter db query results.
-      Put the value of that fileter into the class variable.
-    */
-
-    /*
-      We have a problem with Search and the combined UX of Pools and Visits.
-      We are looking up into 2 tables, both of which have userNames, poolIds,
-      and more duplicate values. How do we handle this? There are lots of ways,
-      and they're all a lot of work.
-
-      NOTE: Implemented this on both ends by removing the default AND condition
-      and requiring logical operators be sent as below. Not easy.
-    */
-    getFilter() {
-      this.filter = ''; //must clear first to undo filters
-      var i = 0;
-
-      if (this.f.visitId.value) {
-        this.filter += `visitId=${this.f.visitId.value}`;
-      }
-      if (this.f.poolId.value) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `logical${++i}=(`;
-        //this.filter += `&mappedPoolId|LIKE=%${this.f.poolId.value}%`;
-        this.filter += `&mappedPoolId=${this.f.poolId.value}`; //exact match
-        this.filter += `&logical${++i}=OR`;
-        //this.filter += `&visitPoolId|LIKE=%${this.f.poolId.value}%`;
-        this.filter += `&visitPoolId=${this.f.poolId.value}`;
-        this.filter += `&logical${++i}=)`;
-      }
-
-      if (this.f.userName.value) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        // TODO: add ability to send OR filter conditions
-        //this.filter += `visitUserName|LIKE=%${this.f.userName.value}%`;
-        //this.filter += `mappedByUser|LIKE=%${this.f.userName.value}%`;
-        this.filter += `logical${++i}=(`;
-        this.filter += `&mappedByUser|LIKE=%${this.f.userName.value}%`;
-        this.filter += `&logical${++i}=OR`;
-        this.filter += `&visitUserName|LIKE=%${this.f.userName.value}%`;
-        this.filter += `&logical${++i}=)`;
-      }
-
-      if (this.f.town.value) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `logical${++i}=(`;
-        this.filter += `&mappedtown."townName"|LIKE=%${this.f.town.value}%`;
-        this.filter += `&logical${++i}=OR`;
-        this.filter += `&visittown."townName"|LIKE=%${this.f.town.value}%`;
-        this.filter += `&logical${++i}=)`;
-      }
-
-      if (this.f.mappedMethod.value) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `mappedMethod=${this.f.mappedMethod.value}`;
-      }
-
-      //hidden field, populated from code
-      /*
-        NOTE: there IS a way to send multiple values for one selector in http:
-        send multiple instances of that same field in the query param lists
-        node express parses them into an array for us. We are not using this
-        previously unknown feature, yet.
-      */
-      if (this.f.mappedPoolStatus.value) {
-        //exclude search items which are not pool statuses
-        if (this.f.mappedPoolStatus.value!="All" &&
-            this.f.mappedPoolStatus.value!="Visited" &&
-            this.f.mappedPoolStatus.value!="Monitored" &&
-            this.f.mappedPoolStatus.value!="Mine" &&
-            this.f.mappedPoolStatus.value!="Review"
-          ) {
-          if (this.filter) {
-            this.filter += `&logical${++i}=AND&`;
-          }
-          this.filter += `mappedPoolStatus=${this.f.mappedPoolStatus.value}`;
-          //this.filter += `mappedPoolStatus|IN=${this.f.mappedPoolStatus.value}`;
-        }
-      }
-
-      //hidden field, populated from code: 'visited'
-      //console.log('getFilter | visitedPool', this.f.visitedPool.value);
-      if (this.f.visitedPool.value == true) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `visitPoolId|!=NULL`;
-      }
-
-      //hidden field, populated from code: 'review'
-      //console.log('getFilter | review', this.f.review.value);
-      if (this.f.review.value == true) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
-      }
-
-      /*
-        filter hidden pools if user is not admin
-        filter hidden pools for admins by default
-      */
-      //console.log('mappedPoolStatus', this.f.mappedPoolStatus.value);
-      if (!this.userIsAdmin || (this.userIsAdmin && (this.f.mappedPoolStatus.value=="All" || this.f.visitedPool.value == true))) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
-        this.filter += `&`;
-        this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
-      }
-
-      //console.log('vppools.list.getfilter()', this.filter);
     }
 
     firstPage() {
@@ -305,7 +174,7 @@ export class vpListComponent implements OnInit {
 
     async loadPage(page) {
       this.loading = true;
-      this.getFilter();
+      this.uxValuesService.getFilter(this.getType());
       if (this.page < 1) this.page = 1;
       if (this.page > this.last) this.page = this.last;
       this.vpPoolsService.getPage(this.page, this.filter)
@@ -325,7 +194,7 @@ export class vpListComponent implements OnInit {
 
     async loadAll() {
       this.loading = true;
-      this.getFilter();
+      this.uxValuesService.getFilter(this.getType());
       this.vpPoolsService.getAll(this.filter)
           .pipe(first())
           .subscribe(
@@ -408,6 +277,7 @@ export class vpListComponent implements OnInit {
         await this.loadPools();
       }
       this.mapView = true;
+      this.uxValuesService.mapView = this.mapView;
     }
 
     async showTable() {
@@ -416,10 +286,20 @@ export class vpListComponent implements OnInit {
         await this.loadPools();
       }
       this.mapView = false;
+      this.uxValuesService.mapView = this.mapView;
     }
 
     clearTown() {
       this.filterForm.get("town").setValue(null);
       this.loadPools();
+    }
+
+    ClearFilters() {
+      this.filterForm.controls['visitId'].setValue('');
+      this.filterForm.controls['poolId'].setValue('');
+      this.filterForm.controls['userName'].setValue('');
+      this.filterForm.controls['town'].setValue({townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null});
+      this.filterForm.controls['mappedMethod'].setValue('');
+      this.loadPools(1);
     }
 }

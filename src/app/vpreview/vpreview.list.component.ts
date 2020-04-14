@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpReviewService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({
   templateUrl: 'vpreview.list.component.html'

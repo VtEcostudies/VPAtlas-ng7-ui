@@ -8,7 +8,7 @@ import { vpReviewService, vpMappedService, vpVisitService, vpPoolsService, vtInf
 import { ModalService } from '@app/_modal';
 import { environment } from '@environments/environment';
 import { reviewDialogText } from '@app/vpreview/dialogText';
-import * as Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import { vpVisitViewComponent } from '@app/vpvisit';
 
 @Component({

@@ -357,3 +357,10 @@ input[type="checkbox"].x4-checkbox:checked:after {
     cursor: inherit;
     display: block;
 }
+
+.no-margin-rt {
+  margin-right: 0px;
+}
+.no-margin-lt {
+  margin-left: 0px;
+}
