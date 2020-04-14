@@ -4,7 +4,7 @@
   ...dunno about 'deeppurple-amber' theme. so far
   it's  not imposing that look.
 */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+/*@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';*/
 @import './app/vpvisit/vpvisit.styles.css';
 /*
   cursor pointer for info icons, etc.

@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-3">
       ﻿<h3><u>VPAtlas Reviews</u></h3>
-      <button (click)="AddReview()" class="btn btn-primary">Add</button>
+      <button *ngIf="f.visitId.value" (click)="AddReview()" class="btn btn-primary">Add</button>
       <button (click)="Cancel()" class="btn btn-link">Cancel</button>
       <label>Count: {{count}}</label>
     </div>
