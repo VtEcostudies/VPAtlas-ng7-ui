@@ -2,6 +2,7 @@
 import { first } from 'rxjs/operators';
 import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import { AuthenticationService, AlertService, vpPoolsService, vtInfoService } from '@app/_services';
+import { vcgiService } from '@app/_services';
 import { vtTown } from '@app/_models';
 
 @Injectable({ providedIn: 'root' }) //this makes a service single-instance?
@@ -45,12 +46,14 @@ export class UxValuesService {
       moni:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0}
       };
     public towns:any = [];
+    public parcels:any = {}; //an array of town parcels by town name
 
     constructor(
       private authenticationService: AuthenticationService,
       private vpPoolsService: vpPoolsService,
       private InfoService: vtInfoService,
-      private alertService: AlertService
+      private alertService: AlertService,
+      private vcgiService: vcgiService
     ) {
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
@@ -317,4 +320,55 @@ export class UxValuesService {
       //console.log('vpvisit.create.compareTownFn t1:', t1, ' t2:', t2);
       return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
     }
+
+    LoadTownParcel(townName) {
+      return new Promise((resolve, reject) => {
+        this.vcgiService.getTownParcel(townName)
+          .pipe(first())
+          .subscribe((result:any) => {
+            if (result.rowCount) {
+              let parcel:object = result.rows[0].vcgiParcel;
+              resolve (parcel);
+            } else {
+              console.log(`LoadTownParcel | Parcel data for ${townName} NOT Found.`);
+              //reject(`Parcel data for ${townName} NOT Found.`);
+            }
+          }, error => {
+            console.log('LoadTownParcel ERROR:', error);
+            reject (error);
+          });
+      });
+    }
+
+    addParcelMap(townName) {
+      return new Promise((resolve, reject) => {
+        this.LoadTownParcel(townName)
+          .then(parcel => {
+            this.parcels[townName] = parcel;
+            //console.log('uxValuesService.addParcelMap', townName, this.parcels[townName]);
+            resolve(parcel);
+          })
+          .catch(error => {
+            console.log('uxValuesService.addParcelMap ERROR', error.message);
+            reject(error);
+          });
+        });
+    }
+
+    getParcelMap(townName) {
+      return new Promise((resolve, reject) => {
+        if (this.parcels[townName]) {
+          console.log('getParcelMap | already loaded', townName)
+          resolve(this.parcels[townName]);
+        } else {
+          this.addParcelMap(townName)
+            .then(parcel => {
+              console.log('getParcelMap | newly loaded', townName)
+              resolve(parcel);
+            })
+            .catch(error => {reject(error);});
+        }
+      });
+    }
+
 }

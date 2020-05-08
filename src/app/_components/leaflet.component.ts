@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
 import { AuthenticationService, vpPoolsService } from '@app/_services';
+import { vcgiService } from '@app/_services';
 import { first } from 'rxjs/operators';
 import { UxValuesService } from '@app/_global';
 import { vpMappedEventInfo } from '@app/_models';
@@ -13,7 +14,8 @@ import { Injector, ComponentFactoryResolver, ApplicationRef, ComponentRef, Chang
 import { Router } from '@angular/router';
 import './popup.component.css';
 
-//import * as L from "leaflet";
+//import * as D3geo from "d3-geo";
+
 //how to import leaflet module with extensions:
 //https://stackoverflow.com/questions/51679056/add-beautifymarker-plugin-to-ngx-leaflet-project
 //BUG: map marker not showing
@@ -42,7 +44,6 @@ import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
 import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
 import towns from '@app/_geojson/Polygon_VT_Town_Boundaries.geo.json';
 import biophysical from '@app/_geojson/Polygon_VT_Biophysical_Regions.geo.json';
-
 /*
   Popup Component - this is used instead of the standard Leaflet popup because we
   want to use Angular routing, not html href routing, to preserve uxValue across
@@ -204,7 +205,10 @@ export class LeafletComponent implements OnInit, OnChanges {
     {group:this.duplGroup, name:'Duplicate', id:'duplicate'},
     {group:this.elimGroup, name:'Eliminated', id:'eliminated'}
   ];
-  bdryGroup = L.featureGroup(); //boundary overlays. 'name' and 'id' are set in options when adding layers to group.
+  bndryGroup = L.featureGroup(); //boundary overlays. 'name' and 'id' are set in options when adding layers to group.
+  parcelGroup = L.featureGroup();
+  parcelAdded = {}; //a list of town parcels that have been added
+  townLayer = null; //class variable for the raw towns layer to be user for processing
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
   cmClrCnt = this.cmColors.length; //(this.cmColors).length();
@@ -265,6 +269,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     public uxValuesService: UxValuesService,
     private authenticationService: AuthenticationService,
     private vpPoolsService: vpPoolsService,
+    private vcgiService: vcgiService,
     private injector: Injector,
     private applRef: ApplicationRef,
     private componentFactoryResolver: ComponentFactoryResolver
@@ -319,10 +324,12 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.baseLayerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
     }
     //boundaryControl is state, counties, towns, geoJson overlays...
-    this.addGeoJsonLayer(state as any, "State Boundary", 'state', this.boundaryControl,  this.bdryGroup);
-    this.addGeoJsonLayer(counties as any, "County Boundaries", 'county', this.boundaryControl, this.bdryGroup);
-    this.addGeoJsonLayer(towns as any, "Town Boundaries", 'town', this.boundaryControl, this.bdryGroup);
-    this.addGeoJsonLayer(biophysical as any, "Biophysical Regions", 'biophysical', this.boundaryControl, this.bdryGroup);
+    this.addGeoJsonLayer(state as any, "State Boundary", 'state', this.boundaryControl,  this.bndryGroup);
+    this.addGeoJsonLayer(counties as any, "County Boundaries", 'county', this.boundaryControl, this.bndryGroup);
+    this.addGeoJsonLayer(towns as any, "Town Boundaries", 'town', this.boundaryControl, this.bndryGroup);
+    this.addGeoJsonLayer(biophysical as any, "Biophysical Regions", 'biophysical', this.boundaryControl, this.bndryGroup);
+    this.boundaryControl.addOverlay(this.parcelGroup, 'Parcel Boundaries');
+    if (this.uxValuesService.overlaySelected['parcel']) {this.parcelGroup.addTo(this.map); this.parcelGroup.bringToBack();}
     this.boundaryControl.addTo(this.map);
 
     //poolControl - show/hide pools by pool status
@@ -353,7 +360,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.map.on("zoomend", e => this.onZoomEnd(e));
     this.map.on("moveend", e => this.onMoveEnd(e));
 
-    //this.map.on("click", e => this.onMapClick(e)); //when used for plotting a point, this causes problems
+    this.map.on("click", e => this.onMapClick(e)); //when used for plotting a point, this causes problems
 
     this.map.on("mousemove", e => this.onMouseMove(e));
 
@@ -380,53 +387,101 @@ export class LeafletComponent implements OnInit, OnChanges {
     poolStatusGroup.on("click", e => this.onCircleGroupClick(e));
   }
 
+  addParcelGeoJsonLayer(townName=null, uxVal=null, pclGp=null, pclAd=null, bdyGp=null, map=null) {
+    if (!uxVal) {uxVal = this.uxValuesService;}
+    if (!pclGp) {pclGp = this.parcelGroup;}
+    if (!pclAd) {pclAd = this.parcelAdded;}
+    if (!bdyGp) {bdyGp = this.bndryGroup;}
+    if (!map) {map = this.map;}
+
+    pclGp.eachLayer(async layer => {
+      console.log('getTownsInView | Remove', layer.options.name);
+      await pclGp.removeLayer(layer);
+      pclAd[townName] = false; //or delete it...
+    })
+
+    uxVal.getParcelMap(townName).then(() => {
+      var layer = null;
+      const layerName = townName;
+      const layerId = townName.toLowerCase();
+      const geoJson = uxVal.parcels[townName];
+      if (!pclAd[townName]) {
+        layer = L.geoJSON(geoJson, {
+            onEachFeature: (feature, layer) => {
+              let obj = feature.properties;
+              let ttp = '';
+              let pop = '';
+              for (var key in obj) {
+                if (('OWNER1'==key||'OWNER2'==key)&&obj[key]) {ttp += `${key}: ${obj[key]}<br>`;}
+                if (obj[key]) pop += `${key}: ${obj[key]}<br>`;
+              }
+              layer.bindTooltip(ttp);
+              layer.bindPopup(pop,{maxHeight:200});
+            }, //this.onEachFeature,
+            style: (feature) => {return {color:"black", weight:1, fillOpacity:0.01, fillColor:"cyan"};}, //this.onStyle,
+            bringToBack: true,
+            name: layerName, //IMPORTANT: this used to compare layers at ZIndex time
+            id: layerId //IMPORTANT: this used to set uxValues in OnMapOverlayChange
+        });
+        pclAd[townName] = true;
+        pclGp.addLayer(layer); //add the town's parcel layer to the parcel featureGroup...
+        if (uxVal.overlaySelected['parcel']) {pclGp.addTo(this.map);}
+        pclGp.bringToBack(); //Push parcelGroup to back so pools are clickable
+        bdyGp.bringToBack(); //Push all other boundaries behind parcel map so parcels are clickable
+      }
+    });
+  }
+
   addGeoJsonLayer(data={"a":"a", "test":"test"}, layerName="Test", layerId='test', layerControl=null, layerGroup=null) {
     var layer = null;
     layer = L.geoJSON(data, {
         onEachFeature: this.onEachFeature,
         style: this.onStyle,
+        uxVal: this.uxValuesService,
+        addGJ: this.addParcelGeoJsonLayer,
+        pclGp: this.parcelGroup,
+        pclAd: this.parcelAdded,
+        bdyGp: this.bndryGroup,
+        map: this.map,
         bringToBack: true,
         name: layerName, //IMPORTANT: this used to compare layers at ZIndex time
         id: layerId //IMPORTANT: this used to set uxValues in OnMapOverlayChange
     });
+    if ('town' == layerId) (this.townLayer = layer);
     if (layerControl) {layerControl.addOverlay(layer, layerName);}
-    if (layerGroup) {layerGroup.addLayer(layer);}
+    if (layerGroup) {layerGroup.addLayer(layer);} //layerGropus are FeatureGroups for aggregating layers for group actions
     if (this.uxValuesService.overlaySelected[layerId]) {layer.addTo(this.map); layer.bringToBack();}
   }
 
   onEachFeature(feature, layer) {
       layer.on("click", function (event) {
-          //console.log('click | event', event, '| layer', layer);
-          event.target._map.fitBounds(layer.getBounds());
+          event.target._map.fitBounds(layer.getBounds()); //zoom to town..
+          if (layer.feature.properties.TOWNNAME) { //load/add/show town's parcel map
+            let townName = layer.feature.properties.TOWNNAME;
+            layer.options.addGJ(townName, layer.options.uxVal, layer.options.pclGp, layer.options.pclAd, layer.options.bdyGp, layer.options.map);
+          }
       });
       layer.on('mousemove', function (e) {
         //console.log('mousemove', e);
       });
       if (feature.properties) {
           var obj = feature.properties;
-          var props = '';
-          var links = '';
+          var pop = '';
+          var ttp = '';
           for (var key in obj) {
             switch(key.substr(key.length - 4).toLowerCase()) { //last 4 characters of property
               case 'name':
-                props += `${obj[key]}<br>`;
+                ttp += `${obj[key]}<br>`;
                 break;
               case 'eoid':
-                //props += `${key}: ${obj[key]}<br>`;
+                //ttp += `${key}: ${obj[key]}<br>`;
                 break;
               case 'type':
-                props += `${obj[key]}<br>`;
+                ttp += `${obj[key]}<br>`;
                 break;
             }
           }
-          if (props) {
-            layer.bindTooltip(props);
-            /*
-            layer.on("click", function (e) {
-              e.sourceTarget.bindPopup(props).openPopup();
-            });
-            */
-          }
+          if (ttp) {layer.bindTooltip(ttp);}
       }
   }
 
@@ -515,9 +570,14 @@ export class LeafletComponent implements OnInit, OnChanges {
       const reg = /\s*(?:;|,|:|\s|$)\s*/;
       const arr = val.split(reg);
       //console.log(arr);
-      const loc = L.latLng(arr[0], arr[1]);
-      const zum = arr[2]?arr[2]:15;
-      this.map.setView(loc, zum);
+      const lat = Number(arr[0]);
+      const lon = Number(arr[1]);
+      var zum = Number(arr[2]);
+      if (lat && lon) {
+        const loc = L.latLng(arr[0], arr[1]);
+        zum = arr[2]?arr[2]:15;
+        this.map.setView(loc, zum);
+      }
     }
   }
 
@@ -609,9 +669,11 @@ export class LeafletComponent implements OnInit, OnChanges {
         return elm.group == e.layer;
       });
       //console.log('OnMapOverlayChange | statusGroups index found:', idx, this.statusGroups[idx]);
-      overlayId = this.statusGroups[idx].id;
+      //check if we found a statusGroup - some overlays (eg. Parcels) aren't in statusGroups
+      if (this.statusGroups[idx]) {overlayId = this.statusGroups[idx].id;}
     }
-    this.uxValuesService.overlaySelected[overlayId] = add; //assign saved value of baselayer for consistency across reloads
+    if (overlayId) {this.uxValuesService.overlaySelected[overlayId] = add;} //assign saved value of baselayer for consistency across reloads
+    else if (this.parcelGroup == e.layer) {this.uxValuesService.overlaySelected['parcel'] = add;}
     //console.log(this.uxValuesService.overlaySelected);
     if (e.layer.options.bringToBack) {e.layer.bringToBack();} //FeatureGroups can do this. LayerGroups cannot.
   }
@@ -619,12 +681,39 @@ export class LeafletComponent implements OnInit, OnChanges {
   //respond to map zoom: set plotted pool radius relative to zoom level and update all points
   async onZoomEnd(e) {
     //console.log('onZoomEnd', e.zoomPrev, e.zoomNext);
+    //console.log('zoomLevel', this.map.getZoom());
     this.zoomLevel = this.map.getZoom();
     this.zoomCenter = this.map.getCenter();
     await this.uxValuesService.addPrevZoom(this.map.getZoom(), this.map.getCenter());
     await this.SetPointZoomRadius();
     await this.setEachPointRadius();
     this.uxValuesService.zoomUI=true;
+
+    if (this.zoomLevel > 10) { //add or remove parcel map layer based on towns visible at zoom
+      //get visible towns at this zoom and get/add/show their parcel maps
+      //this.getTownsInView();
+    }
+  }
+
+  getTownsInView() {
+    this.parcelGroup.eachLayer(async layer => {
+      console.log('getTownsInView | Remove', layer.options.name);
+      await this.parcelGroup.removeLayer(layer);
+    })
+    this.map.eachLayer((layer) => {
+      if (layer.feature && layer.feature.properties.TOWNNAME) {
+        if(this.map.getBounds().contains(layer.getBounds())) {
+          let townName = layer.feature.properties.TOWNNAME;
+          console.log(townName);
+          /*
+          this.uxValuesService.getParcelMap(townName)
+            .then(() => {
+              this.addParcelGeoJsonLayer(townName);
+            });
+          */
+        }
+      }
+    });
   }
 
   //respond to map move: save map center and update displayed value
@@ -634,6 +723,9 @@ export class LeafletComponent implements OnInit, OnChanges {
     //NOTE: too hard to make this work - invokes a 2nd addPrevMove event.
     //await this.uxValuesService.addPrevMove(this.map.getZoom(), this.map.getCenter());
     this.uxValuesService.moveUI=true;
+    if (this.zoomLevel > 10) { //get visible towns at this zoom and get/add/show their parcel maps
+      //this.getTownsInView();
+    }
   }
 
   //set the class value of plotted pool radius relative to zoom level
@@ -666,6 +758,23 @@ export class LeafletComponent implements OnInit, OnChanges {
                                Lat: ${this.itemLoc.lat}<br>
                                Lng: ${this.itemLoc.lng}`);
      }
+
+     //if town boundaries are showing, find the town clicked a load/add/show it parcel map
+     let geoJsonClickLoc = [e.latlng.lng, e.latlng.lat];
+     this.townLayer.eachLayer(layer => {
+       //console.log(layer.feature.geometry, clickLoc);
+       //if (D3geo.geoContains(layer, geoJsonClickLoc)) {
+       if (0) {
+         let townName = layer.feature.properties.TOWNNAME;
+         console.log(townName, layer, geoJsonClickLoc);
+         /*
+         this.uxValuesService.getParcelMap(townName)
+           .then(() => {
+             this.addParcelGeoJsonLayer(townName);
+           });
+          */
+       }
+     })
   }
 
   /*
@@ -736,8 +845,8 @@ export class LeafletComponent implements OnInit, OnChanges {
             console.log(`pool:${row.poolId}/visit:${row.visitId}/review: ${row.reviewId}`);
             if (row.visitId) visits.push(row.visitId);
             if (row.reviewId) reviews.push(row.reviewId);
-            resolve ({visits:visits, reviews:reviews});
           });
+          resolve ({visits:visits, reviews:reviews});
         }, error => {
           console.log('LoadVisitReviewData ERROR:', error);
           reject ({visits:[], reviews:[]});

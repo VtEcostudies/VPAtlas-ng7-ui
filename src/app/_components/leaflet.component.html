@@ -20,8 +20,8 @@
 
   <div *ngIf="itemType=='List Pools/Visits'" class="row">
     <div class="col-4">
-      <button title="Zoom to Latitude (42.375), Longitude (-72.439), optionally Zoom-level (1-20)" class="topmost btn btn-link no-margin-rt">LLZ:</button>
-      <input title="Zoom to Latitude, Longitude, optionally Zoom-level (1-20)" (keyup.enter)="zoomLatLon($event)" size="15" class="topmost no-margin-lt"/>
+      <button title="Zoom to Latitude (42.375), Longitude (-72.625), optionally Zoom-level (1-20)" class="topmost btn btn-link no-margin-rt">LLZ:</button>
+      <input placeholder="42.375 -72.625 11" title="Zoom to Latitude, Longitude, optionally Zoom-level (1-20)" (keyup.enter)="zoomLatLon($event)" size="15" class="topmost no-margin-lt"/>
     </div>
   </div>
 
@@ -60,6 +60,12 @@
           <td style="width: 85%;">
             <!--<input value="{{cursorLng.toFixed(6)}}" disabled=true size="7" />-->
             {{cursorLng.toFixed(6)}}
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 15%;">Zoom</td>
+          <td style="width: 85%;">
+            {{zoomLevel}}
           </td>
         </tr>
       </table>

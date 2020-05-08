@@ -119,7 +119,7 @@ export class vpReviewCreateComponent implements OnInit {
         reviewPoolId: [{value:'', disabled:this.update}, Validators.required],
         reviewQACode: ['', Validators.required],
         reviewQAAlt: [''],
-        reviewQAPerson: [''],
+        reviewQAPerson: [this.currentUser.username],
         reviewQANotes: [''],
         reviewQADate: [(this.create?Moment().format('YYYY-MM-DD'):''), Validators.required],
         reviewPoolStatus: ['', Validators.required],
