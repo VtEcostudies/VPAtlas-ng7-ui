@@ -13,6 +13,9 @@ import { environment } from '@environments/environment';
 import { visitDialogText } from '@app/vpvisit/visitDialogText';
 import { ModalService } from '@app/_modal';
 
+import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
+import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+
 //need these next 2 to manipulate the DOM directly
 import { Inject }  from '@angular/core';
 import { DOCUMENT } from '@angular/common';
@@ -611,6 +614,13 @@ export class vpVisitCreateComponent implements OnInit {
               });
     }
 
+    IsPoolInVermont(poolLon=0, poolLat=0) {
+      const poolLoc = turf.point([poolLon, poolLat]);
+      const statePolygon = turf.polygon(state.features[0].geometry.coordinates);
+      console.log('IsPoolInVermont', poolLoc, statePolygon);
+      return turf.booleanPointInPolygon(poolLoc, statePolygon);
+    }
+
     /*
       Create a mapped pool from visit data:
       - copy observer and location data to a newly-instantiated vpMapped Object
@@ -621,6 +631,15 @@ export class vpVisitCreateComponent implements OnInit {
       this.submitted = true; //this must go at the top - used by alertservice
 
       this.alertService.clear();
+
+      const poolLat = Number(this.visitLocationForm.value.visitLatitude);
+      const poolLon = Number(this.visitLocationForm.value.visitLongitude);
+
+      if (!this.IsPoolInVermont(poolLon, poolLat)) {
+        this.alertService.error("Pool coordinates are not in Vermont. Please correct.");
+        this.setPage(0);
+        return;
+      }
 
       //Parts of the Observer form are disabled. Use getRawValue() to retrieve any value.
       mappedPool.mappedByUser = this.visitObserverForm.getRawValue().visitUserName;
@@ -697,14 +716,11 @@ export class vpVisitCreateComponent implements OnInit {
           return;
         }
 
-        if (Number(this.visitLocationForm.value.visitLatitude) < 42.3 || Number(this.visitLocationForm.value.visitLatitude) > 45.1) {
-          this.alertService.error("Latitude must be between 42.3 and 45.1 to be in Vermont.");
-          this.setPage(0);
-          return;
-        }
+        const poolLat = Number(this.visitLocationForm.value.visitLatitude);
+        const poolLon = Number(this.visitLocationForm.value.visitLongitude);
 
-        if (Number(this.visitLocationForm.value.visitLongitude) > -71.5 || Number(this.visitLocationForm.value.visitLongitude) < -73.5) {
-          this.alertService.error("Longitude must be between 71.5 and 73.5 to be in Vermont.");
+        if (!this.IsPoolInVermont(poolLon, poolLat)) {
+          this.alertService.error("Pool coordinates are not in Vermont. Please correct.");
           this.setPage(0);
           return;
         }

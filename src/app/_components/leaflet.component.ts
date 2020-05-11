@@ -208,6 +208,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   bndryGroup = L.featureGroup(); //boundary overlays. 'name' and 'id' are set in options when adding layers to group.
   parcelGroup = L.featureGroup();
   parcelAdded = {}; //a list of town parcels that have been added
+  stateLayer = null; //geoJSON layer of state boundary used for processing
   townLayer = null; //geoJSON layer of all towns used for processing
   townPolygon = null; //single geoJSON polygon of one town to show on the map
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
@@ -422,7 +423,7 @@ export class LeafletComponent implements OnInit, OnChanges {
               layer.bindTooltip(ttp);
               layer.bindPopup(pop,{maxHeight:200});
             },
-            style: (feature) => {return {color:"black", weight:1, fillOpacity:0.01, fillColor:"cyan"};},
+            style: (feature) => {return {color:"black", weight:1, fillOpacity:0, fillColor:"cyan"};},
             bringToBack: true,
             name: layerName, //IMPORTANT: this used to compare layers at ZIndex time
             id: layerId //IMPORTANT: this used to set uxValues in OnMapOverlayChange
@@ -451,12 +452,8 @@ export class LeafletComponent implements OnInit, OnChanges {
         name: layerName, //IMPORTANT: this used to compare layers at ZIndex time
         id: layerId //IMPORTANT: this used to set uxValues in OnMapOverlayChange
     });
-    if ('town' == layerId) {
-      this.townLayer = layer; //used for what?
-      //to enable 'Search by Town' in /pools/list, let's get the geoJSON town features and make them
-      //available to be searched, found, and then used to foucs on the town form the town drop-down search...
-      //do we have to turn each town feature into an L.polygon?
-    };
+    if ('town' == layerId) {this.townLayer = layer;};
+    if ('state' == layerId) {this.stateLayer = layer;};
     if (layerControl) {layerControl.addOverlay(layer, layerName);}
     if (layerGroup) {layerGroup.addLayer(layer);} //layerGropus are FeatureGroups for aggregating layers for group actions
     if (this.uxValuesService.overlaySelected[layerId]) {layer.addTo(this.map); layer.bringToBack();}
@@ -510,13 +507,13 @@ export class LeafletComponent implements OnInit, OnChanges {
         }
       } else {
         if (feature.properties.BIOPHYSRG1) { //biophysical regions
-          return {color:"red", weight:1, fillOpacity:0.1, fillColor:"red"};
+          return {color:"red", weight:1, fillOpacity:0, fillColor:"red"};
         } else if (feature.properties.CNTYNAME) { //counties
-          return {color:"black", weight:1, fillOpacity:0.1, fillColor:"yellow"};
+          return {color:"black", weight:1, fillOpacity:0, fillColor:"yellow"};
         } else if (feature.properties.TOWNNAME) { //towns
-          return {color:"blue", weight:1, fillOpacity:0.1, fillColor:"blue"};
+          return {color:"blue", weight:1, fillOpacity:0, fillColor:"blue"};
         } else { //states and all others
-          return {color:"black", weight:1, fillOpacity:0.1, fillColor:"black"};
+          return {color:"black", weight:1, fillOpacity:0, fillColor:"black"};
         }
       }
   }
@@ -589,7 +586,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         if (this.townPolygon) {this.townPolygon.removeLayer();}
         this.townPolygon = L.geoJSON(layer.feature, {
           townName: townName,
-          style: (feature) => {return {color:"red", weight:2, fillOpacity:0.1, fillColor:"cyan"};},
+          style: (feature) => {return {color:"red", weight:2, fillOpacity:0, fillColor:"cyan"};},
           onEachFeature: (feature, layer) => {
             layer.on("click", (e) => {e.target._map.fitBounds(layer.getBounds());}); //zoom to town on feature-click..
             layer.bindTooltip(townName);
