@@ -30,6 +30,7 @@ export class vpListComponent implements OnInit {
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools: vpMapped[] = []; //data array from db having lat and lon values to plot on map
     itemType = 'List Pools/Visits'; //used by leaflet map to format popup content, etc.
+    zoomTo = {option:'Vermont', value:{}};
     mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
     seconds = 0;
 
@@ -120,6 +121,16 @@ export class vpListComponent implements OnInit {
       return type;
     }
 
+    townSelected() { //deprecated. logic moved to loadPools().
+      this.loadPools(1);
+      let townName = this.f.town.value.townName;
+      if ('All' == townName) {
+          this.zoomTo = {option:'Vermont', value:{}};
+      } else {
+        this.zoomTo = {option:'Town', value:townName};
+      }
+    }
+
     loadPools(page=0) {
       this.alertService.clear();
       this.uxValuesService.filterPoolId = this.f.poolId.value;
@@ -135,6 +146,15 @@ export class vpListComponent implements OnInit {
         //this.loadPage(this.page);
         this.loadUpdated(this.getType(), this.page);
       }
+      //handle special behavior of a selected town.
+      //zoomTo sends message to leaflet map's ngOnChanges to zoom to town, etc.
+      let townName = this.f.town.value.townName;
+      if ('All' == townName) {
+          this.zoomTo = {option:'Vermont', value:{}};
+      } else {
+        this.zoomTo = {option:'Town', value:townName};
+      }
+
     }
 
     firstPage() {
@@ -291,6 +311,7 @@ export class vpListComponent implements OnInit {
 
     clearTown() {
       this.filterForm.get("town").setValue(null);
+      this.zoomTo = {option:'Vermont', value:{}};
       this.loadPools();
     }
 

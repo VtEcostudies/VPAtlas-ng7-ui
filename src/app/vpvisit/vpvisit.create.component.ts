@@ -23,7 +23,8 @@ import { DOCUMENT } from '@angular/common';
 })
 export class vpVisitCreateComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
-    filter = ''; //pool search filter for API loadMappedPools query
+    filter = ''; //OLD method pool search filter for API loadMappedPools query
+    search:any = {}; //NEW method pool search filter for uxValuesService search
     currentUser = null;
     userIsAdmin = false;
     userIsOwner = false;
@@ -567,6 +568,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.itemType = "Visit Mapped Pool"; //must use this itemType to signal map to send poolId via event
         this.mapMarker = false;
         this.mapPoints = true;
+        this.zoomTo = {option:'Vermont', value:{}};
         this.filter = '';
         //this.loadMappedPools();
         this.loadUpdated();
@@ -906,14 +908,16 @@ export class vpVisitCreateComponent implements OnInit {
     var poolId = this.visitLocationForm.value.visitPoolId;
     var wildCh = poolId.length > 0 ? poolId[poolId.length - 1] :null;
     console.log('vpvisit.create.component.FilterByPoolId', poolId, wildCh);
-    this.filter = `mappedPoolId=${poolId}`;
+    this.filter = `mappedPoolId=${poolId}`; //this is the OLD way of filtering pools, before loadUpdated()
+    this.search.poolId = poolId; //this is the NEW way of filtering pools, using loadUpdated()
     if (!poolId || wildCh === "*") {
       poolId = poolId.substring(0, poolId.length - 1);
       this.filter = `mappedPoolId|LIKE=${poolId}%`;
     }
     this.poolId = null;
+    if (poolId) {this.zoomTo = {option:'Extents', value:{}};} //now that we use zoomTo, have to use it explicitly
     //this.loadMappedPools(this.filter);
-    this.loadUpdated();
+    this.loadUpdated('all', this.search);
   }
 
   private async FilterHiddenPools() {
@@ -945,10 +949,10 @@ export class vpVisitCreateComponent implements OnInit {
             });
   }
 
-  loadUpdated() {
-    console.log('vpvisit.create.component::loadUpdated');
+  async loadUpdated(type='all', search={}) {
+    console.log('vpvisit.create.component::loadUpdated | search', search);
     this.poolsLoading = true;
-    this.uxValuesService.loadUpdated()
+    this.uxValuesService.loadUpdated(type, search)
       .then((data:any) => {
         this.pools = data.pools;
         if (data.count == 1) {this.poolId = data.pools[0].poolId;}

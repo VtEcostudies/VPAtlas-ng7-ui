@@ -106,9 +106,6 @@
         <tr class="form-group">
           <td for="town">Town</td>
           <td>
-            <!--
-            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="town" class="form-control"/>
-            -->
             <select (change)="loadPools(1)" (keyup.delete)="clearTown()" [compareWith]="uxValuesService.compareTownFn" formControlName="town" class="form-control">
               <option *ngFor="let town of uxValuesService.towns" [ngValue]="town">
                 {{ town.townName }}
@@ -244,7 +241,9 @@
         <app-map-comp
           [mapPoints]="mapPoints"
           [mapValues]="pools"
-          [itemType]="itemType">
+          [itemType]="itemType"
+          [zoomTo]="zoomTo"
+          >
         </app-map-comp>
       </div>
 

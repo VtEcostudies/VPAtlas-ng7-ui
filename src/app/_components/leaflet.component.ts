@@ -9,12 +9,12 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 //import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
 
+import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+
 //for angular popup
 import { Injector, ComponentFactoryResolver, ApplicationRef, ComponentRef, ChangeDetectorRef } from "@angular/core";
 import { Router } from '@angular/router';
 import './popup.component.css';
-
-//import * as D3geo from "d3-geo";
 
 //how to import leaflet module with extensions:
 //https://stackoverflow.com/questions/51679056/add-beautifymarker-plugin-to-ngx-leaflet-project
@@ -208,7 +208,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   bndryGroup = L.featureGroup(); //boundary overlays. 'name' and 'id' are set in options when adding layers to group.
   parcelGroup = L.featureGroup();
   parcelAdded = {}; //a list of town parcels that have been added
-  townLayer = null; //class variable for the raw towns layer to be user for processing
+  townLayer = null; //geoJSON layer of all towns used for processing
+  townPolygon = null; //single geoJSON polygon of one town to show on the map
   cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   cmColor = 0; //current color index
   cmClrCnt = this.cmColors.length; //(this.cmColors).length();
@@ -344,7 +345,6 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (this.mapMarker) {this.marker.addTo(this.map);} //a single Marker added in plotPoolMarker
 
-    //this.zoomControl.setPosition('topright');
     this.zoomControl.addTo(this.map);
     this.zoomLevel = this.map.getZoom();
 
@@ -368,9 +368,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.map.addControl(new this.legendControl(this.map));
 
-    if (this.itemType === "Home") {
-      this.zoomVermontLeft();
-    }
+    if (this.itemType === "Home") {this.zoomVermontLeft();}
   }
 
   addPoolStatusLayer(poolStatusGroup) {
@@ -387,17 +385,23 @@ export class LeafletComponent implements OnInit, OnChanges {
     poolStatusGroup.on("click", e => this.onCircleGroupClick(e));
   }
 
+  /*
+   This removes any parcel maps from parcelGroup, then loads/adds/shows one town's parcel map.
+   It also pushes parcelgroup to back, the pushes bndryGroup to back, so that parcel content
+   and pool content are clickable. Since parcelGroup polygons completely cover town polygons,
+   towns are not clickable when viewing parcel maps.
+  */
   addParcelGeoJsonLayer(townName=null, uxVal=null, pclGp=null, pclAd=null, bdyGp=null, map=null) {
     if (!uxVal) {uxVal = this.uxValuesService;}
     if (!pclGp) {pclGp = this.parcelGroup;}
-    if (!pclAd) {pclAd = this.parcelAdded;}
+    //if (!pclAd) {pclAd = this.parcelAdded;}
     if (!bdyGp) {bdyGp = this.bndryGroup;}
     if (!map) {map = this.map;}
 
     pclGp.eachLayer(async layer => {
-      console.log('getTownsInView | Remove', layer.options.name);
+      console.log('addParcelGeoJsonLayer | Remove', layer.options.name);
       await pclGp.removeLayer(layer);
-      pclAd[townName] = false; //or delete it...
+      //pclAd[townName] = false; //or delete it...
     })
 
     uxVal.getParcelMap(townName).then(() => {
@@ -405,7 +409,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       const layerName = townName;
       const layerId = townName.toLowerCase();
       const geoJson = uxVal.parcels[townName];
-      if (!pclAd[townName]) {
+      //if (!pclAd[townName]) {
         layer = L.geoJSON(geoJson, {
             onEachFeature: (feature, layer) => {
               let obj = feature.properties;
@@ -417,18 +421,18 @@ export class LeafletComponent implements OnInit, OnChanges {
               }
               layer.bindTooltip(ttp);
               layer.bindPopup(pop,{maxHeight:200});
-            }, //this.onEachFeature,
-            style: (feature) => {return {color:"black", weight:1, fillOpacity:0.01, fillColor:"cyan"};}, //this.onStyle,
+            },
+            style: (feature) => {return {color:"black", weight:1, fillOpacity:0.01, fillColor:"cyan"};},
             bringToBack: true,
             name: layerName, //IMPORTANT: this used to compare layers at ZIndex time
             id: layerId //IMPORTANT: this used to set uxValues in OnMapOverlayChange
         });
-        pclAd[townName] = true;
+        //pclAd[townName] = true;
         pclGp.addLayer(layer); //add the town's parcel layer to the parcel featureGroup...
         if (uxVal.overlaySelected['parcel']) {pclGp.addTo(this.map);}
         pclGp.bringToBack(); //Push parcelGroup to back so pools are clickable
         bdyGp.bringToBack(); //Push all other boundaries behind parcel map so parcels are clickable
-      }
+      //}
     });
   }
 
@@ -440,14 +444,19 @@ export class LeafletComponent implements OnInit, OnChanges {
         uxVal: this.uxValuesService,
         addGJ: this.addParcelGeoJsonLayer,
         pclGp: this.parcelGroup,
-        pclAd: this.parcelAdded,
+        //pclAd: this.parcelAdded,
         bdyGp: this.bndryGroup,
         map: this.map,
         bringToBack: true,
         name: layerName, //IMPORTANT: this used to compare layers at ZIndex time
         id: layerId //IMPORTANT: this used to set uxValues in OnMapOverlayChange
     });
-    if ('town' == layerId) (this.townLayer = layer);
+    if ('town' == layerId) {
+      this.townLayer = layer; //used for what?
+      //to enable 'Search by Town' in /pools/list, let's get the geoJSON town features and make them
+      //available to be searched, found, and then used to foucs on the town form the town drop-down search...
+      //do we have to turn each town feature into an L.polygon?
+    };
     if (layerControl) {layerControl.addOverlay(layer, layerName);}
     if (layerGroup) {layerGroup.addLayer(layer);} //layerGropus are FeatureGroups for aggregating layers for group actions
     if (this.uxValuesService.overlaySelected[layerId]) {layer.addTo(this.map); layer.bringToBack();}
@@ -456,7 +465,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   onEachFeature(feature, layer) {
       layer.on("click", function (event) {
           event.target._map.fitBounds(layer.getBounds()); //zoom to town..
-          if (layer.feature.properties.TOWNNAME) { //load/add/show town's parcel map
+          if (!layer.options.uxVal) {console.log('ERROR: uxVal missing from layer options for', layer.feature.properties.TOWNNAME); return;}
+          if (layer.feature.properties.TOWNNAME && layer.options.uxVal.overlaySelected.parcel) { //load/add/show town's parcel map
             let townName = layer.feature.properties.TOWNNAME;
             layer.options.addGJ(townName, layer.options.uxVal, layer.options.pclGp, layer.options.pclAd, layer.options.bdyGp, layer.options.map);
           }
@@ -519,6 +529,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   async ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     //console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
     //console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
+    //console.log('leaflet.component.ngOnChanges | poolCount', this.mapValues.length);
     await this.clearPools();
     if (this.mapPoints) {
       await this.plotPoolShapes(this.mapValues);
@@ -530,11 +541,13 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.mapMarker && !this.mapPoints) { //zoom to the mapMarker if it's the only feature
       this.zoomMarker();
     }
-    if (this.mapPoints && this.cmLLArr.length===1) { //zoom to a mapped point if it's the only feature
+    if (this.mapPoints && 1==this.mapValues.length) { //zoom to a mapped point if it's the only feature
       this.zoomExtents();
     }
     if (changes.zoomTo && changes.zoomTo.currentValue != changes.zoomTo.previousValue) {
-      //this.map.setView(changes.zoomTo.currentValue.center, changes.zoomTo.currentValue.zoomLevel);
+      //console.log('*****zoomTo | option', changes.zoomTo.currentValue.option);
+      //console.log('*****zoomTo | value', changes.zoomTo.currentValue.value);
+      const value = changes.zoomTo.currentValue.value;
       switch (changes.zoomTo.currentValue.option) {
         case 'Marker':
           this.zoomMarker();
@@ -555,8 +568,10 @@ export class LeafletComponent implements OnInit, OnChanges {
           this.uxValuesService.InitZoom();
           break;
         case 'Custom':
-          const value = changes.zoomTo.currentValue.value;
           this.map.setView(value.center, value.zoomLevel);
+          break;
+        case 'Town':
+          this.zoomTown(value);
           break;
         default:
           break;
@@ -564,12 +579,37 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }
 
+  zoomTown(townName:string = "") {
+    console.log('leaflet.component.zoomTown', townName);
+    this.townLayer.eachLayer(layer => {
+      if (townName.toUpperCase() == layer.feature.properties.TOWNNAME) {
+        //console.log('zoomTown | layer', layer)
+        this.map.fitBounds(layer.getBounds());
+        /*
+        if (this.townPolygon) {this.townPolygon.removeLayer();}
+        this.townPolygon = L.geoJSON(layer.feature, {
+          townName: townName,
+          style: (feature) => {return {color:"red", weight:2, fillOpacity:0.1, fillColor:"cyan"};},
+          onEachFeature: (feature, layer) => {
+            layer.on("click", (e) => {e.target._map.fitBounds(layer.getBounds());}); //zoom to town on feature-click..
+            layer.bindTooltip(townName);
+          }
+        }).addTo(this.map).bringToBack();
+        //console.log('zoomTown | townPolygon', this.townPolygon);
+        */
+        if (this.uxValuesService.overlaySelected['parcel']) {
+          this.addParcelGeoJsonLayer(townName);
+        }
+      }
+    })
+  }
+
   zoomLatLon(e=null) {
     if (e) {
       const val = e.target.value.trim();
       const reg = /\s*(?:;|,|:|\s|$)\s*/;
       const arr = val.split(reg);
-      //console.log(arr);
+      //console.log('zoomLatLon | array of input tokens', arr);
       const lat = Number(arr[0]);
       const lon = Number(arr[1]);
       var zum = Number(arr[2]);
@@ -601,20 +641,27 @@ export class LeafletComponent implements OnInit, OnChanges {
       */
       var zoomGroup = L.featureGroup();
       var count = 0;
+      var onePt = null;
       this.allGroup.eachLayer(layer => {
         if (this.map.hasLayer(layer)) {
+          if (0==count) {onePt = layer;} //capture the 0th layer for use below..
           count++;
           zoomGroup.addLayer(layer);
         }
-      })
+      });
       if (count == 1) {
         this.map.fitBounds(zoomGroup.getBounds());
         this.map.setZoom(15);
+        if (onePt && this.itemType == 'Visit Mapped Pool') { //this is used to select a pool when creating a new visit
+          this.itemInfo.latLng = onePt._latlng;
+          this.itemInfo.poolId = onePt.options.poolId;
+          this.markerSelect.emit(this.itemInfo);
+        }
       } else if (count > 1) {
         this.map.fitBounds(zoomGroup.getBounds());
         if (this.map.getZoom() > 15) {this.map.setZoom(15);}
       } else if (this.mapMarker) {
-        this.map.setView(this.marker._latlng, 15); //zoomLevl 15 is 300m
+        this.map.setView(this.marker._latlng, 15); //zoomLevel 15 is 300m
       } else {
         this.zoomVermont();
       }
@@ -623,26 +670,22 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   zoomVermont(e=null) {
     if (e) {e.stopPropagation();}
-    if (this.map) {
-      this.map.setView(this.vtCenter, 8);
-    }
+    if (this.map) {this.map.setView(this.vtCenter, 8);}
   }
 
   zoomVermontLeft(e=null) {
     if (e) {e.stopPropagation();}
-    if (this.map) {
-      this.map.setView(this.vtCenterLeft, 8);
-    }
+    if (this.map) {this.map.setView(this.vtCenterLeft, 8);}
   }
 
   zoomPrev(e=null) {
     if (e) {e.stopPropagation();}
-    this.uxValuesService.zoomPrev(this.map);
+    if (this.map) {this.uxValuesService.zoomPrev(this.map);}
   }
 
   zoomNext(e=null) {
     if (e) {e.stopPropagation();}
-    this.uxValuesService.zoomNext(this.map);
+    if (this.map) {this.uxValuesService.zoomNext(this.map);}
   }
 
   OnBaseLayerChange(e) {
@@ -673,7 +716,13 @@ export class LeafletComponent implements OnInit, OnChanges {
       if (this.statusGroups[idx]) {overlayId = this.statusGroups[idx].id;}
     }
     if (overlayId) {this.uxValuesService.overlaySelected[overlayId] = add;} //assign saved value of baselayer for consistency across reloads
-    else if (this.parcelGroup == e.layer) {this.uxValuesService.overlaySelected['parcel'] = add;}
+    else if (this.parcelGroup == e.layer) { //handle parcelGroup differently b/c it's not added the same way
+      this.uxValuesService.overlaySelected['parcel'] = add;
+      if (add && this.townPolygon) {
+        this.addParcelGeoJsonLayer(this.townPolygon.options.townName);
+      }
+      this.parcelGroup.bringToBack();
+    }
     //console.log(this.uxValuesService.overlaySelected);
     if (e.layer.options.bringToBack) {e.layer.bringToBack();} //FeatureGroups can do this. LayerGroups cannot.
   }
@@ -688,32 +737,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     await this.SetPointZoomRadius();
     await this.setEachPointRadius();
     this.uxValuesService.zoomUI=true;
-
-    if (this.zoomLevel > 10) { //add or remove parcel map layer based on towns visible at zoom
-      //get visible towns at this zoom and get/add/show their parcel maps
-      //this.getTownsInView();
-    }
-  }
-
-  getTownsInView() {
-    this.parcelGroup.eachLayer(async layer => {
-      console.log('getTownsInView | Remove', layer.options.name);
-      await this.parcelGroup.removeLayer(layer);
-    })
-    this.map.eachLayer((layer) => {
-      if (layer.feature && layer.feature.properties.TOWNNAME) {
-        if(this.map.getBounds().contains(layer.getBounds())) {
-          let townName = layer.feature.properties.TOWNNAME;
-          console.log(townName);
-          /*
-          this.uxValuesService.getParcelMap(townName)
-            .then(() => {
-              this.addParcelGeoJsonLayer(townName);
-            });
-          */
-        }
-      }
-    });
+    //console.log(this.getTownsInMapView());
   }
 
   //respond to map move: save map center and update displayed value
@@ -723,9 +747,29 @@ export class LeafletComponent implements OnInit, OnChanges {
     //NOTE: too hard to make this work - invokes a 2nd addPrevMove event.
     //await this.uxValuesService.addPrevMove(this.map.getZoom(), this.map.getCenter());
     this.uxValuesService.moveUI=true;
-    if (this.zoomLevel > 10) { //get visible towns at this zoom and get/add/show their parcel maps
-      //this.getTownsInView();
-    }
+    //console.log(this.getTownsInMapView());
+  }
+
+  /*
+    Originally used to selectively load parcel maps for just towns showing on map.
+    That was unreliable because this only finds towns that are wholly contained
+    within the map view. It was necessarily combined with a zoom level of > 11,
+    which for some towns is not enough. But also, loading multiple towns takes too
+    long.
+    Keep this code because it could be useful in the future.
+  */
+  getTownsInMapView() {
+    let towns = [];
+    this.map.eachLayer((layer) => {
+      if (layer.feature && layer.feature.properties.TOWNNAME) {
+        if(this.map.getBounds().contains(layer.getBounds())) {
+          let townName = layer.feature.properties.TOWNNAME;
+          //console.log('getTownsInMapView |', townName);
+          towns.push(townName);
+        }
+      }
+    });
+    return towns;
   }
 
   //set the class value of plotted pool radius relative to zoom level
@@ -759,22 +803,27 @@ export class LeafletComponent implements OnInit, OnChanges {
                                Lng: ${this.itemLoc.lng}`);
      }
 
-     //if town boundaries are showing, find the town clicked a load/add/show it parcel map
-     let geoJsonClickLoc = [e.latlng.lng, e.latlng.lat];
+
+     //using the saved geoJson object of all townLayers, find the town clicked and load/add/show it parcel map
+     //this works really great except a few towns' geoJSON must be bad, or turf.js is bad, and clicking inside
+     //the town does not produce a match...
+     /*
+     var clickLoc = turf.point([e.latlng.lng, e.latlng.lat]);
+     console.log('clicked Location', clickLoc.geometry.coordinates);
      this.townLayer.eachLayer(layer => {
-       //console.log(layer.feature.geometry, clickLoc);
-       //if (D3geo.geoContains(layer, geoJsonClickLoc)) {
-       if (0) {
-         let townName = layer.feature.properties.TOWNNAME;
-         console.log(townName, layer, geoJsonClickLoc);
-         /*
-         this.uxValuesService.getParcelMap(townName)
-           .then(() => {
-             this.addParcelGeoJsonLayer(townName);
-           });
-          */
+       //console.log(layer.feature, clickLoc);
+       if (turf.booleanPointInPolygon(clickLoc, layer.feature)) {
+         const townName = layer.feature.properties.TOWNNAME;
+         console.log('turf.pip found', townName);
+         if (this.uxValuesService.overlaySelected.parcel) {
+           this.addParcelGeoJsonLayer(townName);
+         }
+         if (this.uxValuesService.overlaySelected.town) {
+           this.map.fitBounds(layer.getBounds()); //zoom to town..
+         }
        }
-     })
+     });
+     */
   }
 
   /*
