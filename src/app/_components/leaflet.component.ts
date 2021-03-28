@@ -1,3 +1,10 @@
+/*
+  According to QGIS documentation: https://docs.qgis.org/3.10/en/docs/user_manual/working_with_projections/working_with_projections.html?highlight=epsg#working-with-projections
+  EPSG:4326 == WGS84, the 'common latitude/longitude CRS'
+  EPSG:3857 == WGS84 / Pseudo-Mercator, the 'web mapping standard CRS'
+  Leaflet Default Projection: EPSG:3857
+
+*/
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
 import { AuthenticationService, vpPoolsService } from '@app/_services';
@@ -9,7 +16,7 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 //import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
 
-import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+//import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
 
 //for angular popup
 import { Injector, ComponentFactoryResolver, ApplicationRef, ComponentRef, ChangeDetectorRef } from "@angular/core";
@@ -224,13 +231,29 @@ export class LeafletComponent implements OnInit, OnChanges {
       maxNativeZoom: 20,
       maxZoom: 20
     } as any);
-  streets = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
+  streets = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
     {
-      id: 'mapbox.streets',
+      id: 'mapbox/streets-v11', //must be this value to work with mapbox API
       name: 'Mapbox Streets',
       zIndex: 0,
       maxNativeZoom: 20,
-      maxZoom: 20
+      maxZoom: 20,
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      accessToken: 'pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q'
+    } as any);
+  mapboxSat = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
+    {
+      id: 'mapbox/satellite-v9', //must be this value to work with mapbox API
+      name: 'Mapbox Satellite',
+      zIndex: 0,
+      maxNativeZoom: 20,
+      maxZoom: 20,
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      accessToken: 'pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q'
     } as any);
   light = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
     {
@@ -265,7 +288,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     } as any);
 
     baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-    baseLayers = [this.esriTopo, this.esriWorld, this.openTopo, this.googleSat, this.streets, this.light]; //make esriTopo default b/c openTopo often loads slowly
+    baseLayers = [this.esriTopo, this.esriWorld, this.openTopo, this.googleSat, this.streets, this.light, this.mapboxSat]; //make esriTopo default b/c openTopo often loads slowly
 
   constructor(
     public uxValuesService: UxValuesService,
@@ -996,7 +1019,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         'mappedLongitude',
         //'mappedTown',
         'visitTown',
-        'mappedPoolStatus',
+        'poolStatus',
         'mappedDateText',
         'mappedDate',
         'visitDate',
@@ -1011,7 +1034,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         'mappedLongitude':'Mapped Longitude',
         'mappedTown':'Mapped Town',
         'visitTown':'Visit Town',
-        'mappedPoolStatus':'Pool Status',
+        'poolStatus':'Pool Status',
         'mappedDateText':'Date Mapped',
         'mappedDate':'Date Mapped',
         'visitDate':'Visit Date',
@@ -1168,8 +1191,8 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       ptRadius = this.GetRadiusForPool(vpools[i]);
 
-      // set the circleMarker's color based upon mappedPoolStatus
-      switch (vpools[i].mappedPoolStatus) {
+      // set the circleMarker's color based upon poolStatus
+      switch (vpools[i].poolStatus) {
         case 'Duplicate': //duplicate pools should NOT be displayed
         case 'Eliminated': //eliminate pools should NOT be displayed
           ptColor = this.eliminatedColors[0];
@@ -1216,7 +1239,7 @@ export class LeafletComponent implements OnInit, OnChanges {
           weight: 1, //border thickness
           index: i, //event.sourceTarget.options.index
           poolId: vpools[i].poolId, //event.sourceTarget.options.poolId
-          mappedPoolStatus: vpools[i].mappedPoolStatus,
+          poolStatus: vpools[i].poolStatus,
           mappedConfidence: vpools[i].mappedConfidence,
           mappedLocationUncertainty: vpools[i].mappedLocationUncertainty
       });
@@ -1224,7 +1247,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       //shape.on("click", e => this.onCircleGroupClick(e)); //
 
       this.allGroup.addLayer(shape); //add this marker to the current featureGroup, which is an object with possibly multiple layerGroups by Pool Type or Status
-      switch (vpools[i].mappedPoolStatus) {
+      switch (vpools[i].poolStatus) {
         case 'Duplicate':
           this.duplGroup.addLayer(shape);
           ptCount.duplicate++;
@@ -1256,7 +1279,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       }*/
       toolText += `
             <div>Pool ${vpools[i].poolId}</div>
-            <div>Status: ${vpools[i].mappedPoolStatus}</div>
+            <div>Status: ${vpools[i].poolStatus}</div>
             <div>Lat: ${Number(vpools[i].latitude).toFixed(5)}</div>
             <div>Lon:${Number(vpools[i].longitude).toFixed(5)}</div>
             `;

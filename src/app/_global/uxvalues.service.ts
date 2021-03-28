@@ -131,7 +131,10 @@ export class UxValuesService {
       return new Promise((resolve, reject) => {
         var result;
         if (type=='revu') {result = this.vpPoolsService.getReview(this.data[type].timestamp, this.filter);}
-        else {result = this.vpPoolsService.getUpdated(this.data[type].timestamp, this.filter);}
+        else {
+          //result = this.vpPoolsService.getUpdated(this.data[type].timestamp, this.filter);
+          result = this.vpPoolsService.getOverview(this.data[type].timestamp, this.filter);
+        }
         result.pipe(first()).subscribe(
             async data => {
               await this.updateData(type, data.rows);
@@ -237,9 +240,9 @@ export class UxValuesService {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+        this.filter += `poolStatus|NOT IN=Eliminated`;
         this.filter += `&`;
-        this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
+        this.filter += `poolStatus|NOT IN=Duplicate`;
       }
 
       //console.log('uxvalues.service.getfilter()', this.filter);

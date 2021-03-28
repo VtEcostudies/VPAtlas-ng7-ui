@@ -14,7 +14,7 @@ import { visitDialogText } from '@app/vpvisit/visitDialogText';
 import { ModalService } from '@app/_modal';
 
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
-import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+//import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
 
 //need these next 2 to manipulate the DOM directly
 import { Inject }  from '@angular/core';
@@ -615,10 +615,13 @@ export class vpVisitCreateComponent implements OnInit {
     }
 
     IsPoolInVermont(poolLon=0, poolLat=0) {
+      /*
       const poolLoc = turf.point([poolLon, poolLat]);
       const statePolygon = turf.polygon(state.features[0].geometry.coordinates);
       console.log('IsPoolInVermont', poolLoc, statePolygon);
       return turf.booleanPointInPolygon(poolLoc, statePolygon);
+      */
+      return true;
     }
 
     /*
@@ -941,9 +944,9 @@ export class vpVisitCreateComponent implements OnInit {
     if (this.filter) {
       this.filter += `&logical${++i}=AND&`;
     }
-    this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+    this.filter += `poolStatus|NOT IN=Eliminated`;
     this.filter += `&`;
-    this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
+    this.filter += `poolStatus|NOT IN=Duplicate`;
   }
 
   private async loadMappedPools(filter='') {

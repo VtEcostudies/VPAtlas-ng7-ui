@@ -168,16 +168,17 @@
                 <th class="body-scroll-align-columns">Town</th>
                 <th class="body-scroll-align-columns">Method</th>
                 <th class="body-scroll-align-columns">Status</th>
-                <th class="body-scroll-align-columns">Mapped Lat</th>
-                <th class="body-scroll-align-columns">Mapped Lng</th>
+                <th class="body-scroll-align-columns">Latitude</th>
+                <th class="body-scroll-align-columns">Longitude</th>
 
                 <th class="body-scroll-align-columns">Visit</th>
                 <th class="body-scroll-align-columns">User (Visit)</th>
                 <th class="body-scroll-align-columns">Visit Date</th>
                 <th class="body-scroll-align-columns">Vernal Pool?</th>
+                <!--
                 <th class="body-scroll-align-columns">Visit Lat</th>
                 <th class="body-scroll-align-columns">Visit Lng</th>
-
+                -->
                 <span *ngIf="userIsAdmin">
                 <th class="body-scroll-align-columns">Review</th>
                 <!-- <th class="body-scroll-align-columns">User(Review)</th> -->
@@ -190,14 +191,14 @@
                 <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
                 -->
                 <td title="Add a visit for pool {{pool.mappedPoolId}}" class="vert-aligned body-scroll-align-columns">
-                  <a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a>
+                  <a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.poolId}}</a>
                 </td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedTown.townName}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.knownTown.townName}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedPoolStatus}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedLatitude}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedLongitude}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.poolStatus}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.latitude}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.longitude}}</td>
 
                 <span *ngIf="pool.visitId">
                   <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
@@ -210,9 +211,10 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
+                <!--
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLatitude}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitLongitude}}</td>
-
+                -->
                 <!-- THIS CODE NEVER HIT BECAUSE WE DON'T LOAD REVIEWS WITH LISTED POOLS ANYMORE -->
                 <span *ngIf="userIsAdmin&&pool.visitId&&pool.reviewId">
                   <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">

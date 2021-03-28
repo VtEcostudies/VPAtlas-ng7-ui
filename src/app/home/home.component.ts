@@ -76,7 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         return;
       }
       if (status) {
-        this.filter = `mappedPoolStatus=${status}`;
+        this.filter = `poolStatus=${status}`;
       }
       //this.loadPools();
       this.loadUpdated();
@@ -88,9 +88,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+      this.filter += `poolStatus|NOT IN=Eliminated`;
       this.filter += `&`;
-      this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
+      this.filter += `poolStatus|NOT IN=Duplicate`;
     }
 
     private loadPools(filter='') {
