@@ -103,6 +103,10 @@ export class UxValuesService {
       }
     }
 
+    /*
+    Filter client-side data results after loading. This replaces the API Query Filters by 'Search'.
+    This is called after loading a dataSet by 'Type' (All, Visi, Mine, Revu, Moni)
+    */
     filterData(row:any) {
       var srch:any = this.search;
       var keep:boolean = true;
@@ -110,8 +114,8 @@ export class UxValuesService {
       if (srch.poolId) keep = keep&&(srch.poolId==row.poolId);
       if (srch.userName) keep = keep&&((srch.userName==row.mappedByUser)||(srch.userName==row.visitUserName));
       if (srch.mappedMethod) keep = keep&&(srch.mappedMethod==row.mappedMethod);
-      if (srch.town) keep = keep&&((row.mappedTown&&srch.town==row.mappedTown.townName)||(row.visitTown&&srch.town==row.visitTown.townName));
-      if (!this.userIsAdmin) keep = keep&&(row.mappedPoolStatus!='Eliminated')&&(row.mappedPoolStatus!='Duplicate');
+      if (srch.town) keep = keep&&(row.townName&&srch.town==row.townName);
+      if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
       // TODO: add review, monitored, etc. here and drop getFilter()... //if (srch.revu) keep =
       if (row.mappedDateText) row.mappedDateText = Moment(row.mappedDateText).format('YYYY-MM-DD');
@@ -126,13 +130,12 @@ export class UxValuesService {
 
     public async loadUpdated(type='all', search:any={}, page=0) {
       this.search = search;
-      await this.getFilter(type); //, search); only filter db results by type now that we have fast search here...
+      await this.getFilter(type); //, search); only filter db results by type now that we have fast 'filterData()' here.
       console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data[type].timestamp} | filter:${this.filter} | search:`, search);
       return new Promise((resolve, reject) => {
         var result;
         if (type=='revu') {result = this.vpPoolsService.getReview(this.data[type].timestamp, this.filter);}
         else {
-          //result = this.vpPoolsService.getUpdated(this.data[type].timestamp, this.filter);
           result = this.vpPoolsService.getOverview(this.data[type].timestamp, this.filter);
         }
         result.pipe(first()).subscribe(
@@ -163,8 +166,14 @@ export class UxValuesService {
 
       NOTE: Implemented this on both ends by removing the default AND condition
       and requiring logical operators be sent as below. Not easy.
+
+      UPDATE: WE NO LONGER USE THIS TO FILTER RESULTS BY 'search'. Instead, we load
+      by 'type', then post-filter results client-side by callling 'filterData()'.
+      This reduces server-calls.
     */
     getFilter(type='all', search:any={}) {
+
+      console.log(`BEFORE uxvalues.service::getFilter(type:${type}, search:${JSON.stringify(search)})`);
       this.filter = ''; //must clear first to undo filters
       var i = 0;
 
@@ -177,13 +186,15 @@ export class UxValuesService {
       }
 
       //review pools
+      //a more complex where clause is hard-coded into the API endpoint. Don't add another here.
+/*
       if (type == 'revu') {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
         this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
       }
-
+*/
       if (type=='mine' && this.currentUser) {
         search.username=this.currentUser.username;
       }
@@ -222,6 +233,8 @@ export class UxValuesService {
         this.filter += `&mappedtown."townName"|LIKE=%${search.town}%`;
         this.filter += `&logical${++i}=OR`;
         this.filter += `&visittown."townName"|LIKE=%${search.town}%`;
+        this.filter += `&logical${++i}=OR`;
+        this.filter += `&townName|LIKE=%${search.town}%`;
         this.filter += `&logical${++i}=)`;
       }
 
@@ -245,7 +258,7 @@ export class UxValuesService {
         this.filter += `poolStatus|NOT IN=Duplicate`;
       }
 
-      //console.log('uxvalues.service.getfilter()', this.filter);
+      console.log('AFTER uxvalues.service::getfilter()', this.filter);
     }
 
     addPrevZoom(level, center) {

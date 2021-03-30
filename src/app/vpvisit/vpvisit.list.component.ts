@@ -158,7 +158,8 @@ export class vpVisitListComponent implements OnInit {
       //this.loadAllRec = true;
       this.loading = true;
       this.getFilter();
-      this.vpVisitService.getAll(this.filter)
+      //this.vpVisitService.getAll(this.filter)
+      this.vpVisitService.getOverview(this.filter)
           .pipe(first())
           .subscribe(
               data => {

@@ -11,6 +11,10 @@ import { pgApiResults } from '@app/_models';
 export class vpMappedService {
     constructor(private http: HttpClient) { }
 
+    getOverview(filter: string) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped/overview?${filter}`);
+    }
+
     getAll(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/mapped?${filter}`);
     }

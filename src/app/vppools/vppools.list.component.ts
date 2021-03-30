@@ -243,8 +243,8 @@ export class vpListComponent implements OnInit {
     }
 
     async loadUpdated(type='all', page=0) {
-      //console.log('vppools.list.component::loadUpdated');
       await this.getSearch();
+      console.log('vppools.list.component::loadUpdated | SEARCH', this.search);
       this.loading = true;
       this.uxValuesService.loadUpdated(type, this.search, page)
         .then((data:any) => {
@@ -319,7 +319,7 @@ export class vpListComponent implements OnInit {
       this.filterForm.controls['visitId'].setValue('');
       this.filterForm.controls['poolId'].setValue('');
       this.filterForm.controls['userName'].setValue('');
-      this.filterForm.controls['town'].setValue({townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null});
+      this.filterForm.controls['town'].setValue({townId:0, townName:"All", townCountyId:0});
       this.filterForm.controls['mappedMethod'].setValue('');
       this.loadPools(1);
     }

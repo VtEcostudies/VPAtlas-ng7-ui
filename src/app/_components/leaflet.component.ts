@@ -255,13 +255,17 @@ export class LeafletComponent implements OnInit, OnChanges {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       accessToken: 'pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q'
     } as any);
-  light = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
+  light = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q',
     {
-      id: 'mapbox.light',
+      id: 'mapbox/light-v10',
       name: 'Mapbox Light',
       zIndex: 0,
       maxNativeZoom: 20,
-      maxZoom: 20
+      maxZoom: 20,
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      accessToken: 'pk.eyJ1Ijoiamxvb21pc3ZjZSIsImEiOiJjanB0dzVoZ3YwNjlrNDNwYm9qN3NmNmFpIn0.tyJsp2P7yR2zZV4KIkC16Q'
     } as any);
   esriWorld = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       id: 'esri.world ',
@@ -1222,6 +1226,8 @@ export class LeafletComponent implements OnInit, OnChanges {
       */
       if (vpools[i].visitId) {
         ptShape = "triangle";
+      } else if (vpools[i].surveyId) {
+          ptShape = "square";
       } else {
         ptShape = "circle";
       }

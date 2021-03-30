@@ -12,6 +12,10 @@ import { pgApiResults  } from '@app/_models';
 export class vpVisitService {
     constructor(private http: HttpClient) { }
 
+    getOverview(filter: string) { 
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/visit/overview?${filter}`);
+    }
+
     getAll(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/visit?${filter}`);
     }

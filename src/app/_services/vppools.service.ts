@@ -8,19 +8,15 @@ import { pgApiResults  } from '@app/_models';
 export class vpPoolsService {
     constructor(private http: HttpClient) { }
 
-    getOverview(timestamp: string, filter: string) {
+    getOverview(timestamp: string, filter: string) { //This is used for map/table list views - limited data for speed
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/overview?timestamp=${timestamp}&${filter}`);
     }
 
-    getUpdated(timestamp: string, filter: string) {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/updated?timestamp=${timestamp}&${filter}`);
-    }
-
-    getReview(timestamp: string, filter: string) {
+    getReview(timestamp: string, filter: string) { //calls getPoolsNeedReview API endpoint
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/review?timestamp=${timestamp}&${filter}`);
     }
 
-    getAll(filter: string) {
+    getAll(filter: string) { //This should not be used. All fields are slow to load.
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools?${filter}`);
     }
 

@@ -21,7 +21,7 @@ export class vpMapped {
     mappedLongitude: number = -72.668056;
 
     mappedMethod: string = '';
-    mappedPoolStatus: string = '';
+    //mappedPoolStatus: string = '';
     mappedlocationInfoDirections: string = '';
     mappedLandownerPermission: boolean = false;
     mappedLandownerName: string = '';
@@ -41,4 +41,5 @@ export class vpMapped {
     poolId: string = '';
     latitude: number = 43.916944;
     longitude: number = -72.668056;
+    poolStatus: string = ''; //need to follow-through on these edits
 }

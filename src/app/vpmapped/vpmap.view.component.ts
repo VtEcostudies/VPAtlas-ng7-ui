@@ -50,7 +50,7 @@ export class vpMapViewComponent implements OnInit {
       this.authenticationService.check();
 
       console.log('vpmap.view.compoenent.ngOnInit | route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
-      this.pool.mappedTown = {townName:"Unknown", townId:0, townCountyId:0, townCentroid:null, townBorder:null}; //kluge to get around issue with class object vpMapped
+      this.pool.mappedTown = {townName:"Unknown", townId:0, townCountyId:0}; //kluge to get around issue with class object vpMapped
 
       //create a separate form for landowner data, to be nested within vpMappedForm
       this.vpLandOwnForm = this.formBuilder.group({
@@ -71,7 +71,7 @@ export class vpMapViewComponent implements OnInit {
         mappedTown: [],
         mappedLocationUncertainty: [],
         mappedMethod: [],
-        mappedPoolStatus: [],
+        poolStatus: [],
         mappedComments: [],
         mappedLandownerPermission: [],
         mappedLandowner: [{disabled: true}, this.vpLandOwnForm],
@@ -117,7 +117,7 @@ export class vpMapViewComponent implements OnInit {
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
       this.vpMappedForm.controls['mappedMethod'].setValue(this.pool.mappedMethod);
-      this.vpMappedForm.controls['mappedPoolStatus'].setValue(this.pool.mappedPoolStatus);
+      this.vpMappedForm.controls['poolStatus'].setValue(this.pool.poolStatus);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
     }
 

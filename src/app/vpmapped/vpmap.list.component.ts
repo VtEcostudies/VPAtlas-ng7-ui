@@ -107,7 +107,8 @@ export class vpMapListComponent implements OnInit {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `vptown."townName"=${this.f.mappedTown.value.townName}`;
+        //this.filter += `vptown."townName"=${this.f.mappedTown.value.townName}`;
+        this.filter += `townName=${this.f.mappedTown.value.townName}`;
       }
 
       if (this.f.mappedConfidence.value) {
@@ -157,6 +158,7 @@ export class vpMapListComponent implements OnInit {
 
     private loadPage(page) {
       //this.loadAllRec = false;
+      this.alertService.clear();
       this.loading = true;
       this.getFilter();
       if (this.page < 1) this.page = 1;
@@ -178,9 +180,11 @@ export class vpMapListComponent implements OnInit {
 
     private loadAll() {
       //this.loadAllRec = true;
+      this.alertService.clear();
       this.loading = true;
       this.getFilter();
-      this.vpMappedService.getAll(this.filter)
+      //this.vpMappedService.getAll(this.filter)
+      this.vpMappedService.getOverview(this.filter)
           .pipe(first())
           .subscribe(
               data => {

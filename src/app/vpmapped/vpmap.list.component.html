@@ -117,21 +117,25 @@
                 <th>Latitude</th>
                 <th>Longitude</th>
                 <th>Permission</th>
+<!--
                 <th>Source</th>
                 <th>Source2</th>
+-->
             </tr>
             <tr *ngFor="let pool of pools">
                 <td><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
                 <td>{{pool.mappedByUser}}</td>
                 <td>{{pool.mappedMethod}}</td>
-                <td>{{pool.mappedPoolStatus}}</td>
-                <td>{{pool.mappedTown.townName}}</td>
+                <td>{{pool.poolStatus}}</td>
+                <td>{{pool.townName}}</td>
                 <td>{{pool.mappedConfidence}}</td>
-                <td>{{pool.mappedLatitude}}</td>
-                <td>{{pool.mappedLongitude}}</td>
+                <td>{{pool.latitude}}</td>
+                <td>{{pool.longitude}}</td>
                 <td>{{pool.mappedLandownerPermission}}</td>
+<!--
                 <td>{{pool.mappedSource}}</td>
                 <td>{{pool.mappedSource2}}</td>
+-->
             </tr>
         </table>
       </div>

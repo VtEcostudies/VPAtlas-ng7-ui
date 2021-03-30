@@ -77,9 +77,9 @@
                 <th>Pool</th>
                 <th>User</th>
                 <th>Date</th>
-                <th>Mapped Town</th>
-                <th>Mapped Lat</th>
-                <th>Mapped Lng</th>
+                <th>Town</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
                 <th>Vernal Pool?</th>
                 <th>Visit Lat</th>
                 <th>Visit Lng</th>
@@ -87,12 +87,12 @@
             </tr>
             <tr *ngFor="let visit of visits">
                 <td><a [routerLink]="['/pools/visit/view/', visit.visitId]" class="btn btn-link">{{visit.visitId}}</a></td>
-                <td>{{visit.visitPoolId}}</td>
+                <td>{{visit.poolId}}</td>
                 <td>{{visit.visitUserName}}</td>
                 <td>{{visit.visitDate}}</td>
-                <td>{{visit.mappedTown.townName}}</td>
-                <td>{{visit.mappedLatitude}}</td>
-                <td>{{visit.mappedLongitude}}</td>
+                <td>{{visit.townName}}</td>
+                <td>{{visit.latitude}}</td>
+                <td>{{visit.longitude}}</td>
                 <td>{{visit.visitVernalPool}}</td>
                 <td>{{visit.visitLatitude}}</td>
                 <td>{{visit.visitLongitude}}</td>
