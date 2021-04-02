@@ -47,6 +47,7 @@ const iconDefault = icon({
 });
 Marker.prototype.options.icon = iconDefault;
 
+
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
 import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
 import towns from '@app/_geojson/Polygon_VT_Town_Boundaries.geo.json';
@@ -828,7 +829,7 @@ export class LeafletComponent implements OnInit, OnChanges {
      }
 
 
-     //using the saved geoJson object of all townLayers, find the town clicked and load/add/show it parcel map
+     //using the saved geoJson object of all townLayers, find the town clicked and load/add/show its parcel map
      //this works really great except a few towns' geoJSON must be bad, or turf.js is bad, and clicking inside
      //the town does not produce a match...
      /*

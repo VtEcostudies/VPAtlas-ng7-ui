@@ -97,6 +97,7 @@
       <!--
         mappedTown
       -->
+      <!--
       <div class="form-group">
           <label for="mappedTown">Town</label>
           <select [compareWith]="compareTownFn" formControlName="mappedTown" class="form-control">
@@ -104,6 +105,14 @@
               {{ town.townName }}
             </option>
           </select>
+      </div>
+      -->
+      <!--
+        townName
+      -->
+      <div class="form-group">
+        <label for="townName">Town</label>
+        <input type="text" size="11" disabled="true" value="{{pool.townName}}" class="form-control" />
       </div>
     </div>
   </div> <!-- row -->
@@ -139,11 +148,11 @@
 
     <div class="col-4">
       <!--
-          poolStatus
+          mappedPoolStatus
       -->
       <div class="form-group">
-          <label for="poolStatus">Pool Status</label>
-          <select formControlName="poolStatus" class="form-control">
+          <label for="mappedPoolStatus">Pool Status</label>
+          <select formControlName="mappedPoolStatus" class="form-control">
             <option *ngFor="let status of statuses" [ngValue]="status">
               {{ status }}
             </option>

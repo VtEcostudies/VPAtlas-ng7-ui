@@ -50,7 +50,7 @@ export class vpMapViewComponent implements OnInit {
       this.authenticationService.check();
 
       console.log('vpmap.view.compoenent.ngOnInit | route.snapshot params: ', this.route.snapshot.params.mappedPoolId);
-      this.pool.mappedTown = {townName:"Unknown", townId:0, townCountyId:0}; //kluge to get around issue with class object vpMapped
+      //this.pool.mappedTown = {townName:"Unknown", townId:0, townCountyId:0}; //kluge to get around issue with class object vpMapped
 
       //create a separate form for landowner data, to be nested within vpMappedForm
       this.vpLandOwnForm = this.formBuilder.group({
@@ -68,10 +68,11 @@ export class vpMapViewComponent implements OnInit {
         mappedDateText: [],
         mappedLatitude: [],
         mappedLongitude: [],
-        mappedTown: [],
+        //mappedTown: [],
+        townName: [],
         mappedLocationUncertainty: [],
         mappedMethod: [],
-        poolStatus: [],
+        mappedPoolStatus: [],
         mappedComments: [],
         mappedLandownerPermission: [],
         mappedLandowner: [{disabled: true}, this.vpLandOwnForm],
@@ -96,12 +97,13 @@ export class vpMapViewComponent implements OnInit {
       this.vpMappedForm.controls['mappedLongitude'].setValue(this.pool.mappedLongitude);
 
       //kluge to create array of towns equal to one town
-      this.towns = [{townName:this.pool.mappedTown.townName, townId:this.pool.mappedTown.townId}];
-      this.townCount = 1;
+      //this.towns = [{townName:this.pool.mappedTown.townName, townId:this.pool.mappedTown.townId}];
+      //this.townCount = 1;
 
       //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
       //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
-      this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
+      //this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
+      this.vpMappedForm.controls['townName'].setValue(this.pool.townName);
       this.vpMappedForm.controls['mappedLandownerPermission'].setValue(this.pool.mappedLandownerPermission);
 
       this.permission = this.pool.mappedLandownerPermission;
@@ -117,7 +119,7 @@ export class vpMapViewComponent implements OnInit {
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
       this.vpMappedForm.controls['mappedMethod'].setValue(this.pool.mappedMethod);
-      this.vpMappedForm.controls['poolStatus'].setValue(this.pool.poolStatus);
+      this.vpMappedForm.controls['mappedPoolStatus'].setValue(this.pool.mappedPoolStatus);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
     }
 

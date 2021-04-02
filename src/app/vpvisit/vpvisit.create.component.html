@@ -167,7 +167,7 @@
           <!--
               visitPoolId - text
           -->
-          <div class="form-group form-inline">
+          <div class="form-group">
             <label for="visitPoolId">Pool ID</label>
             <i (click)="openModal('vpvisit_help_info', 'visitPoolId')" class="fa fa-info-circle no-margins link"></i>
             <input type="text" size="10" (change)="FilterByPoolId()" formControlName="visitPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && locate.visitPoolId.errors }" />
@@ -180,7 +180,7 @@
           <!--
               visitDate
           -->
-          <div class="form-group form-inline">
+          <div class="form-group">
               <label for="visitDate">Visit Date</label>
               <i (click)="openModal('vpvisit_help_info', 'visitDate')" class="fa fa-info-circle no-margins link"></i>
               <!--
@@ -197,9 +197,12 @@
         </div> <!-- col -->
         <div class="col-4">
           <!--
-            visitTown
+            visitTown - drop-down data-entry
+
+            removed div class 'form-inline' which lets control resize on window-resize
           -->
-          <div class="form-group form-inline float-right">
+          <!--
+          <div class="form-group float-right">
               <label for="visitTown">Town</label>
               <i (click)="openModal('vpvisit_help_info', 'visitTown')" class="fa fa-info-circle no-margins link"></i>
               <select [compareWith]="compareTownFn" formControlName="visitTown" class="form-control">
@@ -208,6 +211,18 @@
                 </option>
               </select>
           </div>
+          -->
+          <!--
+            visitTown - display-only
+          -->
+          <div class="form-group">
+              <label for="visitTown">Town</label>
+              <input type="text" size="10" formControlName="visitTownName" class="form-control" />
+              <!--
+              <input type="text" size="10" class="form-control" disabled="true" value="{{visit.visitTownName.value}}" />
+              -->
+          </div>
+
         </div> <!-- col -->
       </div> <!-- row -->
       <!--

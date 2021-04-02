@@ -147,8 +147,9 @@ export class vpViewComponent implements OnInit {
         visitNavMethod: [],
         visitNavMethodOther: [],
         visitDirections: [],
-        visitTown: [],
-        visitTownId: [],
+        //visitTown: [],
+        //visitTownId: [],
+        visitTownName: [],
         visitLocationComments: [],
         visitPoolPhoto: [],
         //2b Location of Pool
@@ -307,7 +308,8 @@ export class vpViewComponent implements OnInit {
       this.visitLocationForm.controls['visitNavMethodOther'].setValue(this.visit.visitNavMethodOther);
       this.visitLocationForm.controls['visitDirections'].setValue(this.visit.visitDirections);
       //console.log('vppools.view.setFormValues | visitTown: ', this.visit.visitTown);
-      this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown);
+      //this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown);
+      this.visitLocationForm.controls['visitTownName'].setValue(this.visit.townName);
       this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
       //2b Location of Pool
       this.visitLocationForm.controls['visitCoordSource'].setValue(this.visit.visitCoordSource);

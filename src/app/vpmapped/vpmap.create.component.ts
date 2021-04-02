@@ -70,8 +70,8 @@ export class vpMapCreateComponent implements OnInit {
         this.pool.mappedDateText = Moment().format('YYYY-MM-DD');
         this.pool.mappedLatitude = 43.916944;
         this.pool.mappedLongitude = -72.668056;
-        this.pool.mappedTown = new vtTown(); //instantiates town object to enable default value for town drop-down
-        this.pool.poolStatus = 'Potential';
+        //this.pool.mappedTown = new vtTown(); //instantiates town object to enable default value for town drop-down
+        this.pool.mappedPoolStatus = 'Potential';
       }
 
       //create a separate form for landowner data, to be nested within vpMappedForm
@@ -98,8 +98,8 @@ export class vpMapCreateComponent implements OnInit {
         mappedDateText: [Moment(this.pool.mappedDateText).format('YYYY-MM-DD'), Validators.required],
         mappedLatitude: [this.pool.mappedLatitude, Validators.required],
         mappedLongitude: [this.pool.mappedLongitude, Validators.required],
-        mappedTown: [this.pool.mappedTown, new FormControl(this.towns[this.townCount])],
-        mappedTownId: [this.pool.mappedTownId], //non-display field set when the form is submitted
+        //mappedTown: [this.pool.mappedTown, new FormControl(this.towns[this.townCount])],
+        //mappedTownId: [this.pool.mappedTownId], //non-display field set when the form is submitted
         mappedLandownerPermission: [this.pool.mappedLandownerPermission, Validators.nullValidator],
 
         mappedLandowner: [{disabled: true}, this.vpLandOwnForm],
@@ -107,11 +107,11 @@ export class vpMapCreateComponent implements OnInit {
         mappedLandownerInfo: ['', Validators.nullValidator],
         mappedLocationUncertainty: ['50', new FormControl(this.locUncs[4], Validators.required)],
         mappedMethod: ['Visited', new FormControl(this.methods[4], Validators.required)],
-        poolStatus: ['Potential', new FormControl(this.statuses[5], Validators.required)],
+        mappedPoolStatus: ['Potential', new FormControl(this.statuses[5], Validators.required)],
         mappedComments: ['', Validators.nullValidator],
       });
       //Reactive form controls cannot be properly disabled with markup
-      if (!this.userIsAdmin) {this.vpMappedForm.get('poolStatus').disable();}
+      if (!this.userIsAdmin) {this.vpMappedForm.get('mappedPoolStatus').disable();}
 
       //how to handle UI changes from checkbox input:
       //https://www.infragistics.com/community/blogs/b/infragistics/posts/how-to-do-conditional-validation-on-valuechanges-methods-in-angular-reactive-forms-
@@ -143,7 +143,7 @@ export class vpMapCreateComponent implements OnInit {
 
       //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
       //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
-      this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
+      //this.vpMappedForm.controls['mappedTown'].setValue(this.pool.mappedTown);
       this.vpMappedForm.controls['mappedLandownerPermission'].setValue(this.pool.mappedLandownerPermission);
 
       this.vpLandOwnForm.controls['mappedLandownerName'].setValue(this.pool.mappedLandownerName);
@@ -157,7 +157,7 @@ export class vpMapCreateComponent implements OnInit {
       this.vpMappedForm.controls['mappedLandownerInfo'].setValue(this.pool.mappedLandownerInfo);
       this.vpMappedForm.controls['mappedLocationUncertainty'].setValue(this.pool.mappedLocationUncertainty);
       this.vpMappedForm.controls['mappedMethod'].setValue(this.pool.mappedMethod);
-      this.vpMappedForm.controls['poolStatus'].setValue(this.pool.poolStatus);
+      this.vpMappedForm.controls['mappedPoolStatus'].setValue(this.pool.mappedPoolStatus);
       this.vpMappedForm.controls['mappedComments'].setValue(this.pool.mappedComments);
 
       /* these fields are not displayed on new pool entry
@@ -231,7 +231,7 @@ export class vpMapCreateComponent implements OnInit {
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
-        this.vpMappedForm.get("mappedTownId").setValue(this.vpMappedForm.value.mappedTown.townId);
+        //this.vpMappedForm.get("mappedTownId").setValue(this.vpMappedForm.value.mappedTown.townId);
 
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {

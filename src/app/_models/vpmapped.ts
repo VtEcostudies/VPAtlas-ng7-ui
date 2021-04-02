@@ -21,7 +21,7 @@ export class vpMapped {
     mappedLongitude: number = -72.668056;
 
     mappedMethod: string = '';
-    //mappedPoolStatus: string = '';
+    mappedPoolStatus: string = '';
     mappedlocationInfoDirections: string = '';
     mappedLandownerPermission: boolean = false;
     mappedLandownerName: string = '';
@@ -35,11 +35,13 @@ export class vpMapped {
     //mappedLocationUncertaintyUnits: string = '';
     mappedLocationUncertainty: number = null;
 
-    mappedTownId: number = 0;
-    mappedTown: vtTown = null; //new vtTown(); //instantiating town causes circular dependency warning. set this on form load instead.
+    //mappedTownId: number = 0;
+    //mappedTown: vtTown = null; //new vtTown(); //instantiating town causes circular dependency warning. set this on form load instead.
+
 
     poolId: string = '';
     latitude: number = 43.916944;
     longitude: number = -72.668056;
     poolStatus: string = ''; //need to follow-through on these edits
+    townName: string = '';
 }

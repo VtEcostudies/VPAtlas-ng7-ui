@@ -16,7 +16,7 @@
             </li>
 
             <li class="nav-item" *ngIf="!userIsAdmin">
-              <a class="nav-link" routerLink="/pools/list">Search Pools</a>
+              <a class="nav-link" routerLink="/pools/list">View Pools</a>
             </li>
 
             <li class="nav-item dropdown">
@@ -40,7 +40,7 @@
             <li class="nav-item dropdown" *ngIf="userIsAdmin">
               <a class="nav-link dropdown-toggle"
                 id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Search Pools
+                View Pools
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" routerLink="/pools/list" >All Data</a>
@@ -90,7 +90,7 @@
             </li>
 
             <!--
-            <a class="nav-item nav-link" routerLink="/pools/list" >Search Pools</a>
+            <a class="nav-item nav-link" routerLink="/pools/list" >View Pools</a>
             <a class="nav-item nav-link" routerLink="/pools/mapped/list" *ngIf="userIsAdmin" >(Mapped Pools)</a>
             <a class="nav-item nav-link" routerLink="/pools/visit/list" *ngIf="userIsAdmin" >(Pool Visits)</a>
             <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Visit</a>

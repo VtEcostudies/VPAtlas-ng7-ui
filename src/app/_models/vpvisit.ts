@@ -15,8 +15,8 @@ export class vpVisit {
     visitCertainty: string = '';
     visitLocationUncertainty: string = '';
     visitDate: any = '';
-    visitTown: vtTown = null; //vtTown = new vtTown(); instantiating town ojbect here works, but creates a circular dependency warning. set this on form load instead.
-    visitTownId: number = 0;
+    //visitTown: vtTown = null; //vtTown = new vtTown(); instantiating town ojbect here works, but creates a circular dependency warning. set this on form load instead.
+    //visitTownId: number = 0;
     visitLocationComments: string = '';
     visitDirections: string = '';
     visitCoordSource: string = '';
@@ -119,4 +119,5 @@ export class vpVisit {
     poolId: string = '';
     latitude: number = 43.916944;
     longitude: number = -72.668056;
+    townName: string = '';
 }
