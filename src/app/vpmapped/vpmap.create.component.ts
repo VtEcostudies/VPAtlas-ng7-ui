@@ -62,9 +62,9 @@ export class vpMapCreateComponent implements OnInit {
       if (this.poolId) {
         this.update = true;
         this.loadPage(this.poolId);
-      } else {
+      } else { //Adding new pool...
         this.update = false;
-        this.pool.mappedPoolId = `${this.authenticationService.currentUserValue.user.username}1`;
+        this.pool.mappedPoolId = 'NEW*'; //`${this.authenticationService.currentUserValue.user.username}1`;
         this.pool.mappedByUser = this.authenticationService.currentUserValue.user.username;
         this.pool.mappedObserverUserName = this.authenticationService.currentUserValue.user.username;
         this.pool.mappedDateText = Moment().format('YYYY-MM-DD');
@@ -106,7 +106,7 @@ export class vpMapCreateComponent implements OnInit {
 
         mappedLandownerInfo: ['', Validators.nullValidator],
         mappedLocationUncertainty: ['50', new FormControl(this.locUncs[4], Validators.required)],
-        mappedMethod: ['Visited', new FormControl(this.methods[4], Validators.required)],
+        mappedMethod: ['Visit', new FormControl(this.methods[4], Validators.required)],
         mappedPoolStatus: ['Potential', new FormControl(this.statuses[5], Validators.required)],
         mappedComments: ['', Validators.nullValidator],
       });
@@ -211,7 +211,7 @@ export class vpMapCreateComponent implements OnInit {
           this.alertService.error("Mapped By User must be your username.");
           return;
         }
-
+/*
         if (Number(this.vpMappedForm.value.mappedLatitude) < 42.3 || Number(this.vpMappedForm.value.mappedLatitude) > 45.1) {
           this.alertService.error("Latitude must be between 42.3 and 45.1 to be in Vermont.");
           return;
@@ -221,8 +221,13 @@ export class vpMapCreateComponent implements OnInit {
           this.alertService.error("Longitude must be between 71.5 and 73.5 to be in Vermont.");
           return;
         }
+*/
+        if (!this.vpMappedForm.value.mappedMethod) {
+          this.alertService.error("Please enter Mapped Method.");
+          return;
+        }
 
-        if (this.vpMappedForm.value.mappedLocationUncertainty === null) {
+        if (!this.vpMappedForm.value.mappedLocationUncertainty) {
           this.alertService.error("Please enter Location Uncertainty.");
           return;
         }
