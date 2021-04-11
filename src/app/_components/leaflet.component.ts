@@ -57,6 +57,10 @@ import biophysical from '@app/_geojson/Polygon_VT_Biophysical_Regions.geo.json';
   want to use Angular routing, not html href routing, to preserve uxValue across
   page-loads. This allows us to keep the UX performant.
 
+  Links are created in popup.component.html.
+  popup list items are created in buildPopupList, and that html is injected into
+
+
   Use createLeafletPopup(...) to invoke.
 */
 @Component({
@@ -880,7 +884,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   onCircleGroupClick(e) {
     //console.log("leaflet.onCircleGroupClick | event: ", e);
     //console.log("leaflet.onCircleGroupClick | index:", e.layer.options.index);
-    console.log("leaflet.onCircleGroupClick | poolId:", e.layer.options.poolId);
+    console.log(`leaflet.onCircleGroupClick | itemType:${this.itemType} | poolId:`, e.layer.options.poolId);
     const index = e.sourceTarget.options.index;
     const cmLoc = L.latLng(e.latlng.lat, e.latlng.lng);
     const poolId = e.sourceTarget.options.poolId;
@@ -890,7 +894,8 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.itemInfo.latLng = cmLoc;
       this.itemInfo.poolId = poolId;
       this.markerSelect.emit(this.itemInfo);
-    } else {
+    }
+    else if (poolObj.visitId) { //get popup data for pools with visits
       this.LoadVisitReviewData(poolObj.poolId)
         .then(data => {
           const popList = this.buildPopupList(index);
@@ -906,6 +911,9 @@ export class LeafletComponent implements OnInit, OnChanges {
           e.sourceTarget.bindPopup(popShow).openPopup();
           */
         }).catch(err => {console.log('Error loading review data for popup:', err);})
+    } else { //
+      const popList = this.buildPopupList(index);
+      e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, {visits:[], reviews:[]}, popList)).openPopup();
     }
   }
 
@@ -916,7 +924,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         .subscribe(data => {
           var visits = [], reviews = [];
           data.rows.forEach(row => {
-            console.log(`pool:${row.poolId}/visit:${row.visitId}/review: ${row.reviewId}`);
+            console.log(`Leaflet.Componenet::LoadVisitReviewData | pool:${row.poolId}/visit:${row.visitId}/review: ${row.reviewId}`);
             if (row.visitId) visits.push(row.visitId);
             if (row.reviewId) reviews.push(row.reviewId);
           });
@@ -955,11 +963,17 @@ export class LeafletComponent implements OnInit, OnChanges {
       return div;
   }
 
+  /*
+    This is no longer used. createLeafletPopup is used instead.
+  */
   buildPopup(index) {
     var poolObj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
     return this.buildPopupLinks(poolObj) + this.buildPopupList(poolObj);
   }
 
+  /*
+    This is no longer used. popup links are created in popup.component.html.
+  */
   buildPopupLinks(obj) {
     var text = '';
 
@@ -971,12 +985,14 @@ export class LeafletComponent implements OnInit, OnChanges {
       case 'Visit Mapped Pool':
         //don't add links to the top - they just click on the point to select it
         break;
-      case 'Visit':
-        text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
-        if (this.userIsAdmin) {
-          text += `<div><a href="review/create/${obj.visitId}">Review Visit ${obj.visitId}</a></div>`;
-          //text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId}</a></div>`;
-          text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
+      case 'Visit': 
+        if (obj.visitId) { //for the pool visit
+          text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
+          if (this.userIsAdmin) {
+            text += `<div><a href="review/create/${obj.visitId}">Review Visit ${obj.visitId}</a></div>`;
+            //text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId}</a></div>`;
+            text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
+          }
         }
         break;
       case 'List Mapped Pool':

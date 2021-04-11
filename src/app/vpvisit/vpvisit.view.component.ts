@@ -18,8 +18,9 @@ export class vpVisitViewComponent implements OnInit {
     userIsAdmin = false;
     vpVisitForm: FormGroup;
     dataLoading = false;
+    pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
     //visit: vpVisit = new vpVisit();
-    visit: any = new vpVisit(); //cast thype to any to prevent typeScript build errors on fields not in vpVisit
+    visit: any = new vpVisit(); //cast type to any to prevent typeScript build errors on fields not in vpVisit
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     itemType = 'Visit';
     modalText: string;
@@ -65,7 +66,8 @@ export class vpVisitViewComponent implements OnInit {
           .subscribe(
               data => {
                 console.log('vpvisit.view.loadPage() result:', data);
-                this.visit = data.rows[0]; //one-element array of pools used by mapView
+                this.pools = [data.rows[0].both.visit, data.rows[0].both.mapped];
+                this.visit = data.rows[0].both.visit; //[data.rows[0].both.visit,data.rows[0].both.mapped]; //vpvisit pool object, one-element array (?) of pools used by mapView
                 this.visit.visitDate = Moment(this.visit.visitDate);
                 this.visit.visitUpdatedAt = Moment(this.visit.visitUpdatedAt);
                 this.dataLoading = false; //this forces a map update, which plots a point

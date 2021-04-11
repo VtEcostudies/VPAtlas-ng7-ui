@@ -36,6 +36,7 @@
 </div>
 
 <!-- Viewing a single Visit. Edit Visit or View Review -->
+<div *ngIf="poolObj.visitId">
 <div *ngIf="itemType=='View Visit'">
   <div *ngIf="userIsAdmin||userIsOwner">
     <button (click)="EditVisit(poolObj.visitId)" class="btn btn-link no-margin-rt">Edit Visit {{poolObj.visitId}}</button>
@@ -49,6 +50,7 @@
     <button (click)="ViewReview(poolObj.reviewId)" class="btn btn-link no-margin-rt">View Review {{poolObj.reviewId}}</button>
     <a [routerLink]="['/review/view/', poolObj.reviewId]" title="View Review in separate tab" target="_blank">(+)</a>
   </div>
+</div>
 </div>
 
 <!-- Mapped pools. Simple UI to view/edit pools. -->

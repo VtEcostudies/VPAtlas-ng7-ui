@@ -99,7 +99,8 @@ export class vpVisitListComponent implements OnInit {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `visittown."townName"|LIKE=%${this.f.visitTown.value}%`;
+        //this.filter += `visittown."townName"|LIKE=%${this.f.visitTown.value}%`;
+        this.filter += `townName|LIKE=%${this.f.visitTown.value}%`;
       }
 
       console.log('vpvisit.list.getfilter()', this.filter);

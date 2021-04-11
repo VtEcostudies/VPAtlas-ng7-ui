@@ -457,8 +457,8 @@ export class vpViewComponent implements OnInit {
           .subscribe(
               data => {
                 //console.log('vppools.view.component.loadPage result:', data);
-                this.pools = data.rows[0]; //sets map data
-                this.visit = data.rows[0]; //sets form data
+                this.pools = [data.rows[0].both.visit, data.rows[0].both.mapped]; //this.pools = data.rows[0]; //sets map data
+                this.visit = data.rows[0].both.visit; //this.visit = data.rows[0]; //sets form data
                 this.poolId = this.visit.poolId; //needed for photos
                 this.setFormValues();
                 this.dataLoading = false;
