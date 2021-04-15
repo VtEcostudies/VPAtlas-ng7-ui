@@ -12,6 +12,7 @@ export class AppComponent {
     vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';
     vceIconPath = '../assets/images/vce_favicon.png';
     fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
+    VPAtlasPath = 'https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/';
 
     constructor(
         private router: Router,

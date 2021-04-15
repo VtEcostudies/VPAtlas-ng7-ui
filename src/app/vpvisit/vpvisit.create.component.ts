@@ -14,7 +14,7 @@ import { visitDialogText } from '@app/vpvisit/visitDialogText';
 import { ModalService } from '@app/_modal';
 
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
-import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+//import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
 
 //need these next 2 to manipulate the DOM directly
 import { Inject }  from '@angular/core';
@@ -615,10 +615,12 @@ export class vpVisitCreateComponent implements OnInit {
     }
 
     IsPoolInVermont(poolLon=0, poolLat=0) {
+      /*
       const poolLoc = turf.point([poolLon, poolLat]);
       const statePolygon = turf.polygon(state.features[0].geometry.coordinates);
       console.log('IsPoolInVermont', poolLoc, statePolygon);
       return turf.booleanPointInPolygon(poolLoc, statePolygon);
+      */
     }
 
     /*
@@ -635,12 +637,13 @@ export class vpVisitCreateComponent implements OnInit {
       const poolLat = Number(this.visitLocationForm.value.visitLatitude);
       const poolLon = Number(this.visitLocationForm.value.visitLongitude);
 
+      /*
       if (!this.IsPoolInVermont(poolLon, poolLat)) {
         this.alertService.error("Pool coordinates are not in Vermont. Please correct.");
         this.setPage(0);
         return;
       }
-
+      */
       //Parts of the Observer form are disabled. Use getRawValue() to retrieve any value.
       mappedPool.mappedByUser = this.visitObserverForm.getRawValue().visitUserName;
       mappedPool.mappedObserverUserName = this.visitObserverForm.getRawValue().visitObserverUserName;
@@ -718,13 +721,13 @@ export class vpVisitCreateComponent implements OnInit {
 
         const poolLat = Number(this.visitLocationForm.value.visitLatitude);
         const poolLon = Number(this.visitLocationForm.value.visitLongitude);
-
+        /*
         if (!this.IsPoolInVermont(poolLon, poolLat)) {
           this.alertService.error("Pool coordinates are not in Vermont. Please correct.");
           this.setPage(0);
           return;
         }
-
+        */
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.

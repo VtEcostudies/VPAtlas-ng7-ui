@@ -9,7 +9,7 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 //import * as $ from "jquery";
 //import * as LP from "leaflet.browser.print";
 
-import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+//import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
 
 //for angular popup
 import { Injector, ComponentFactoryResolver, ApplicationRef, ComponentRef, ChangeDetectorRef } from "@angular/core";

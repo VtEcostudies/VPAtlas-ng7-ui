@@ -20,6 +20,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   imagePath = '../assets/images/vp_splash.jpg';
   vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg'; //C:\Users\jloomis\Documents\VCE\VPAtlas\vpAtlas-ng7-ui\src\assets\images\vce logo new clr w tag.jpg
   fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
+  VPAtlasPath = 'https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/';
+  VPMonPath = 'https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-monitoring-project/';
 
     constructor(
         private router: Router,
