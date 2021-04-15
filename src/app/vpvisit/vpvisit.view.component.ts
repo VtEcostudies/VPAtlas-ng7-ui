@@ -25,6 +25,7 @@ export class vpVisitViewComponent implements OnInit {
     itemType = 'Visit';
     modalText: string;
     modalTitle: string;
+    zoomTo = {option:'Vermont', value:{}};
 
     constructor(
         private formBuilder: FormBuilder,
@@ -44,6 +45,7 @@ export class vpVisitViewComponent implements OnInit {
       } else { this.userIsAdmin = false;}
       console.log('vpvisit.view.ngOnInit | route.snapshot params: ', this.route.snapshot.params.visitId);
       await this.loadPage(this.route.snapshot.params.visitId);
+      this.zoomTo = {option:'Extents', value:{}};
     }
 
     openModal(id: string, infoId=null) {

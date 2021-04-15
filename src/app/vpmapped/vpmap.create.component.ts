@@ -99,7 +99,7 @@ export class vpMapCreateComponent implements OnInit {
         mappedLatitude: [this.pool.mappedLatitude, Validators.required],
         mappedLongitude: [this.pool.mappedLongitude, Validators.required],
         //mappedTown: [this.pool.mappedTown, new FormControl(this.towns[this.townCount])],
-        //mappedTownId: [this.pool.mappedTownId], //non-display field set when the form is submitted
+        mappedTownId: [this.pool.mappedTownId], //non-display field set when the form is submitted
         mappedLandownerPermission: [this.pool.mappedLandownerPermission, Validators.nullValidator],
 
         mappedLandowner: [{disabled: true}, this.vpLandOwnForm],
@@ -237,6 +237,7 @@ export class vpMapCreateComponent implements OnInit {
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
         //this.vpMappedForm.get("mappedTownId").setValue(this.vpMappedForm.value.mappedTown.townId);
+        this.vpMappedForm.get("mappedTownId").setValue(0);
 
         // stop here if form is invalid
         if (this.vpMappedForm.invalid) {

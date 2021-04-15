@@ -53,11 +53,11 @@
         <td>{{stats.visited}}</td>
       </tr>
 
-      <tr *ngIf="false">
+      <tr *ngIf="true">
         <td>
-          <label [ngClass]="{ 'disabled':true }">
-            <input formControlName="poolDataType" type="radio" value="Monitored" class="radio-button-justify-left" />
-            <span [ngClass]="{ 'disabled':true }">Monitored</span>
+          <label>
+            <input formControlName="poolDataType" type="radio" value="Monitored" (change)="setDataTypeLoadPools('Monitored')" class="radio-button-justify-left" />
+            <span>Monitored</span>
           </label>
         </td>
         <td>{{stats.monitored}}</td>

@@ -61,6 +61,7 @@ export class vpViewComponent implements OnInit {
     s3PhotoBucket = environment.s3PhotoBucket; //used in html links
     modalText: string;
     modalTitle: string;
+    zoomTo = {option:'Vermont', value:{}};
 
     constructor(
         private formBuilder: FormBuilder,
@@ -108,6 +109,7 @@ export class vpViewComponent implements OnInit {
       } else { //redirect to pool list
         //this.router.navigate(['/pools/list']);
       }
+      this.zoomTo = {option:'Extents', value:{}}; //we zoomTo extents because we map 2 points for visits now
     } //end ngOnInit
 
     openModal(id: string, infoId=null) {

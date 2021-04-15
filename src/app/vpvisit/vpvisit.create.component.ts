@@ -107,6 +107,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.mapPoints = true; //now with 2 points for every visit (mapped and visit) we must mapPoints
         await this.createFormControls();
         await this.LoadVisitData(this.visitId);
+        this.zoomTo = {option:'Extents', value:{}}; //we zoomTo extents because we map 2 points for visits now
         this.setPage(this.uxValuesService.visitPageIndex);
       } else { //create a new visit - set a few necessary initial values
         this.poolsLoading = true; //need to flip this value to show the map
@@ -123,6 +124,7 @@ export class vpVisitCreateComponent implements OnInit {
         if (this.poolId) {
           this.mapMarker =  true;
           await this.LoadMappedPool(this.poolId);
+          this.zoomTo = {option:'Extents', value:{}}; //not sure if this should go here
         }
         this.poolsLoading = false; //need to flip this value to show the map
       }
@@ -537,8 +539,9 @@ export class vpVisitCreateComponent implements OnInit {
           .subscribe(
               data => {
                 //Now for visits we load a 2-value object: 1) mapped pool, 2) this visit
+                //But: for creating/updating visits, we show a marker for the visit, a circle for its mapped location
                 console.log('vpvisit.create.component.LoadVisitData result:', data);
-                this.pools = [data.rows[0].both.visit, data.rows[0].both.mapped];
+                this.pools = [data.rows[0].both.mapped]; //[data.rows[0].both.visit, data.rows[0].both.mapped];
                 this.visit = data.rows[0].both.visit;
                 this.poolId = data.rows[0].both.visit.poolId;
                 console.log('VisitPoolPhoto', this.visit.visitPoolPhoto);

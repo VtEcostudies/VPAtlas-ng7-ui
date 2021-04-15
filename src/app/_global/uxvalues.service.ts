@@ -38,6 +38,7 @@ export class UxValuesService {
     public pageSize = 12;
     public filter:string = '';
     public search:any = {};
+    public type:any = {};
     public data:any = {
       all:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
       mine:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
@@ -118,6 +119,7 @@ export class UxValuesService {
       if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
       // TODO: add review, monitored, etc. here and drop getFilter()... //if (srch.revu) keep =
+      if (this.type=='moni') keep = keep&&row.surveyId;
       if (row.mappedDateText) row.mappedDateText = Moment(row.mappedDateText).format('YYYY-MM-DD');
       if (row.visitDate) row.visitDate = Moment(row.visitDate).format('YYYY-MM-DD');
       if (row.reviewQADate) row.reviewQADate = Moment(row.reviewQADate).format('YYYY-MM-DD');
@@ -130,6 +132,7 @@ export class UxValuesService {
 
     public async loadUpdated(type='all', search:any={}, page=0) {
       this.search = search;
+      this.type = type;
       await this.getFilter(type); //, search); only filter db results by type now that we have fast 'filterData()' here.
       console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data[type].timestamp} | filter:${this.filter} | search:`, search);
       return new Promise((resolve, reject) => {
@@ -141,7 +144,8 @@ export class UxValuesService {
         result.pipe(first()).subscribe(
             async data => {
               await this.updateData(type, data.rows);
-              var res = this.data[type].pools.filter(row => this.filterData(row));
+              //var res = this.data[type].pools.filter(row => this.filterData(row));
+              var res = this.data['all'].pools.filter(row => this.filterData(row));
               var len = res.length;
               var chg = data.rowCount > 0;
               if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
@@ -168,7 +172,7 @@ export class UxValuesService {
       and requiring logical operators be sent as below. Not easy.
 
       UPDATE: WE NO LONGER USE THIS TO FILTER RESULTS BY 'search'. Instead, we load
-      by 'type', then post-filter results client-side by callling 'filterData()'.
+      by 'type', then post-filter results client-side by calling 'filterData()'.
       This reduces server-calls.
     */
     getFilter(type='all', search:any={}) {
@@ -185,6 +189,15 @@ export class UxValuesService {
         this.filter += `visitPoolId|!=NULL`;
       }
 
+      //monitored pools
+/*
+      if (type == 'moni') {
+        if (this.filter) {
+          this.filter += `&logical${++i}=AND&`;
+        }
+        this.filter += `surveyPoolId|!=NULL`;
+      }
+*/
       //review pools
       //a more complex where clause is hard-coded into the API endpoint. Don't add another here.
 /*
@@ -253,9 +266,9 @@ export class UxValuesService {
         if (this.filter) {
           this.filter += `&logical${++i}=AND&`;
         }
-        this.filter += `poolStatus|NOT IN=Eliminated`;
+        this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
         this.filter += `&`;
-        this.filter += `poolStatus|NOT IN=Duplicate`;
+        this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
       }
 
       console.log('AFTER uxvalues.service::getfilter()', this.filter);

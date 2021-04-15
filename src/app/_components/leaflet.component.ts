@@ -559,7 +559,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     //console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
     //console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     //console.log('leaflet.component.ngOnChanges | poolCount', this.mapValues.length);
-    await this.clearPools();
+    await this.clearPools(); //OMG. Always? Yikes.
     if (this.mapPoints) {
       await this.plotPoolShapes(this.mapValues);
     }
@@ -573,7 +573,8 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.mapPoints && 1==this.mapValues.length) { //zoom to a mapped point if it's the only feature
       this.zoomExtents();
     }
-    if (changes.zoomTo && changes.zoomTo.currentValue != changes.zoomTo.previousValue) {
+    console.log('*****LEAFLET ngOnChanges***** | zoomTo', changes.zoomTo);
+    if (changes.zoomTo && (changes.zoomTo.currentValue != changes.zoomTo.previousValue)) {
       //console.log('*****zoomTo | option', changes.zoomTo.currentValue.option);
       //console.log('*****zoomTo | value', changes.zoomTo.currentValue.value);
       const value = changes.zoomTo.currentValue.value;
@@ -678,6 +679,9 @@ export class LeafletComponent implements OnInit, OnChanges {
           zoomGroup.addLayer(layer);
         }
       });
+      if (this.mapMarker) { //now with 2 points per visit, add marker to zoomGroup
+        zoomGroup.addLayer(this.marker);
+      }
       if (count == 1) {
         this.map.fitBounds(zoomGroup.getBounds());
         this.map.setZoom(15);
@@ -985,7 +989,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       case 'Visit Mapped Pool':
         //don't add links to the top - they just click on the point to select it
         break;
-      case 'Visit': 
+      case 'Visit':
         if (obj.visitId) { //for the pool visit
           text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
           if (this.userIsAdmin) {
@@ -1241,10 +1245,10 @@ export class LeafletComponent implements OnInit, OnChanges {
         See https://github.com/rowanwins/Leaflet.SvgShapeMarkers
         for options, shapes, etc.
       */
-      if (vpools[i].visitId) {
+      if (vpools[i].surveyId) {
+        ptShape = "square";
+      } else if (vpools[i].visitId) {
         ptShape = "triangle";
-      } else if (vpools[i].surveyId) {
-          ptShape = "square";
       } else {
         ptShape = "circle";
       }
@@ -1296,16 +1300,18 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.cmLLArr.push(llLoc); //this is used to scope zoom. redundant?
 
       var toolText = '';
-      /* Don't indlue visitId in tooltip anymore.
-      if (vpools[i].visitId) {
-        toolText += `<div>Visit ${vpools[i].visitId}</div>`;
-      }*/
       toolText += `
             <div>Pool ${vpools[i].poolId}</div>
             <div>Status: ${vpools[i].poolStatus}</div>
             <div>Lat: ${Number(vpools[i].latitude).toFixed(5)}</div>
             <div>Lon:${Number(vpools[i].longitude).toFixed(5)}</div>
             `;
+
+      //For pools with multiple visits, we have only the most recent
+      if (vpools[i].visitId) {
+        toolText += `<div>Visit ${vpools[i].visitId}</div>`;
+      }
+
       //Add image to bottom of toolTip if one is indicated in field visitPoolPhoto
       if (vpools[i].visitPoolPhoto && vpools[i].visitPoolPhoto.includes('https')) {
         toolText += `<img
