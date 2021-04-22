@@ -24,6 +24,10 @@ export class UserService {
         return ret;
     }
 
+    getRoles() {
+        return this.http.get(`${environment.apiUrl}/roles`);
+    }
+
     register(user: User) {
         return this.http.post(`${environment.apiUrl}/users/register`, user);
     }

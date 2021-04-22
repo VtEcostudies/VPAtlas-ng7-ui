@@ -119,5 +119,6 @@ export class vpVisit {
     poolId: string = '';
     latitude: number = 43.916944;
     longitude: number = -72.668056;
+    townId: number = 0;
     townName: string = '';
 }

@@ -111,6 +111,8 @@ export class UxValuesService {
     filterData(row:any) {
       var srch:any = this.search;
       var keep:boolean = true;
+      var user:string = this.currentUser ? this.currentUser.username : null;
+
       if (srch.visitId) keep = keep&&(srch.visitId==row.visitId);
       if (srch.poolId) keep = keep&&(srch.poolId==row.poolId);
       if (srch.userName) keep = keep&&((srch.userName==row.mappedByUser)||(srch.userName==row.visitUserName));
@@ -119,6 +121,12 @@ export class UxValuesService {
       if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
       // TODO: add review, monitored, etc. here and drop getFilter()... //if (srch.revu) keep =
+      if (this.type=='revu') keep = keep&&row.visitId;
+      if (this.type=='mine' && this.currentUser) keep = keep&&
+        (user==row.mappedByUser ||
+        user==row.visitUserName ||
+        user==row.surveyUserName)
+      if (this.type=='visi') keep = keep&&row.visitId;
       if (this.type=='moni') keep = keep&&row.surveyId;
       if (row.mappedDateText) row.mappedDateText = Moment(row.mappedDateText).format('YYYY-MM-DD');
       if (row.visitDate) row.visitDate = Moment(row.visitDate).format('YYYY-MM-DD');

@@ -1,0 +1,61 @@
+<jw-modal id="vpatlas_help_info">
+    <button (click)="closeModal('vpatlas_help_info');">Close</button>
+</jw-modal>
+
+<div class="row">
+  <div class="col-4">
+    <div style="display:inline-block;">
+      <h5><b>Upload Vernal Pool Survey Data</b></h5>
+    </div>
+  </div> <!-- col -->
+
+  <div class="col-8">
+  </div> <!-- col -->
+</div> <!-- row -->
+
+
+<form [formGroup]="surveyForm">
+
+  <div class="row">
+    <div class="col-2">
+      <div class="form-group">
+          <label for="surveyUserName">User</label>
+          <i (click)="openModal('vpatlas_help_info', 'surveyUserName')" class="fa fa-info-circle no-margins link"></i>
+          <input type="text" size="10" formControlName="surveyUserName" class="form-control" />
+      </div>
+    </div> <!-- col -->
+  </div> <!-- row -->
+
+  <div class="row">
+    <div class="col-4">
+      <input type="file"
+        class="form-control"
+        (change)="FileUploadEvent($event)"
+        size="15"
+        accept="text/csv"
+        >
+    </div> <!-- col -->
+  </div> <!-- row -->
+
+</form> <!-- surveySurveyForm -->
+
+<!--
+  Action buttons
+-->
+<div class="form-group survey-upload-button-bar">
+    <button [disabled]="" class="btn btn-primary" (click)="UploadSurvey()">
+      Upload</button>
+    <img *ngIf="upLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+    <button (click)="CancelUpload()" class="btn">
+      Cancel</button>
+</div>
+<hr>
+<!--
+<div *ngIf="!dataLoading">
+  <app-map-comp
+  [itemType]="itemType"
+  [pools]="pools"
+  ></app-map-comp>
+</div>
+-->

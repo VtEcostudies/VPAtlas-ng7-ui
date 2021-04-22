@@ -37,6 +37,8 @@ import { vpReviewListComponent } from './vpreview';
 import { vpReviewViewComponent } from './vpreview';
 import { vpReviewCreateComponent } from './vpreview';
 
+import { vpSurveyUploadComponent } from './vpsurvey';
+
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
 
@@ -79,6 +81,8 @@ import { UxValuesService } from './_global';
         vpReviewListComponent,
         vpReviewViewComponent,
         vpReviewCreateComponent,
+
+        vpSurveyUploadComponent,
 
         vpListComponent,
         vpViewComponent,

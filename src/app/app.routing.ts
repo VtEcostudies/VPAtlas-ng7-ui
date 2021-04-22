@@ -25,6 +25,8 @@ import { vpReviewListComponent } from './vpreview';
 import { vpReviewViewComponent } from './vpreview';
 import { vpReviewCreateComponent } from './vpreview';
 
+import { vpSurveyUploadComponent } from './vpsurvey';
+
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
 
@@ -65,6 +67,8 @@ const appRoutes: Routes = [
     //{ path: 'review/create', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
     { path: 'review/create/:visitId', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
     { path: 'review/update/:reviewId', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
+
+    { path: 'survey/upload', component: vpSurveyUploadComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' } //comment this to debug
