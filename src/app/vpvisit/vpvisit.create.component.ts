@@ -14,7 +14,7 @@ import { visitDialogText } from '@app/vpvisit/visitDialogText';
 import { ModalService } from '@app/_modal';
 
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
-import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+//import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
 
 //need these next 2 to manipulate the DOM directly
 import { Inject }  from '@angular/core';

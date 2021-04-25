@@ -17,24 +17,51 @@
 <form [formGroup]="surveyForm">
 
   <div class="row">
-    <div class="col-2">
-      <div class="form-group">
-          <label for="surveyUserName">User</label>
-          <i (click)="openModal('vpatlas_help_info', 'surveyUserName')" class="fa fa-info-circle no-margins link"></i>
-          <input type="text" size="10" formControlName="surveyUserName" class="form-control" />
-      </div>
+    <div class="col-6">
+      <div class="row">
+        <div class="form-group form-inline">
+            <label for="surveyUserName">User</label>
+            <i (click)="openModal('vpsurvey_help_info', 'surveyUserName')" class="fa fa-info-circle no-margins link"></i>
+            <input type="text" size="10" formControlName="surveyUserName" class="form-control" />
+        </div>
+      </div> <!-- sub-row -->
+      <div class="row">
+        <div class="form-group form-inline">
+          <input type="file"
+            class="form-control"
+            (change)="FileUploadEvent($event)"
+            size="15"
+            accept="text/csv"
+            >
+        </div>
+      </div> <!-- sub-row -->
+      <div class="row">
+        <div class="form-group form-inline">
+            <label for="surveyUploadUpdate">Overwrite existing survey data?</label>
+            <i (click)="openModal('vpsurvey_help_info', 'surveyUploadUpdate')" class="fa fa-info-circle no-margins link"></i>
+            <input type="checkbox" formControlName="surveyUploadUpdate" />
+            <label>Yes</label>
+        </div>
+      </div> <!-- sub-row -->
     </div> <!-- col -->
-  </div> <!-- row -->
-
-  <div class="row">
-    <div class="col-4">
-      <input type="file"
-        class="form-control"
-        (change)="FileUploadEvent($event)"
-        size="15"
-        accept="text/csv"
-        >
-    </div> <!-- col -->
+    <div class="col-6">
+      <table class="table table-striped">
+          <tr>
+            <th>Survey ID</th>
+            <th>Survey Pool ID</th>
+            <th>Updated?</th>
+          </tr>
+          <tr *ngFor="let survey of surveyIds">
+              <td>
+                <a [routerLink]="['/survey/', survey.surveyId]" target='_blank' class="btn btn-link">{{survey.surveyId}}</a>
+              </td>
+              <td>
+                <a [routerLink]="['/survey/pool/', survey.surveyPoolId]" target='_blank' class="btn btn-link">{{survey.surveyPoolId}}</a>
+              </td>
+              <td>{{survey.updated}} </td>
+          </tr>
+      </table>
+    </div>
   </div> <!-- row -->
 
 </form> <!-- surveySurveyForm -->

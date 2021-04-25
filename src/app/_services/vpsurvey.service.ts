@@ -12,8 +12,8 @@ import { pgApiResults  } from '@app/_models';
 export class vpSurveyService {
     constructor(private http: HttpClient) { }
 
-    uploadFile(file: object, update: boolean = false) {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/upload?${update}`, file);
+    uploadFile(file: any, update: boolean = false) {
+        return this.http.post<any>(`${environment.apiUrl}/survey/upload?update=${update}`, file);
     }
 
     getAll(filter: string) {

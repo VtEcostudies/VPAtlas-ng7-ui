@@ -29,8 +29,8 @@ export class vpSurveyUploadComponent implements OnInit {
     surveyDialogText = surveyDialogText; //amazing but true... set this class var to the import type...
 
     surveyIds = [];
-    uploadFile = '';
-    uploadFileName = '';
+    surveyUploadFile = {};
+    surveyUploadFileName = '';
 
     constructor(
         private formBuilder: FormBuilder,
@@ -73,8 +73,9 @@ export class vpSurveyUploadComponent implements OnInit {
     async createFormControls() { //Create formcontrols within formgroups
 
       this.surveyForm = this.formBuilder.group({
-        //these values are always set from the context, so they're disabled by default
         surveyUserName: [{value: this.currentUser.username, disabled: true}, Validators.required],
+        surveyUploadUpdate: [false],
+        surveyUploadFile: [null]
       });
     } //end createFormControls()
 
@@ -84,21 +85,43 @@ export class vpSurveyUploadComponent implements OnInit {
     // convenience getters for easy access to form fields
     get r() { return this.surveyForm.controls; }
 
+    /*
+      NOTE: see http://expressjs.com/en/resources/middleware/multer.html
+      Multer processes multipart/form-data POST request into express req.body
+      and req.file. To do this, the incoming request must have a form field name
+      which matches the value used my MULTER to parse the request.
+
+      This is weird, but that's how http was written. A POST http method includes
+      form-data for various text fields and file data in a single request. MULTER
+      needs the name of the 'Upload File' field within the request to know which
+      field to process as a multipart file.
+
+      Therefore our form name here, 'surveyUploadFile', is the field name expected
+      by MULTER in the express API that receives this request.
+    */
     FileUploadEvent(e) {
-      console.log('FileUploadEvent | file selected:', e.target.files[0]);
-      this.uploadFile = e.target.files[0];
+      //const file = (e.target as HTMLInputElement).files[0];
+      const file = (e.target).files[0];
+      console.log('FileUploadEvent | file selected:', file);
+      this.surveyForm.patchValue({
+          surveyUploadFile: file
+        });
+      this.surveyForm.get('surveyUploadFile').updateValueAndValidity();
     }
 
     UploadSurvey() {
       this.upLoading = true;
-      console.log('UploadSurvey', this.uploadFile);
-      this.vpSurveyService.uploadFile(this.uploadFile, this.update)
+      this.update = this.surveyForm.get('surveyUploadUpdate').value;
+      var formData: any = new FormData();
+      formData.append("surveyUploadFile", this.surveyForm.get('surveyUploadFile').value);
+      console.log('UploadSurvey | formData', formData);
+      this.vpSurveyService.uploadFile(formData, this.update)
           .pipe(first())
           .subscribe(
               data => {
                   console.log(`vpsurvey.upload.component::uploadSurvey=>data:`, data);
                   this.upLoading = false;
-                  this.surveyIds = data.rows;
+                  this.surveyIds = data; //NOTE: the return from POST => INSERT/UPDATE is different from GET (ie. no rows[])
               },
               error => {
                   console.log(`vpsurvey.upload.component::uploadSurvey=>error: ${error}`);
