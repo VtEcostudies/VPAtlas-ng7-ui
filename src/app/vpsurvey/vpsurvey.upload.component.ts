@@ -82,6 +82,11 @@ export class vpSurveyUploadComponent implements OnInit {
     async setFormValues() {
     }
 
+    private init() {
+      this.surveyIds = [];
+      this.alertService.clear();
+    }
+
     // convenience getters for easy access to form fields
     get r() { return this.surveyForm.controls; }
 
@@ -100,7 +105,7 @@ export class vpSurveyUploadComponent implements OnInit {
       by MULTER in the express API that receives this request.
     */
     FileUploadEvent(e) {
-      //const file = (e.target as HTMLInputElement).files[0];
+      this.init();
       const file = (e.target).files[0];
       console.log('FileUploadEvent | file selected:', file);
       this.surveyForm.patchValue({
@@ -110,6 +115,7 @@ export class vpSurveyUploadComponent implements OnInit {
     }
 
     UploadSurvey() {
+      this.init();
       this.upLoading = true;
       this.update = this.surveyForm.get('surveyUploadUpdate').value;
       var formData: any = new FormData();
@@ -122,6 +128,7 @@ export class vpSurveyUploadComponent implements OnInit {
                   console.log(`vpsurvey.upload.component::uploadSurvey=>data:`, data);
                   this.upLoading = false;
                   this.surveyIds = data; //NOTE: the return from POST => INSERT/UPDATE is different from GET (ie. no rows[])
+                  this.alertService.success(`Successfully uploaded ${data.length} rows of Survey data.`);
               },
               error => {
                   console.log(`vpsurvey.upload.component::uploadSurvey=>error: ${error}`);

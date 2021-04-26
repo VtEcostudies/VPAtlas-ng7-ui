@@ -1,5 +1,5 @@
-<jw-modal id="vpatlas_help_info">
-    <button (click)="closeModal('vpatlas_help_info');">Close</button>
+<jw-modal id="vpsurvey_help_info">
+    <button (click)="closeModal('vpsurvey_help_info');">Close</button>
 </jw-modal>
 
 <div class="row">
@@ -44,7 +44,7 @@
         </div>
       </div> <!-- sub-row -->
     </div> <!-- col -->
-    <div class="col-6">
+    <div class="col-6" *ngIf="surveyIds.length>0">
       <table class="table table-striped">
           <tr>
             <th>Survey ID</th>

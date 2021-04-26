@@ -1,3 +1,31 @@
+/*
+  NOTES:
+
+  - To enable modal dialogs, you must declare the jw-modal in your html source like this:
+
+      <jw-modal id="vpsurvey_help_info">
+          <button (click)="closeModal('vpsurvey_help_info');">Close</button>
+      </jw-modal>
+
+  - And, you must import the Modal Service like this:
+
+    private modalService: ModalService
+
+  - And, you must inject that service into your Constructor like this:
+
+    ... , private modalService: ModalService, ...
+
+  - And, you must add the following functions to your source js/ts like this:
+
+    openModal(id: string, infoId=null) {
+        console.log('infoId', infoId);
+        this.modalService.open(id, surveyDialogText[infoId]);
+    }
+
+    closeModal(id: string) {
+        this.modalService.close(id);
+    }
+*/
 export const surveyDialogText = {
 
 surveyUserName:`
@@ -7,7 +35,8 @@ surveyUserName:`
 who conducted the field Survey of Vernal Pool data.</p>
 `,
 surveyUploadUpdate:`
-<h3><u>Vernal Pool Survey Data Upload: UPDATE/OVERWRITE!?!</u></h3>
+<h3><u>OVERWRITE SURVEY DATA</u></h3>
+<p></p>
 <p>DO YOU WANT TO OVERWRITE ANY MATCHING SURVEY DATA RECORDS WITH UPDATED DATA?</p>
 `,
 surveyUploadFile:`

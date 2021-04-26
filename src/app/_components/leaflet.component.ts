@@ -899,25 +899,15 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.itemInfo.poolId = poolId;
       this.markerSelect.emit(this.itemInfo);
     }
-    else if (poolObj.visitId) { //get popup data for pools with visits
+    else if (poolObj.visitId || poolObj.surveyId) { //get popup data for pools with visits or surveys
       this.LoadVisitReviewData(poolObj.poolId)
         .then(data => {
           const popList = this.buildPopupList(index);
           e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, data, popList)).openPopup();
-          /*
-          const popText = this.buildPopup(index);
-          const popShow = L.popup({
-            className: 'leaflet-custom-popup',
-          	maxHeight: 200,
-            keepInView: true
-          }).setContent(popText);
-
-          e.sourceTarget.bindPopup(popShow).openPopup();
-          */
         }).catch(err => {console.log('Error loading review data for popup:', err);})
-    } else { //
+    } else {
       const popList = this.buildPopupList(index);
-      e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, {visits:[], reviews:[]}, popList)).openPopup();
+      e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, {visits:[], reviews:[], surveys:[]}, popList)).openPopup();
     }
   }
 
@@ -926,13 +916,16 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.vpPoolsService.getByPoolId(poolId)
         .pipe(first())
         .subscribe(data => {
-          var visits = [], reviews = [];
+          var visits = [], reviews = [], surveys = [];
+          //console.log('leaflet.Componenet::LoadVisitReviewData | data.rows:', data.rows);
           data.rows.forEach(row => {
-            console.log(`Leaflet.Componenet::LoadVisitReviewData | pool:${row.poolId}/visit:${row.visitId}/review: ${row.reviewId}`);
-            if (row.visitId) visits.push(row.visitId);
-            if (row.reviewId) reviews.push(row.reviewId);
+            console.log(`leaflet.Componenet::LoadVisitReviewData | pool:${row.poolId}/visit:${row.visitId}/review:${row.reviewId}`);
+            console.log(`leaflet.Componenet::LoadVisitReviewData |`, visits.includes(row.visitId), '|', reviews.includes(row.reviewId), '|', surveys.includes(row.surveyId));
+            if (row.visitId && !visits.includes(row.visitId)) visits.push(row.visitId);
+            if (row.reviewId && !reviews.includes(row.reviewId)) reviews.push(row.reviewId);
+            if (row.surveyId && !surveys.includes(row.surveyId)) surveys.push(row.surveyId);
           });
-          resolve ({visits:visits, reviews:reviews});
+          resolve ({visits:visits, reviews:reviews, surveys:surveys});
         }, error => {
           console.log('LoadVisitReviewData ERROR:', error);
           reject ({visits:[], reviews:[]});
@@ -944,130 +937,64 @@ export class LeafletComponent implements OnInit, OnChanges {
     https://stackoverflow.com/questions/45091330/how-to-spawn-angular-4-component-inside-a-leaflet-markers-popup#45107300
   */
   private createLeafletPopup(poolObj:any = {}, data:any = {}, popList:string = '') {
-      const factory = this.componentFactoryResolver.resolveComponentFactory(PopupComponent);
-      const compRef = factory.create(this.injector);
+    const factory = this.componentFactoryResolver.resolveComponentFactory(PopupComponent);
+    const compRef = factory.create(this.injector);
 
-      compRef.instance.poolObj = poolObj;
-      compRef.instance.visits = data.visits;
-      compRef.instance.reviews = data.reviews;
-      compRef.instance.itemType = this.itemType;
+    compRef.instance.poolObj = poolObj;
+    compRef.instance.visits = data.visits;
+    compRef.instance.reviews = data.reviews;
+    compRef.instance.itemType = this.itemType;
 
-      this.applRef.attachView(compRef.hostView);
-      compRef.onDestroy(() => {
-          this.applRef.detachView(compRef.hostView);
-      });
+    this.applRef.attachView(compRef.hostView);
+    compRef.onDestroy(() => {
+        this.applRef.detachView(compRef.hostView);
+    });
 
-      let div = document.createElement('div');
-      div.appendChild(compRef.location.nativeElement); //include html from popup.component.html
+    let div = document.createElement('div');
+    div.appendChild(compRef.location.nativeElement); //include html from popup.component.html
 
-      div.insertAdjacentHTML('beforeend', this.buildPopupList(poolObj));
+    div.insertAdjacentHTML('beforeend', this.buildPopupList(poolObj));
 
-      compRef.changeDetectorRef.detectChanges(); //causes bubble to auto-size
+    compRef.changeDetectorRef.detectChanges(); //causes bubble to auto-size
 
-      return div;
+    return div;
   }
 
-  /*
-    This is no longer used. createLeafletPopup is used instead.
-  */
-  buildPopup(index) {
-    var poolObj = Array.isArray(this.mapValues) ? this.mapValues[index] : this.mapValues;
-    return this.buildPopupLinks(poolObj) + this.buildPopupList(poolObj);
-  }
-
-  /*
-    This is no longer used. popup links are created in popup.component.html.
-  */
-  buildPopupLinks(obj) {
+  buildPopupList(obj) {
     var text = '';
-
-    //Create action links at the top of the popup display based upon the context - 'itemType'
-    switch (this.itemType) {
-      case 'Visit New Pool':
-        //don't add links to the top - they just click on the point to get info about it
-        break;
-      case 'Visit Mapped Pool':
-        //don't add links to the top - they just click on the point to select it
-        break;
-      case 'Visit':
-        if (obj.visitId) { //for the pool visit
-          text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId}</a></div>`;
-          if (this.userIsAdmin) {
-            text += `<div><a href="review/create/${obj.visitId}">Review Visit ${obj.visitId}</a></div>`;
-            //text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId}</a></div>`;
-            text += `<div><a href="pools/visit/create/${obj.visitPoolId}">Add Visit for Pool ${obj.visitPoolId}</a></div>`;
-          }
-        }
-        break;
-      case 'List Mapped Pool':
-        text += `<div><a href="pools/mapped/view/${obj.poolId}">View Mapped Pool ${obj.poolId}</a></div>`;
-        text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
-        break;
-      case 'View Mapped Pool':
-        if (this.userIsAdmin) {
-          text += `<div><a href="pools/mapped/update/${obj.poolId}">Edit Mapped Pool ${obj.poolId}</a></div>`;
-        }
-        text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
-        break;
-
-      default:
-      case 'List Pools/Visits':
-        if (this.userIsAdmin && obj.visitId) {
-          text += `<div><a href="review/create/${obj.visitId}">Add Review for Visit ${obj.visitId}</a></div>`;
-        }
-        if (this.userIsAdmin && obj.reviewId) {
-          text += `<div><a href="review/view/${obj.reviewId}">View Review ${obj.reviewId} for Visit ${obj.visitId}</a></div>`;
-        }
-        if (obj.visitId) {
-          /*
-          if (this.userIsAdmin||(this.currentUser&&(this.currentUser.username===obj.mappedByUser||this.currentUser.username===obj.visitUserName))) {
-            text += `<div><a href="pools/visit/update/${obj.visitId}">Edit Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
-          }*/
-          text += `<div><a href="pools/visit/view/${obj.visitId}">View Visit ${obj.visitId} for Pool ${obj.poolId}</a></div>`;
-        }
-        if (this.currentUser) {
-          text += `<div><a href="pools/visit/create/${obj.poolId}">Add Visit for Pool ${obj.poolId}</a></div>`;
-        }
-        if (obj.visitPoolPhoto) {
-          text += `<div><a href="${obj.visitPoolPhoto}" target="_blank">View Pool Photo</a></div>`;
-        }
-        break;
-    }
-  }
-
-    buildPopupList(obj) {
-      var text = '';
-      var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
-      var include = [ //an array of column names to include in the popup list of values from the db
-        'poolId',
-        'mappedLatitude',
-        'mappedLongitude',
-        //'mappedTown',
-        'visitTown',
-        'poolStatus',
-        'mappedDateText',
-        'mappedDate',
-        'visitDate',
-        'mappedMethod',
-        'mappedByUser',
-        'visitUserName',
-        'visitPoolPhoto'
+    var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
+    var include = [ //an array of column names to include in the popup list of values from the db
+      'poolId',
+      'mappedLatitude',
+      'mappedLongitude',
+      //'mappedTown',
+      //'visitTown',
+      'townName',
+      'poolStatus',
+      'mappedDateText',
+      'mappedDate',
+      'visitDate',
+      'mappedMethod',
+      'mappedByUser',
+      'visitUserName',
+      'visitPoolPhoto'
       ];
-      var fieldName = {
-        'poolId':'Pool ID',
-        'mappedLatitude':'Mapped Latitude',
-        'mappedLongitude':'Mapped Longitude',
-        'mappedTown':'Mapped Town',
-        'visitTown':'Visit Town',
-        'poolStatus':'Pool Status',
-        'mappedDateText':'Date Mapped',
-        'mappedDate':'Date Mapped',
-        'visitDate':'Visit Date',
-        'mappedMethod':'Mapped Method',
-        'mappedByUser':'Mapped by User',
-        'visitUserName':'Visited by User',
-        'visitPoolPhoto':'Pool Photo'
-      }
+    var fieldName = {
+      'poolId':'Pool ID',
+      'mappedLatitude':'Mapped Latitude',
+      'mappedLongitude':'Mapped Longitude',
+      //'mappedTown':'Mapped Town',
+      //'visitTown':'Visit Town',
+      'townName': 'Town',
+      'poolStatus':'Pool Status',
+      'mappedDateText':'Date Mapped',
+      'mappedDate':'Date Mapped',
+      'visitDate':'Visit Date',
+      'mappedMethod':'Mapped Method',
+      'mappedByUser':'Mapped by User',
+      'visitUserName':'Visited by User',
+      'visitPoolPhoto':'Pool Photo'
+    };
 
     /*
       It looks like the issue with the vertical scrollbar clipping table content happens

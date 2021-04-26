@@ -118,6 +118,7 @@ export class vpVisitCreateComponent implements OnInit {
         this.visit.visitLatitude = 43.916944;
         this.visit.visitLongitude = -72.668056;
         //this.visit.visitTown = new vtTown(); //instantiates town object to enable default value for town drop-down
+        this.visit.visitTownName = 'Unknown';
         await this.createFormControls();
         if (this.poolId) {
           this.mapMarker =  true;
@@ -186,6 +187,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitDirections: ['', Validators.nullValidator],
         visitTown: [new vtTown(), new FormControl(this.towns[this.townCount]), Validators.required], //displayed form-only value - a selectable list of towns
         visitTownId: [], //non-display db-only value set when the form is submitted
+        visitTownName: [], //NEW, display-only field for town
         visitLocationComments: ['', Validators.nullValidator],
         visitPoolPhoto: ['', Validators.nullValidator],
         //2b Location of Pool
@@ -361,6 +363,7 @@ export class vpVisitCreateComponent implements OnInit {
       //this.visitLocationForm.controls['visitTown'].setValue(this.visit.visitTown || new vtTown()); //set whole object, uses compare fn to match drop-down
       //this.visitLocationForm.controls['visitTownId'].setValue(this.visit.visitTownId);
       this.visitLocationForm.controls['visitTownId'].setValue(this.visit.townId);
+      this.visitLocationForm.controls['visitTownName'].setValue(this.visit.townName);
       this.visitLocationForm.controls['visitLocationComments'].setValue(this.visit.visitLocationComments);
       //2b Location of Pool
       this.visitLocationForm.controls['visitCoordSource'].setValue(this.visit.visitCoordSource);
@@ -655,7 +658,7 @@ export class vpVisitCreateComponent implements OnInit {
       mappedPool.mappedDateText = this.visitLocationForm.value.visitDate;
       mappedPool.mappedLocationUncertainty = this.visitLocationForm.value.visitLocationUncertainty;
       mappedPool.mappedlocationInfoDirections = this.visitLocationForm.value.visitDirections;
-      mappedPool.mappedTownId = this.visitLocationForm.value.visitTown.townId;
+      //mappedPool.mappedTownId = this.visitLocationForm.value.visitTown.townId;
       mappedPool.mappedComments = this.visitLocationForm.value.visitLocationComments;
 
       mappedPool.mappedLatitude = this.visitLocationForm.value.visitLatitude;
@@ -732,6 +735,7 @@ export class vpVisitCreateComponent implements OnInit {
         //our method to extract townId from townObject is to have a non-display formControl and
         //assign its value here. the API expects a db column name with a single value, and we
         //choose to add that complexity here rather than parse requests in API code.
+        /*
         if (typeof(this.visitLocationForm.value.visitTown) != undefined && this.visitLocationForm.value.visitTown) {
           this.visitLocationForm.controls['visitTownId'].setValue(this.visitLocationForm.value.visitTown.townId);
         } else { //visitTownId is required in db. must at least set value to 'Unknown'.
@@ -739,7 +743,7 @@ export class vpVisitCreateComponent implements OnInit {
           this.setPage(0);
           return;
         }
-
+        */
         // stop here if form is invalid - navigate to the earliest page missing data
         if (this.visitObserverForm.invalid) {
           //console.log(`visitObserverForm.invalid`,this.visitObserverForm.invalid);
