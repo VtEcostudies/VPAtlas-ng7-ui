@@ -1,8 +1,15 @@
 ﻿<!-- nav -->
+<div *ngIf="dev_mode" class="row dev-background">
+  <div class="col-2"></div>
+  <div class="col-8">
+    THIS IS A DEVELOPMENT SERVER.
+  </div>
+  <div class="col-2"></div>
+</div>
 <div class="row vce-green">
 
   <div class="col-1 vce-logo-noshrink">
-    <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/">
+    <a href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/">
       <img [src]="vceLogoPath" height="30px" alt="VCE Vernal Pool Mapping Project">
     </a>
   </div>
@@ -125,8 +132,10 @@
   </div> <!-- col:navbar -->
 </div> <!-- row:navbar -->
 
-<!-- main app container -->
+<!-- main app container
 <div id="jumbotron" class="jumbotron">
+-->
+<div id="jumbotron">
     <div id="container" class="container-fluid"> <!-- fluid makes content fit the device's screen -->
         <div class="row">
             <div class="col-12">

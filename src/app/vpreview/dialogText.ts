@@ -49,7 +49,17 @@ reviewQACode: `<h3><u>Review QA Code</u></h3>
 </li>
 </ul>
 `,
-reviewQAAlt: `<h3><u>Review QA Alt</u></h3><p>Used for additional and/or temporary notations during the QA process</p>`,
-reviewQAPerson: `<h3><u>Review QA Person</u></h3><p>Identification of the QA reviewer.</p>`,
-reviewQANotes: `<h3><u>Review QA Notes</u></h3><p>Notes about QA review, justification for QA_CODE, changes made and outstanding issues encountered during the QA review</p>`
+reviewQAAlt: `<h3><u>Review QA Alt</u></h3>
+<p>Used for additional and/or temporary notations during the QA process</p>`,
+reviewQAPerson: `<h3><u>Review QA Person</u></h3>
+<p>Identification of the QA reviewer.</p>`,
+reviewQANotes: `<h3><u>Review QA Notes</u></h3>
+<p>Notes about QA review, justification for QA_CODE, changes made and outstanding issues encountered during the QA review</p>`,
+reviewPoolStatus: `<h3><u>Review Pool Status</u></h3>
+<p>Set the Pool's status.</p>
+<p>This should correspond to what QA Code was selected.</p>`,
+reviewPoolLocator: `<h3><u>Review Pool Locator</u></h3>
+<p>Do the coordinates recorded in this Visit define the pool's VPMap location?</p>
+<p>Checking this box will alter the pool's visible location in VPAtlas to the
+coordinates reecorded in this Visit.</p>`
 };

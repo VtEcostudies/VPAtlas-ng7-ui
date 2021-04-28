@@ -7,7 +7,10 @@ import { User } from '@app/_models';
 import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
 
-@Component({ templateUrl: 'home.component.html' })
+@Component({
+  templateUrl: 'home.component.html',
+  styleUrls: ['styles.css']
+  })
 export class HomeComponent implements OnInit, OnDestroy {
   currentUser = null;
   userIsAdmin = false;

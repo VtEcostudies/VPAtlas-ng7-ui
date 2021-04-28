@@ -109,6 +109,9 @@ export class PopupComponent {
   CreateReview(visitId) {
     if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
+  ViewSurvey(surveyId) {
+    if (surveyId) {this.router.navigate([`/survey/view/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
+  }
 }
 
 /*

@@ -1,0 +1,23 @@
+/*
+  Could not get td style to affect <a> sub-tag having bootstrap class="btn btn-link".
+  Removed those classes, and it worked. Links are fine in table without those
+  classes.
+*/
+.td-large {
+  word-wrap: break-word;
+  word-break: break-all;
+  min-width: 60px;
+  max-width: 150px;
+}
+.td-small {
+  word-wrap: break-word;
+  word-break: break-all;
+  min-width: 20px;
+  max-width: 60px;
+}
+.table-wrapper {
+  max-height: 650px;
+  width: 100%;
+  overflow: auto;
+  display:inline-block;
+}

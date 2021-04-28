@@ -87,7 +87,7 @@ export class vpReviewCreateComponent implements OnInit {
       this.visitId = this.route.snapshot.params.visitId;
       this.poolId = this.route.snapshot.params.poolId;
 
-      if (this.reviewId) { //update an existing visit - set all initial values in setFormValues()
+      if (this.reviewId) { //update an existing review - set all initial values in setFormValues()
         this.update = true;
         await this.createFormControls();
         await this.LoadReview(this.reviewId);
@@ -123,6 +123,7 @@ export class vpReviewCreateComponent implements OnInit {
         reviewQANotes: [''],
         reviewQADate: [(this.create?Moment().format('YYYY-MM-DD'):''), Validators.required],
         reviewPoolStatus: ['', Validators.required],
+        reviewPoolLocator: [''],
         reviewUpdatedAt: ['']
       });
     } //end createFormControls()
@@ -138,6 +139,7 @@ export class vpReviewCreateComponent implements OnInit {
       this.reviewForm.controls['reviewQANotes'].setValue(this.review.reviewQANotes);
       this.reviewForm.controls['reviewQADate'].setValue(this.review.reviewQADate);
       this.reviewForm.controls['reviewPoolStatus'].setValue(this.review.reviewPoolStatus);
+      this.reviewForm.controls['reviewPoolLocator'].setValue(this.review.reviewPoolLocator);
       this.reviewForm.controls['reviewUpdatedAt'].setValue(this.review.reviewUpdatedAt);
     }
 
@@ -168,7 +170,7 @@ export class vpReviewCreateComponent implements OnInit {
           .pipe(first())
           .subscribe(
               data => {
-                  this.visit = data.rows[0];
+                  this.visit = data.rows[0].both.visit; //data.rows[0];
                   this.visitId = this.visit.visitId; //this should trigger <pool-data-view> tag to load via @Input
                   this.poolId = this.visit.visitPoolId;
                   this.reviewForm.controls['reviewVisitId'].setValue(this.visit.visitId);

@@ -38,7 +38,8 @@
       <th>QA Alt</th>
       <th>QA Person</th>
       <th>QA Date</th>
-      <th>Pool Status</th>
+      <th>Status</th>
+      <th>Locator</th>
       <th>Updated</th>
     </tr>
     <tr *ngFor="let review of reviews">
@@ -53,6 +54,7 @@
         <td>{{review.reviewQAPerson}}</td>
         <td>{{review.reviewQADate}}</td>
         <td>{{review.reviewPoolStatus}}</td>
+        <td>{{review.reviewPoolLocator}}</td>
         <td>{{review.reviewUpdatedAt}}</td>
     </tr>
 </table>

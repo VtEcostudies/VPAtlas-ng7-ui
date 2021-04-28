@@ -6,6 +6,7 @@ import { User, Auth } from './_models';
 
 @Component({ selector: 'app', templateUrl: 'app.component.html' })
 export class AppComponent {
+    dev_mode = true;
     currentUserSubscription: Subscription;
     currentUser: Auth; //type Auth is {token: string, user: User}
     userIsAdmin = false;

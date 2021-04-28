@@ -5,7 +5,10 @@ import { first } from 'rxjs/operators';
 import { User, Auth } from '@app/_models';
 import { AlertService, UserService, AuthenticationService } from '@app/_services';
 
-@Component({ templateUrl: 'admin.component.html' })
+@Component({
+    templateUrl: 'admin.component.html',
+    styleUrls: ['styles.css']
+  })
 export class AdminComponent implements OnInit, OnDestroy {
     currentUser: Auth;
     userIsAdmin: boolean = false;

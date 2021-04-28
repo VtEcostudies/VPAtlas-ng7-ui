@@ -108,6 +108,7 @@ export class vpReviewViewComponent implements OnInit {
         reviewQANotes: [''],
         reviewQADate: [''],
         reviewPoolStatus: [''],
+        reviewPoolLocator: [''],
         reviewUpdatedAt: ['']
       });
 
@@ -125,6 +126,7 @@ export class vpReviewViewComponent implements OnInit {
       this.reviewForm.controls['reviewQANotes'].setValue(this.review.reviewQANotes);
       this.reviewForm.controls['reviewQADate'].setValue(Moment(this.review.reviewQADate).format('YYYY-MM-DD')); //NOTE: format must be YYYY-MM-DD to set value of input type="date"
       this.reviewForm.controls['reviewPoolStatus'].setValue(this.review.reviewPoolStatus);
+      this.reviewForm.controls['reviewPoolLocator'].setValue(this.review.reviewPoolLocator);
       this.reviewForm.controls['reviewUpdatedAt'].setValue(Moment(this.review.reviewUpdatedAt).format('YYYY-MM-DD'));//NOTE: format must be YYYY-MM-DD to set value of input type="date"
     }
 

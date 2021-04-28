@@ -91,7 +91,7 @@ export class vpVisitCreateComponent implements OnInit {
         } else { //user not logged-in
           this.router.navigate(['/visits/visit/list']); // redirect to visit search if user not logged-in
         }
-      this.loadTowns();
+      //this.loadTowns();
     }
 
     async ngOnInit() {
@@ -104,8 +104,10 @@ export class vpVisitCreateComponent implements OnInit {
       if (this.visitId) { //update an existing visit - set all initial values in setFormValues()
         this.update = true;
         this.mapMarker = true;
+        this.mapPoints = true; //now with 2 points for every visit (mapped and visit) we must mapPoints
         await this.createFormControls();
         await this.LoadVisitData(this.visitId);
+        this.zoomTo = {option:'Extents', value:{}}; //we zoomTo extents because we map 2 points for visits now
         this.setPage(this.uxValuesService.visitPageIndex);
       } else { //create a new visit - set a few necessary initial values
         this.poolsLoading = true; //need to flip this value to show the map
@@ -118,11 +120,11 @@ export class vpVisitCreateComponent implements OnInit {
         this.visit.visitLatitude = 43.916944;
         this.visit.visitLongitude = -72.668056;
         //this.visit.visitTown = new vtTown(); //instantiates town object to enable default value for town drop-down
-        this.visit.visitTownName = 'Unknown';
         await this.createFormControls();
         if (this.poolId) {
           this.mapMarker =  true;
           await this.LoadMappedPool(this.poolId);
+          this.zoomTo = {option:'Extents', value:{}}; //not sure if this should go here
         }
         this.poolsLoading = false; //need to flip this value to show the map
       }
@@ -185,9 +187,9 @@ export class vpVisitCreateComponent implements OnInit {
         visitNavMethod: ['', Validators.nullValidator],
         visitNavMethodOther: ['', Validators.nullValidator],
         visitDirections: ['', Validators.nullValidator],
-        visitTown: [new vtTown(), new FormControl(this.towns[this.townCount]), Validators.required], //displayed form-only value - a selectable list of towns
-        visitTownId: [], //non-display db-only value set when the form is submitted
-        visitTownName: [], //NEW, display-only field for town
+        //visitTown: [new vtTown(), new FormControl(this.towns[this.townCount]), Validators.required], //displayed form-only value - a selectable list of towns
+        //visitTownId: [], //non-display db-only value set when the form is submitted
+        visitTownName: [{value: this.visit.townName, disabled: true}, Validators.nullValidator],
         visitLocationComments: ['', Validators.nullValidator],
         visitPoolPhoto: ['', Validators.nullValidator],
         //2b Location of Pool
@@ -537,10 +539,12 @@ export class vpVisitCreateComponent implements OnInit {
           .pipe(first())
           .subscribe(
               data => {
-                //console.log('vpvisit.create.component.LoadVisitData result:', data);
-                //this.pools = data.rows[0]; //sets map data
-                this.visit = data.rows[0];
-                this.poolId = data.rows[0].poolId;
+                //Now for visits we load a 2-value object: 1) mapped pool, 2) this visit
+                //But: for creating/updating visits, we show a marker for the visit, a circle for its mapped location
+                console.log('vpvisit.create.component.LoadVisitData result:', data);
+                this.pools = [data.rows[0].both.mapped]; //[data.rows[0].both.visit, data.rows[0].both.mapped];
+                this.visit = data.rows[0].both.visit;
+                this.poolId = data.rows[0].both.visit.poolId;
                 console.log('VisitPoolPhoto', this.visit.visitPoolPhoto);
                 this.locMarker = {
                   latitude: this.visit.latitude,
@@ -619,13 +623,13 @@ export class vpVisitCreateComponent implements OnInit {
     }
 
     IsPoolInVermont(poolLon=0, poolLat=0) {
-/*
+      /*
       const poolLoc = turf.point([poolLon, poolLat]);
       const statePolygon = turf.polygon(state.features[0].geometry.coordinates);
       console.log('IsPoolInVermont', poolLoc, statePolygon);
       return turf.booleanPointInPolygon(poolLoc, statePolygon);
-*/
-    return true;
+      */
+      return true;
     }
 
     /*
@@ -912,7 +916,7 @@ export class vpVisitCreateComponent implements OnInit {
             data => {
                 //console.log(`vpvisit.create.deleteVisit=>data:`, data);
                 this.alertService.success('Successfully deleted Vernal Pool Visit.', true);
-                this.router.navigate([`/pools/visit/list`]);
+                this.router.navigate([`/pools/list`]);
             },
             error => {
                 //console.log(`vpvisit.create.deleteVisit=>error: `, error);
@@ -949,9 +953,9 @@ export class vpVisitCreateComponent implements OnInit {
     if (this.filter) {
       this.filter += `&logical${++i}=AND&`;
     }
-    this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
+    this.filter += `poolStatus|NOT IN=Eliminated`;
     this.filter += `&`;
-    this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
+    this.filter += `poolStatus|NOT IN=Duplicate`;
   }
 
   private async loadMappedPools(filter='') {
