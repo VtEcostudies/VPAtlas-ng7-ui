@@ -104,6 +104,9 @@
           "configurations": {
             "production": {
               "browserTarget": "vpatlas-angular-ui:build:production"
+            },
+            "dev-remote": {
+              "browserTarget": "vpatlas-angular-ui:build:dev-remote"
             }
           }
         },
@@ -158,6 +161,9 @@
           "configurations": {
             "production": {
               "devServerTarget": "vpatlas-angular-ui:serve:production"
+            },
+            "dev-remote": {
+              "devServerTarget": "vpatlas-angular-ui:serve:dev-remote"
             }
           }
         },

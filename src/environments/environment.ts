@@ -1,7 +1,15 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+/*
+  NOTE: Further discussion on custom build environments found here:
 
+    https://angular.io/guide/build
+
+  To use a specific build env, do something like this:
+
+    ng build --configuration=dev-remote
+*/
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:4000',
