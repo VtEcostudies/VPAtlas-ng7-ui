@@ -103,6 +103,9 @@ export class vpSurveyUploadComponent implements OnInit {
 
       Therefore our form name here, 'surveyUploadFile', is the field name expected
       by MULTER in the express API that receives this request.
+
+      When using POSTMAN, POST body must include the 'Key' 'surveyUploadFile', whose
+      'type' is 'File', and whose value is any filename.
     */
     FileUploadEvent(e) {
       this.init();
@@ -131,7 +134,7 @@ export class vpSurveyUploadComponent implements OnInit {
                   this.alertService.success(`Successfully uploaded ${data.length} rows of Survey data.`);
               },
               error => {
-                  console.log(`vpsurvey.upload.component::uploadSurvey=>error: ${error}`);
+                  console.log(`vpsurvey.upload.component::uploadSurvey=>error:`, error);
                   this.upLoading = false;
                   this.alertService.error(error);
               });

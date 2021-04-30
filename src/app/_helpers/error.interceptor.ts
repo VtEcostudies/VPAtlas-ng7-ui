@@ -18,8 +18,10 @@ export class ErrorInterceptor implements HttpInterceptor {
                 location.reload(true);
             }
 
-            const error = err.error.message || err.statusText;
-            return throwError(error);
+            //const error = err.error.message || err.statusText;
+            var ret = err.error.message;
+            if (err.error.detail) {ret += ' : ' + err.error.detail}
+            return throwError(ret);
         }))
     }
 }
