@@ -188,7 +188,7 @@ export class vpVisitCreateComponent implements OnInit {
         visitNavMethodOther: ['', Validators.nullValidator],
         visitDirections: ['', Validators.nullValidator],
         //visitTown: [new vtTown(), new FormControl(this.towns[this.townCount]), Validators.required], //displayed form-only value - a selectable list of towns
-        //visitTownId: [], //non-display db-only value set when the form is submitted
+        visitTownId: [], //non-display db-only value set when the form is submitted
         visitTownName: [{value: this.visit.townName, disabled: true}, Validators.nullValidator],
         visitLocationComments: ['', Validators.nullValidator],
         visitPoolPhoto: ['', Validators.nullValidator],

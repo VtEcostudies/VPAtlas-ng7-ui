@@ -7,13 +7,12 @@ export const poolsDialogText = {
   <li>All Pools: Potential, Probable, and Confirmed Vernal Pools.</li>
   <li>My Data: All pools to which you have contributed data, both mapping and visits. You must be a
   registered VPAtlas user and be logged-in to see this option.</li>
-  <li>Monitored: (Not implemented yet.) Coming soon: the ability to view pools that are
-  part of the Vernal Pool Monitoring Project!</li>
+  <li>Monitored: Pools that are part of the Vernal Pool Monitoring Project</li>
   </ul>
   <p>On the map, you will also see a menu of check boxes allowing you to show/hide pools by status:</p>
   <ul>
   <li>Potential: Might be Vernal Pools; awaiting data from a field visit.</li>
-  <li>Probable: Probable Vernal Pools; need more information to determine status</li>
+  <li>Probable: Probable Vernal Pools; need more information to determine status.</li>
   <li>Confirmed: Confirmed Vernal Pools; pools that have been verified by at least one field visit, and a QA/QC review by a VPAtlas administrator.</li>
   </ul>
   `,
@@ -28,7 +27,7 @@ export const poolsDialogText = {
   <ul>
     <li>Pool ID: The value must be an exact match. Values are case-sensitive.</li>
     <li>User: Enter a username to see only pools where a user has contributed data.</li>
-    <li>Town: Enter a town name to see pools in a town. Partial matches allowed. NOTE: This search criteria will only display pools that have been visited in the field.</li>
+    <li>Town: Select a town name to see pools in a town.</li>
     <li>Method: Select an option to see pools that were discovered by a specific mapping method.</li>
   </ul>
   `,
