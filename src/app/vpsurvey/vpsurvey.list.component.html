@@ -1,0 +1,81 @@
+<form [formGroup]="filterForm">
+  <div class="row">
+    <div class="col-3">
+      ﻿<h3><u>VPAtlas Surveys</u></h3>
+      <button *ngIf="f.surveyId.value" (click)="AddSurvey()" class="btn btn-primary">Add</button>
+      <button (click)="Cancel()" class="btn btn-link">Cancel</button>
+      <label>Count: {{count}}</label>
+    </div>
+
+    <div class="form-group col-2">
+      <label>User</label>
+      <input (change)="LoadSurveys()" type="text" formControlName="userName" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Survey ID</label>
+      <input (change)="LoadSurveys()" type="text" formControlName="surveyId" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Pool ID</label>
+      <!--
+      <input (change)="LoadSurveys()" type="text" formControlName="poolId" class="form-control"/>
+      -->
+      <select (change)="LoadSurveys()" formControlName="poolId" class="form-control">
+        <option *ngFor="let pool of surveyPools" [ngValue]="pool">
+          {{ pool.surveyPoolId }}
+        </option>
+      </select>
+    </div>
+    <div class="form-group col-2">
+      <label>Survey Type</label>
+      <!--
+      <input (change)="LoadSurveys()" type="text" formControlName="surveyTypeId" class="form-control"/>
+      -->
+      <select (change)="LoadSurveys()" formControlName="surveyTypeId" class="form-control">
+        <option *ngFor="let type of surveyTypes" [ngValue]="type">
+          {{ type }}
+        </option>
+      </select>
+    </div>
+    <div class="form-group col-2">
+      <label>Observer</label>
+      <input (change)="LoadSurveys()" type="text" formControlName="surveyObserver" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Begin Survey Date</label>
+      <input (change)="LoadSurveys()" type="date" formControlName="surveyDateBeg" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>End Survey Date</label>
+      <input (change)="LoadSurveys()" type="date" formControlName="surveyDateEnd" class="form-control"/>
+    </div>
+
+  </div>
+</form>
+
+<div class="row">
+<table class="table table-striped">
+    <tr>
+      <th>Survey ID</th>
+      <th>User</th>
+      <th>Pool ID</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Type</th>
+      <th>Observer/Amphib</th>
+      <th>Macros</th>
+    </tr>
+    <tr *ngFor="let survey of surveys">
+        <td>
+          <a [routerLink]="['/survey/view/', survey.surveyId]" class="btn btn-link">{{survey.surveyId}}</a>
+        </td>
+        <td>{{survey.username}}</td>
+        <td>{{survey.surveyPoolId}}</td>
+        <td>{{survey.surveyDate}}</td>
+        <td>{{survey.surveyTime}}</td>
+        <td>{{survey.surveyTypeId}}</td>
+        <td class="btn-link" (click)="ShowAmphib(survey.surveyAmphib)">{{survey.surveyAmphibObsEmail}}</td>
+        <td class="btn-link" (click)="ShowMacros(survey.surveyMacros)">Macros</td>
+    </tr>
+</table>
+</div> <!-- row -->

@@ -12,7 +12,7 @@ import { surveyDialogText } from '@app/vpsurvey/dialogText';
 import { ModalService } from '@app/_modal';
 
 @Component({
-  templateUrl: 'vpsurvey.component.html',
+  templateUrl: 'vpsurvey.upload.component.html',
   styleUrls: ['styles.css']
 })
 export class vpSurveyUploadComponent implements OnInit {

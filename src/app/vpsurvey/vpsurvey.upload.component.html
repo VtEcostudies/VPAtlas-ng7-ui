@@ -1,0 +1,88 @@
+<jw-modal id="vpsurvey_help_info">
+    <button (click)="closeModal('vpsurvey_help_info');">Close</button>
+</jw-modal>
+
+<div class="row">
+  <div class="col-4">
+    <div style="display:inline-block;">
+      <h5><b>Upload Vernal Pool Survey Data</b></h5>
+    </div>
+  </div> <!-- col -->
+
+  <div class="col-8">
+  </div> <!-- col -->
+</div> <!-- row -->
+
+
+<form [formGroup]="surveyForm">
+
+  <div class="row">
+    <div class="col-6">
+      <div class="row">
+        <div class="form-group form-inline">
+            <label for="surveyUserName">User</label>
+            <i (click)="openModal('vpsurvey_help_info', 'surveyUserName')" class="fa fa-info-circle no-margins link"></i>
+            <input type="text" size="10" formControlName="surveyUserName" class="form-control" />
+        </div>
+      </div> <!-- sub-row -->
+      <div class="row">
+        <div class="form-group form-inline">
+          <input type="file"
+            class="form-control"
+            (change)="FileUploadEvent($event)"
+            size="15"
+            accept="text/csv"
+            >
+        </div>
+      </div> <!-- sub-row -->
+      <div class="row">
+        <div class="form-group form-inline">
+            <label for="surveyUploadUpdate">Overwrite existing survey data?</label>
+            <i (click)="openModal('vpsurvey_help_info', 'surveyUploadUpdate')" class="fa fa-info-circle no-margins link"></i>
+            <input type="checkbox" formControlName="surveyUploadUpdate" />
+            <label>Yes</label>
+        </div>
+      </div> <!-- sub-row -->
+    </div> <!-- col -->
+    <div class="col-6" *ngIf="surveyIds.length>0">
+      <table class="table table-striped">
+          <tr>
+            <th>Survey ID</th>
+            <th>Survey Pool ID</th>
+            <th>Updated?</th>
+          </tr>
+          <tr *ngFor="let survey of surveyIds">
+              <td>
+                <a [routerLink]="['/survey/', survey.surveyId]" target='_blank' class="btn btn-link">{{survey.surveyId}}</a>
+              </td>
+              <td>
+                <a [routerLink]="['/survey/pool/', survey.surveyPoolId]" target='_blank' class="btn btn-link">{{survey.surveyPoolId}}</a>
+              </td>
+              <td>{{survey.updated}} </td>
+          </tr>
+      </table>
+    </div>
+  </div> <!-- row -->
+
+</form> <!-- surveySurveyForm -->
+
+<!--
+  Action buttons
+-->
+<div class="form-group survey-upload-button-bar">
+    <button [disabled]="" class="btn btn-primary" (click)="UploadSurvey()">
+      Upload</button>
+    <img *ngIf="upLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+    <button (click)="CancelUpload()" class="btn">
+      Cancel</button>
+</div>
+<hr>
+<!--
+<div *ngIf="!dataLoading">
+  <app-map-comp
+  [itemType]="itemType"
+  [pools]="pools"
+  ></app-map-comp>
+</div>
+-->

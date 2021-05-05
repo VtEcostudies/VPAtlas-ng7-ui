@@ -16,6 +16,10 @@ export class vpSurveyService {
         return this.http.post<any>(`${environment.apiUrl}/survey/upload?update=${update}`, file);
     }
 
+    getPools() {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/pools`);
+    }
+
     getAll(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/survey?${filter}`);
     }

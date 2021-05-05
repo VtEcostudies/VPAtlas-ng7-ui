@@ -188,10 +188,10 @@
           <tbody>
             <tr *ngFor="let pool of pools">
                 <!--
-                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.mappedPoolId]" class="btn btn-link">{{pool.mappedPoolId}}</a></td>
+                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a></td>
                 -->
-                <td title="Add a visit for pool {{pool.mappedPoolId}}" class="vert-aligned body-scroll-align-columns">
-                  <a [routerLink]="['/pools/visit/create/', pool.mappedPoolId]" class="btn btn-link">{{pool.poolId}}</a>
+                <td title="Add a visit for pool {{pool.poolId}}" class="vert-aligned body-scroll-align-columns">
+                  <a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a>
                 </td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.townName}}</td>
