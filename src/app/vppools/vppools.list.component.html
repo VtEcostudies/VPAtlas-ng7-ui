@@ -183,6 +183,7 @@
                 <th class="body-scroll-align-columns">Review</th>
                 <!-- <th class="body-scroll-align-columns">User(Review)</th> -->
                 </span>
+                <th class="body-scroll-align-columns">Survey</th>
             </tr>
           </thead>
           <tbody>
@@ -231,6 +232,12 @@
                     <!--
                     <a title="Open Reviews in new tab" [routerLink]="['/review/list/', pool.visitId]" target="_blank">(+)</a>
                     -->
+                  </td>
+                </span>
+                <span *ngIf="pool.surveyId">
+                  <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                    <a [routerLink]="['/survey/list/', pool.surveyId]" title="View Survey {{pool.surveyId}}"
+                    >{{pool.surveyId}}</a>
                   </td>
                 </span>
             </tr>

@@ -17,9 +17,15 @@
     <button (click)="ViewVisit(visit)" class="btn btn-link no-margin-rt no-margin-rt">View Visit {{visit}}</button>
     <a [routerLink]="['/pools/visit/view/', visit]" title="View Visit in separate tab" target="_blank">(+)</a>
   </div>
+  <!--
   <div *ngFor="let survey of surveys">
     <button (click)="ViewSurvey(survey)" class="btn btn-link no-margin-rt no-margin-rt">View Survey {{survey}}</button>
-    <a [routerLink]="['/survey/view/', survey]" title="View Survey in separate tab" target="_blank">(+)</a>
+    <a [routerLink]="['/survey/list/', survey]" title="View Survey in separate tab" target="_blank">(+)</a>
+  </div>
+  -->
+  <div *ngIf="surveys.length">
+    <button (click)="ViewSurveyPool(poolObj.poolId)" class="btn btn-link no-margin-rt no-margin-rt">View Pool Surveys</button>
+    <a [routerLink]="['/survey/pool/', poolObj.poolId]" title="View Pool Surveys in separate tab" target="_blank">(+)</a>
   </div>
   <div *ngIf="currentUser">
     <button (click)="CreateVisit()" class="btn btn-link no-margin-rt">Add Visit for Pool {{poolObj.poolId}}</button>

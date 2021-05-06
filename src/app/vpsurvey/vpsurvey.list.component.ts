@@ -17,11 +17,15 @@ export class vpSurveyListComponent implements OnInit {
   returnUrl = "/pools/list";
   surveys = [];
   surveyPools = [];
+  surveyObs = [];
   surveyTypes = ['All',1,2,3,4,9];
   count = 0;
   dataLoading = false;
   filterForm: FormGroup = this.formBuilder.group({});
   filter = '';
+  routeParams = null;
+  queryParams = null;
+  loadParams = null;
 
   constructor(
     private router: Router,
@@ -37,25 +41,52 @@ export class vpSurveyListComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
-    //console.log('queryParams', this.route.snapshot.queryParams);
-    //console.log('params', this.route.snapshot.params);
-    //surveyId can be passed as a route param (survey/list/1234) or a query param (survey/list?surveyId=1234)
-    var surveyId = this.route.snapshot.params['surveyId'];
-    if (surveyId) surveyId=surveyId.split('?')[0];
-    surveyId = surveyId ? surveyId : this.route.snapshot.queryParams['surveyId']
+    
     this.filterForm = this.formBuilder.group({
-        userName: [this.route.snapshot.queryParams['userName']],
-        surveyId: [surveyId],
-        poolId: [this.route.snapshot.queryParams['poolId']],
-        surveyTypeId: [this.route.snapshot.queryParams['surveyTypeId']],
-        surveyObserver: [this.route.snapshot.queryParams['surveyObserver']],
+        surveyId: [],
+        surveyPoolId: [{surveyPoolId:'All'}],
+        userName: [],
+        surveyTypeId: [],
+        surveyObserver: [],
         surveyDateBeg: [],
         surveyDateEnd: []
       });
-    this.LoadSurveyPools();
+
+    console.log('route.snapshot.params', this.route.snapshot.params);
+    this.routeParams = this.route.snapshot.params; //only this arg is allowed. see app.routing.ts
+    this.queryParams = this.route.snapshot.queryParams
+    console.log('routeParams', this.routeParams);
+    console.log('queryParams', this.queryParams);
+
+    await this.LoadSurveyPools(); //these are needed to process loadParams
+    await this.LoadSurveyObervers();
+
+    //NOTE:surveyId can be passed as a route param (survey/list/1234) or a query param (survey/list?surveyId=1234)
+
+    if (this.routeParams) {
+      this.loadParams = this.routeParams
+    } else if (this.queryParams) {
+      this.loadParams = this.queryParams;
+    } else {
+      this.loadParams = {};
+    }
+
+    console.log('loadParams', this.loadParams);
+
+    await this.setFilterFormValues();
     this.LoadSurveys();
+  }
+
+  setFilterFormValues() {
+    this.filterForm.controls['surveyId'].setValue(this.loadParams.surveyId);
+    this.filterForm.controls['surveyPoolId'].setValue({surveyPoolId:this.loadParams.surveyPoolId||'All'});
+    this.filterForm.controls['userName'].setValue(this.loadParams.userName);
+    this.filterForm.controls['surveyTypeId'].setValue(this.loadParams.surveyTypeId);
+    this.filterForm.controls['surveyObserver'].setValue({surveyObserver:this.loadParams.surveyObserver||'All'});
+    this.filterForm.controls['surveyDateBeg'].setValue(this.loadParams.surveyDateBeg);
+    this.filterForm.controls['surveyDateEnd'].setValue(this.loadParams.surveyDateEnd);
   }
 
   filterRow(row:any) {
@@ -72,7 +103,6 @@ export class vpSurveyListComponent implements OnInit {
     await this.getFilter();
     this.dataLoading = true;
     this.alertService.clear();
-    //console.log('vpveview.create.component.LoadSurvey:', surveyId);
     this.surveyService.getAll(this.filter)
         .pipe(first())
         .subscribe(
@@ -102,6 +132,21 @@ export class vpSurveyListComponent implements OnInit {
             });
   }
 
+  async LoadSurveyObervers() {
+    this.surveyService.getObservers()
+        .pipe(first())
+        .subscribe(
+            data => {
+              this.surveyObs = [{surveyObserver:'All'}];
+              data.rows.forEach(obs => {
+                this.surveyObs.push(obs);
+              })
+            },
+            error => {
+                this.alertService.error(error);
+            });
+  }
+
   // convenience getter for easy access to form fields
   get f() { return this.filterForm.controls; }
 
@@ -112,11 +157,11 @@ export class vpSurveyListComponent implements OnInit {
     if (this.f.surveyId.value) {
       this.filter += `surveyId=${this.f.surveyId.value}`;
     }
-    if (this.f.poolId.value && this.f.poolId.value.surveyPoolId != 'All') {
+    if (this.f.surveyPoolId.value && this.f.surveyPoolId.value.surveyPoolId != 'All') {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `&surveyPoolId=${this.f.poolId.value.surveyPoolId}`; //exact match
+      this.filter += `&surveyPoolId=${this.f.surveyPoolId.value.surveyPoolId}`; //exact match
     }
     if (this.f.userName.value) {
       if (this.filter) {
@@ -130,11 +175,11 @@ export class vpSurveyListComponent implements OnInit {
       }
       this.filter += `surveyTypeId=${this.f.surveyTypeId.value}`;
     }
-    if (this.f.surveyObserver.value) {
+    if (this.f.surveyObserver.value && this.f.surveyObserver.value.surveyObserver != 'All') {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `surveyAmphibObsEmail|LIKE=%${this.f.surveyObserver.value}%`;
+      this.filter += `surveyAmphibObsEmail|LIKE=%${this.f.surveyObserver.value.surveyObserver}%`;
     }
     if (this.f.surveyDateBeg.value && this.f.surveyDateEnd.value) {
       if (this.filter) {
@@ -162,15 +207,8 @@ export class vpSurveyListComponent implements OnInit {
     alert(disp);
   }
 
-  AddSurvey() {
-    if (this.f.surveyId.value) {
-      this.router.navigate([`/survey/create/${this.f.surveyId.value}`], {queryParams:{returnUrl:this.router.url}});
-    } else {
-      this.router.navigate([`/survey/create`], {queryParams:{returnUrl:this.router.url}});
-    }
-  }
   Cancel() {
-    //this.router.navigate([this.returnUrl]);
+    this.router.navigate([this.returnUrl]);
   }
 
 }

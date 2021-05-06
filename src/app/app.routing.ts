@@ -70,6 +70,8 @@ const appRoutes: Routes = [
     { path: 'review/update/:reviewId', component: vpReviewCreateComponent, canActivate: [AuthGuard] },
 
     { path: 'survey/list', component: vpSurveyListComponent },
+    { path: 'survey/list/:surveyId', component: vpSurveyListComponent },
+    { path: 'survey/pool/:surveyPoolId', component: vpSurveyListComponent },
     { path: 'survey/upload', component: vpSurveyUploadComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home

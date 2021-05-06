@@ -110,7 +110,10 @@ export class PopupComponent {
     if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   ViewSurvey(surveyId) {
-    if (surveyId) {this.router.navigate([`/survey/view/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (surveyId) {this.router.navigate([`/survey/list/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
+  }
+  ViewSurveyPool(surveyPoolId) {
+    if (surveyPoolId) {this.router.navigate([`/survey/pool/${surveyPoolId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
 }
 
@@ -920,9 +923,9 @@ export class LeafletComponent implements OnInit, OnChanges {
         .pipe(first())
         .subscribe(data => {
           var visits = [], reviews = [], surveys = [];
-          //console.log('leaflet.Componenet::LoadVisitReviewData | data.rows:', data.rows);
+          console.log('leaflet.Componenet::LoadVisitReviewData | data.rows:', data.rows);
           data.rows.forEach(row => {
-            console.log(`leaflet.Componenet::LoadVisitReviewData | pool:${row.poolId}/visit:${row.visitId}/review:${row.reviewId}`);
+            console.log(`leaflet.Componenet::LoadVisitReviewData | pool:${row.poolId}/visit:${row.visitId}/review:${row.reviewId}/survey:${row.surveyId}`);
             console.log(`leaflet.Componenet::LoadVisitReviewData |`, visits.includes(row.visitId), '|', reviews.includes(row.reviewId), '|', surveys.includes(row.surveyId));
             if (row.visitId && !visits.includes(row.visitId)) visits.push(row.visitId);
             if (row.reviewId && !reviews.includes(row.reviewId)) reviews.push(row.reviewId);
@@ -931,7 +934,7 @@ export class LeafletComponent implements OnInit, OnChanges {
           resolve ({visits:visits, reviews:reviews, surveys:surveys});
         }, error => {
           console.log('LoadVisitReviewData ERROR:', error);
-          reject ({visits:[], reviews:[]});
+          reject ({visits:[], reviews:[], surveys:[]});
         });
     });
   }
@@ -946,6 +949,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     compRef.instance.poolObj = poolObj;
     compRef.instance.visits = data.visits;
     compRef.instance.reviews = data.reviews;
+    compRef.instance.surveys = data.surveys;
     compRef.instance.itemType = this.itemType;
 
     this.applRef.attachView(compRef.hostView);

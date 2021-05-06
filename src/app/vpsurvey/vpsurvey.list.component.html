@@ -2,7 +2,9 @@
   <div class="row">
     <div class="col-3">
       ﻿<h3><u>VPAtlas Surveys</u></h3>
+      <!--
       <button *ngIf="f.surveyId.value" (click)="AddSurvey()" class="btn btn-primary">Add</button>
+      -->
       <button (click)="Cancel()" class="btn btn-link">Cancel</button>
       <label>Count: {{count}}</label>
     </div>
@@ -20,7 +22,7 @@
       <!--
       <input (change)="LoadSurveys()" type="text" formControlName="poolId" class="form-control"/>
       -->
-      <select (change)="LoadSurveys()" formControlName="poolId" class="form-control">
+      <select (change)="LoadSurveys()" formControlName="surveyPoolId" class="form-control">
         <option *ngFor="let pool of surveyPools" [ngValue]="pool">
           {{ pool.surveyPoolId }}
         </option>
@@ -39,7 +41,14 @@
     </div>
     <div class="form-group col-2">
       <label>Observer</label>
+      <!--
       <input (change)="LoadSurveys()" type="text" formControlName="surveyObserver" class="form-control"/>
+      -->
+      <select (change)="LoadSurveys()" formControlName="surveyObserver" class="form-control">
+        <option *ngFor="let obs of surveyObs" [ngValue]="obs">
+          {{ obs.surveyObserver }}
+        </option>
+      </select>
     </div>
     <div class="form-group col-2">
       <label>Begin Survey Date</label>
@@ -67,7 +76,10 @@
     </tr>
     <tr *ngFor="let survey of surveys">
         <td>
+          <!--
           <a [routerLink]="['/survey/view/', survey.surveyId]" class="btn btn-link">{{survey.surveyId}}</a>
+          -->
+          {{survey.surveyId}}
         </td>
         <td>{{survey.username}}</td>
         <td>{{survey.surveyPoolId}}</td>
