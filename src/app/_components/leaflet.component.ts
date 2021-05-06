@@ -76,6 +76,7 @@ export class PopupComponent {
   poolObj: any = {};
   visits: any = [];
   reviews: any = [];
+  surveys: any = [];
   constructor (
     private authenticationService: AuthenticationService,
     private router: Router
