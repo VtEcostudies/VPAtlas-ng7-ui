@@ -3,7 +3,6 @@
   EPSG:4326 == WGS84, the 'common latitude/longitude CRS'
   EPSG:3857 == WGS84 / Pseudo-Mercator, the 'web mapping standard CRS'
   Leaflet Default Projection: EPSG:3857
-
 */
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
@@ -52,6 +51,7 @@ import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
 import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
 import towns from '@app/_geojson/Polygon_VT_Town_Boundaries.geo.json';
 import biophysical from '@app/_geojson/Polygon_VT_Biophysical_Regions.geo.json';
+
 /*
   Popup Component - this is used instead of the standard Leaflet popup because we
   want to use Angular routing, not html href routing, to preserve uxValue across
@@ -93,11 +93,21 @@ export class PopupComponent {
   EditMapped(poolId) {
     if (poolId) {this.router.navigate([`/pools/mapped/update/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
-  ViewVisit(visitId) {
-    if (visitId) {this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+  ViewVisit(visitId, tab=0) {
+    if (visitId) {
+      //this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );
+      var url = `/pools/visit/view/${visitId}?returnUrl=${this.router.url}`;
+      if (tab) {window.open(url, "_blank");}
+      else {this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+    }
   }
-  EditVisit(visitId) {
-    if (visitId) {this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+  EditVisit(visitId, tab=0) {
+    if (visitId) {
+      //this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );
+      var url = `/pools/visit/update/${visitId}?returnUrl=${this.router.url}`;
+      if (tab) {window.open(url, "_blank");}
+      else {this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+    }
   }
   CreateVisit() {
     if (this.poolObj.poolId) {
@@ -110,10 +120,10 @@ export class PopupComponent {
   CreateReview(visitId) {
     if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
-  ViewSurvey(surveyId) {
+  ViewSurvey(surveyId, tab=0) {
     if (surveyId) {this.router.navigate([`/survey/list/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
-  ViewSurveyPool(surveyPoolId) {
+  ViewSurveyPool(surveyPoolId, tab=0) {
     if (surveyPoolId) {this.router.navigate([`/survey/pool/${surveyPoolId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
 }

@@ -175,14 +175,10 @@
                 <th class="body-scroll-align-columns">User (Visit)</th>
                 <th class="body-scroll-align-columns">Visit Date</th>
                 <th class="body-scroll-align-columns">Vernal Pool?</th>
-                <!--
-                <th class="body-scroll-align-columns">Visit Lat</th>
-                <th class="body-scroll-align-columns">Visit Lng</th>
-                -->
-                <span *ngIf="userIsAdmin">
+                <!-- <span *ngIf="userIsAdmin"> -->
                 <th class="body-scroll-align-columns">Review</th>
                 <!-- <th class="body-scroll-align-columns">User(Review)</th> -->
-                </span>
+                <!-- </span> -->
                 <th class="body-scroll-align-columns">Survey</th>
             </tr>
           </thead>
@@ -200,46 +196,43 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.poolStatus}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.latitude}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.longitude}}</td>
-
+                <!-- Visits -->
                 <span *ngIf="pool.visitId">
                   <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
                     <a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a>
                   </td>
                 </span>
                 <span *ngIf="!pool.visitId">
-                  <td class="vert-aligned body-scroll-align-columns"></td>
+                    <td class="vert-aligned body-scroll-align-columns">
+                      <span *ngIf="currentUser">
+                        <a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">(+)</a>
+                      </span>
+                    </td>
                 </span>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
-                <!--
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitLatitude}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitLongitude}}</td>
-                -->
-                <!-- THIS CODE NEVER HIT BECAUSE WE DON'T LOAD REVIEWS WITH LISTED POOLS ANYMORE -->
-                <span *ngIf="userIsAdmin&&pool.visitId&&pool.reviewId">
-                  <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
-                    <a [routerLink]="['/review/view/', pool.reviewId]" title="Edit Review {{pool.reviewId}}"
-                    >{{pool.reviewId}}</a>
-                    <a [routerLink]="['/review/create/', pool.visitId]" title="Add Review of Visit {{pool.visitId}}"
-                    >(+)</a>
-                  </td>
-                  <!--<td class="vert-aligned body-scroll-align-columns">{{pool.reviewUserName}}</td>-->
-                </span>
-                <span *ngIf="userIsAdmin&&pool.visitId&&!pool.reviewId">
-                  <td class="vert-aligned body-scroll-align-columns">
-                    <button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>
-                    <!--
-                    <a title="Open Reviews in new tab" [routerLink]="['/review/list/', pool.visitId]" target="_blank">(+)</a>
-                    -->
-                  </td>
-                </span>
-                <span *ngIf="pool.surveyId">
-                  <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
-                    <a [routerLink]="['/survey/list/', pool.surveyId]" title="View Survey {{pool.surveyId}}"
-                    >{{pool.surveyId}}</a>
-                  </td>
-                </span>
+                <!-- Reviews -->
+                <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                  <span *ngIf="userIsAdmin&&pool.visitId">
+                    <span *ngIf="pool.reviewId">
+                        <a [routerLink]="['/review/view/', pool.reviewId]" title="View Review {{pool.reviewId}}"
+                        >{{pool.reviewId}}</a>
+                    </span>
+                    <span *ngIf="!pool.reviewId">
+                        <!--<button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>-->
+                        <a [routerLink]="['/review/create/', pool.visitId]" title="Add Review of Visit {{pool.visitId}}"
+                        >(+)</a>
+                    </span>
+                  </span>
+                </td>
+                <!-- Surveys -->
+                <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                  <span *ngIf="pool.surveyId">
+                      <a [routerLink]="['/survey/list/', pool.surveyId]" title="View Survey {{pool.surveyId}}"
+                      >{{pool.surveyId}}</a>
+                  </span>
+                </td>
             </tr>
           </tbody>
         </table>

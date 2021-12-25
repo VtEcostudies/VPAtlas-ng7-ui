@@ -1,4 +1,12 @@
 <!--
+  There is still a problem with using the '+ to navigate. We lose the state/context
+  of the user, etc. and the user is logged-out on navigation. Possible solutions;
+
+  - pass the 'state' when using angular [routerLink]
+  https://www.geekstrick.com/pass-data-from-routes-to-components-in-angular/
+
+  - open a separte browser tab when using router.navigate
+
   case 'Visit New Pool':
     //don't add links to the top - they just click on the point to get info about it
   case 'Visit Mapped Pool':
@@ -15,7 +23,10 @@
 <div *ngIf="itemType=='List Pools/Visits'">
   <div *ngFor="let visit of visits">
     <button (click)="ViewVisit(visit)" class="btn btn-link no-margin-rt no-margin-rt">View Visit {{visit}}</button>
+    <button (click)="ViewVisit(visit, 1)" class="btn btn-link no-margin-rt no-margin-rt">(++)</button>
+    <!--
     <a [routerLink]="['/pools/visit/view/', visit]" title="View Visit in separate tab" target="_blank">(+)</a>
+    -->
   </div>
   <!--
   <div *ngFor="let survey of surveys">
@@ -50,7 +61,10 @@
   <div *ngIf="poolObj.visitId">
     <div *ngIf="userIsAdmin||userIsOwner">
       <button (click)="EditVisit(poolObj.visitId)" class="btn btn-link no-margin-rt">Edit Visit {{poolObj.visitId}}</button>
+      <button (click)="EditVisit(visit, 1)" class="btn btn-link no-margin-rt no-margin-rt">(++)</button>
+      <!--
       <a [routerLink]="['/pools/visit/view/', poolObj.visitId]" title="Edit Visit in separate tab" target="_blank">(+)</a>
+      -->
     </div>
     <div *ngIf="userIsAdmin">
       <button (click)="CreateReview(poolObj.visitId)" class="btn btn-link no-margin-rt">Add Review for Visit {{poolObj.visitId}}</button>
@@ -60,6 +74,10 @@
       <button (click)="ViewReview(poolObj.reviewId)" class="btn btn-link no-margin-rt">View Review {{poolObj.reviewId}}</button>
       <a [routerLink]="['/review/view/', poolObj.reviewId]" title="View Review in separate tab" target="_blank">(+)</a>
     </div>
+  </div>
+  <div *ngIf="surveys.length">
+    <button (click)="ViewSurveyPool(poolObj.poolId)" class="btn btn-link no-margin-rt no-margin-rt">View Pool Surveys</button>
+    <button (click)="ViewSurveyPool(poolObj.poolId, 1)" class="btn btn-link no-margin-rt no-margin-rt">(++)</button>
   </div>
 </div>
 
