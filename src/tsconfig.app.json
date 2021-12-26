@@ -1,3 +1,19 @@
+/*
+  IMPORTANT NOTE:
+
+  If you get errors on 'ng serve' like eg.
+
+    ERROR in ../Documents/VCE/VPAtlas/vpAtlas-ng7-ui/src/main.ts
+    Module build failed (from ../Documents/VCE/VPAtlas/vpAtlas-ng7-ui/node_modules/@ngtools/webpack/src/index.js):
+    Error: C:\Users\jloomis\Documents\VCE\VPAtlas\vpAtlas-ng7-ui\src\main.ts is missing from the TypeScript compilation.
+      Please make sure it is in your tsconfig via the 'files' or 'include' property.
+
+  This is caused by path errors arising from your environment. On Windows 10, if
+  you use a symbolic link to change directory to this application directory, it
+  causes angular to fail to find the root directory, and it cannot locate main.ts
+  and polyfills.ts. To resolve this, in your development terminal session, simply
+  change directory explicitly, not via a simbolic link.
+*/
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
@@ -9,5 +25,9 @@
   "files": [
     "main.ts",
     "polyfills.ts"
+  ],
+  "include": [  //this is not necessary
+    "**/*.app.ts",
+    "**/*.d.ts"
   ]
 }

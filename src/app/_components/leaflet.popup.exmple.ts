@@ -1,4 +1,5 @@
 import 'leaflet';
+declare let L;
 import './main.scss';
 import "reflect-metadata";
 import "zone.js/dist/zone";
