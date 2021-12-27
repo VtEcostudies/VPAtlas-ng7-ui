@@ -27,7 +27,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "esnext", /* experimental. "target": "es2015" was working... */
+    "target": "es2015",
     "typeRoots": ["node_modules/@types"],
     "lib": [
         "es2018",
