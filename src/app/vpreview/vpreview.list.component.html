@@ -1,12 +1,17 @@
+<div class="row">
+  <div class="col-12">
+    ﻿<h3><u>VPAtlas Reviews</u></h3>
+    <button *ngIf="singleVisit && singleVisit==f.visitId.value" (click)="AddReview()" class="btn btn-primary">Add Review</button>
+    <button (click)="Cancel()" class="btn">Cancel</button>
+    <label><u>Count: {{count}}</u></label>
+  </div>
+</div>
 <form [formGroup]="filterForm">
   <div class="row">
-    <div class="col-3">
-      ﻿<h3><u>VPAtlas Reviews</u></h3>
-      <button *ngIf="f.visitId.value" (click)="AddReview()" class="btn btn-primary">Add</button>
-      <button (click)="Cancel()" class="btn btn-link">Cancel</button>
-      <label>Count: {{count}}</label>
+    <div class="form-group col-2">
+      <label>Review ID</label>
+      <input (change)="LoadReviews()" type="text" formControlName="reviewId" class="form-control"/>
     </div>
-
     <div class="form-group col-2">
       <label>User</label>
       <input (change)="LoadReviews()" type="text" formControlName="userName" class="form-control"/>
@@ -23,7 +28,14 @@
       <label>QA Person</label>
       <input (change)="LoadReviews()" type="text" formControlName="QAPerson" class="form-control"/>
     </div>
-
+    <div class="form-group col-2">
+      <label>Status</label>
+      <select (change)="LoadReviews()" formControlName="status" class="form-control">
+        <option *ngFor="let status of statuses" [ngValue]="status">
+          {{ status }}
+        </option>
+      </select>
+    </div>
   </div>
 </form>
 

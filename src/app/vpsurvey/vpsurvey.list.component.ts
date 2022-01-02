@@ -7,7 +7,8 @@ import { UxValuesService } from '@app/_global';
 import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({
-  templateUrl: 'vpsurvey.list.component.html'
+  templateUrl: 'vpsurvey.list.component.html',
+  styleUrls: ['styles.css']
 })
 
 export class vpSurveyListComponent implements OnInit {
@@ -23,9 +24,9 @@ export class vpSurveyListComponent implements OnInit {
   dataLoading = false;
   filterForm: FormGroup = this.formBuilder.group({});
   filter = '';
-  routeParams = null;
-  queryParams = null;
-  loadParams = null;
+  routeParams: any = {};
+  queryParams: any = {};
+  loadParams: any = {};
 
   constructor(
     private router: Router,
@@ -42,47 +43,40 @@ export class vpSurveyListComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
-    
-    this.filterForm = this.formBuilder.group({
-        surveyId: [],
-        surveyPoolId: [{surveyPoolId:'All'}],
-        userName: [],
-        surveyTypeId: [],
-        surveyObserver: [],
-        surveyDateBeg: [],
-        surveyDateEnd: []
-      });
-
     console.log('route.snapshot.params', this.route.snapshot.params);
     this.routeParams = this.route.snapshot.params; //only this arg is allowed. see app.routing.ts
     this.queryParams = this.route.snapshot.queryParams
     console.log('routeParams', this.routeParams);
     console.log('queryParams', this.queryParams);
+    //NOTE:surveyId can be passed as a route param (survey/list/1234) or a query param (survey/list?surveyId=1234)
+    //NOTE: we can have both route and query params, so we need to join those into a single object...
+    Object.assign(this.loadParams, this.routeParams, this.queryParams);
+
+    console.log('loadParams', this.loadParams);
+
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
+
+    this.filterForm = this.formBuilder.group({
+        surveyId: [this.loadParams.surveyId],
+        surveyPoolId: [{surveyPoolId:this.loadParams.poolId || 'All'}],
+        surveyUserEmail: [this.loadParams.email],
+        surveyTypeId: [this.loadParams.surveyTypeId],
+        surveyObserver: [this.loadParams.surveyObserver],
+        surveyDateBeg: [this.loadParams.surveyDateBeg],
+        surveyDateEnd: [this.loadParams.surveyDateEnd]
+      });
+    await this.setFilterFormValues();
 
     await this.LoadSurveyPools(); //these are needed to process loadParams
     await this.LoadSurveyObervers();
 
-    //NOTE:surveyId can be passed as a route param (survey/list/1234) or a query param (survey/list?surveyId=1234)
-
-    if (this.routeParams) {
-      this.loadParams = this.routeParams
-    } else if (this.queryParams) {
-      this.loadParams = this.queryParams;
-    } else {
-      this.loadParams = {};
-    }
-
-    console.log('loadParams', this.loadParams);
-
-    await this.setFilterFormValues();
     this.LoadSurveys();
   }
 
   setFilterFormValues() {
     this.filterForm.controls['surveyId'].setValue(this.loadParams.surveyId);
-    this.filterForm.controls['surveyPoolId'].setValue({surveyPoolId:this.loadParams.surveyPoolId||'All'});
-    this.filterForm.controls['userName'].setValue(this.loadParams.userName);
+    this.filterForm.controls['surveyPoolId'].setValue({surveyPoolId:this.loadParams.poolId||'All'});
+    this.filterForm.controls['surveyUserEmail'].setValue(this.loadParams.email);
     this.filterForm.controls['surveyTypeId'].setValue(this.loadParams.surveyTypeId);
     this.filterForm.controls['surveyObserver'].setValue({surveyObserver:this.loadParams.surveyObserver||'All'});
     this.filterForm.controls['surveyDateBeg'].setValue(this.loadParams.surveyDateBeg);
@@ -163,11 +157,14 @@ export class vpSurveyListComponent implements OnInit {
       }
       this.filter += `&surveyPoolId=${this.f.surveyPoolId.value.surveyPoolId}`; //exact match
     }
-    if (this.f.userName.value) {
-      if (this.filter) {
-        this.filter += `&logical${++i}=AND&`;
+    if (this.f.surveyUserEmail.value) {
+      if (this.filter) {this.filter += `&logical${++i}=AND&`;}
+      var filterValue = `${this.f.surveyUserEmail.value}`;
+      if (filterValue.includes('*')) {
+        this.filter += `surveyUserEmail|LIKE=${filterValue.replace(/\*/g,'%')}`; //partial match
+      } else {
+        this.filter += `surveyUserEmail=${filterValue}`; //exact match
       }
-      this.filter += `surveyUserName|LIKE=%${this.f.userName.value}%`;
     }
     if (this.f.surveyTypeId.value && this.f.surveyTypeId.value != 'All') {
       if (this.filter) {
@@ -175,11 +172,19 @@ export class vpSurveyListComponent implements OnInit {
       }
       this.filter += `surveyTypeId=${this.f.surveyTypeId.value}`;
     }
+    /*
+      There is no 'surveyObserver' in vpsurvey. Instead, there is 'surveyAmphibObsEmail' and
+      'surveyAmphibObsId' in vpsurvey_amphib. Standard table search doesn't support table
+      joins without custom code.
+    */
     if (this.f.surveyObserver.value && this.f.surveyObserver.value.surveyObserver != 'All') {
-      if (this.filter) {
-        this.filter += `&logical${++i}=AND&`;
+      if (this.filter) {this.filter += `&logical${++i}=AND&`;}
+      var filterValue = `${this.f.surveyObserver.value.surveyObserver}`;
+      if (filterValue.includes('*')) {
+        this.filter += `surveyObserver|LIKE=${filterValue.replace(/\*/g,'%')}`; //partial match
+      } else {
+        this.filter += `surveyObserver=${filterValue}`; //exact match
       }
-      this.filter += `surveyAmphibObsEmail|LIKE=%${this.f.surveyObserver.value.surveyObserver}%`;
     }
     if (this.f.surveyDateBeg.value && this.f.surveyDateEnd.value) {
       if (this.filter) {

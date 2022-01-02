@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-3">
+  <div class="col-2">
     <div *ngIf="reviewVisitId" style="display:inline-block;">
       <h5><b>Review Vernal Pool Visit '{{reviewVisitId}}'</b></h5>
     </div>
@@ -30,8 +30,31 @@
     </div>
   </div> <!-- col -->
 
-  <div class="col-8">
+  <!-- Action buttons -->
+  <div class="col-3 form-group form-inline">
+      <button *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">
+        Save Pool
+      </button>
+<!--
+      <button *ngIf="itemType!='Visit New Pool'" [disabled]="itemType==='Visit New Pool' || visitPage.index===0 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(-1)">Prev</button>
+      <button *ngIf="itemType!='Visit New Pool'" [disabled]="itemType==='Visit New Pool' || visitPage.index===4 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(1)">Next</button>
+-->
+      <button [disabled]="itemType==='Visit New Pool' || (!poolId&&!visitId)"
+        *ngIf="itemType!='Visit New Pool' && itemType!='View Visit' && itemType!='Review Visit'" class="btn btn-primary" (click)="CreateVisit()">
+        Save Visit
+      </button>
+      <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+      <button *ngIf="itemType!='Review Visit'" (click)="cancelVisit()" class="btn">Cancel</button>
+      <button *ngIf="update && userIsAdmin" (click)="deleteVisit()" [disabled]="dataLoading" class="btn">Delete</button>
+      <button *ngIf="!update && (userIsAdmin || userIsOwner) && visitId" class="btn btn-primary" (click)="ToEditMode()">
+        Edit
+      </button>
+  </div>
+
+  <div class="col-7">
     <div style="display:inline-block;float:right;">
+      <button *ngIf="itemType!='Visit New Pool'" [disabled]="itemType==='Visit New Pool' || visitPage.index===0 || (!poolId&&!visitId)" class="btn btn-primary btn-nav" (click)="nextPage(-1)"><</button>
+      <button *ngIf="itemType!='Visit New Pool'" [disabled]="itemType==='Visit New Pool' || visitPage.index===4 || (!poolId&&!visitId)" class="btn btn-primary btn-nav" (click)="nextPage(1)">></button>
       <label>Pool Data Page:</label>
       <!-- https://juristr.com/blog/2016/11/ng2-binding-radiobutton-lists/ -->
       <label>
@@ -847,7 +870,7 @@
       </label>
       <label>
         <input type="radio" value="Ephemeral" formControlName="visitHydroPeriod" class="form-control radio-button-horiz" />
-        <span>Ephemeral (drying out completely during the growing searson in most years)</span>
+        <span>Ephemeral (drying out completely during the growing season in most years)</span>
       </label>
     </div>
     <!-- visitMaxWidth -->
@@ -1334,6 +1357,7 @@
 <!--
   Action buttons
 -->
+<!--
 <div class="form-group form-inline">
     <button *ngIf="visitPage.index===0 && itemType==='Visit New Pool'" class="btn btn-primary" (click)="CreateMappedPool()">Save Pool</button>
     <button *ngIf="itemType!='Visit New Pool'" [disabled]="itemType==='Visit New Pool' || visitPage.index===0 || (!poolId&&!visitId)" class="btn btn-primary" (click)="nextPage(-1)">Prev Page</button>
@@ -1349,3 +1373,4 @@
       Edit
     </button>
 </div>
+-->

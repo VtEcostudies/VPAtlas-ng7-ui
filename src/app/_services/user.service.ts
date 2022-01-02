@@ -9,8 +9,8 @@ import { User } from '@app/_models';
 export class UserService {
     constructor(private http: HttpClient) { }
 
-    getAll() {
-        return this.http.get<User[]>(`${environment.apiUrl}/users`);
+    getAll(filter: string) {
+        return this.http.get<User[]>(`${environment.apiUrl}/users?${filter}`);
     }
 
     getPage(page: number) {

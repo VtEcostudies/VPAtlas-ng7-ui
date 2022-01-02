@@ -9,7 +9,10 @@
 <div class="row vce-green">
 
   <div class="col-1 vce-logo-noshrink">
+    <!--
     <a href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/">
+    -->
+    <a href="src/vpatlas_banner.jpg">
       <img [src]="vceLogoPath" height="30px" alt="VCE Vernal Pool Mapping Project">
     </a>
   </div>
@@ -73,15 +76,12 @@
               </div>
             </li>
 
-            <li class="nav-item dropdown" *ngIf="userIsAdmin">
-              <a class="nav-link dropdown-toggle"
-                id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Review
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" routerLink="/review/list">List Reviews</a>
-                <!--<a class="dropdown-item" routerLink="/review/create">Add Review</a>-->
-              </div>
+            <li class="nav-item" *ngIf="userIsAdmin">
+              <a class="nav-item nav-link" routerLink="/review/list">Reviews</a>
+            </li>
+
+            <li class="nav-item" *ngIf="userIsAdmin">
+              <a class="nav-item nav-link" routerLink="/survey/list">Surveys</a>
             </li>
 
             <li class="nav-item" *ngIf="userIsAdmin" >
@@ -123,7 +123,7 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
               <a class="nav-link" href="https://vtfishandwildlife.com/">
-                <img [src]="fNwLogoPath" height="20" alt="VT Fish & Wildlife">
+                <img [src]="fNwLogoPath" height="20" alt="VT F&W">
                 Vermont Fish & Wildlife
               </a>
             </li>

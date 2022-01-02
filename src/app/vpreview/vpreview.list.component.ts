@@ -7,7 +7,8 @@ import { UxValuesService } from '@app/_global';
 import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({
-  templateUrl: 'vpreview.list.component.html'
+  templateUrl: 'vpreview.list.component.html',
+  styleUrls: ['styles.css']
 })
 
 export class vpReviewListComponent implements OnInit {
@@ -17,9 +18,11 @@ export class vpReviewListComponent implements OnInit {
   returnUrl = "/pools/list";
   reviews = [];
   count = 0;
+  singleVisit = null; //if the lookup resolves to a single visitId, set this value
   dataLoading = false;
   filterForm: FormGroup = this.formBuilder.group({});
   filter = '';
+  statuses = ['All','Eliminated','Duplicate','Potential','Probable','Confirmed'];
 
   constructor(
     private router: Router,
@@ -47,9 +50,11 @@ export class vpReviewListComponent implements OnInit {
     visitId = visitId ? visitId : this.route.snapshot.queryParams['visitId']
     this.filterForm = this.formBuilder.group({
         userName: [this.route.snapshot.queryParams['userName']],
+        reviewId: [this.route.snapshot.queryParams['reviewId']],
         visitId: [visitId],
         poolId: [this.route.snapshot.queryParams['poolId']],
-        QAPerson: [this.route.snapshot.queryParams['QAPerson']]
+        QAPerson: [this.route.snapshot.queryParams['QAPerson']],
+        status: [this.route.snapshot.queryParams['poolStatus']]
       });
     this.LoadReviews();
   }
@@ -57,7 +62,7 @@ export class vpReviewListComponent implements OnInit {
   async LoadReviews() {
     await this.getFilter();
     this.dataLoading = true;
-    //console.log('vpveview.create.component.LoadReview:', reviewId);
+    console.log('vpreview.create.component.LoadReviews');
     this.reviewService.getAll(this.filter)
         .pipe(first())
         .subscribe(
@@ -65,6 +70,7 @@ export class vpReviewListComponent implements OnInit {
               this.reviews = data.rows;
               this.count = data.rowCount;
               this.dataLoading = false;
+              this.singleVisit = (1==this.count) ? data.rows[0].visitId : null;
             },
             error => {
                 this.alertService.error(error);
@@ -76,9 +82,13 @@ export class vpReviewListComponent implements OnInit {
   get f() { return this.filterForm.controls; }
 
   getFilter() {
+    this.alertService.clear();
     this.filter = ''; //must clear first to undo filters
     var i = 0;
 
+    if (this.f.reviewId.value) {
+      this.filter += `reviewId=${this.f.reviewId.value}`;
+    }
     if (this.f.visitId.value) {
       this.filter += `reviewVisitId=${this.f.visitId.value}`;
     }
@@ -86,19 +96,37 @@ export class vpReviewListComponent implements OnInit {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `&reviewPoolId=${this.f.poolId.value}`; //exact match
+      var filterValue = `${this.f.poolId.value}`;
+      if (filterValue.includes('*')) { //handle wildcard character '*'
+        this.filter += `reviewPoolId|LIKE=${filterValue.replace(/\*/g,'%')}`; //partial match
+      } else {
+        this.filter += `reviewPoolId=${this.f.poolId.value}`; //exact match
+      }
     }
     if (this.f.userName.value) {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `reviewUserName|LIKE=%${this.f.userName.value}%`;
+      var filterValue = `${this.f.userName.value}`;
+      if (filterValue.includes('*')) {
+        this.filter += `reviewUserName|LIKE=${filterValue.replace(/\*/g,'%')}`; //partial match
+      } else {
+        this.filter += `reviewUserName=${filterValue}`; //exact match
+      }
     }
     if (this.f.QAPerson.value) {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `reviewQAPerson|LIKE=%${this.f.QAPerson.value}%`;
+      var filterValue = `${this.f.QAPerson.value}`;
+      if (filterValue.includes('*')) {
+        this.filter += `reviewQAPerson|LIKE=${filterValue.replace(/\*/g,'%')}`; //partial match
+      } else {
+        this.filter += `reviewQAPerson=${filterValue}`; //exact match
+      }
+    }
+    if (this.f.status.value && 'All' != this.f.status.value) {
+      this.filter += `reviewPoolStatus=${this.f.status.value}`;
     }
     console.log(this.filter);
   }

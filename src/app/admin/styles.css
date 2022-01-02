@@ -1,4 +1,12 @@
 /*
+  In placing action buttons at the top, need h* tags to allow inline display.
+*/
+h1, h2, h3, h4 {
+    display: inline;
+    padding-right: 20px;
+}
+
+/*
   Could not get td style to affect <a> sub-tag having bootstrap class="btn btn-link".
   Removed those classes, and it worked. Links are fine in table without those
   classes.

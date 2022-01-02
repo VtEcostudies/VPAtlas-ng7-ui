@@ -8,3 +8,8 @@ hr {
   border-width: 5px;
   border-color: darkblue;
 }
+
+h1, h2, h3, h4 {
+    display: inline;
+    padding-right: 20px;
+}
