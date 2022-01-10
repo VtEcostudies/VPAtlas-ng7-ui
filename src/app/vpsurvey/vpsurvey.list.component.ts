@@ -58,8 +58,8 @@ export class vpSurveyListComponent implements OnInit {
 
     this.filterForm = this.formBuilder.group({
         surveyId: [this.loadParams.surveyId],
-        surveyPoolId: [{surveyPoolId:this.loadParams.poolId || 'All'}],
-        surveyUserEmail: [this.loadParams.email],
+        surveyPoolId: [{surveyPoolId:this.loadParams.surveyPoolId}],
+        surveyUserEmail: [this.loadParams.surveyUserEmail],
         surveyTypeId: [this.loadParams.surveyTypeId],
         surveyObserver: [this.loadParams.surveyObserver],
         surveyDateBeg: [this.loadParams.surveyDateBeg],
@@ -75,8 +75,8 @@ export class vpSurveyListComponent implements OnInit {
 
   setFilterFormValues() {
     this.filterForm.controls['surveyId'].setValue(this.loadParams.surveyId);
-    this.filterForm.controls['surveyPoolId'].setValue({surveyPoolId:this.loadParams.poolId||'All'});
-    this.filterForm.controls['surveyUserEmail'].setValue(this.loadParams.email);
+    this.filterForm.controls['surveyPoolId'].setValue({surveyPoolId:this.loadParams.surveyPoolId||'All'});
+    this.filterForm.controls['surveyUserEmail'].setValue(this.loadParams.surveyUserEmail);
     this.filterForm.controls['surveyTypeId'].setValue(this.loadParams.surveyTypeId);
     this.filterForm.controls['surveyObserver'].setValue({surveyObserver:this.loadParams.surveyObserver||'All'});
     this.filterForm.controls['surveyDateBeg'].setValue(this.loadParams.surveyDateBeg);
