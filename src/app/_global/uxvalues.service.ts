@@ -121,11 +121,17 @@ export class UxValuesService {
       if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
       // TODO: add review, monitored, etc. here and drop getFilter()... //if (srch.revu) keep =
-      if (this.type=='revu') keep = keep&&row.visitId;
+      if (this.type=='revu') keep = keep&&
+        (
+          (row.visitId && !row.reviewId) ||
+          row.mappedUpdatedAt > row.reviewUpdatedAt ||
+          row.visitUpdatedAt > row.reviewUpdatedAt
+        );
       if (this.type=='mine' && this.currentUser) keep = keep&&
         (user==row.mappedByUser ||
         user==row.visitUserName ||
-        user==row.surveyUserName)
+        user==row.visitObserverUserName ||
+        user==row.surveyUserName);
       if (this.type=='visi') keep = keep&&row.visitId;
       if (this.type=='moni') keep = keep&&row.surveyId;
       if (row.mappedDateText) row.mappedDateText = Moment(row.mappedDateText).format('YYYY-MM-DD');
@@ -145,9 +151,11 @@ export class UxValuesService {
       console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data[type].timestamp} | filter:${this.filter} | search:`, search);
       return new Promise((resolve, reject) => {
         var result;
-        if (type=='revu') {result = this.vpPoolsService.getReview(this.data[type].timestamp, this.filter);}
-        else {
-          result = this.vpPoolsService.getOverview(this.data[type].timestamp, this.filter);
+        if (type=='revu') {
+          result = this.vpPoolsService.getReview(this.data[type].timestamp, this.filter);
+        } else {
+          //result = this.vpPoolsService.getOverview(this.data[type].timestamp, this.filter);
+          result = this.vpPoolsService.getOverview(this.data['all'].timestamp, this.filter);
         }
         result.pipe(first()).subscribe(
             async data => {

@@ -54,7 +54,7 @@ import biophysical from '@app/_geojson/Polygon_VT_Biophysical_Regions.geo.json';
 
 /*
   Popup Component - this is used instead of the standard Leaflet popup because we
-  want to use Angular routing, not html href routing, to preserve uxValue across
+  want to use Angular routing, not html href routing, to preserve uxValues across
   page-loads. This allows us to keep the UX performant.
 
   Links are created in popup.component.html.
@@ -220,7 +220,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   confirmedColors = ["Navy"];
   eliminatedColors = ["Black"];
   monitoredColors = ["LightSteelBlue"];
-  cmLLArr = []; //array of shapeMarkers (originally native circleMarkers) 1:1 with mapPoints values
+  objPoolIds = {}; //object of poolIds to manage one shapeMarker per poolId
   allGroup = L.featureGroup(); //allGroup is not shown but used for zoomTo, etc.
   potnGroup = L.featureGroup(null, {name:'Potential', id:'potential'});
   probGroup = L.featureGroup(null, {name:'Probable', id:'probable'});
@@ -917,7 +917,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.markerSelect.emit(this.itemInfo);
     }
     else if (poolObj.visitId || poolObj.surveyId) { //get popup data for pools with visits or surveys
-      this.LoadVisitReviewData(poolObj.poolId)
+      this.LoadVisitReviewSurveyData(poolObj.poolId)
         .then(data => {
           const popList = this.buildPopupList(index);
           e.sourceTarget.bindPopup(() => this.createLeafletPopup(poolObj, data, popList)).openPopup();
@@ -928,23 +928,23 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }
 
-  LoadVisitReviewData(poolId) {
+  LoadVisitReviewSurveyData(poolId) {
     return new Promise((resolve, reject) => {
       this.vpPoolsService.getByPoolId(poolId)
         .pipe(first())
         .subscribe(data => {
           var visits = [], reviews = [], surveys = [];
-          console.log('leaflet.Componenet::LoadVisitReviewData | data.rows:', data.rows);
+          console.log('leaflet.Componenet::LoadVisitReviewSurveyData | data.rows:', data.rows);
           data.rows.forEach(row => {
-            console.log(`leaflet.Componenet::LoadVisitReviewData | pool:${row.poolId}/visit:${row.visitId}/review:${row.reviewId}/survey:${row.surveyId}`);
-            console.log(`leaflet.Componenet::LoadVisitReviewData |`, visits.includes(row.visitId), '|', reviews.includes(row.reviewId), '|', surveys.includes(row.surveyId));
+            console.log(`leaflet.Componenet::LoadVisitReviewSurveyData | pool:${row.poolId}/visit:${row.visitId}/review:${row.reviewId}/survey:${row.surveyId}`);
+            console.log(`leaflet.Componenet::LoadVisitReviewSurveyData |`, visits.includes(row.visitId), '|', reviews.includes(row.reviewId), '|', surveys.includes(row.surveyId));
             if (row.visitId && !visits.includes(row.visitId)) visits.push(row.visitId);
             if (row.reviewId && !reviews.includes(row.reviewId)) reviews.push(row.reviewId);
             if (row.surveyId && !surveys.includes(row.surveyId)) surveys.push(row.surveyId);
           });
           resolve ({visits:visits, reviews:reviews, surveys:surveys});
         }, error => {
-          console.log('LoadVisitReviewData ERROR:', error);
+          console.log('LoadVisitReviewSurveyData ERROR:', error);
           reject ({visits:[], reviews:[], surveys:[]});
         });
     });
@@ -1056,8 +1056,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.confGroup.clearLayers();
     this.duplGroup.clearLayers();
     this.elimGroup.clearLayers();
-    //delete this.cmLLArr;
-    this.cmLLArr = [];
+    this.objPoolIds = {};
   }
 
   /*
@@ -1112,8 +1111,6 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     llLoc = L.latLng(vpool.latitude, vpool.longitude);
 
-    //this.cmLLArr.push(llLoc); //don't add markers to LatLon array. it mucks zoom, etc.
-
     this.marker.setLatLng(llLoc);
 
     var toolTip = `Pool ID: ${vpool.poolId}<br>
@@ -1158,6 +1155,15 @@ export class LeafletComponent implements OnInit, OnChanges {
       }
 
       llLoc = L.latLng(vpools[i].latitude, vpools[i].longitude);
+
+      //Don't plot poolIds already plotted. We load multiple rows per poolId for visits, reviews, surveys, etc.
+      if (('View Visit' != this.itemType && 'Edit Visit' != this.itemType) && this.objPoolIds[vpools[i].poolId]) {
+        //console.log('leaflet.plotPoolShapes() Already plotted poolId', vpools[i].poolId);
+        console.log(`itemType:`, this.itemType);
+        continue;
+      } else {
+        this.objPoolIds[vpools[i].poolId] = llLoc;
+      }
 
       ptRadius = this.GetRadiusForPool(vpools[i]);
 
@@ -1241,8 +1247,6 @@ export class LeafletComponent implements OnInit, OnChanges {
           ptCount.potential++;
           break;
       }
-
-      this.cmLLArr.push(llLoc); //this is used to scope zoom. redundant?
 
       var toolText = '';
       toolText += `
