@@ -246,7 +246,7 @@ export class vpReviewCreateComponent implements OnInit {
 
   DeleteReview() {
     if (confirm(`Are you sure you want to delete Review ${this.review.reviewId}?`)) {
-      this.vpVisitService.delete(this.review.reviewId)
+      this.vpReviewService.delete(this.review.reviewId)
         .pipe(first())
         .subscribe(
             data => {

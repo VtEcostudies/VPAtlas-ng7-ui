@@ -39,15 +39,10 @@ export class UxValuesService {
     public filter:string = '';
     public search:any = {};
     public type:any = {};
-    public data:any = {
-      all:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
-      mine:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
-      revu:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
-      visi:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0},
-      moni:{timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0}
-      };
+    public data:any = {timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0};
     public towns:any = [];
-    public parcels:any = {}; //an array of town parcels by town name
+    public parcels:any = {}; //an object of geoJson town parcel layers by town name
+    public geoLayers:any = {}; //an object of geoJson useful boundaries by layer name (State, County, Town, Biophysical, ...)
 
     constructor(
       private authenticationService: AuthenticationService,
@@ -63,50 +58,58 @@ export class UxValuesService {
       console.log('****************************UXVALUES CONSTRUCTOR****************************')
     }
 
+    /*
+      updateData is called after loading 'updates' from the API
+      transfer new and changed data in 'pools' to global this.data for use by the map/table
+
+    */
     updateData(type='all', pools:any) {
-      console.log(`uxValues.service::updateData(${type}) | incoming data count:`, pools.length);
-      if (this.data[type].pools.length == 0) { //initial load
-        this.data[type].timestamp = Moment.utc().format();
-        this.data[type].pools = pools;
-        this.data[type].count = pools.length;
+      type = 'all';
+      console.log(`uxValues.service::updateData(${type}) | incoming data count:`, pools.length, ` | timestamp: ${this.data.timestamp}`);
+      if (this.data.pools.length == 0) { //initial load
+        this.data.timestamp = Moment.utc().format();
+        this.data.pools = pools;
+        this.data.count = pools.length;
       } else {
-        this.data[type].timestamp = Moment.utc().format();
+        this.data.timestamp = Moment.utc().format();
         //update existing array with new data
         pools.forEach(upd => { //iterate over incoming rows, each as 'upd'
           var found = false; //flag that the incoming row, 'upd' was found in this pass through 'old' pools
-          var match = {pool:false, visit:false, review:false}; //instantaneous match of the idxth element
+          var match = {pool:false, visit:false, review:false, survey:false}; //instantaneous match of the idxth element
           var vpmap = [];
-          console.log(`searching ${type} for ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}`);
-          this.data[type].pools.find((old, idx, arr) => {
-            if (upd.mappedPoolId==old.mappedPoolId&&!old.visitId) {
-              console.log(`FOUND Existing VPMap[${old.mappedPoolId}]=${idx}`);
-              vpmap[old.mappedPoolId]=idx;}
+          console.log(`searching ${type} for ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
+          this.data.pools.find((old, idx, arr) => {
+            if (upd.poolId==old.poolId&&!old.visitId) {
+              console.log(`FOUND Existing VPMap[${old.poolId}]=${idx}`);
+              vpmap[old.poolId]=idx;}
             match = {
-              pool: upd.mappedPoolId==old.mappedPoolId,
+              pool: upd.poolId==old.poolId,
               visit: upd.visitId==old.visitId,
-              review: upd.reviewId==old.reviewId};
-            if ((match.pool && match.visit && match.review)) {
+              review: upd.reviewId==old.reviewId,
+              survey: upd.surveyId==old.surveyId
+            };
+            if ((match.pool && match.visit && match.review && match.survey)) {
               found = true; //flag that we found a match so we don't duplicate it.
-              console.log(`FOUND ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}. UPDATING.`);
-              this.data[type].pools[idx] = upd; //update row
+              console.log(`FOUND match: ${match}. UPDATING.`);
+              this.data.pools[idx] = upd; //update row
             }
             return found;
           })
           if (!found) { //searched all rows for the current incoming value. not found. add it.
-            console.log(`ADDING ${upd.mappedPoolId}/${upd.visitId}/${upd.reviewId}`);
-            this.data[type].pools.push(upd); //add row
+            console.log(`ADDING ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
+            this.data.pools.push(upd); //add row
           }
-          if (upd.visitId && vpmap[upd.mappedPoolId]) { //if new row has visit delete old row without...
-            console.log(`DELETING ${upd.mappedPoolId} from data.pools[${type}] at index ${vpmap[upd.mappedPoolId]}`);
-            delete this.data[type].pools[vpmap[upd.mappedPoolId]];
+          if (upd.visitId && vpmap[upd.poolId]) { //if new row has visit delete old row without...
+            console.log(`DELETING ${upd.poolId} from data.pools[${type}] at index ${vpmap[upd.poolId]}`);
+            delete this.data.pools[vpmap[upd.poolId]];
           }
         });
       }
     }
 
     /*
-    Filter client-side data results after loading. This replaces the API Query Filters by 'Search'.
-    This is called after loading a dataSet by 'Type' (All, Visi, Mine, Revu, Moni)
+      Filter client-side global this.data array after loading/updating. This replaces the API Query Filters by 'Search'.
+      This is called after loading a dataSet by 'Type' (All, Visi, Mine, Revu, Moni)
     */
     filterData(row:any) {
       var srch:any = this.search;
@@ -120,14 +123,16 @@ export class UxValuesService {
       if (srch.town) keep = keep&&(row.townName&&srch.town==row.townName);
       if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
-      // TODO: add review, monitored, etc. here and drop getFilter()... //if (srch.revu) keep =
-      if (this.type=='revu') keep = keep&&
+      if (this.type=='revu') keep = keep &&
         (
           (row.visitId && !row.reviewId) ||
           row.mappedUpdatedAt > row.reviewUpdatedAt ||
           row.visitUpdatedAt > row.reviewUpdatedAt
         );
-      if (this.type=='mine' && this.currentUser) keep = keep&&
+      if (row.poolId=='SDF791') {
+        console.log(row.poolId, row.visitId, row.reviewId, row.mappedUpdatedAt, row.visitUpdatedAt, row.reviewUpdatedAt);
+      }
+      if (this.type=='mine' && this.currentUser) keep = keep &&
         (user==row.mappedByUser ||
         user==row.visitUserName ||
         user==row.visitObserverUserName ||
@@ -144,24 +149,21 @@ export class UxValuesService {
       return keep;
     }
 
+    /*
+      Primary entrypoint for loading data.
+    */
     public async loadUpdated(type='all', search:any={}, page=0) {
       this.search = search;
       this.type = type;
-      await this.getFilter(type); //, search); only filter db results by type now that we have fast 'filterData()' here.
-      console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data[type].timestamp} | filter:${this.filter} | search:`, search);
+      //await this.getFilter(type); //, search); only filter db results by type now that we have fast 'filterData()' here.
+      console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data.timestamp} | filter:${this.filter} | search:`, search);
       return new Promise((resolve, reject) => {
         var result;
-        if (type=='revu') {
-          result = this.vpPoolsService.getReview(this.data[type].timestamp, this.filter);
-        } else {
-          //result = this.vpPoolsService.getOverview(this.data[type].timestamp, this.filter);
-          result = this.vpPoolsService.getOverview(this.data['all'].timestamp, this.filter);
-        }
+        result = this.vpPoolsService.getOverview(this.data.timestamp, this.filter);
         result.pipe(first()).subscribe(
             async data => {
-              await this.updateData(type, data.rows);
-              //var res = this.data[type].pools.filter(row => this.filterData(row));
-              var res = this.data['all'].pools.filter(row => this.filterData(row));
+              await this.updateData(type, data.rows); //sync old data with updates
+              var res = this.data.pools.filter(row => this.filterData(row)); //filter global: 'data' by selectors, etc.
               var len = res.length;
               var chg = data.rowCount > 0;
               if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
@@ -176,6 +178,12 @@ export class UxValuesService {
 
 
     /*
+      This is Deprecated.
+
+      WE NO LONGER USE THIS TO FILTER RESULTS BY 'search'. Instead, we load
+      by 'type', then post-filter results client-side by calling 'filterData()'.
+      This reduces server-calls, and is much faster.
+
       Construct an SQL WHERE clause search filter to be passed to vppools.service
       API route to filter db query results.
 
@@ -186,10 +194,6 @@ export class UxValuesService {
 
       NOTE: Implemented this on both ends by removing the default AND condition
       and requiring logical operators be sent as below. Not easy.
-
-      UPDATE: WE NO LONGER USE THIS TO FILTER RESULTS BY 'search'. Instead, we load
-      by 'type', then post-filter results client-side by calling 'filterData()'.
-      This reduces server-calls.
     */
     getFilter(type='all', search:any={}) {
 
@@ -366,7 +370,7 @@ export class UxValuesService {
       return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
     }
 
-    LoadTownParcel(townName) {
+    loadTownParcel(townName) {
       return new Promise((resolve, reject) => {
         this.vcgiService.getTownParcel(townName)
           .pipe(first())
@@ -375,40 +379,26 @@ export class UxValuesService {
               let parcel:object = result.rows[0].vcgiParcel;
               resolve (parcel);
             } else {
-              console.log(`LoadTownParcel | Parcel data for ${townName} NOT Found.`);
-              //reject(`Parcel data for ${townName} NOT Found.`);
+              console.log(`uxValuesService::loadTownParcel | Parcel data for ${townName} NOT Found.`);
+              reject(new Error(`uxValuesService::loadTownParcel | Parcel data for ${townName} NOT Found.`));
             }
           }, error => {
-            console.log('LoadTownParcel ERROR:', error);
+            console.log('uxValuesService::loadTownParcel ERROR:', error);
             reject (error);
           });
       });
     }
 
-    addParcelMap(townName) {
-      return new Promise((resolve, reject) => {
-        this.LoadTownParcel(townName)
-          .then(parcel => {
-            this.parcels[townName] = parcel;
-            //console.log('uxValuesService.addParcelMap', townName, this.parcels[townName]);
-            resolve(parcel);
-          })
-          .catch(error => {
-            console.log('uxValuesService.addParcelMap ERROR', error.message);
-            reject(error);
-          });
-        });
-    }
-
     getParcelMap(townName) {
       return new Promise((resolve, reject) => {
         if (this.parcels[townName]) {
-          console.log('getParcelMap | already loaded', townName)
+          console.log('uxValuesService::getParcelMap | already loaded', townName)
           resolve(this.parcels[townName]);
         } else {
-          this.addParcelMap(townName)
+          this.loadTownParcel(townName)
             .then(parcel => {
-              console.log('getParcelMap | newly loaded', townName)
+              console.log('uxValuesService::getParcelMap | newly loaded', townName)
+              this.parcels[townName] = parcel;
               resolve(parcel);
             })
             .catch(error => {reject(error);});

@@ -590,7 +590,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     if (this.mapPoints && 1==this.mapValues.length) { //zoom to a mapped point if it's the only feature
       this.zoomExtents();
     }
-    console.log('*****LEAFLET ngOnChanges***** | zoomTo', changes.zoomTo);
+    //console.log('*****LEAFLET ngOnChanges***** | zoomTo', changes.zoomTo);
     if (changes.zoomTo && (changes.zoomTo.currentValue != changes.zoomTo.previousValue)) {
       //console.log('*****zoomTo | option', changes.zoomTo.currentValue.option);
       //console.log('*****zoomTo | value', changes.zoomTo.currentValue.value);
@@ -1156,10 +1156,10 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       llLoc = L.latLng(vpools[i].latitude, vpools[i].longitude);
 
-      //Don't plot poolIds already plotted. We load multiple rows per poolId for visits, reviews, surveys, etc.
+      //We load multiple rows per poolId for visits, reviews, surveys, etc.
+      //Don't plot poolIds already plotted in the 'List Pools' view.
+      //Do plot the same poolId twice when viewing a single pool - vpMapped and vpVisit coordinates separately.
       if (('View Visit' != this.itemType && 'Edit Visit' != this.itemType) && this.objPoolIds[vpools[i].poolId]) {
-        //console.log('leaflet.plotPoolShapes() Already plotted poolId', vpools[i].poolId);
-        console.log(`itemType:`, this.itemType);
         continue;
       } else {
         this.objPoolIds[vpools[i].poolId] = llLoc;
