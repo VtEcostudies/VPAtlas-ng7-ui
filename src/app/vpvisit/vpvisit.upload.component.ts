@@ -2,32 +2,32 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-import { AlertService, AuthenticationService, vpSurveyService } from '@app/_services';
+import { AlertService, AuthenticationService, vpVisitService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
 import { environment } from '@environments/environment';
-import { surveyDialogText } from '@app/vpsurvey/dialogText';
+import { visitDialogText } from '@app/vpvisit/dialogText';
 import { ModalService } from '@app/_modal';
 
 @Component({
-  templateUrl: 'vpsurvey.upload.component.html',
+  templateUrl: 'vpvisit.upload.component.html',
   styleUrls: ['styles.css']
 })
-export class vpSurveyUploadComponent implements OnInit {
+export class vpVisitUploadComponent implements OnInit {
     create = false; //aka insert
     update = false; //flag for html config that we are editing an existing visit, not creating a new one
     currentUser = null;
     userIsAdmin = false;
     userIsOwner = false;
-    returnUrl = '/survey/list';
-    surveyForm: FormGroup = this.formBuilder.group({});
+    returnUrl = '/visit/list';
+    visitForm: FormGroup = this.formBuilder.group({});
     upLoading = false; //flag that the form data is loading
     submitted = false; //flag that the form was submitted
-    itemType = 'Upload Survey';
-    surveyDialogText = surveyDialogText; //amazing but true... set this class var to the import type...
+    itemType = 'Upload Visit';
+    visitDialogText = visitDialogText; //amazing but true... set this class var to the import type...
 
-    surveyIds = [];
-    surveyUploadFile = {};
-    surveyUploadFileName = '';
+    visitIds = [];
+    visitUploadFile = {};
+    visitUploadFileName = '';
 
     constructor(
         private formBuilder: FormBuilder,
@@ -36,10 +36,10 @@ export class vpSurveyUploadComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
         private uxValuesService: UxValuesService,
-        private vpSurveyService: vpSurveyService,
+        private vpVisitService: vpVisitService,
         private modalService: ModalService
     ) {
-        this.authenticationService.check().catch(err => {console.log('authService.check error in vpsurvey.create.')});
+        this.authenticationService.check().catch(err => {console.log('authService.check error in vpvisit.create.')});
         if (this.authenticationService.currentUserValue) {
           this.currentUser = this.authenticationService.currentUserValue.user;
           this.userIsAdmin = this.currentUser.userrole == 'admin';
@@ -51,16 +51,16 @@ export class vpSurveyUploadComponent implements OnInit {
 
     async ngOnInit() {
 
-      // get return url from route parameters or default to '/survey/list'
-      console.log('vpsurvey.create.copmonenent | returnUrl:', this.route.snapshot.queryParams);
-      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/survey/list';
+      // get return url from route parameters or default to '/visit/list'
+      console.log('vpvisit.create.copmonenent | returnUrl:', this.route.snapshot.queryParams);
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/visit/list';
 
       await this.createFormControls();
     } //end ngOnInit
 
     openModal(id: string, infoId=null) {
         console.log('infoId', infoId);
-        this.modalService.open(id, surveyDialogText[infoId]);
+        this.modalService.open(id, visitDialogText[infoId]);
     }
 
     closeModal(id: string) {
@@ -69,10 +69,10 @@ export class vpSurveyUploadComponent implements OnInit {
 
     async createFormControls() { //Create formcontrols within formgroups
 
-      this.surveyForm = this.formBuilder.group({
-        surveyUserName: [{value: this.currentUser.username, disabled: true}, Validators.required],
-        surveyUploadUpdate: [false],
-        surveyUploadFile: [null]
+      this.visitForm = this.formBuilder.group({
+        visitUserName: [{value: this.currentUser.username, disabled: true}, Validators.required],
+        visitUploadUpdate: [false],
+        visitUploadFile: [null]
       });
     } //end createFormControls()
 
@@ -80,12 +80,12 @@ export class vpSurveyUploadComponent implements OnInit {
     }
 
     private init() {
-      this.surveyIds = [];
+      this.visitIds = [];
       this.alertService.clear();
     }
 
     // convenience getters for easy access to form fields
-    get r() { return this.surveyForm.controls; }
+    get r() { return this.visitForm.controls; }
 
     /*
       NOTE: see http://expressjs.com/en/resources/middleware/multer.html
@@ -98,40 +98,40 @@ export class vpSurveyUploadComponent implements OnInit {
       needs the name of the 'Upload File' field within the request to know which
       field to process as a multipart file.
 
-      Therefore our form name here, 'surveyUploadFile', is the field name expected
+      Therefore our form name here, 'visitUploadFile', is the field name expected
       by MULTER in the express API that receives this request.
 
-      When using POSTMAN, POST body must include the 'Key' 'surveyUploadFile', whose
+      When using POSTMAN, POST body must include the 'Key' 'visitUploadFile', whose
       'type' is 'File', and whose value is any filename.
     */
     FileUploadEvent(e) {
       this.init();
       const file = (e.target).files[0];
       console.log('FileUploadEvent | file selected:', file);
-      this.surveyForm.patchValue({
-          surveyUploadFile: file
+      this.visitForm.patchValue({
+          visitUploadFile: file
         });
-      this.surveyForm.get('surveyUploadFile').updateValueAndValidity();
+      this.visitForm.get('visitUploadFile').updateValueAndValidity();
     }
 
-    UploadSurvey() {
+    UploadVisit() {
       this.init();
       this.upLoading = true;
-      this.update = this.surveyForm.get('surveyUploadUpdate').value;
+      this.update = this.visitForm.get('visitUploadUpdate').value;
       var formData: any = new FormData();
-      formData.append("surveyUploadFile", this.surveyForm.get('surveyUploadFile').value);
-      console.log('UploadSurvey | formData', formData);
-      this.vpSurveyService.uploadFile(formData, this.update)
+      formData.append("visitUploadFile", this.visitForm.get('visitUploadFile').value);
+      console.log('UploadVisit | formData', formData);
+      this.vpVisitService.uploadFile(formData, this.update)
           .pipe(first())
           .subscribe(
               data => {
-                  console.log(`vpsurvey.upload.component::uploadSurvey=>data:`, data);
+                  console.log(`vpvisit.upload.component::uploadVisit=>data:`, data);
                   this.upLoading = false;
-                  this.surveyIds = data; //NOTE: the return from POST => INSERT/UPDATE is different from GET (ie. no rows[])
-                  this.alertService.success(`Successfully uploaded ${data.length} rows of Survey data.`);
+                  this.visitIds = data; //NOTE: the return from POST => INSERT/UPDATE is different from GET (ie. no rows[])
+                  this.alertService.success(`Successfully uploaded ${data.length} rows of Visit data.`);
               },
               error => {
-                  console.log(`vpsurvey.upload.component::uploadSurvey=>error:`, error);
+                  console.log(`vpvisit.upload.component::uploadVisit=>error:`, error);
                   this.upLoading = false;
                   this.alertService.error(error);
               });

@@ -10,7 +10,7 @@ import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
 import { AwsS3Service } from '@app/_services';
 import { environment } from '@environments/environment';
-import { visitDialogText } from '@app/vpvisit/visitDialogText';
+import { visitDialogText } from '@app/vpvisit/dialogText';
 import { ModalService } from '@app/_modal';
 
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
@@ -22,7 +22,7 @@ import { DOCUMENT } from '@angular/common';
 
 @Component({
   templateUrl: 'vpvisit.create.component.html',
-  styleUrls: ['vpvisit.styles.css']
+  styleUrls: ['styles.css']
 })
 export class vpVisitCreateComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one

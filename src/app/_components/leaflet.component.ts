@@ -1159,10 +1159,11 @@ export class LeafletComponent implements OnInit, OnChanges {
       //We load multiple rows per poolId for visits, reviews, surveys, etc.
       //Don't plot poolIds already plotted in the 'List Pools' view.
       //Do plot the same poolId twice when viewing a single pool - vpMapped and vpVisit coordinates separately.
-      if (('View Visit' != this.itemType && 'Edit Visit' != this.itemType) && this.objPoolIds[vpools[i].poolId]) {
+      if (('View Visit' != this.itemType && 'Edit Visit' != this.itemType && 'Review Visit' != this.itemType)
+          && this.objPoolIds[vpools[i].poolId]) {
         continue;
       } else {
-        this.objPoolIds[vpools[i].poolId] = llLoc;
+        //this.objPoolIds[vpools[i].poolId] = llLoc;
       }
 
       ptRadius = this.GetRadiusForPool(vpools[i]);
@@ -1225,28 +1226,31 @@ export class LeafletComponent implements OnInit, OnChanges {
       //shape.on("click", e => this.onCircleGroupClick(e)); //
 
       this.allGroup.addLayer(shape); //add this marker to the current featureGroup, which is an object with possibly multiple layerGroups by Pool Type or Status
+
       switch (vpools[i].poolStatus) {
         case 'Duplicate':
           this.duplGroup.addLayer(shape);
-          ptCount.duplicate++;
+          if (!this.objPoolIds[vpools[i].poolId]) ptCount.duplicate++;
           break;
         case 'Eliminated':
           this.elimGroup.addLayer(shape);
-          ptCount.eliminated++;
+          if (!this.objPoolIds[vpools[i].poolId]) ptCount.eliminated++;
           break;
         case 'Confirmed':
           this.confGroup.addLayer(shape);
-          ptCount.confirmed++;
+          if (!this.objPoolIds[vpools[i].poolId]) ptCount.confirmed++;
           break;
         case 'Probable':
           this.probGroup.addLayer(shape);
-          ptCount.probable++;
+          if (!this.objPoolIds[vpools[i].poolId]) ptCount.probable++;
           break;
         case 'Potential':
           this.potnGroup.addLayer(shape);
-          ptCount.potential++;
+          if (!this.objPoolIds[vpools[i].poolId]) ptCount.potential++;
           break;
       }
+
+      this.objPoolIds[vpools[i].poolId] = llLoc; //add this poolID to the global object checklist of all poolIDs
 
       var toolText = '';
       toolText += `

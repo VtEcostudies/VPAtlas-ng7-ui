@@ -30,8 +30,9 @@ import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
 
 import { vpVisitListComponent } from './vpvisit';
-import { vpVisitViewComponent } from './vpvisit';
+//import { vpVisitViewComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
+import { vpVisitUploadComponent } from './vpvisit';
 
 import { vpReviewListComponent } from './vpreview';
 import { vpReviewViewComponent } from './vpreview';
@@ -76,8 +77,9 @@ import { UxValuesService } from './_global';
         vpMapCreateComponent,
 
         vpVisitListComponent,
-        vpVisitViewComponent,
+        //vpVisitViewComponent,
         vpVisitCreateComponent,
+        vpVisitUploadComponent,
 
         vpReviewListComponent,
         vpReviewViewComponent,

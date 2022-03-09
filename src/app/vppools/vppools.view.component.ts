@@ -9,7 +9,7 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 import L from "leaflet";
 import { vtTown, vpMapped, vpVisit, vpMappedEventInfo } from '@app/_models';
 import { EmailOrPhone } from '@app/_helpers/email-or-phone.validator';
-import { visitDialogText} from '@app/vpvisit/visitDialogText';
+import { visitDialogText} from '@app/vpvisit/dialogText';
 import { environment } from '@environments/environment';
 import { ModalService } from '@app/_modal';
 

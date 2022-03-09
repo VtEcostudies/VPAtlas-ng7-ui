@@ -9,7 +9,7 @@ import { ModalService } from '@app/_modal';
 import { environment } from '@environments/environment';
 import { reviewDialogText } from '@app/vpreview/dialogText';
 import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
-import { vpVisitViewComponent } from '@app/vpvisit';
+//import { vpVisitViewComponent } from '@app/vpvisit';
 
 @Component({
   templateUrl: 'vpreview.component.html',

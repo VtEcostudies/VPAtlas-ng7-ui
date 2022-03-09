@@ -12,7 +12,7 @@ import { pgApiResults  } from '@app/_models';
 export class vpVisitService {
     constructor(private http: HttpClient) { }
 
-    getOverview(filter: string) { 
+    getOverview(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/pools/visit/overview?${filter}`);
     }
 
@@ -52,5 +52,9 @@ export class vpVisitService {
 
     delete(visitId: number) {
         return this.http.delete<pgApiResults>(`${environment.apiUrl}/pools/visit/${visitId}`);
+    }
+
+    uploadFile(file: any, update: boolean = false) {
+        return this.http.post<any>(`${environment.apiUrl}/pools/visit/upload?update=${update}`, file);
     }
 }

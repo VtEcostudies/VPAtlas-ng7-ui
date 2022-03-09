@@ -18,8 +18,9 @@ import { vpMapCreateComponent } from './vpmapped';
 //import { vpMapUpdateComponent } from './vpmapped';
 
 import { vpVisitListComponent } from './vpvisit';
-import { vpVisitViewComponent } from './vpvisit';
+//import { vpVisitViewComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
+import { vpVisitUploadComponent } from './vpvisit';
 
 import { vpReviewListComponent } from './vpreview';
 import { vpReviewViewComponent } from './vpreview';
@@ -57,6 +58,7 @@ const appRoutes: Routes = [
     { path: 'pools/visit/create', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/visit/create/:poolId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/visit/update/:visitId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
+    { path: 'pools/visit/upload', component: vpVisitUploadComponent, canActivate: [AuthGuard] },
 
     //new UI/UX combining 'Mapped Pools' and 'Pool Visits'
     { path: 'pools/list', component: vpListComponent },

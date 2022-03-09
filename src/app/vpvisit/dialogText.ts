@@ -1,3 +1,31 @@
+/*
+  NOTES:
+
+  - To enable modal dialogs, you must declare the jw-modal in your html source like this:
+
+      <jw-modal id="vpvisit_help_info">
+          <button (click)="closeModal('vpvisit_help_info');">Close</button>
+      </jw-modal>
+
+  - And, you must import the Modal Service like this:
+
+    private modalService: ModalService
+
+  - And, you must inject that service into your Constructor like this:
+
+    ... , private modalService: ModalService, ...
+
+  - And, you must add the following functions to your source js/ts like this:
+
+    openModal(id: string, infoId=null) {
+        console.log('infoId', infoId);
+        this.modalService.open(id, visitDialogText[infoId]);
+    }
+
+    closeModal(id: string) {
+        this.modalService.close(id);
+    }
+*/
 export const visitDialogText = {
 //page 1 Pool-Location
     visitPoolMapped:`
@@ -367,7 +395,7 @@ one vegetation type can be filled in and the sum of the percentages can exceed 1
 <p>Content paragraph...</p>`,
 
 //page 5 Indicator-Species
-    visitSpeciesObserved: `
+visitSpeciesObserved: `
 <h3><u>Indicator Species Observed</u></h3>
 <p>Use amphibian identification aids
 <a target="_blank" href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/volunteer-materials/">
@@ -375,7 +403,7 @@ found here
 </a> to help identify the indicator species using the pool.</p>
 <p>Presence of other amphibian species (such as Eastern Newt or Green Frog) are also noteworthy and should be
 included in the 'Other' row.</p>`,
-    visitAdults: `
+visitAdults: `
 <h3><u>Adults</u></h3>
 <p>
 Please enter the approximate number of adults observed for the amphibians (frogs and salamanders) present.
@@ -383,24 +411,24 @@ Please enter the approximate number of adults observed for the amphibians (frogs
 <p>
 For invertebrates such as fingernail clams and fairy shrimp, mark an 'X' in this column to indicate species present.
 </p>`,
-    visitTadpolesLarvae: `
+visitTadpolesLarvae: `
 <h3><u>Tadpoles/Larvae</u></h3>
 <p>Mark an 'X' in this column to indicate the presence of tadpoles or larvae of each species present.</p>`,
-    visitEggMassNumber: `
+visitEggMassNumber: `
 <h3><u>Egg Mass Number</u></h3>
 <p>Please enter the number of egg masses (not individual embryos) of each species present in the pool.</p>
 <p>Use the dropdown menu in the next column to indicate if the number entered was derived from an actual
 count or an estimate.</p>`,
-    visitEggMassMethod: `
+visitEggMassMethod: `
 <h3><u>Egg Mass Method</u></h3>
 <p>Please use this dropdown menu to indicate if the Egg Mass Number entered in the previous column was derived from
 an actual count or an estimate.</p>`,
-    visitPhotoUpload: `
+visitPhotoUpload: `
 <h3><u>Photo Upload</u></h3>
 <p>Please upload photographs of each indicator species present (egg masses, tadpoles, metamorphs or adults).</p>
 <p>One Photo per species is allowed. In the future, VPAtlas will allow multiple Species Photos.</p>
 `,
-    visitPhotoLinks: `
+visitPhotoLinks: `
 <h3><u>Photo Links</u></h3>
 <p>You may <i>link</i> to Species Photos as well as upload them.</p>
 <p>For example, you may have used iNaturalist to record Species Photos in the field, and wish
@@ -424,7 +452,26 @@ visitFish: `
 <p>Please indicate whether you observed any fish in the pool.</p>`,
 visitFishCount: `
 <h3><u>How Many Fish?</u></h3>
-<p>Please select the value that indicates how many fish were observed.</p>`
+<p>Please select the value that indicates how many fish were observed.</p>
+`,
+visitUserName:`
+<h3><u>Vernal Pool Visit User Name</u></h3>
+<p>Visit User Name is the name of person who uploads Visit data.</p>
+<p>This is not necessarily the same as the Visit Observer User Names, the individuals
+who conducted the field Visit to the Vernal Pool.</p>
+`,
+visitUploadUpdate:`
+<h3><u>OVERWRITE VISIT DATA</u></h3>
+<p></p>
+<p>DO YOU WANT TO OVERWRITE ANY MATCHING VISIT DATA RECORDS WITH UPDATED DATA?</p>
+`,
+visitUploadFile:`
+<h3><u>Vernal Pool Visit Data Upload File</u></h3>
+<p>Select the file on your computer which contains Vernal Pool Visit Data to upload.</p>
+<p>This file must conform exactly to the Visit-data upload file format,
+<a href="https://vpatlas.org/visit_data_upload_format.html">found here.</a>
+</p>
+`
 };
 
 /*
