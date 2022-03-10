@@ -1,0 +1,76 @@
+<div class="row">
+  <div class="col-12">
+    ﻿<h3><u>VPAtlas Uploads</u></h3>
+    <a [routerLink]="['pools/visit/upload']" class="btn btn-link">Upload Visit</a>
+    <a [routerLink]="['survey/upload']" class="btn btn-link">Upload Survey</a>
+    <button (click)="Cancel()" class="btn">Cancel</button>
+    <label><u>Count: {{count}}</u></label>
+  </div>
+</div>
+
+<form [formGroup]="filterForm">
+  <div class="row">
+    <div class="form-group col-2">
+      <label>Username</label>
+      <input (change)="LoadUploads()" type="text" formControlName="username" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Type</label>
+      <input (change)="LoadUploads()" type="text" formControlName="type" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Date</label>
+      <input (change)="LoadUploads()" type="text" formControlName="date" class="form-control"/>
+    </div>
+    <div class="form-group col-2">
+      <label>Status</label>
+      <select (change)="LoadUploads()" formControlName="status" class="form-control">
+        <option *ngFor="let status of statuses" [ngValue]="status">
+          {{ status }}
+        </option>
+      </select>
+    </div>
+    <div class="form-group col-2">
+      <label>Role</label>
+      <select (change)="LoadUploads()" formControlName="role" class="form-control">
+        <option *ngFor="let role of roles" [ngValue]="role">
+          {{ role }}
+        </option>
+      </select>
+    </div>
+  </div>
+</form>
+
+<div class="row">
+  <div class="table-wrapper">
+<table class="table table-striped">
+    <tr>
+      <th>Username</th>
+      <th>First</th>
+      <th>Last</th>
+      <th>Email</th>
+      <th>Alias</th>
+      <th>Status</th>
+      <th>Role</th>
+      <th>Updated</th>
+    </tr>
+    <tr *ngFor="let user of users">
+        <td class="td-large">
+          <!--
+          Could not get td stuyle in styles.css to affect <a> sub-tag having bootstrap class="btn btn-link".
+          Removed those classes, and it worked. Links are fine in table without those classes.
+          -->
+          <a [routerLink]="['/user/profile/update/', user.id]" class="none">{{user.username}}</a>
+        </td>
+        <td class="td-small">{{user.firstname}} </td>
+        <td class="td-small">{{user.lastname}}</td>
+        <td class="td-large">{{user.email}}</td>
+        <td class="td-large">{{user.alias}}</td>
+        <td class="td-small">{{user.status}}</td>
+        <td class="td-small">{{user.userrole}}</td>
+        <td class="td-large">{{user.updatedAt}}</td>
+        <td *ngIf="user.id!=0 && user.id!=currentUser.user.id"><a (click)="deleteUser(user.id, user.username)" class="td-small text-danger">Delete</a></td>
+    </tr>
+</table>
+</div>
+</div> <!-- row -->

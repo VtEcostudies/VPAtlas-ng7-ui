@@ -17,7 +17,7 @@ export class vpMapCreateComponent implements OnInit {
     vpLandOwnForm: FormGroup;
     vpMappedForm: FormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
-    methods = ['Aerial', 'Known', 'Visit']; //https://angular.io/api/forms/SelectControlValueAccessor
+    methods = ['Aerial', 'Known', 'Visit', 'Survey']; //https://angular.io/api/forms/SelectControlValueAccessor
     statuses = ['Potential', 'Probable', 'Confirmed', 'Eliminated', 'Duplicate'];
     towns = [];
     townCount = 0;

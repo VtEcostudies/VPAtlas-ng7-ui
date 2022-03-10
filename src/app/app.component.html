@@ -84,10 +84,22 @@
             <li class="nav-item" *ngIf="userIsAdmin">
               <a class="nav-item nav-link" routerLink="/survey/list">Surveys</a>
             </li>
-
+<!--
             <li class="nav-item" *ngIf="userIsAdmin" >
               <a class="nav-item nav-link" routerLink="/admin" >Admin</a>
             </li>
+-->
+            <li class="nav-item dropdown" *ngIf="userIsAdmin">
+              <a class="nav-link dropdown-toggle"
+                id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Admin
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" routerLink="/users">Users</a>
+                <a class="dropdown-item" routerLink="/uploads">Uploads</a>
+              </div>
+            </li>
+
             <li class="nav-item" *ngIf="!userIsAdmin&&currentUser" >
               <a class="nav-item nav-link" (click)="profile()">Profile</a>
             </li>

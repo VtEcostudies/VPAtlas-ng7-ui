@@ -19,7 +19,7 @@ import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { ResetComponent } from './reset_confirm';
 import { ConfirmComponent } from './reset_confirm';
-import { AdminComponent } from './admin';
+import { UserComponent } from './admin';
 import { ProfileComponent } from './profile';
 
 import { LeafletComponent } from './_components';
@@ -67,7 +67,7 @@ import { UxValuesService } from './_global';
         RegisterComponent,
         ResetComponent,
         ConfirmComponent,
-        AdminComponent,
+        UserComponent,
         ProfileComponent,
         LeafletComponent,
         PopupComponent,

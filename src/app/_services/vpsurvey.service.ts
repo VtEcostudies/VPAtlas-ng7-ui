@@ -12,8 +12,8 @@ import { pgApiResults  } from '@app/_models';
 export class vpSurveyService {
     constructor(private http: HttpClient) { }
 
-    uploadFile(file: any, update: boolean = false) {
-        return this.http.post<any>(`${environment.apiUrl}/survey/upload?update=${update}`, file);
+    uploadFile(file: any, email: string, update: boolean = false) {
+        return this.http.post<any>(`${environment.apiUrl}/survey/upload?surveyUserEmail=${email}&update=${update}`, file);
     }
 
     getPools() {

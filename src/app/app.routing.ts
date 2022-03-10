@@ -5,7 +5,7 @@ import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { ResetComponent } from './reset_confirm';
 import { ConfirmComponent } from './reset_confirm';
-import { AdminComponent } from './admin';
+import { UserComponent } from './admin';
 import { ProfileComponent } from './profile';
 import { AuthGuard } from './_guards';
 
@@ -42,7 +42,7 @@ const appRoutes: Routes = [
     { path: 'confirm/registration', component: LoginComponent },
     { path: 'confirm/email', component: LoginComponent },
     { path: 'confirm/reset', component: ConfirmComponent },
-    { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+    { path: 'users', component: UserComponent, canActivate: [AuthGuard] },
     { path: 'user/profile/view/:userId', component: ProfileComponent },
     { path: 'user/profile/update/:userId', component: ProfileComponent },
     { path: 'user/profile/create', component: ProfileComponent },

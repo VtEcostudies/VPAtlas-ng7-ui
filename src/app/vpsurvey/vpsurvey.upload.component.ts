@@ -118,10 +118,11 @@ export class vpSurveyUploadComponent implements OnInit {
       this.init();
       this.upLoading = true;
       this.update = this.surveyForm.get('surveyUploadUpdate').value;
+      //console.log('CURRENT USER |', this.currentUser);
       var formData: any = new FormData();
       formData.append("surveyUploadFile", this.surveyForm.get('surveyUploadFile').value);
       console.log('UploadSurvey | formData', formData);
-      this.vpSurveyService.uploadFile(formData, this.update)
+      this.vpSurveyService.uploadFile(formData, this.currentUser.email, this.update)
           .pipe(first())
           .subscribe(
               data => {
