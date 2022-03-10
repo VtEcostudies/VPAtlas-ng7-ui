@@ -197,6 +197,18 @@ export class vpSurveyListComponent implements OnInit {
     console.log(this.filter);
   }
 
+  ShowJson(data) {
+    console.log(data);
+    var disp = '';
+    if (typeof data != 'object') {
+      data = JSON.parse(data);
+    }
+    Object.keys(data).forEach(key => {
+      disp += `${key}: ${data[key]}\n`;
+    })
+    alert(disp);
+  }
+
   ShowMacros(data) {
     var disp = '';
     data.split(',').forEach(ele => {
