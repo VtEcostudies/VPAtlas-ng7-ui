@@ -67,7 +67,7 @@
       <th>Type</th>
       <th>Observer/Amphib</th>
       <th>Macros</th>
-      <th>Photo</th>
+<!--      <th>Photo</th> -->
       <th>Photos</th>
     </tr>
     <tr *ngFor="let survey of surveys">
@@ -85,11 +85,13 @@
         <td>{{survey.surveyTypeId}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyAmphib)">{{survey.surveyAmphibObsEmail}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">Macros</td>
+<!--
         <td>
-          <a href="{{survey.surveyPhotoJson.surveyPhotoUrl}}" target=_blank>
-            <img class="survey-list-photo" src="{{survey.surveyPhotoJson.surveyPhotoUrl}}"/>
+          <a href="{{survey.surveyPhotoJson?survey.surveyPhotoJson.surveyPhotoUrl:null}}" target=_blank>
+            <img class="survey-list-photo" src="{{survey.surveyPhotoJson?survey.surveyPhotoJson.surveyPhotoUrl:null}}"/>
           </a>
         </td>
+-->
         <td class="btn-link" (click)="ShowJson(survey.surveyPhotoJson)">Photos</td>
     </tr>
 </table>

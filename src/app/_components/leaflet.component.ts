@@ -620,6 +620,9 @@ export class LeafletComponent implements OnInit, OnChanges {
         case 'Town':
           this.zoomTown(value);
           break;
+        case 'Pool':
+          this.zoomPool(value);
+          break;
         default:
           break;
       }
@@ -649,6 +652,14 @@ export class LeafletComponent implements OnInit, OnChanges {
         }
       }
     })
+  }
+
+  // zoom level 12 to a poolId
+  zoomPool(poolId) {
+    if (this.objPoolIds[poolId]) {
+      const llLoc = this.objPoolIds[poolId];
+      this.map.setView(llLoc, 12);
+    }
   }
 
   zoomLatLon(e=null) {

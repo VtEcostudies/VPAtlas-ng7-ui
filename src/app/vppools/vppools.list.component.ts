@@ -23,6 +23,7 @@ export class vpListComponent implements OnInit {
     page = 1;
     pageSize = 10;
     loadAllRec = true; //flag to load by page or to load all at once
+    zoomFilter = true; //flag to Zoom to selected filters, not filter data
     last = 1;
     count: number = 1;
     filter: string = '';
@@ -121,14 +122,10 @@ export class vpListComponent implements OnInit {
       return type;
     }
 
-    townSelected() { //deprecated. logic moved to loadPools().
+    //respond to a click on the 'Zoom Only' checkbox
+    filterZoom(e) {
+      this.zoomFilter = e.target.checked;
       this.loadPools(1);
-      let townName = this.f.town.value.townName;
-      if ('All' == townName) {
-          this.zoomTo = {option:'Vermont', value:{}};
-      } else {
-        this.zoomTo = {option:'Town', value:townName};
-      }
     }
 
     loadPools(page=0) {
@@ -138,47 +135,44 @@ export class vpListComponent implements OnInit {
       this.uxValuesService.filterUserName = this.f.userName.value;
       this.uxValuesService.filterTown = this.f.town.value;
       this.uxValuesService.filterMappedMethod = this.f.mappedMethod.value;
+
       if (this.loadAllRec) {
-        //this.loadAll();
         this.loadUpdated(this.getType());
       } else {
         if (page) {this.page = page;}
-        //this.loadPage(this.page);
         this.loadUpdated(this.getType(), this.page);
       }
-      //handle special behavior of a selected town.
-      //zoomTo sends message to leaflet map's ngOnChanges to zoom to town, etc.
+      // Handle special zoomTo behavior of a selected town or Pool
+      // zoomTo sends message to leaflet map's ngOnChanges to zoom to town, etc.
       let townName = this.f.town.value.townName;
       if ('All' == townName) {
           this.zoomTo = {option:'Vermont', value:{}};
       } else {
         this.zoomTo = {option:'Town', value:townName};
       }
-
+      if (this.f.poolId.value) {
+        this.zoomTo = {option:'Pool', value: this.f.poolId.value};
+      }
     }
 
     firstPage() {
         this.page=1
-        //this.loadPage(this.page);
         this.loadUpdated(this.getType(), this.page);
     }
 
     nextPage() {
         this.page++;
         if (this.page > this.last) this.page = this.last;
-        //this.loadPage(this.page);
         this.loadUpdated(this.getType(), this.page);
     }
 
     prevPage() {
       this.page--; if (this.page < 1) this.page = 1;
-      //this.loadPage(this.page);
       this.loadUpdated(this.getType(), this.page);
     }
 
     lastPage() {
       this.page = this.last;
-      //this.loadPage(this.page);
       this.loadUpdated(this.getType(), this.page);
     }
 
@@ -192,54 +186,18 @@ export class vpListComponent implements OnInit {
       }
     }
 
-    async loadPage(page) {
-      this.loading = true;
-      this.uxValuesService.getFilter(this.getType());
-      if (this.page < 1) this.page = 1;
-      if (this.page > this.last) this.page = this.last;
-      this.vpPoolsService.getPage(this.page, this.filter)
-          .pipe(first())
-          .subscribe(
-              data => {
-                this.pools = data.rows;
-                this.count = data.rows[0] ? data.rows[0].count : data.rowCount;
-                this.setLast();
-                this.loading = false;
-              },
-              error => {
-                  this.alertService.error(error);
-                  this.loading = false;
-              });
-    }
-
-    async loadAll() {
-      this.loading = true;
-      this.uxValuesService.getFilter(this.getType());
-      this.vpPoolsService.getAll(this.filter)
-          .pipe(first())
-          .subscribe(
-              data => {
-                this.pools = data.rows;
-                this.count = data.rowCount;
-                this.setLast();
-                this.loading = false;
-              },
-              error => {
-                this.alertService.error(error);
-                this.loading = false;
-              });
-    }
-
     /*
       retrieve values of search filter items to pass to loadUpdated
     */
     getSearch() {
-      this.search={};
-      if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
-      if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
-      if (this.f.userName.value) this.search.userName=this.f.userName.value;
-      if (this.f.town.value && this.f.town.value.townName!='All') this.search.town=this.f.town.value.townName;
-      if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
+      this.search = {};
+      if (!this.zoomFilter) {
+        if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
+        if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
+        if (this.f.userName.value) this.search.userName=this.f.userName.value;
+        if (this.f.town.value && this.f.town.value.townName!='All') this.search.town=this.f.town.value.townName;
+        if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
+      }
     }
 
     async loadUpdated(type='all', page=0) {
