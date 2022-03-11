@@ -68,6 +68,7 @@ export class vpListComponent implements OnInit {
       });
       this.mapView = this.uxValuesService.mapView;
       this.loadAllRec = this.uxValuesService.loadAllRec;
+      this.zoomFilter = this.uxValuesService.zoomFilter;
       this.uxValuesService.loadTowns();
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
@@ -125,6 +126,7 @@ export class vpListComponent implements OnInit {
     //respond to a click on the 'Zoom Only' checkbox
     filterZoom(e) {
       this.zoomFilter = e.target.checked;
+      this.uxValuesService.zoomFilter = this.zoomFilter;
       this.loadPools(1);
     }
 

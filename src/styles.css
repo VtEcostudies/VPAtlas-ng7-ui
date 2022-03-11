@@ -250,6 +250,18 @@ label.disabled span.disabled {
   background-color: transparent;
 }
 
+.diamond {
+  background: white;
+  border-right:solid 1px black;
+  border-left:solid 1px black;
+  border-top:solid 1px black;
+  border-bottom:solid 1px black;
+  height: 9px;
+  width:9px;
+  text-align: center;
+  transform:rotate(45deg);
+}
+
 .triangle {
   position: relative;
   top:-12px;

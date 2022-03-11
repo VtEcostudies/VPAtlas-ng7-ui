@@ -32,8 +32,10 @@ export const poolsDialogText = {
   `,
   zoomFilter:`
   <h3><u>Zoom Only</u></h3>
-  <p>Check this box to use the search filters to Zoom to a Pool ID or Town.</p>
-  <p>Un-check this box to use search filters to limit data shown on the map and list views.</p>
+  <p>Check this box to use search filters to Zoom to a Pool ID or Town.</p>
+  <p>
+  Un-check this box to use search filters to limit data shown on the map and in the tabular view to just your search criteria.
+  </p>
   <ul>
     <li>Pool ID: The value must be an exact match. Values are case-sensitive.</li>
     <li>Town: Select a town name to see pools in (or Zoom to) a town.</li>

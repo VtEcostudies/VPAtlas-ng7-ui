@@ -15,6 +15,7 @@ export class UxValuesService {
     public visitPageIndex = 0;
     public baseLayerIndex = 0;
     public pointColorIndex = 0;
+    public smRadius = 5; //plotted pool shape marker radius
     public poolDataType = 'All'; //radio button selection
     public filterPoolId = null;
     public filterVisitId = null;
@@ -34,6 +35,8 @@ export class UxValuesService {
     public zoomCount = 0;
     public zoomUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
     public moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
+
+    public zoomFilter = true; //flag 'Zoom Only' handling of search filters
 
     public pageSize = 12;
     public filter:string = '';

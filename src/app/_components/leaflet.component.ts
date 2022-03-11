@@ -200,7 +200,7 @@ export class LeafletComponent implements OnInit, OnChanges {
           <label style="padding-left:3px;">Confirmed</label>
         </div>
         <div class="row">
-          <div class="square"></div>
+          <div class="diamond"></div>
           <label style="padding-left:3px;">Monitored</label>
         </div>
         <div class="row">
@@ -240,10 +240,10 @@ export class LeafletComponent implements OnInit, OnChanges {
   stateLayer = null; //geoJSON layer of state boundary used for processing
   townLayer = null; //geoJSON layer of all towns used for processing
   townPolygon = null; //single geoJSON polygon of one town to show on the map
-  cmColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
-  cmColor = 0; //current color index
-  cmClrCnt = this.cmColors.length; //(this.cmColors).length();
-  cmRadius = 4 ;
+  smColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
+  smColor = 0; //current color index
+  cmClrCnt = this.smColors.length; //(this.smColors).length();
+  smRadius = 1;
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
       id: 'google.sat', //illegal property
@@ -330,7 +330,8 @@ export class LeafletComponent implements OnInit, OnChanges {
       which holds baseLayers[] array index of last-selected baseLayer.
     */
     this.baseLayer = this.uxValuesService.baseLayerIndex;
-    this.cmColor = this.uxValuesService.pointColorIndex;
+    this.smColor = this.uxValuesService.pointColorIndex;
+    this.smRadius = this.uxValuesService.smRadius;
 
     //console.log(`constructor | baseLayerIndex: ${this.baseLayer}`);
   } //constructor
@@ -340,6 +341,8 @@ export class LeafletComponent implements OnInit, OnChanges {
       this.currentUser = this.authenticationService.currentUserValue.user;
       this.userIsAdmin = this.currentUser.userrole == 'admin';
     } else { this.userIsAdmin = false;}
+
+    this.smRadius = this.uxValuesService.smRadius;
 
     /*
       This resolves errors of an 'already initialized map'.
@@ -654,11 +657,21 @@ export class LeafletComponent implements OnInit, OnChanges {
     })
   }
 
-  // zoom level 12 to a poolId
-  zoomPool(poolId) {
+  /*
+    Zoom to level 15, centered on a poolId, or to values passed-in
+    Incoming 'option' can be a poolId, or an object:
+      {poolId:'KWN123', zoomLevel:12}
+  */
+  zoomPool(option) {
+    var poolId = option;
+    var zoomLevel = 15;
+    if (typeof option === 'object') {
+      poolId = option.poolId;
+      zoomLevel = option.zoomLevel;
+    }
     if (this.objPoolIds[poolId]) {
       const llLoc = this.objPoolIds[poolId];
-      this.map.setView(llLoc, 12);
+      this.map.setView(llLoc, zoomLevel);
     }
   }
 
@@ -835,17 +848,25 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   //set the class value of plotted pool radius relative to zoom level
   async SetPointZoomRadius() {
-    //this.cmRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
-    this.cmRadius = Math.floor(this.zoomLevel/3);
-    //console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'cmRadius', this.cmRadius);
+    //this.smRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
+    //this.smRadius = Math.floor(this.zoomLevel/3);
+    //console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'smRadius', this.smRadius);
+  }
+
+  sliderPointRadius(e) {
+    if (e) {
+      //e.stopPropagation();
+      console.log('sliderPointRadius | e.target.value', e.target.value);
+      this.smRadius = e.target.value;
+      this.uxValuesService.smRadius = this.smRadius;
+      this.setEachPointRadius(this.smRadius);
+    }
   }
 
   //iterate through all plotted pools in the featureGroup and alter each radius
-  setEachPointRadius(radius = this.cmRadius) {
-    var i=0;
-    this.allGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
-      //if (++i < 10) {console.log('leaflet.component.setEachPointRadius', cmLayer)}
-      radius = this.GetRadiusForPool(cmLayer.options); //we hung pool properties on each plotted pool shape for use here
+  setEachPointRadius(radius = this.smRadius) {
+    this.allGroup.eachLayer((cmLayer: L.ShapeMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
+      //radius = this.GetRadiusForPool(cmLayer.options); //we hung pool properties on each plotted pool shape for use here
       cmLayer.setRadius(radius);
     });
   }
@@ -1075,7 +1096,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     This is not curerntly implemented, but should be easily done.
   */
   private GetRadiusForPool(objPool:any) {
-    var radius = this.cmRadius;
+    var radius = this.smRadius;
 
     return radius;
 /*
@@ -1084,13 +1105,13 @@ export class LeafletComponent implements OnInit, OnChanges {
       case '10':
         break;
       case '50':
-        radius = this.cmRadius + 1;
+        radius = this.smRadius + 1;
         break;
       case '100':
-        radius = this.cmRadius + 2;
+        radius = this.smRadius + 2;
         break;
       case '>100':
-        radius = this.cmRadius + 4;
+        radius = this.smRadius + 4;
         break;
     }
     return radius;
@@ -1151,7 +1172,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     if (!Array.isArray(vpools)) {vpools = [vpools];}
 
-    this.SetPointZoomRadius(); //adjust cmRadius to current zoomLevel
+    this.SetPointZoomRadius(); //adjust smRadius to current zoomLevel
 
     for (var i = 0; i < vpools.length; i++) {
 
@@ -1177,7 +1198,7 @@ export class LeafletComponent implements OnInit, OnChanges {
         //this.objPoolIds[vpools[i].poolId] = llLoc;
       }
 
-      ptRadius = this.GetRadiusForPool(vpools[i]);
+      ptRadius = this.smRadius; //this.GetRadiusForPool(vpools[i]);
 
       // set the circleMarker's color based upon poolStatus
       switch (vpools[i].poolStatus) {
@@ -1209,7 +1230,8 @@ export class LeafletComponent implements OnInit, OnChanges {
         for options, shapes, etc.
       */
       if (vpools[i].surveyId) {
-        ptShape = "square";
+        //ptShape = "square";
+        ptShape = "diamond";
       } else if (vpools[i].visitId) {
         ptShape = "triangle";
       } else {
@@ -1303,16 +1325,16 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     //console.log(`changeColor(${index})`);
     if (!index) {
-      this.cmColor++;
-      if (this.cmColor > this.cmClrCnt) {this.cmColor = 0;}
+      this.smColor++;
+      if (this.smColor > this.cmClrCnt) {this.smColor = 0;}
     }
     //console.log(`changeColor(${index})`);
 
     this.allGroup.eachLayer((layer: any) => {
 
-      layer.setStyle({color: this.cmColors[this.cmColor]})
+      layer.setStyle({color: this.smColors[this.smColor]})
     });
 
-    this.uxValuesService.pointColorIndex = this.cmColor; //apply the change to the UX service to preserve value across page loads
+    this.uxValuesService.pointColorIndex = this.smColor; //apply the change to the UX service to preserve value across page loads
   }
 }

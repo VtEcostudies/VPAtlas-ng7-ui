@@ -38,6 +38,11 @@
       <button (click)="uxValuesService.InitZoom()" class="topmost btn btn-link">({{uxValuesService.zoomIndex}}/{{uxValuesService.zoomCount}})</button>
     </div>
   </div>
+  <div class="row slidecontainer">
+    <div class="col-2">
+      <input (input)="sliderPointRadius($event)" type="range" min="1" max="15" value="{{smRadius}}" class="topmost slider" id="ptRadius">
+    </div>
+  </div>
   <!--
   <div class="row">
     <div class="col-2">
@@ -62,15 +67,15 @@
             {{cursorLng.toFixed(6)}}
           </td>
         </tr>
+        <tr>
+          <td style="width: 15%;">Zoom</td>
+          <td style="width: 85%;">
+            {{zoomLevel}}
+          </td>
+        </tr>
       </table>
       <div *ngIf="zoomStats">
         <table class="table table-sm topmost">
-          <tr>
-            <td style="width: 15%;">Zlvl</td>
-            <td style="width: 85%;">
-              {{zoomLevel}}
-            </td>
-          </tr>
           <tr>
             <td style="width: 15%;">Zctr</td>
             <td style="width: 85%;">
