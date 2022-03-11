@@ -26,9 +26,18 @@ export const poolsDialogText = {
   on the map.</p>
   <ul>
     <li>Pool ID: The value must be an exact match. Values are case-sensitive.</li>
+    <li>Town: Select a town name to see pools in (or Zoom to) a town.</li>
     <li>User: Enter a username to see only pools where a user has contributed data.</li>
-    <li>Town: Select a town name to see pools in a town.</li>
-    <li>Method: Select an option to see pools that were discovered by a specific mapping method.</li>
+  </ul>
+  `,
+  zoomFilter:`
+  <h3><u>Zoom Only</u></h3>
+  <p>Check this box to use the search filters to Zoom to a Pool ID or Town.</p>
+  <p>Un-check this box to use search filters to limit data shown on the map and list views.</p>
+  <ul>
+    <li>Pool ID: The value must be an exact match. Values are case-sensitive.</li>
+    <li>Town: Select a town name to see pools in (or Zoom to) a town.</li>
+    <li>User: Enter a username to see only pools where a user has contributed data.</li>
   </ul>
   `,
   recordCount:`

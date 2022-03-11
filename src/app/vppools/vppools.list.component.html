@@ -94,6 +94,7 @@
       <input [checked]="zoomFilter" (change)="filterZoom($event)" type="checkbox" class="radio-button-justify-left"/>
       <span>Zoom Only</span>
     </label>
+    <i (click)="openModal('vppools_help_info', 'zoomFilter')" class="fa fa-info-circle no-margins link"></i>
     <button (click)="ClearFilters()" class="btn btn-link">Clear Search Filters</button>
     <!--
     There's a performance issue here with search filters:
@@ -120,12 +121,6 @@
           </td>
         </tr>
         <tr class="form-group">
-          <td for="userName">User</td>
-          <td>
-            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="userName" class="form-control"/>
-          </td>
-        </tr>
-        <tr class="form-group">
           <td for="town">Town</td>
           <td>
             <select (change)="loadPools(1)" (keyup.delete)="clearTown()" [compareWith]="uxValuesService.compareTownFn" formControlName="town" class="form-control">
@@ -135,6 +130,13 @@
             </select>
           </td>
         </tr>
+        <tr class="form-group">
+          <td for="userName">User</td>
+          <td>
+            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="userName" class="form-control"/>
+          </td>
+        </tr>
+<!--
         <tr class="form-group">
           <td>Method</td>
           <td>
@@ -146,6 +148,7 @@
             </select>
           </td>
         </tr>
+-->
       </table>
     </form>
   </div> <!-- col-2 -->

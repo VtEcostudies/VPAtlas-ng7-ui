@@ -155,7 +155,7 @@ export class vpSurveyListComponent implements OnInit {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `&surveyPoolId=${this.f.surveyPoolId.value.surveyPoolId}`; //exact match
+      this.filter += `surveyPoolId=${this.f.surveyPoolId.value.surveyPoolId}`; //exact match
     }
     if (this.f.surveyUserEmail.value) {
       if (this.filter) {this.filter += `&logical${++i}=AND&`;}
@@ -194,7 +194,7 @@ export class vpSurveyListComponent implements OnInit {
       this.filter += `surveyDateBeg=${this.f.surveyDateBeg.value}&`;
       this.filter += `surveyDateEnd=${this.f.surveyDateEnd.value}`;
     }
-    console.log(this.filter);
+    console.log('vpsurvey.list.component::getFilter', this.filter);
   }
 
   ShowJson(data) {
