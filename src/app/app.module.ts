@@ -23,14 +23,13 @@ import { UserComponent } from './admin';
 import { ProfileComponent } from './profile';
 
 import { LeafletComponent } from './_components';
-import { PopupComponent } from './_components';
+import { LeafletPopupComponent } from './_components';
 
 import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
 
 import { vpVisitListComponent } from './vpvisit';
-//import { vpVisitViewComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
 import { vpVisitUploadComponent } from './vpvisit';
 
@@ -70,7 +69,7 @@ import { UxValuesService } from './_global';
         UserComponent,
         ProfileComponent,
         LeafletComponent,
-        PopupComponent,
+        LeafletPopupComponent,
 
         vpMapListComponent,
         vpMapViewComponent,
@@ -98,7 +97,9 @@ import { UxValuesService } from './_global';
         //fakeBackendProvider // provider used to create fake backend
     ],
     bootstrap: [AppComponent],
-    entryComponents: [PopupComponent]
+    entryComponents: [
+      LeafletPopupComponent
+    ]
 })
 
 export class AppModule { }

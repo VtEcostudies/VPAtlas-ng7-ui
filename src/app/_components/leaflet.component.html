@@ -38,18 +38,7 @@
       <button (click)="uxValuesService.InitZoom()" class="topmost btn btn-link">({{uxValuesService.zoomIndex}}/{{uxValuesService.zoomCount}})</button>
     </div>
   </div>
-  <div class="row slidecontainer">
-    <div class="col-2">
-      <input (input)="sliderPointRadius($event)" type="range" min="1" max="15" value="{{smRadius}}" class="topmost slider" id="ptRadius">
-    </div>
-  </div>
-  <!--
-  <div class="row">
-    <div class="col-2">
-      <button (click)="changeColor($event)" class="topmost btn btn-link">Change Color</button>
-    </div>
-  </div>
-  -->
+
   <div *ngIf="itemType!='Home'" class="row">
     <div class="col-1">
       <table class="table table-sm topmost">
@@ -74,6 +63,7 @@
           </td>
         </tr>
       </table>
+
       <div *ngIf="zoomStats">
         <table class="table table-sm topmost">
           <tr>
@@ -103,6 +93,32 @@
           </tr>
         </table>
       </div> <!-- ngIf=zoomStats -->
+
+    </div> <!-- end col-2 -->
+  </div> <!-- end row -->
+
+  <!-- Point Radius Slider in its own Row. Float-Right in col-12 to push to far side of Map.
+    style="float:left;margin-left:10px;"
+    style="float:right;margin-top:50px;"
+  -->
+  <div class="row">
+    <div class="col-12">
+      <input
+      style="float:right;margin-top:50px;"
+      type="range" min="1" max="20" value="{{smRadius}}" class="topmost vertical-slider" id="ptRadius"
+      title="Move slider to set point size"
+      (input)="sliderRadiusInput($event)"
+      (mousedown)="sliderMouseDown($event)"
+      (mouseup)="sliderMouseUp($event)"
+      >
     </div>
   </div>
+  <!--
+  <div class="row">
+    <div class="col-2">
+      <button (click)="changeColor($event)" class="topmost btn btn-link">Change Color</button>
+    </div>
+  </div>
+  -->
+
 </div>

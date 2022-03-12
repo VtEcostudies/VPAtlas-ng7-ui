@@ -10,3 +10,8 @@
 .map-topfields {
   height: 550px;
 }
+
+.vertical-slider {
+  transform:rotate(270deg);
+  width:60px;
+}

@@ -16,6 +16,7 @@ export class UxValuesService {
     public baseLayerIndex = 0;
     public pointColorIndex = 0;
     public smRadius = 5; //plotted pool shape marker radius
+    public autoRadius = 0; //flag automatic smRadius set from zoomLevel
     public poolDataType = 'All'; //radio button selection
     public filterPoolId = null;
     public filterVisitId = null;

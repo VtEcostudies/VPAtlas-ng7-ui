@@ -6,21 +6,24 @@
 */
 ﻿import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
-import { AuthenticationService, vpPoolsService } from '@app/_services';
-import { vcgiService } from '@app/_services';
+import { AuthenticationService, vpPoolsService, vcgiService } from '@app/_services';
 import { first } from 'rxjs/operators';
 import { UxValuesService } from '@app/_global';
 import { vpMappedEventInfo } from '@app/_models';
 import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
-//import * as $ from "jquery";
-//import * as LP from "leaflet.browser.print";
+/*
+  Leaflet Popup Component - this is used instead of the standard Leaflet popup because we
+  want to use Angular routing, not html href routing, to preserve uxValues across
+  page-loads. This allows us to keep the UX performant.
 
-//import * as turf from '@turf/turf'; //import turf gets an error, so had to use '* from turf'...
+  Links are created in popup.component.html.
+  popup list items are created in buildPopupList, and that html is injected into
 
-//for angular popup
+  Use createLeafletPopup(...) to invoke.
+*/
+import { LeafletPopupComponent } from '@app/_components';
+//Below used here to invoke angular popup 'LeafletPopupComponent'
 import { Injector, ComponentFactoryResolver, ApplicationRef, ComponentRef, ChangeDetectorRef } from "@angular/core";
-import { Router } from '@angular/router';
-import './popup.component.css';
 
 //how to import leaflet module with extensions:
 //https://stackoverflow.com/questions/51679056/add-beautifymarker-plugin-to-ngx-leaflet-project
@@ -29,7 +32,6 @@ import './popup.component.css';
 import "leaflet";
 import "leaflet-svg-shape-markers";
 declare let L;
-
 import { icon, Marker } from 'leaflet';
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -46,87 +48,10 @@ const iconDefault = icon({
 });
 Marker.prototype.options.icon = iconDefault;
 
-
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
 import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
 import towns from '@app/_geojson/Polygon_VT_Town_Boundaries.geo.json';
 import biophysical from '@app/_geojson/Polygon_VT_Biophysical_Regions.geo.json';
-
-/*
-  Popup Component - this is used instead of the standard Leaflet popup because we
-  want to use Angular routing, not html href routing, to preserve uxValues across
-  page-loads. This allows us to keep the UX performant.
-
-  Links are created in popup.component.html.
-  popup list items are created in buildPopupList, and that html is injected into
-
-
-  Use createLeafletPopup(...) to invoke.
-*/
-@Component({
-    selector: 'popup',
-    templateUrl: 'popup.component.html',
-    styleUrls: ['popup.component.css']
-})
-export class PopupComponent {
-  currentUser = null;
-  userIsAdmin = false;
-  userIsOwner = false; //not used here... yet.
-  itemType = '';
-  poolObj: any = {};
-  visits: any = [];
-  reviews: any = [];
-  surveys: any = [];
-  constructor (
-    private authenticationService: AuthenticationService,
-    private router: Router
-  ) {
-    if (this.authenticationService.currentUserValue) {
-      this.currentUser = this.authenticationService.currentUserValue.user;
-      this.userIsAdmin = this.currentUser.userrole == 'admin';
-    }
-  }
-
-  ViewMapped(poolId) {
-    if (poolId) {this.router.navigate([`/pools/mapped/view/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
-  }
-  EditMapped(poolId) {
-    if (poolId) {this.router.navigate([`/pools/mapped/update/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
-  }
-  ViewVisit(visitId, tab=0) {
-    if (visitId) {
-      //this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );
-      var url = `/pools/visit/view/${visitId}?returnUrl=${this.router.url}`;
-      if (tab) {window.open(url, "_blank");}
-      else {this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
-    }
-  }
-  EditVisit(visitId, tab=0) {
-    if (visitId) {
-      //this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );
-      var url = `/pools/visit/update/${visitId}?returnUrl=${this.router.url}`;
-      if (tab) {window.open(url, "_blank");}
-      else {this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
-    }
-  }
-  CreateVisit() {
-    if (this.poolObj.poolId) {
-      this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`], { queryParams: { returnUrl: this.router.url }} );
-    }
-  }
-  ViewReview(reviewId) {
-    if (reviewId) {this.router.navigate([`/review/view/${reviewId}`], { queryParams: { returnUrl: this.router.url }} );}
-  }
-  CreateReview(visitId) {
-    if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
-  }
-  ViewSurvey(surveyId, tab=0) {
-    if (surveyId) {this.router.navigate([`/survey/list/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
-  }
-  ViewSurveyPool(surveyPoolId, tab=0) {
-    if (surveyPoolId) {this.router.navigate([`/survey/pool/${surveyPoolId}`], { queryParams: { returnUrl: this.router.url }} );}
-  }
-}
 
 /*
   Map Component
@@ -184,7 +109,6 @@ export class LeafletComponent implements OnInit, OnChanges {
 
       div.style.backgroundColor = 'white';
 
-
       div.innerHTML = `
       <div class="col-12">
         <div class="row">
@@ -200,12 +124,16 @@ export class LeafletComponent implements OnInit, OnChanges {
           <label style="padding-left:3px;">Confirmed</label>
         </div>
         <div class="row">
-          <div class="diamond"></div>
-          <label style="padding-left:3px;">Monitored</label>
+          <div class="circle" style="background:White;"></div>
+          <label style="padding-left:3px;">Mapped</label>
         </div>
         <div class="row">
           <div class="triangle"><div class="filled"></div></div>
-          <label>Visited</label>
+          <label style="padding-left:3px;">Visited</label>
+        </div>
+        <div class="row">
+          <div class="diamond"></div>
+          <label style="padding-left:3px;">Monitored</label>
         </div>
       </div>
       `;
@@ -213,7 +141,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     }
   }); // end legendControl
 
-  //printControl = LP.control.browserPrint();
   //https://www.w3schools.com/colors/colors_names.asp
   potentialColors = ["Orange"];
   probableColors = ["Cyan"];
@@ -313,8 +240,17 @@ export class LeafletComponent implements OnInit, OnChanges {
       attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     } as any);
 
-    baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-    baseLayers = [this.esriTopo, this.esriWorld, this.openTopo, this.googleSat, this.streets, this.light, this.mapboxSat]; //make esriTopo default b/c openTopo often loads slowly
+//https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_CIR_WM_CACHE/ImageServer
+  vcgiCIR = L.tileLayer('https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_CIR_WM_CACHE/ImageServer/tile/{z}/{y}/{x}', {
+      id: 'vcgi.cir',
+      name: 'VCGI CIR',
+      zIndex: 0,
+      maxZoom: 20,
+      attribution: 'Map data: VCGI Data'
+    } as any);
+
+  baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
+  baseLayers = [this.esriTopo, this.esriWorld, this.openTopo, this.googleSat, this.streets, this.light, this.mapboxSat, this.vcgiCIR]; //make esriTopo default b/c openTopo often loads slowly
 
   constructor(
     public uxValuesService: UxValuesService,
@@ -372,7 +308,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     //baseLayerControl is baseLayers control
     this.baseLayerControl.addTo(this.map);
-    for (var i=0;i<this.baseLayers.length;i++) {
+    for (let i=0;i<this.baseLayers.length;i++) {
       //note: get around TypeScript type-checking by accessing non-declared object .properties in
       //the following way: as ['property']['sub-property'], not array[i].property.sub-property.
       this.baseLayerControl.addBaseLayer(this.baseLayers[i], this.baseLayers[i]['options']['name']);
@@ -808,8 +744,8 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.zoomLevel = this.map.getZoom();
     this.zoomCenter = this.map.getCenter();
     await this.uxValuesService.addPrevZoom(this.map.getZoom(), this.map.getCenter());
-    await this.SetPointZoomRadius();
-    await this.setEachPointRadius();
+    //await this.SetPointZoomRadius();
+    //await this.setEachPointRadius();
     this.uxValuesService.zoomUI=true;
     //console.log(this.getTownsInMapView());
   }
@@ -848,24 +784,33 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   //set the class value of plotted pool radius relative to zoom level
   async SetPointZoomRadius() {
-    //this.smRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
-    //this.smRadius = Math.floor(this.zoomLevel/3);
-    //console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'smRadius', this.smRadius);
+    if (this.uxValuesService.autoRadius) {
+      this.smRadius = this.zoomLevel;
+      //this.smRadius = Math.floor(2 + Math.pow(this.zoomLevel, 2) / 20);
+      //this.smRadius = Math.floor(this.zoomLevel/3);
+      //console.log('leaflet.component.SetPointZoomRadius | zoomLevel: ', this.zoomLevel, 'smRadius', this.smRadius);
+    }
   }
 
-  sliderPointRadius(e) {
-    if (e) {
-      //e.stopPropagation();
-      console.log('sliderPointRadius | e.target.value', e.target.value);
+  sliderRadiusInput(e) {
+    if (e && !this.uxValuesService.autoRadius) {
+      //console.log('sliderPointRadius | e.target.value', e.target.value);
       this.smRadius = e.target.value;
       this.uxValuesService.smRadius = this.smRadius;
       this.setEachPointRadius(this.smRadius);
+      e.stopPropagation();
     }
+  }
+  sliderMouseDown(e) {
+    this.map.dragging.disable();
+  }
+  sliderMouseUp(e) {
+    this.map.dragging.enable();
   }
 
   //iterate through all plotted pools in the featureGroup and alter each radius
   setEachPointRadius(radius = this.smRadius) {
-    this.allGroup.eachLayer((cmLayer: L.ShapeMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
+    this.allGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
       //radius = this.GetRadiusForPool(cmLayer.options); //we hung pool properties on each plotted pool shape for use here
       cmLayer.setRadius(radius);
     });
@@ -884,28 +829,6 @@ export class LeafletComponent implements OnInit, OnChanges {
                                Lat: ${this.itemLoc.lat}<br>
                                Lng: ${this.itemLoc.lng}`);
      }
-
-
-     //using the saved geoJson object of all townLayers, find the town clicked and load/add/show its parcel map
-     //this works really great except a few towns' geoJSON must be bad, or turf.js is bad, and clicking inside
-     //the town does not produce a match...
-     /*
-     var clickLoc = turf.point([e.latlng.lng, e.latlng.lat]);
-     console.log('clicked Location', clickLoc.geometry.coordinates);
-     this.townLayer.eachLayer(layer => {
-       //console.log(layer.feature, clickLoc);
-       if (turf.booleanPointInPolygon(clickLoc, layer.feature)) {
-         const townName = layer.feature.properties.TOWNNAME;
-         console.log('turf.pip found', townName);
-         if (this.uxValuesService.overlaySelected.parcel) {
-           this.addParcelGeoJsonLayer(townName);
-         }
-         if (this.uxValuesService.overlaySelected.town) {
-           this.map.fitBounds(layer.getBounds()); //zoom to town..
-         }
-       }
-     });
-     */
   }
 
   /*
@@ -986,7 +909,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     https://stackoverflow.com/questions/45091330/how-to-spawn-angular-4-component-inside-a-leaflet-markers-popup#45107300
   */
   private createLeafletPopup(poolObj:any = {}, data:any = {}, popList:string = '') {
-    const factory = this.componentFactoryResolver.resolveComponentFactory(PopupComponent);
+    const factory = this.componentFactoryResolver.resolveComponentFactory(LeafletPopupComponent);
     const compRef = factory.create(this.injector);
 
     compRef.instance.poolObj = poolObj;
@@ -1174,7 +1097,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.SetPointZoomRadius(); //adjust smRadius to current zoomLevel
 
-    for (var i = 0; i < vpools.length; i++) {
+    for (let i = 0; i < vpools.length; i++) {
 
       //convert null, undefined, NaN, empty, etc to 0
       vpools[i].latitude = vpools[i].latitude || 0;
