@@ -17,9 +17,10 @@ export class vpSurveyListComponent implements OnInit {
   userIsOwner = false;
   returnUrl = "/pools/list";
   surveys = [];
-  surveyPools = [];
+  surveyPoolIds = [];
   surveyObs = [];
-  surveyTypes = ['All',1,2,3,4,9];
+  surveyYears = [];
+  surveyTypes = []; //['All',1,2,3,4,9];
   count = 0;
   dataLoading = false;
   filterForm: FormGroup = this.formBuilder.group({});
@@ -62,13 +63,15 @@ export class vpSurveyListComponent implements OnInit {
         surveyUserEmail: [this.loadParams.surveyUserEmail],
         surveyTypeId: [this.loadParams.surveyTypeId],
         surveyObserver: [this.loadParams.surveyObserver],
+        surveyYear: [this.loadParams.surveyYear],
         surveyDateBeg: [this.loadParams.surveyDateBeg],
         surveyDateEnd: [this.loadParams.surveyDateEnd]
       });
     await this.setFilterFormValues();
-
-    await this.LoadSurveyPools(); //these are needed to process loadParams
+    await this.LoadSurveyPoolIds(); //these are needed to process loadParams
+    await this.LoadSurveyTypes();
     await this.LoadSurveyObervers();
+    await this.LoadSurveyYears();
 
     this.LoadSurveys();
   }
@@ -79,6 +82,7 @@ export class vpSurveyListComponent implements OnInit {
     this.filterForm.controls['surveyUserEmail'].setValue(this.loadParams.surveyUserEmail);
     this.filterForm.controls['surveyTypeId'].setValue(this.loadParams.surveyTypeId);
     this.filterForm.controls['surveyObserver'].setValue({surveyObserver:this.loadParams.surveyObserver||'All'});
+    this.filterForm.controls['surveyYear'].setValue({surveyYear:this.loadParams.surveyYear||'All'});
     this.filterForm.controls['surveyDateBeg'].setValue(this.loadParams.surveyDateBeg);
     this.filterForm.controls['surveyDateEnd'].setValue(this.loadParams.surveyDateEnd);
   }
@@ -111,14 +115,14 @@ export class vpSurveyListComponent implements OnInit {
             });
   }
 
-  async LoadSurveyPools() {
-    this.surveyService.getPools()
+  LoadSurveyPoolIds() {
+    this.surveyService.getPoolIds()
         .pipe(first())
         .subscribe(
             data => {
-              this.surveyPools = [{surveyPoolId:'All'}];
+              this.surveyPoolIds = [{surveyPoolId:'All'}];
               data.rows.forEach(pool => {
-                this.surveyPools.push(pool);
+                this.surveyPoolIds.push(pool);
               })
             },
             error => {
@@ -126,7 +130,22 @@ export class vpSurveyListComponent implements OnInit {
             });
   }
 
-  async LoadSurveyObervers() {
+  LoadSurveyTypes() {
+    this.surveyService.getTypes()
+        .pipe(first())
+        .subscribe(
+            data => {
+              this.surveyTypes = [{surveyTypeId:'All', surveyTypeName:'All'}];
+              data.rows.forEach(type => {
+                this.surveyTypes.push(type);
+              })
+            },
+            error => {
+                this.alertService.error(error);
+            });
+  }
+
+  LoadSurveyObervers() {
     this.surveyService.getObservers()
         .pipe(first())
         .subscribe(
@@ -134,6 +153,21 @@ export class vpSurveyListComponent implements OnInit {
               this.surveyObs = [{surveyObserver:'All'}];
               data.rows.forEach(obs => {
                 this.surveyObs.push(obs);
+              })
+            },
+            error => {
+                this.alertService.error(error);
+            });
+  }
+
+  LoadSurveyYears() {
+    this.surveyService.getYears()
+        .pipe(first())
+        .subscribe(
+            data => {
+              this.surveyYears = [{surveyYear:'All'}];
+              data.rows.forEach(year => {
+                this.surveyYears.push(year);
               })
             },
             error => {
@@ -166,11 +200,11 @@ export class vpSurveyListComponent implements OnInit {
         this.filter += `surveyUserEmail=${filterValue}`; //exact match
       }
     }
-    if (this.f.surveyTypeId.value && this.f.surveyTypeId.value != 'All') {
+    if (this.f.surveyTypeId.value && this.f.surveyTypeId.value.surveyTypeId != 'All') {
       if (this.filter) {
         this.filter += `&logical${++i}=AND&`;
       }
-      this.filter += `surveyTypeId=${this.f.surveyTypeId.value}`;
+      this.filter += `surveyTypeId=${this.f.surveyTypeId.value.surveyTypeId}`;
     }
     /*
       There is no 'surveyObserver' in vpsurvey. Instead, there is 'surveyAmphibObsEmail' and
@@ -185,6 +219,11 @@ export class vpSurveyListComponent implements OnInit {
       } else {
         this.filter += `surveyObserver=${filterValue}`; //exact match
       }
+    }
+    if (this.f.surveyYear.value && this.f.surveyYear.value.surveyYear != 'All') {
+      if (this.filter) {this.filter += `&logical${++i}=AND&`;}
+      var filterValue = `${this.f.surveyYear.value.surveyYear}`;
+      this.filter += `surveyYear=${filterValue}`; //exact match
     }
     if (this.f.surveyDateBeg.value && this.f.surveyDateEnd.value) {
       if (this.filter) {
@@ -216,19 +255,8 @@ export class vpSurveyListComponent implements OnInit {
     alert(disp);
   }
 
-  ShowMacros(data) {
-    var disp = '';
-    data.split(',').forEach(ele => {
-      disp += ele+'\n';
-    })
-    alert(disp);
-  }
-  ShowAmphib(data) {
-    var disp = '';
-    data.split(',').forEach(ele => {
-      disp += ele+'\n';
-    })
-    alert(disp);
+  Add() {
+    this.router.navigate(['/survey/upload']);
   }
 
   Cancel() {

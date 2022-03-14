@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col-12">
     ﻿<h3><u>VPAtlas Surveys</u></h3>
+    <button (click)="Add()" class="btn btn-primary">Add</button>
     <button (click)="Cancel()" class="btn">Cancel</button>
     <label>Count: {{count}}</label>
   </div>
@@ -11,16 +12,10 @@
       <label>Survey ID</label>
       <input (change)="LoadSurveys()" type="text" formControlName="surveyId" class="form-control"/>
     </div>
-<!--
-    <div class="form-group col-2">
-      <label>Email</label>
-      <input (change)="LoadSurveys()" type="text" formControlName="surveyUserEmail" class="form-control"/>
-    </div>
--->
     <div class="form-group col-2">
       <label>Pool ID</label>
       <select (change)="LoadSurveys()" formControlName="surveyPoolId" class="form-control">
-        <option *ngFor="let pool of surveyPools" [ngValue]="pool">
+        <option *ngFor="let pool of surveyPoolIds" [ngValue]="pool">
           {{ pool.surveyPoolId }}
         </option>
       </select>
@@ -29,7 +24,15 @@
       <label>Survey Type</label>
       <select (change)="LoadSurveys()" formControlName="surveyTypeId" class="form-control">
         <option *ngFor="let type of surveyTypes" [ngValue]="type">
-          {{ type }}
+          {{ type.surveyTypeName }}
+        </option>
+      </select>
+    </div>
+    <div class="form-group col-2">
+      <label>Survey Year</label>
+      <select (change)="LoadSurveys()" formControlName="surveyYear" class="form-control">
+        <option *ngFor="let year of surveyYears" [ngValue]="year">
+          {{ year.surveyYear }}
         </option>
       </select>
     </div>
@@ -62,12 +65,11 @@
     <tr>
       <th>Survey ID</th>
       <th>User</th>
-      <!--<th>Email</th>-->
       <th>Pool ID</th>
       <th>Date</th>
       <th>Time</th>
       <th>Type</th>
-      <th>Observer/Amphib</th>
+      <th>Amphib</th>
       <th>Macros</th>
       <th>Photo</th>
     </tr>
@@ -80,8 +82,8 @@
         <td>{{survey.surveyDate}}</td>
         <td>{{survey.surveyTime}}</td>
         <td>{{survey.surveyTypeName}}</td>
-        <td class="btn-link" (click)="ShowJson(survey.surveyAmphibJson)">Amphibs</td>
-        <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">Macros</td>
+        <td class="btn-link" (click)="ShowJson(survey.surveyAmphibJson)">{{survey.sumAmphib?survey.sumAmphib[0]+'/'+survey.sumAmphib[1]:'0'}}</td>
+        <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">{{survey.sumMacros?survey.sumMacros:'0'}}</td>
         <td *ngIf="survey.surveyPhotoJson">
           <a *ngIf="survey.surveyPhotoJson.surveyPhotoUrl" href="{{survey.surveyPhotoJson.surveyPhotoUrl}}" target=_blank>
             <img class="survey-list-photo" src="{{survey.surveyPhotoJson.surveyPhotoUrl}}"/>

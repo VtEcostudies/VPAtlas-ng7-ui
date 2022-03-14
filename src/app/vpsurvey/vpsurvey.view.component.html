@@ -2,28 +2,147 @@
 <form [formGroup]="vpSurveyForm">
   <div class="row">
     <div class="col-6">
+      <div class="row">
+        <div class="col-8">
+          <h4><u>
+            {{survey.surveyYearJson?survey.surveyYearJson.surveyYear:''}} {{survey.surveyTypeName}} of Pool {{survey.surveyPoolId}}
+          </u></h4>
+        </div>
+        <div class="col-4">
+          <!--
+            Action buttons
+          -->
+          <div class="form-group">
+              <button *ngIf="!viewOnly" [disabled]="dataLoading" class="btn btn-primary" (click)="onSubmit()">Save</button>
+              <button *ngIf="0 && viewOnly && userIsAdmin" [disabled]="dataLoading" class="btn btn-primary" (click)="ToEditMode()">Edit</button>
+              <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+              <button (click)="cancel()" class="btn">Cancel</button>
+              <button *ngIf="update && userIsAdmin" (click)="deleteSurvey()" [disabled]="dataLoading" class="btn">Delete</button>
+          </div>
+        </div>
+      </div> <!-- row -->
 
     <div *ngIf="viewOnly">
-      <h5><u>View Vernal Pool Survey {{survey.surveyId}} of Pool {{survey.surveyPoolId}}</u></h5>
       <p>
         On {{survey.surveyDate}} at {{survey.surveyTime}},
-        {{survey.surveyAmphibObs?survey.surveyAmphibObs[0]:'Unknown Observer 1'}} and
-        {{survey.surveyAmphibObs?survey.surveyAmphibObs[1]:'Unknown Observer 2'}}
+        <u><i>{{survey.surveyAmphibObs?survey.surveyAmphibObs[0]:'Unknown Observer 1'}}</i></u>
+        and
+        <u><i>{{survey.surveyAmphibObs?survey.surveyAmphibObs[1]:'Unknown Observer 2'}}</i></u>
         visited Vernal Pool {{survey.surveyPoolId}} in {{survey.townName}} for the
         {{survey.surveyTypeName}}.
       </p>
-      <p *ngIf="survey.sumAmphib?(!survey.sumAmphib[0]&&!survey.sumAmphib[1]):true">
-        They did not observe indicator species.
-      <p>
-        <p *ngIf="survey.sumAmphib?(survey.sumAmphib[0]||survey.sumAmphib[1]):false">
-        They made the following observations:
-      </p>
-      <p *ngIf="survey.surveyPhotoJson?survey.surveyPhotoJson.surveyPhotoSpecies:false">
+      <p><u><b>
+        They recorded these status items:
+      </b></u></p>
+      <table class="table table-sm">
+        <thead class="scroll-thead">
+          <tr>
+            <th>Item</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody class="scroll-tbody-y table-body">
+          <tr><td>AcousticMonitor	</td>	<td>	{{survey.surveyAcousticMonitor}}	</td></tr>
+          <tr><td>HoboLogger	</td>	<td>	{{survey.surveyHoboLogger}}	</td></tr>
+          <tr><td>HoboData	</td>	<td>	{{survey.surveyHoboData}}	</td></tr>
+          <tr><td>CustomLogger	</td>	<td>	{{survey.surveyCustomLogger}}	</td></tr>
+          <tr><td>IceCover	</td>	<td>	{{survey.surveyIceCover}}	</td></tr>
+          <tr><td>WaterLevel	</td>	<td>	{{survey.surveyWaterLevel}}	</td></tr>
+          <tr><td>SubmergedVeg	</td>	<td>	{{survey.surveySubmergedVeg}}	</td></tr>
+          <tr><td>FloatingVeg	</td>	<td>	{{survey.surveyFloatingVeg}}	</td></tr>
+          <tr><td>EmergentVeg	</td>	<td>	{{survey.surveyEmergentVeg}}	</td></tr>
+          <tr><td>Shrubs	</td>	<td>	{{survey.surveyShrubs}}	</td></tr>
+          <tr><td>Trees	</td>	<td>	{{survey.surveyTrees}}	</td></tr>
+          <tr><td>PhysicalParametersNotes	</td>	<td>	{{survey.surveyPhysicalParametersNotes}}	</td></tr>
+          <tr><td>AirTempF	</td>	<td>	{{survey.surveyAirTempF}}	</td></tr>
+          <tr><td>Humidity	</td>	<td>	{{survey.surveyHumidity}}	</td></tr>
+          <tr><td>WindBeaufort	</td>	<td>	{{survey.surveyWindBeaufort}}	</td></tr>
+          <tr><td>WeatherConditions	</td>	<td>	{{survey.surveyWeatherConditions}}	</td></tr>
+          <tr><td>WeatherNotes	</td>	<td>	{{survey.surveyWeatherNotes}}	</td></tr>
+          <tr><td>Spermatophores	</td>	<td>	{{survey.surveySpermatophores}}	</td></tr>
+          <tr><td>AmphibMacroNotes	</td>	<td>	{{survey.surveyAmphibMacroNotes}}	</td></tr>
+          <tr><td>EdgeVisualImpairment	</td>	<td>	{{survey.surveyEdgeVisualImpairment}}	</td></tr>
+          <tr><td>InteriorVisualImpairment	</td>	<td>	{{survey.surveyInteriorVisualImpairment}}	</td></tr>
+        </tbody>
+      </table>
+      <div *ngIf="survey.sumAmphib?(!survey.sumAmphib[0]&&!survey.sumAmphib[1]):true">
+        <p><u><b>
+        They did not observe Amphibian indicator species.
+        </b></u></p>
+      </div>
+      <div *ngIf="survey.sumAmphib?(survey.sumAmphib[0]||survey.sumAmphib[1]):false">
+        <p><u><b>
+          They observed Amphibian indicator species:
+        </b></u></p>
+        <table class="table table-sm">
+          <thead>
+          <tr>
+            <th>Species</th>
+            <th>{{survey.surveyAmphibObs?survey.surveyAmphibObs[0]:'Observer 1'}} Edge</th>
+            <th>{{survey.surveyAmphibObs?survey.surveyAmphibObs[0]:'Observer 1'}} Interior</th>
+            <th>{{survey.surveyAmphibObs?survey.surveyAmphibObs[1]:'Observer 2'}} Edge</th>
+            <th>{{survey.surveyAmphibObs?survey.surveyAmphibObs[1]:'Observer 2'}} Interior</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr><td>WOFR</td>
+            <td>{{survey.surveyAmphibJson[1].surveyAmphibEdgeWOFR}}</td><td>{{survey.surveyAmphibJson[1].surveyAmphibInteriorWOFR}}</td>
+            <td>{{survey.surveyAmphibJson[2].surveyAmphibEdgeWOFR}}</td><td>{{survey.surveyAmphibJson[2].surveyAmphibInteriorWOFR}}</td>
+          </tr>
+          <tr><td>SPSA</td>
+            <td>{{survey.surveyAmphibJson[1].surveyAmphibEdgeSPSA}}</td><td>{{survey.surveyAmphibJson[1].surveyAmphibInteriorSPSA}}</td>
+            <td>{{survey.surveyAmphibJson[2].surveyAmphibEdgeSPSA}}</td><td>{{survey.surveyAmphibJson[2].surveyAmphibInteriorSPSA}}</td>
+          </tr>
+          <tr><td>JESA</td>
+            <td>{{survey.surveyAmphibJson[1].surveyAmphibEdgeJESA}}</td><td>{{survey.surveyAmphibJson[1].surveyAmphibInteriorJESA}}</td>
+            <td>{{survey.surveyAmphibJson[2].surveyAmphibEdgeJESA}}</td><td>{{survey.surveyAmphibJson[2].surveyAmphibInteriorJESA}}</td>
+          </tr>
+          <tr><td>BLSA</td>
+            <td>{{survey.surveyAmphibJson[1].surveyAmphibEdgeBLSA}}</td><td>{{survey.surveyAmphibJson[1].surveyAmphibInteriorBLSA}}</td>
+            <td>{{survey.surveyAmphibJson[2].surveyAmphibEdgeBLSA}}</td><td>{{survey.surveyAmphibJson[2].surveyAmphibInteriorBLSA}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="survey.sumMacros?(!survey.sumMacros):true">
+        <p><u><b>
+        They did not observe Macroinvertebrates.
+        </b></u></p>
+      </div>
+      <div *ngIf="survey.sumAmphib?(survey.sumMacros):false">
+        <p><u><b>
+        They observed Macroinvertebrates:
+        </b></u></p>
+        <table class="table table-sm">
+          <tr>
+            <th>Species</th><th>North</th><th>East</th><th>South</th><th>West</th><th>Total</th>
+          </tr>
+          <tr>
+            <td>FASH</td>
+            <td>{{survey.surveyMacroJson.surveyMacroNorthFASH}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroEastFASH}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroSouthFASH}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroWestFASH}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroTotalFASH}}</td>
+          </tr>
+          <tr>
+            <td>CDFY</td>
+            <td>{{survey.surveyMacroJson.surveyMacroNorthCDFY}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroEastCDFY}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroSouthCDFY}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroWestCDFY}}</td>
+            <td>{{survey.surveyMacroJson.surveyMacroTotalCDFY}}</td>
+          </tr>
+        </table>
+      </div>
+      <div *ngIf="survey.surveyPhotoJson?survey.surveyPhotoJson.surveyPhotoSpecies:false">
+        <p>
         They took the following photos:
+        </p>
         <a *ngIf="survey.surveyPhotoJson.surveyPhotoUrl" href="{{survey.surveyPhotoJson.surveyPhotoUrl}}" target=_blank>
           <img class="survey-list-photo" src="{{survey.surveyPhotoJson.surveyPhotoUrl}}"/>
         </a>
-      </p>
+      </div>
     </div>
 
     <div *ngIf="!viewOnly && update">
@@ -151,16 +270,6 @@
   </div> <!-- row -->
 </div> <!-- *ngIf -->
 
-      <!--
-        Action buttons
-      -->
-      <div class="form-group">
-          <button *ngIf="!viewOnly" [disabled]="dataLoading" class="btn btn-primary" (click)="onSubmit()">Save</button>
-          <button *ngIf="viewOnly" [disabled]="dataLoading" class="btn btn-primary" (click)="ToEditMode()">Edit</button>
-          <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-          <button (click)="cancel()" class="btn">Cancel</button>
-          <button *ngIf="update && userIsAdmin" (click)="deleteSurvey()" [disabled]="dataLoading" class="btn">Delete</button>
-      </div>
 
     </div> <!-- col-6 -->
 

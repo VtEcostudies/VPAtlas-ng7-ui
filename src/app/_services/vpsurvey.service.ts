@@ -16,16 +16,26 @@ export class vpSurveyService {
         return this.http.post<any>(`${environment.apiUrl}/survey/upload?surveyUserEmail=${email}&update=${update}`, file);
     }
 
-    getPools() {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/pools`);
-    }
-
     getPool(poolId: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/pool/${poolId}`);
     }
 
-    getObservers() {
-        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/observers`);
+    getPoolIds() { //a simple list of Pool IDs for eg. drop-down lists
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/poolids`);
+    }
+
+    getTypes() { //a simple list of Types for eg. drop-down lists
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/types`);
+    }
+
+    getObservers(poolId: string = '') { //a simple list of Observers for eg. drop-down lists
+        var poolFilter = poolId?`?surveyPoolId=${poolId}`:'';
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/observers${poolFilter}`);
+    }
+
+    getYears(poolId: string = '') { //a simple list of Years for eg. drop-down lists
+        var poolFilter = poolId?`?surveyPoolId=${poolId}`:'';
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/years${poolFilter}`);
     }
 
     getAll(filter: string) {
