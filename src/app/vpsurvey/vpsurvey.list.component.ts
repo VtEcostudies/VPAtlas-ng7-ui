@@ -204,7 +204,14 @@ export class vpSurveyListComponent implements OnInit {
       data = JSON.parse(data);
     }
     Object.keys(data).forEach(key => {
-      disp += `${key}: ${data[key]}\n`;
+      if (typeof data[key] == 'object') {
+        var obj = data[key];
+        Object.keys(obj).forEach(cay => {
+          disp += `${key} - ${cay}: ${obj[cay]}\n`;
+        })
+      } else {
+        disp += `${key}: ${data[key]}\n`;
+      }
     })
     alert(disp);
   }

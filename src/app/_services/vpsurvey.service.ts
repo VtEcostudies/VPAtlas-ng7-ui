@@ -20,6 +20,10 @@ export class vpSurveyService {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/pools`);
     }
 
+    getPool(poolId: string) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/pool/${poolId}`);
+    }
+
     getObservers() {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/observers`);
     }

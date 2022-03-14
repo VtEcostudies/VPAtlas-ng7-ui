@@ -26,8 +26,9 @@ import { vpReviewListComponent } from './vpreview';
 import { vpReviewViewComponent } from './vpreview';
 import { vpReviewCreateComponent } from './vpreview';
 
-import { vpSurveyListComponent } from './vpsurvey';
 import { vpSurveyUploadComponent } from './vpsurvey';
+import { vpSurveyListComponent } from './vpsurvey';
+import { vpSurveyViewComponent } from './vpsurvey';
 
 import { vpListComponent } from './vppools';
 import { vpViewComponent } from './vppools';
@@ -74,6 +75,7 @@ const appRoutes: Routes = [
     { path: 'survey/list', component: vpSurveyListComponent },
     { path: 'survey/list/:surveyId', component: vpSurveyListComponent },
     { path: 'survey/pool/:surveyPoolId', component: vpSurveyListComponent },
+    { path: 'survey/view/:surveyId', component: vpSurveyViewComponent },
     { path: 'survey/upload', component: vpSurveyUploadComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home

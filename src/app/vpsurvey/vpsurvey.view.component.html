@@ -1,0 +1,186 @@
+
+<form [formGroup]="vpSurveyForm">
+  <div class="row">
+    <div class="col-6">
+
+    <div *ngIf="viewOnly">
+      <h5><u>View Vernal Pool Survey {{survey.surveyId}} of Pool {{survey.surveyPoolId}}</u></h5>
+      <p>
+        On {{survey.surveyDate}} at {{survey.surveyTime}},
+        {{survey.surveyAmphibObs?survey.surveyAmphibObs[0]:'Unknown Observer 1'}} and
+        {{survey.surveyAmphibObs?survey.surveyAmphibObs[1]:'Unknown Observer 2'}}
+        visited Vernal Pool {{survey.surveyPoolId}} in {{survey.townName}} for the
+        {{survey.surveyTypeName}}.
+      </p>
+      <p *ngIf="survey.sumAmphib?(!survey.sumAmphib[0]&&!survey.sumAmphib[1]):true">
+        They did not observe indicator species.
+      <p>
+        <p *ngIf="survey.sumAmphib?(survey.sumAmphib[0]||survey.sumAmphib[1]):false">
+        They made the following observations:
+      </p>
+      <p *ngIf="survey.surveyPhotoJson?survey.surveyPhotoJson.surveyPhotoSpecies:false">
+        They took the following photos:
+        <a *ngIf="survey.surveyPhotoJson.surveyPhotoUrl" href="{{survey.surveyPhotoJson.surveyPhotoUrl}}" target=_blank>
+          <img class="survey-list-photo" src="{{survey.surveyPhotoJson.surveyPhotoUrl}}"/>
+        </a>
+      </p>
+    </div>
+
+    <div *ngIf="!viewOnly && update">
+
+      <h2><u>Edit VPMon Survey '{{survey.surveyId}}'</u></h2>
+
+    <div class="row">
+      <div class="col-3">
+        <!--
+            surveyId
+        -->
+        <div class="form-group">
+            <label for="surveId">Survey ID</label>
+            <input type="text" size="11" value="{{survey.surveyId}}" class="form-control" disabled />
+        </div>
+      </div> <!-- col-4 -->
+      <div class="col-3">
+        <!--
+            surveyPoolId
+        -->
+        <div class="form-group">
+            <label for="surveyPoolId">Pool ID</label>
+            <input type="text" size="11" formControlName="surveyPoolId" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surveyPoolId.errors }" />
+            <div *ngIf="submitted && f.surveyPoolId.errors" class="invalid-feedback">
+                <div *ngIf="f.surveyPoolId.errors.required">Survey Pool ID is required</div>
+            </div>
+        </div>
+      </div> <!-- col-4 -->
+      <div class="col-3">
+        <!--
+            surveyUserName
+        -->
+        <div class="form-group">
+            <label for="surveyUserName">User</label>
+            <input type="text" size="11" formControlName="surveyUserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surveyUserName.errors }" />
+            <div *ngIf="submitted && f.surveyUserName.errors" class="invalid-feedback">
+                <div *ngIf="f.surveyUserName.errors.required">Survey By User is required</div>
+            </div>
+        </div>
+      </div> <!-- col -->
+    </div> <!-- row -->
+
+    <div class="row">
+      <div class="col-3">
+        <!--
+            surveyDate
+        -->
+        <div class="form-group">
+            <label for="surveyDate">Date</label>
+            <!-- style="width:150px;" -->
+            <input type="date" formControlName="surveyDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surveyDate.errors }" />
+            <div *ngIf="submitted && f.surveyDate.errors" class="invalid-feedback">
+                <div *ngIf="f.surveyDate.errors.required">Survey Date is required</div>
+                <div *ngIf="f.surveyDate.errors.date">Survey Date must be a valid date in the format MM/DD/YYYY</div>
+            </div>
+          </div>
+        </div> <!-- col -->
+    <div class="col-3">
+      <!--
+          surveyTime
+      -->
+      <div class="form-group">
+          <label for="surveyTime">Time</label>
+          <!-- style="width:150px;" -->
+          <input type="time" formControlName="surveyTime" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surveyTime.errors }" />
+          <div *ngIf="submitted && f.surveyTime.errors" class="invalid-feedback">
+              <div *ngIf="f.surveyTime.errors.required">Survey Time is required</div>
+              <div *ngIf="f.surveyTime.errors.time">Survey Time must be a valid time in the format HH:MM</div>
+          </div>
+        </div>
+      </div> <!-- col -->
+      <div class="col-3">
+        <!--
+            surveyType
+        -->
+        <div class="form-group">
+            <label for="surveyType">Type</label>
+            <input type="text" formControlName="surveyType" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surveyType.errors }" />
+            <div *ngIf="submitted && f.surveyType.errors" class="invalid-feedback">
+                <div *ngIf="f.surveyType.errors.required">Survey Type is required</div>
+                <div *ngIf="f.surveyType.errors.date">Survey Type must be a valid type</div>
+            </div>
+          </div>
+        </div> <!-- col -->
+  </div> <!-- row -->
+
+  <div class="row">
+    <div class="col-3">
+      <!--
+        surveyLatitude
+      -->
+      <div class="form-group">
+          <label for="surveyLatitude">Latitude</label>
+          <input type="text" size="11" formControlName="surveyLatitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surveyLatitude.errors }" />
+          <div *ngIf="submitted && f.surveyLatitude.errors" class="invalid-feedback">
+              <div *ngIf="f.surveyLatitude.errors.required">Survey Latitude is required</div>
+          </div>
+      </div>
+    </div> <!-- col -->
+    <div class="col-3">
+      <!--
+        surveyLongitude
+      -->
+      <div class="form-group">
+          <label for="surveyLongitude">Longitude</label>
+          <input type="text" size="11" formControlName="surveyLongitude" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surveyLongitude.errors }" />
+          <div *ngIf="submitted && f.surveyLongitude.errors" class="invalid-feedback">
+              <div *ngIf="f.surveyLongitude.errors.required">Survey Longitude is required</div>
+          </div>
+      </div>
+    </div> <!-- col -->
+    <div class="col-3">
+      <!--
+          mappedPoolStatus
+      -->
+      <div class="form-group">
+          <label for="poolStatus">Pool Status</label>
+          <select formControlName="poolStatus" class="form-control">
+            <option *ngFor="let status of statuses" [ngValue]="status">
+              {{ status }}
+            </option>
+          </select>
+      </div>
+    </div> <!-- col-4 -->
+  </div> <!-- row -->
+</div> <!-- *ngIf -->
+
+      <!--
+        Action buttons
+      -->
+      <div class="form-group">
+          <button *ngIf="!viewOnly" [disabled]="dataLoading" class="btn btn-primary" (click)="onSubmit()">Save</button>
+          <button *ngIf="viewOnly" [disabled]="dataLoading" class="btn btn-primary" (click)="ToEditMode()">Edit</button>
+          <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+          <button (click)="cancel()" class="btn">Cancel</button>
+          <button *ngIf="update && userIsAdmin" (click)="deleteSurvey()" [disabled]="dataLoading" class="btn">Delete</button>
+      </div>
+
+    </div> <!-- col-6 -->
+
+    <div class="col-6">
+      <div *ngIf="!dataLoading">
+        <app-map-comp
+          [mapPoints]="mapPoints"
+          [mapValues]="pool"
+          [itemType]="itemType"
+          [mapMarker]="mapMarker"
+          [locMarker]="locMarker"
+          (markerUpdate)="poolMapUpdate($event)"
+        >
+        </app-map-comp>
+      </div>
+      <div *ngIf="dataLoading">
+        ...Loading
+      </div>
+    </div> <!-- col-6 -->
+
+  </div> <!-- row -->
+
+</form>

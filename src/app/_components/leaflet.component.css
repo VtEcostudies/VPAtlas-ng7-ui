@@ -13,5 +13,45 @@
 
 .vertical-slider {
   transform:rotate(270deg);
-  width:60px;
+  width: 75px;
+}
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 20px; /* Slider handle width */
+  height: 35px; /* Slider handle height */
+  outline: 2px solid grey;
+  border-radius: 10px;
+  border-color: grey;
+  border-width: 2px;
+  background: LightGray;
+}
+.slider::-moz-range-thumb {
+  width: 20px; /* Slider handle width */
+  height: 35px; /* Slider handle height */
+  border-radius: 10px;
+  border-color: grey;
+  border-width: 2px;
+  background: LightGray;
+}
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 75px;
+  height: 20px; /* defines slide bar thickness in all browsers */
+  margin-right: 20px;
+  outline: 1px solid grey;
+  border-radius: 5px;
+}
+.slider-container { /* remove bootstrap 'border-box' to allow alignment of slider to right */
+  -webkit-box-sizing: content-box;
+     -moz-box-sizing: content-box;
+          box-sizing: content-box;
+}
+.slider-container:before,
+.slider-container:after { /* remove bootstrap 'border-box' to allow alignment of slider to right */
+  -webkit-box-sizing: content-box;
+     -moz-box-sizing: content-box;
+          box-sizing: content-box;
 }

@@ -73,26 +73,21 @@
     </tr>
     <tr *ngFor="let survey of surveys">
         <td>
-          <!--
           <a [routerLink]="['/survey/view/', survey.surveyId]" class="btn btn-link">{{survey.surveyId}}</a>
-          -->
-          {{survey.surveyId}}
         </td>
-        <td>{{survey.username}}</td>
-        <!--<td>{{survey.surveyUserEmail}}</td>-->
+        <td>{{survey.surveyUserName}}</td>
         <td>{{survey.surveyPoolId}}</td>
         <td>{{survey.surveyDate}}</td>
         <td>{{survey.surveyTime}}</td>
-        <td>{{survey.surveyTypeId}}</td>
-        <td class="btn-link" (click)="ShowJson(survey.surveyAmphib)">Amphibs</td>
+        <td>{{survey.surveyTypeName}}</td>
+        <td class="btn-link" (click)="ShowJson(survey.surveyAmphibJson)">Amphibs</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">Macros</td>
         <td *ngIf="survey.surveyPhotoJson">
           <a *ngIf="survey.surveyPhotoJson.surveyPhotoUrl" href="{{survey.surveyPhotoJson.surveyPhotoUrl}}" target=_blank>
             <img class="survey-list-photo" src="{{survey.surveyPhotoJson.surveyPhotoUrl}}"/>
           </a>
         </td>
-        <td class="survey-list-photo" *ngIf="!survey.surveyPhotoJson">
-        </td>
+        <td *ngIf="!survey.surveyPhotoJson"></td>
     </tr>
 </table>
 </div> <!-- row -->
