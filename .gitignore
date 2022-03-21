@@ -1,8 +1,5 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
-
-#temporarily ignore package*.json for angular updates...
-package.json
-package-lock.json
+.angular
 
 # compiled output
 #/dist
