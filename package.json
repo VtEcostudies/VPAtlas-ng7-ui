@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "@angular/animations": "^12.2.16",
     "@angular/cdk": "^11.2.2",
     "@angular/common": "^12.2.16",
@@ -19,6 +20,16 @@
     "@angular/platform-browser": "^12.2.16",
     "@angular/platform-browser-dynamic": "^12.2.16",
     "@angular/router": "^12.2.16",
+=======
+    "@angular/animations": "^13.3.0",
+    "@angular/cdk": "^12.2.13",
+    "@angular/common": "^13.3.0",
+    "@angular/core": "^13.3.0",
+    "@angular/forms": "^13.3.0",
+    "@angular/platform-browser": "^13.3.0",
+    "@angular/platform-browser-dynamic": "^13.3.0",
+    "@angular/router": "^13.3.0",
+>>>>>>> 0b59e11 (more updates)
     "@turf/turf": "^6.3.0",
     "@types/leaflet": "1.5.23",
     "ajv": "^7.1.1",
