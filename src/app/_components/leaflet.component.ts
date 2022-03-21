@@ -152,8 +152,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   potnGroup = L.featureGroup(null, {name:'Potential', id:'potential'});
   probGroup = L.featureGroup(null, {name:'Probable', id:'probable'});
   confGroup = L.featureGroup(null, {name:'Confirmed', id:'confirmed'});
-  elimGroup = L.featureGroup(null, {name:'Duplicate', id:'duplicate'});
-  duplGroup = L.featureGroup(null, {name:'Eliminated', id:'eliminated'});
+  duplGroup = L.featureGroup(null, {name:'Duplicate', id:'duplicate'});
+  elimGroup = L.featureGroup(null, {name:'Eliminated', id:'eliminated'});
   statusGroups = [
     {group:this.potnGroup, name:'Potential', id:'potential'},
     {group:this.probGroup, name:'Probable', id:'probable'},
