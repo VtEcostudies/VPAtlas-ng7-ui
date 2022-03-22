@@ -169,7 +169,7 @@ An incorrect email address will require administrator assistance to correct.`
                               this.authenticationService.logout();
                               this.email_reset=true;
                             } else {
-                              this.router.navigate(['/admin']);
+                              this.router.navigate(['/users']);
                             }
                           },
                           error => {
@@ -178,7 +178,7 @@ An incorrect email address will require administrator assistance to correct.`
                           });
                       } else {
                         this.loading=false;
-                        this.router.navigate(['/admin']);
+                        this.router.navigate(['/users']);
                       }
                 },
                 error => {
@@ -204,7 +204,7 @@ An incorrect email address will require administrator assistance to correct.`
           .subscribe(
               data => {
                 this.loading=false;
-                this.router.navigate(['/admin']);
+                this.router.navigate(['/users']);
               },
               error => {
                   this.alertService.error(error);
@@ -213,6 +213,6 @@ An incorrect email address will require administrator assistance to correct.`
     }
 
     cancel() {
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/users']);
     }
 }
