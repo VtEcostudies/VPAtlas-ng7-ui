@@ -71,7 +71,7 @@
       <th>Type</th>
       <th>Amphib</th>
       <th>Macros</th>
-      <th>Photo</th>
+      <th>Photos</th>
     </tr>
     <tr *ngFor="let survey of surveys">
         <td>
@@ -84,9 +84,9 @@
         <td>{{survey.surveyTypeName}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyAmphibJson)">{{survey.sumAmphib?survey.sumAmphib[0]+'/'+survey.sumAmphib[1]:'0'}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">{{survey.sumMacros?survey.sumMacros:'0'}}</td>
-        <td *ngIf="survey.surveyPhotoJson">
-          <a *ngIf="survey.surveyPhotoJson.surveyPhotoUrl" href="{{survey.surveyPhotoJson.surveyPhotoUrl}}" target=_blank>
-            <img class="survey-list-photo" src="{{survey.surveyPhotoJson.surveyPhotoUrl}}"/>
+        <td *ngFor="let url of survey.surveyPhotoUrls">
+          <a href="{{url}}" target=_blank>
+            <img class="survey-list-photo" src="{{url}}"/>
           </a>
         </td>
         <td *ngIf="!survey.surveyPhotoJson"></td>
