@@ -11,6 +11,7 @@ import { User, Auth } from '@app/_models';
 export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<Auth>;
     public currentUser: Observable<Auth>;
+    //public currentSettings: Observable<any>;
 
     constructor(
       private http: HttpClient,

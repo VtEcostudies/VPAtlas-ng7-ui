@@ -85,8 +85,8 @@
           <tr>
             <th>Survey ID</th>
             <th>Survey Pool ID</th>
-            <th>S123 Global ID</th>
             <th>S123 Object ID</th>
+            <th>S123 Global ID</th>
             <th>S123 Attachments</th>
             <th>Updated?</th>
           </tr>
@@ -94,13 +94,19 @@
         <tbody>
           <tr *ngFor="let survey of s123results">
               <td>
-                <a [routerLink]="['/survey/list', survey.data.surveyId]" target='_blank' class="btn btn-link">{{survey.data.surveyId}}</a>
+                <a [routerLink]="['/survey/list', survey.data.surveyId]" class="btn btn-link">{{survey.data.surveyId}}</a>
               </td>
               <td>
-                <a [routerLink]="['/survey/pool', survey.data.surveyPoolId]" target='_blank' class="btn btn-link">{{survey.data.surveyPoolId}}</a>
+                <a [routerLink]="['/survey/pool', survey.data.surveyPoolId]" class="btn btn-link">{{survey.data.surveyPoolId}}</a>
               </td>
-              <td>{{survey.data.surveyGlobalId}} </td>
-              <td>{{survey.data.surveyObjectId}} </td>
+              <td *ngIf="survey.data.surveyDataUrl">
+                <a href="{{survey.data.surveyDataUrl?(survey.data.surveyDataUrl.split('?')[0]):null}}"
+                target="_blank" class="btn btn-link">{{survey.data.surveyObjectId}}</a>
+              </td>
+              <td *ngIf="!survey.data.surveyDataUrl">
+                {{survey.data.surveyObjectId}}
+              </td>
+              <td>{{survey.data.surveyGlobalId}}</td>
               <td>{{survey.attachments.length?survey.attachments.length:0}} </td>
               <td>{{survey.data.updated}} </td>
           </tr>

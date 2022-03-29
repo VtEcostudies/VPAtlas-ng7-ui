@@ -81,8 +81,11 @@
         <td>
           <a [routerLink]="['/survey/view/', survey.surveyId]" class="btn btn-link">{{survey.surveyId}}</a>
         </td>
-        <td>
-          <a href="{{survey.surveyDataUrl}}" class="btn btn-link">{{survey.surveyObjectId}}</a>
+        <td *ngIf="userIsAdmin">
+          <a href="{{survey.surveyDataUrl?(survey.surveyDataUrl.split('?')[0]):null}}" target="_blank" class="btn btn-link">{{survey.surveyObjectId}}</a>
+        </td>
+        <td *ngIf="!userIsAdmin">
+          {{survey.surveyObjectId}}
         </td>
         <td>{{survey.surveyUserName}}</td>
         <td>{{survey.surveyPoolId}}</td>
@@ -92,7 +95,7 @@
         <td class="btn-link" (click)="ShowJson(survey.surveyAmphibJson)">{{survey.sumAmphib?survey.sumAmphib[0]+'/'+survey.sumAmphib[1]:'0'}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">{{survey.sumMacros?survey.sumMacros:'0'}}</td>
         <td *ngFor="let url of survey.surveyPhotoUrls">
-          <a href="{{url}}" target=_blank>
+          <a href="{{url}}">
             <img class="survey-list-photo" src="{{url}}"/>
           </a>
         </td>

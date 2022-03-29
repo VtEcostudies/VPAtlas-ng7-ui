@@ -1024,12 +1024,15 @@ export class vpVisitCreateComponent implements OnInit {
     weird API/DB error trying to set the value of just one column:
     update vpvisit set ("visitPoolPhoto") = ($2) where "visitId"=$1 returning "visitId"
     error: source for a multiple-column UPDATE item must be a sub-SELECT or ROW() expression
-    taking the set values out of parenthesis allows the query to succeed.
+
+    ->Taking the set values out of parenthesis allows the query to succeed.
+    ->Adding another column to the update allows the query to succeed:
+      -added 'visitUserName' to the update so it will succeed
     */
     var objUpd:any = {};
 
     objUpd[`visit${type}Photo`] = this.ImgUrl(type, iter);
-    objUpd.visitIdLegacy = this.visit.visitIdLegacy;
+    objUpd.visitUserName = this.visit.visitUserName;
 
     this.visit[`visit${type}Photo`] = objUpd[`visit${type}Photo`]; //set local variable for display update
 

@@ -85,8 +85,8 @@
           <tr>
             <th>Visit ID</th>
             <th>Visit Pool ID</th>
-            <th>S123 Global ID</th>
             <th>S123 Object ID</th>
+            <th>S123 Global ID</th>
             <th>S123 Attachments</th>
             <th>Updated?</th>
           </tr>
@@ -99,8 +99,14 @@
               <td>
                 <a [routerLink]="['/pools/list', visit.data.visitPoolId]" target='_blank' class="btn btn-link">{{visit.data.visitPoolId}}</a>
               </td>
+              <td *ngIf="visit.data.visitDataUrl">
+                <a href="{{visit.data.visitDataUrl?(visit.data.visitDataUrl.split('?')[0]):null}}"
+                target="_blank" class="btn btn-link">{{visit.data.visitObjectId}}</a>
+              </td>
+              <td *ngIf="!visit.data.visitDataUrl">
+                {{visit.data.visitObjectId}}
+              </td>
               <td>{{visit.data.visitGlobalId}} </td>
-              <td>{{visit.data.visitObjectId}} </td>
               <td>{{visit.attachments.length?visit.attachments.length:0}} </td>
               <td>{{visit.data.updated}} </td>
           </tr>

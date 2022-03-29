@@ -23,10 +23,9 @@ export class UxValuesService {
     public filterUserName = null
     public filterTown = {townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null};
     public filterMappedMethod = "";
-    public poolListViewType = 0; //0:Map View, 1:Table View
     public overlaySelected = {'potential':1, 'probable':1, 'confirmed':1, 'duplicate':0, 'eliminated':0,
                               'state':0, 'county':0, 'town':0, 'biophysical':0, 'parcel':0};
-    public mapView = true;
+    public mapView = true; // true:Map View, false:Table View
     public loadAllRec = true;
 
     public vtCenter = {lat:43.916944,lng:-72.668056};
@@ -48,6 +47,8 @@ export class UxValuesService {
     public parcels:any = {}; //an object of geoJson town parcel layers by town name
     public geoLayers:any = {}; //an object of geoJson useful boundaries by layer name (State, County, Town, Biophysical, ...)
 
+    public userContext:any = {};
+
     constructor(
       private authenticationService: AuthenticationService,
       private vpPoolsService: vpPoolsService,
@@ -59,13 +60,31 @@ export class UxValuesService {
         this.currentUser = this.authenticationService.currentUserValue.user;
         this.userIsAdmin = this.currentUser.userrole == 'admin';
       }
+      //this.getUserContext();
       console.log('****************************UXVALUES CONSTRUCTOR****************************')
     }
-
+/*
+    public setUserContext() {
+      this.userContext.smRadius = this.smRadius;
+      localStorage.setItem('userContext', JSON.stringify(this.userContext));
+    }
+    public getUserContext() {
+      this.userContext = JSON.parse(localStorage.getItem('userContext'));
+      if (this.userContext) {
+        this.updUserContext();
+      } else {
+        this.setUserContext();
+        this.userContext = JSON.parse(localStorage.getItem('userContext'));
+        this.updUserContext();
+      }
+    }
+    public updUserContext() {
+      this.smRadius = this.userContext.smRadius;
+    }
+*/
     /*
       updateData is called after loading 'updates' from the API
       transfer new and changed data in 'pools' to global this.data for use by the map/table
-
     */
     updateData(type='all', pools:any) {
       type = 'all';

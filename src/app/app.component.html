@@ -1,8 +1,8 @@
 ﻿<!-- nav -->
-<div *ngIf="dev_mode" class="row dev-background">
+<div *ngIf="bannerMessage" class="row dev-background">
   <div class="col-2"></div>
   <div class="col-8">
-    THE VPATLAS SERVER WAS UPDATED ON 2022-03-25 TO VERSION 2. Note new Survey data, menu items, and map features.
+    {{bannerMessage}}
   </div>
   <div class="col-2"></div>
 </div>
