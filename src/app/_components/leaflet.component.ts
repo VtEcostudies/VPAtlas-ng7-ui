@@ -92,8 +92,8 @@ export class LeafletComponent implements OnInit, OnChanges {
   cursorLng = 0; //value for map display of cursor longitude location on map
   zoomLevel = 0; //global value that tracks the map zoomLevel
   zoomCenter = this.vtCenter; //global value that tracks the map zoomCenter
-  zoomStatus = false; //flag to show zoom stats
-
+  zoomStats = true; //flag to show zoom stats
+    
   /*
     https://leafletjs.com/reference-1.5.0.html#domevent eg. L.DomEvent.on(div, 'click', e => onDivClick(e))
     https://leafletjs.com/reference-1.5.0.html#domutil
@@ -170,7 +170,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   smColors = ["blue", "#f5d108","#800000","yellow","orange","purple","cyan","grey"];
   smColor = 0; //current color index
   cmClrCnt = this.smColors.length; //(this.smColors).length();
-  smRadius = 1;
+  smRadius = 1; //this is initialized in uxvalues.service
   googleSat = L.tileLayer("https://{s}.google.com/vt/lyrs=s,h&hl=tr&x={x}&y={y}&z={z}",
     {
       id: 'google.sat', //illegal property

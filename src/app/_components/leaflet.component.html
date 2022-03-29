@@ -39,20 +39,18 @@
     </div>
   </div>
 
-  <div *ngIf="itemType!='Home'" class="row">
+  <div *ngIf="itemType!='Home' && zoomStats" class="row">
     <div class="col-1">
       <table class="table table-sm topmost">
         <tr>
           <td style="width: 15%;">Lat</td>
           <td style="width: 85%;">
-            <!--<input value="{{cursorLat.toFixed(6)}}" disabled=true size="7" />-->
             {{cursorLat.toFixed(6)}}
           </td>
         </tr>
         <tr>
           <td style="width: 15%;">Lon</td>
           <td style="width: 85%;">
-            <!--<input value="{{cursorLng.toFixed(6)}}" disabled=true size="7" />-->
             {{cursorLng.toFixed(6)}}
           </td>
         </tr>
@@ -62,45 +60,17 @@
             {{zoomLevel}}
           </td>
         </tr>
+        <tr>
+          <td style="width: 15%;">Radius</td>
+          <td style="width: 85%;">
+            {{smRadius}}
+          </td>
+        </tr>
       </table>
-
-      <div *ngIf="zoomStats">
-        <table class="table table-sm topmost">
-          <tr>
-            <td style="width: 15%;">Zctr</td>
-            <td style="width: 85%;">
-              {{zoomCenter.lat.toFixed(6)}}
-              {{zoomCenter.lng.toFixed(6)}}
-            </td>
-          </tr>
-          <tr>
-            <td style="width: 15%;">Rad</td>
-            <td style="width: 85%;">
-              {{cmRadius}}
-            </td>
-          </tr>
-          <tr>
-            <td style="width: 15%;">Zidx</td>
-            <td style="width: 85%;">
-              {{uxValuesService.zoomIndex}}
-            </td>
-          </tr>
-          <tr>
-            <td style="width: 15%;">Zcnt</td>
-            <td style="width: 85%;">
-              {{uxValuesService.zoomCount}}
-            </td>
-          </tr>
-        </table>
-      </div> <!-- ngIf=zoomStats -->
 
     </div> <!-- end col-2 -->
   </div> <!-- end row -->
 
-  <!-- Point Radius Slider in its own Row. Float-Right in col-12 to push to far side of Map.
-    style="float:left;margin-left:10px;"
-    style="float:right;margin-top:50px;"
-  -->
   <div class="row">
     <div class="col-12 slider-container" style="float:right;">
       <input
@@ -113,12 +83,5 @@
       >
     </div>
   </div>
-  <!--
-  <div class="row">
-    <div class="col-2">
-      <button (click)="changeColor($event)" class="topmost btn btn-link">Change Color</button>
-    </div>
-  </div>
-  -->
 
 </div>

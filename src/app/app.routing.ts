@@ -17,16 +17,18 @@ import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
 //import { vpMapUpdateComponent } from './vpmapped';
 
+import { vpVisitUploadComponent } from './vpvisit';
+import { vpVisitS123LoadComponent } from './vpvisit';
 import { vpVisitListComponent } from './vpvisit';
 //import { vpVisitViewComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
-import { vpVisitUploadComponent } from './vpvisit';
 
 import { vpReviewListComponent } from './vpreview';
 import { vpReviewViewComponent } from './vpreview';
 import { vpReviewCreateComponent } from './vpreview';
 
 import { vpSurveyUploadComponent } from './vpsurvey';
+import { vpSurveyS123LoadComponent } from './vpsurvey';
 import { vpSurveyListComponent } from './vpsurvey';
 import { vpSurveyViewComponent } from './vpsurvey';
 
@@ -60,6 +62,7 @@ const appRoutes: Routes = [
     { path: 'pools/visit/create/:poolId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/visit/update/:visitId', component: vpVisitCreateComponent, canActivate: [AuthGuard] },
     { path: 'pools/visit/upload', component: vpVisitUploadComponent, canActivate: [AuthGuard] },
+    { path: 'pools/visit/s123load', component: vpVisitS123LoadComponent, canActivate: [AuthGuard] },
 
     //new UI/UX combining 'Mapped Pools' and 'Pool Visits'
     { path: 'pools/list', component: vpListComponent },
@@ -77,6 +80,7 @@ const appRoutes: Routes = [
     { path: 'survey/pool/:surveyPoolId', component: vpSurveyListComponent },
     { path: 'survey/view/:surveyId', component: vpSurveyViewComponent },
     { path: 'survey/upload', component: vpSurveyUploadComponent, canActivate: [AuthGuard] },
+    { path: 'survey/s123load', component: vpSurveyS123LoadComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' } //comment this to debug

@@ -1,0 +1,139 @@
+<jw-modal id="vpvisit_help_info">
+    <button (click)="closeModal('vpvisit_help_info');">Close</button>
+</jw-modal>
+
+<div class="row">
+  <div class="col-4">
+    <div style="display:inline-block;">
+      <h5><b>Load VPVisit Survey123 Data from API</b></h5>
+    </div>
+  </div> <!-- col -->
+</div> <!-- row -->
+
+<form [formGroup]="visitForm">
+
+  <div class="row">
+    <div class="col-4">
+
+      <div class="row">
+        <div class="form-group form-inline">
+            <label for="visitS123LoadUpdate">Overwrite existing visit data?</label>
+            <i (click)="openModal('vpvisit_help_info', 'visitS123LoadUpdate')" class="fa fa-info-circle no-margins link"></i>
+            <input type="checkbox" formControlName="visitS123LoadUpdate" />
+            <label>Yes</label>
+        </div>
+      </div> <!-- sub-row -->
+
+      <div class="row"> <!-- sub-row -->
+        <label class="col-sm-2" for="visitS123LoadOffset">Offset</label>
+        <i class="fa fa-info-circle no-margins link" (click)="openModal('vpvisit_help_info', 'visitS123Load_Offset')"></i>
+        <div class="col-sm-3">
+          <input class="form-control" type="number" min="1" max="1000" formControlName="visitS123LoadOffset" />
+        </div>
+
+        <label class="col-sm-2" for="visitS123LoadLimit">Limit</label>
+        <i class="fa fa-info-circle no-margins link" (click)="openModal('vpvisit_help_info', 'visitS123Load_Limit')"></i>
+        <div class="col-sm-3">
+          <input class="form-control" type="number" min="1" max="500" formControlName="visitS123LoadLimit" />
+        </div>
+      </div> <!-- sub-row -->
+
+    </div> <!-- main col-3 -->
+
+    <div class="col-4">
+      <!--
+        Action buttons
+      -->
+      <div class="form-group">
+          <button [disabled]="" class="btn btn-primary btn-default" (click)="S123LoadVisits()">Load Data</button>
+          <img *ngIf="upLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+          <button (click)="AbortS123Load()" class="btn">Abort</button>
+          <button (click)="CancelS123Load()" class="btn">Cancel</button>
+      </div>
+    </div>
+    <div class="col-4" *ngIf="s123counts">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <td>Success</td>
+            <td>Errors</td>
+            <td>Target</td>
+            <td>Total</td>
+            <td>Aborted</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{s123counts.success}}</td>
+            <td>{{s123counts.errors}}</td>
+            <td>{{s123counts.target}}</td>
+            <td>{{s123counts.total}}</td>
+            <td>{{s123counts.aborted}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div> <!-- col-9 -->
+    <hr>
+  </div> <!-- row -->
+
+</form> <!-- visitVisitForm -->
+
+  <div class="row">
+    <div class="col-12" *ngIf="s123results.length>0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Visit ID</th>
+            <th>Visit Pool ID</th>
+            <th>S123 Global ID</th>
+            <th>S123 Object ID</th>
+            <th>S123 Attachments</th>
+            <th>Updated?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let visit of s123results">
+              <td>
+                <a [routerLink]="['/pools/visit/view', visit.data.visitId]" target='_blank' class="btn btn-link">{{visit.data.visitId}}</a>
+              </td>
+              <td>
+                <a [routerLink]="['/pools/list', visit.data.visitPoolId]" target='_blank' class="btn btn-link">{{visit.data.visitPoolId}}</a>
+              </td>
+              <td>{{visit.data.visitGlobalId}} </td>
+              <td>{{visit.data.visitObjectId}} </td>
+              <td>{{visit.attachments.length?visit.attachments.length:0}} </td>
+              <td>{{visit.data.updated}} </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> <!-- sub-col, sub-row -->
+
+  <div class="row">
+    <div class="col-12" *ngIf="s123errors.length>0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Object ID</th>
+            <th>Name</th>
+            <th>Message</th>
+            <th>Table</th>
+            <th>Column</th>
+            <th>Routine</th>
+          </tr>
+        </thead>
+        <thead>
+          <tr *ngFor="let error of s123errors">
+              <td>
+                <a href="{{error.dataUrl}}" target="_blank" class="btn btn-link">{{error.objectId}}</a>
+              </td>
+              <td>{{error.name}} </td>
+              <td>{{error.hint}} </td>
+              <td>{{error.table}} </td>
+              <td>{{error.column}} </td>
+              <td>{{error.routine}} </td>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div> <!-- sub-col, sub-row -->

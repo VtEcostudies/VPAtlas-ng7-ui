@@ -29,15 +29,17 @@ import { vpMapListComponent } from './vpmapped';
 import { vpMapViewComponent } from './vpmapped';
 import { vpMapCreateComponent } from './vpmapped';
 
+import { vpVisitUploadComponent } from './vpvisit';
+import { vpVisitS123LoadComponent } from './vpvisit';
 import { vpVisitListComponent } from './vpvisit';
 import { vpVisitCreateComponent } from './vpvisit';
-import { vpVisitUploadComponent } from './vpvisit';
 
 import { vpReviewListComponent } from './vpreview';
 import { vpReviewViewComponent } from './vpreview';
 import { vpReviewCreateComponent } from './vpreview';
 
 import { vpSurveyUploadComponent } from './vpsurvey';
+import { vpSurveyS123LoadComponent } from './vpsurvey';
 import { vpSurveyListComponent } from './vpsurvey';
 import { vpSurveyViewComponent } from './vpsurvey';
 
@@ -76,16 +78,18 @@ import { UxValuesService } from './_global';
         vpMapViewComponent,
         vpMapCreateComponent,
 
+        vpVisitUploadComponent,
+        vpVisitS123LoadComponent,
         vpVisitListComponent,
         //vpVisitViewComponent,
         vpVisitCreateComponent,
-        vpVisitUploadComponent,
 
         vpReviewListComponent,
         vpReviewViewComponent,
         vpReviewCreateComponent,
 
         vpSurveyUploadComponent,
+        vpSurveyS123LoadComponent,
         vpSurveyListComponent,
         vpSurveyViewComponent,
 

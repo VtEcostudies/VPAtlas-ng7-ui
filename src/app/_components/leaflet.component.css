@@ -15,35 +15,79 @@
   transform:rotate(270deg);
   width: 75px;
 }
-/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;  /* Override default CSS styles */
-  appearance: none;
-  width: 20px; /* Slider handle width */
-  height: 35px; /* Slider handle height */
-  outline: 2px solid grey;
-  border-radius: 10px;
-  border-color: grey;
-  border-width: 2px;
-  background: LightGray;
-}
-.slider::-moz-range-thumb {
-  width: 20px; /* Slider handle width */
-  height: 35px; /* Slider handle height */
-  border-radius: 10px;
-  border-color: grey;
-  border-width: 2px;
-  background: LightGray;
-}
 .slider {
-  -webkit-appearance: none;  /* Override default CSS styles */
+  -webkit-appearance: none;
   appearance: none;
   width: 75px;
-  height: 20px; /* defines slide bar thickness in all browsers */
+  height: 20px; /* defines slide bar thickness in all browsers, but not on focus in Firefox! */
+  border: 1px solid black;
+  /*outline: 3px solid green;*/
   margin-right: 20px;
-  outline: 1px solid grey;
   border-radius: 5px;
 }
+.slider::-webkit-slider-thumb { /* Style the slider handle in Chrome, Opera, Safari, Edge */
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; /* Slider handle width */
+  height: 35px; /* Slider handle height */
+  outline: 2px solid gray;
+  border-radius: 10px;
+  border-color: gray;
+  border-width: 2px;
+  background: #F5F5F5;
+}
+.slider::-moz-range-thumb { /* Style the slider handle in Firefox */
+  width: 20px; /* Slider handle width */
+  height: 35px; /* Slider handle height */
+  /*outline: 2px solid gray;*/
+  border-radius: 10px;
+  border-color: gray;
+  border-width: 2px;
+  background: #F5F5F5;
+}
+.slider:focus::-moz-range-thumb { /* Style the slider handle in Firefox */
+  /*background: DarkGray;*/
+}
+.slider:hover::-moz-range-thumb { /* Style the slider handle in Firefox */
+  /*background: DarkGray;*/
+}
+
+.slider:focus::-webkit-slider-runnable-track { /* Style the slider track in Chrome, Opera, Safari, Edge */
+  background: none;
+  height: 20px; /* Slider track width */
+  /*border: 2px solid black;*/ /* Border is edges of element. This defined is .slider above. */
+  /*outline: 2px solid blue;*/ /* Outline is outside of border */
+  border-radius: 5px;
+  box-shadow: 0 0 0 0.2rem rgba(51, 153, 255, 0.5);
+}
+.slider:focus::-webkit-slider-thumb { /* Style the slider handle in Chrome, Opera, Safari, Edge */
+  position: relative;
+  top: -8px;
+}
+.slider:hover::-webkit-slider-runnable-track { /* Style the slider track in Chrome, Opera, Safari, Edge */
+  height: 18px;
+  background: #F5F5F5;
+  border-radius: 5px;
+}
+.slider:hover::-webkit-slider-thumb { /* Style the slider handle in Chrome, Opera, Safari, Edge */
+  position: relative;
+  top: -9px;
+}
+
+.slider:focus::-moz-range-track { /* Style the slider track's focus in Firefox */
+   background: none;
+   height: 20px; /* Slider track width */
+   /*border: 2px solid black;*/ /* Border is edges of element. This defined is .slider above. */
+   /*outline: 2px solid blue;*/ /* Outline is outside of border */
+   border-radius: 5px;
+   box-shadow: 0 0 0 0.2rem rgba(51, 153, 255, 0.5);
+}
+.slider:hover::-moz-range-track { /* Style the slider track's focus in Firefox */
+  height: 18px;
+  background: #F5F5F5;
+  border-radius: 5px;
+}
+
 .slider-container { /* remove bootstrap 'border-box' to allow alignment of slider to right */
   -webkit-box-sizing: content-box;
      -moz-box-sizing: content-box;

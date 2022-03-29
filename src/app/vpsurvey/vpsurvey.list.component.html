@@ -62,8 +62,10 @@
 
 <div class="row">
 <table class="table table-striped">
+  <thead>
     <tr>
       <th>Survey ID</th>
+      <th>Object ID</th>
       <th>User</th>
       <th>Pool ID</th>
       <th>Date</th>
@@ -73,9 +75,14 @@
       <th>Macros</th>
       <th>Photos</th>
     </tr>
+  </thead>
+  <tbody>
     <tr *ngFor="let survey of surveys">
         <td>
           <a [routerLink]="['/survey/view/', survey.surveyId]" class="btn btn-link">{{survey.surveyId}}</a>
+        </td>
+        <td>
+          <a href="{{survey.surveyDataUrl}}" class="btn btn-link">{{survey.surveyObjectId}}</a>
         </td>
         <td>{{survey.surveyUserName}}</td>
         <td>{{survey.surveyPoolId}}</td>
@@ -91,5 +98,6 @@
         </td>
         <td *ngIf="!survey.surveyPhotoJson"></td>
     </tr>
+  </tbody>
 </table>
 </div> <!-- row -->

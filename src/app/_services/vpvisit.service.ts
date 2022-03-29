@@ -57,4 +57,12 @@ export class vpVisitService {
     uploadFile(file: any, update: boolean = false) {
         return this.http.post<any>(`${environment.apiUrl}/pools/visit/upload?update=${update}`, file);
     }
+
+    s123LoadData(args:any = {}, update:boolean = false, offset:number = 1, limit:number = 1) {
+        return this.http.post<any>(`${environment.apiUrl}/pools/visit/s123/all?update=${update}&offset=${offset}&limit=${limit}`, args);
+    }
+
+    s123AbortLoad(args:any = {}) {
+        return this.http.post<any>(`${environment.apiUrl}/pools/visit/s123/abort`, args);
+    }
 }
