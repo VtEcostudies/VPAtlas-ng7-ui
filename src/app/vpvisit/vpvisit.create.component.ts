@@ -353,7 +353,7 @@ export class vpVisitCreateComponent implements OnInit {
       this.visitLocationForm.controls['visitDate'].setValue(Moment(this.visit.visitDate).format('YYYY-MM-DD')); //NOTE: format must be YYYY-MM-DD to set value of input type="date"
       //this.visitLocationForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
       this.visitPoolMappedForm.controls['visitPoolMapped'].setValue(this.visit.visitPoolMapped.toString()); //radio button bool=>string
-      const locatePool = this.visit.visitLocatePool ? this.visit.visitLocatePool.toString() : false; //radio button bool=>string
+      const locatePool = this.visit.visitLocatePool ? this.visit.visitLocatePool.toString() : 'false'; //radio button bool=>string
       this.visitLocationForm.controls['visitLocatePool'].setValue(locatePool);
       this.visitLocationForm.controls['visitCertainty'].setValue(this.visit.visitCertainty);
       this.visitLocationForm.controls['visitLocationUncertainty'].setValue(this.visit.visitLocationUncertainty);
@@ -787,7 +787,8 @@ export class vpVisitCreateComponent implements OnInit {
 
         //have to convert true/false radio buttons from string to boolean
         this.visitPoolMappedForm.controls['visitPoolMapped'].setValue(this.visitPoolMappedForm.value.visitPoolMapped == 'true');
-        this.visitLocationForm.controls['visitLocatePool'].setValue(this.visitLocationForm.value.visitLocatePool == 'true');
+        //There was a bug with visitLocaotePool - always set to false. Oddly, the usual value access visitLocationForm.value.visitLocatePool was undefined?
+        this.visitLocationForm.controls['visitLocatePool'].setValue(this.visitLocationForm.controls['visitLocatePool'].value == 'true');
         //amphibian adults must be counted. shrimp and clams are just 'present'. database column is text. convert to number or 'X'.
         this.visitIndicatorSpeciesForm.controls['visitWoodFrogAdults'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitWoodFrogAdults));
         this.visitIndicatorSpeciesForm.controls['visitSpsAdults'].setValue(Number(this.visitIndicatorSpeciesForm.value.visitSpsAdults));
@@ -832,16 +833,14 @@ export class vpVisitCreateComponent implements OnInit {
 
         /* Photo URL Form Values have bugs, so we don't use form values. Instead we use class object 'this.visit.{value}'
            to handle these values. This means we need to set the db object manually, here. */
-        if (this.visit.visitPoolPhoto) {
-          Object.assign(objAll, {"visitPoolPhoto":this.visit.visitPoolPhoto});
-          Object.assign(objAll, {"visitWoodFrogPhoto":this.visit.visitWoodFrogPhoto});
-          Object.assign(objAll, {"visitSpsPhoto":this.visit.visitSpsPhoto});
-          Object.assign(objAll, {"visitJesaPhoto":this.visit.visitJesaPhoto});
-          Object.assign(objAll, {"visitBssaPhoto":this.visit.visitBssaPhoto});
-          Object.assign(objAll, {"visitFairyShrimpPhoto":this.visit.visitFairyShrimpPhoto});
-          Object.assign(objAll, {"visitFingerNailClamsPhoto":this.visit.visitFingerNailClamsPhoto});
-          Object.assign(objAll, {"visitSpeciesOtherPhoto":this.visit.visitSpeciesOtherPhoto});
-        }
+        Object.assign(objAll, {"visitPoolPhoto":this.visit.visitPoolPhoto});
+        Object.assign(objAll, {"visitWoodFrogPhoto":this.visit.visitWoodFrogPhoto});
+        Object.assign(objAll, {"visitSpsPhoto":this.visit.visitSpsPhoto});
+        Object.assign(objAll, {"visitJesaPhoto":this.visit.visitJesaPhoto});
+        Object.assign(objAll, {"visitBssaPhoto":this.visit.visitBssaPhoto});
+        Object.assign(objAll, {"visitFairyShrimpPhoto":this.visit.visitFairyShrimpPhoto});
+        Object.assign(objAll, {"visitFingerNailClamsPhoto":this.visit.visitFingerNailClamsPhoto});
+        Object.assign(objAll, {"visitSpeciesOtherPhoto":this.visit.visitSpeciesOtherPhoto});
 
         this.dataLoading = true;
         this.vpVisitService.createOrUpdate(this.update, this.visitId, objAll)
@@ -1125,5 +1124,4 @@ export class vpVisitCreateComponent implements OnInit {
     //console.log('vpvisit.create.ImgUrl()', url);
     return url;
   }
-
 }
