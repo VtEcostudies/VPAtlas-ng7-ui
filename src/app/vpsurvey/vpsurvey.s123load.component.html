@@ -5,7 +5,7 @@
 <div class="row">
   <div class="col-4">
     <div style="display:inline-block;">
-      <h5><b>Load VPMon Survey123 Data from API</b></h5>
+      <h5><b>Load <u>VPMon</u> S123 Data from API</b></h5>
     </div>
   </div> <!-- col -->
 </div> <!-- row -->
@@ -133,11 +133,11 @@
               <td>
                 <a href="{{error.dataUrl}}" target="_blank" class="btn btn-link">{{error.objectId}}</a>
               </td>
-              <td>{{error.name}} </td>
-              <td>{{error.hint}} </td>
-              <td>{{error.table}} </td>
-              <td>{{error.column}} </td>
-              <td>{{error.routine}} </td>
+              <td class="btn-link" (click)="Alert(error.detail, error.where)">{{error.name}}</td>
+              <td>{{error.hint}}</td>
+              <td>{{error.table}}</td>
+              <td>{{error.column}}</td>
+              <td>{{error.routine}}</td>
           </tr>
         </thead>
       </table>

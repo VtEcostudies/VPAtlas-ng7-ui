@@ -156,4 +156,9 @@ export class vpVisitS123LoadComponent implements OnInit {
       console.log('CancelS123Load');
       this.router.navigate([this.returnUrl]);
     }
+
+    Alert(detail, where) {
+      //console.log('Alert', detail, where);
+      alert(`Detail:${detail}\nWhere:${where}`);
+    }
 }
