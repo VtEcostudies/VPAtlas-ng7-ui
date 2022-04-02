@@ -142,7 +142,7 @@
         <table>
           <tr>
             <td *ngFor="let photo of survey.surveyPhotos">
-              {{photo.surveyPhotoSpecies}}
+              <sup>{{photo.surveyPhotoSpecies}}</sup>
               <a href="{{photo.surveyPhotoUrl}}" target=_blank>
                 <img class="survey-list-photo" src="{{photo.surveyPhotoUrl}}"/>
               </a>

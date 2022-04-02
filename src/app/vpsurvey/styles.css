@@ -59,3 +59,17 @@ hr {
 .table-body{
     height: 200px;
 }
+
+/* BEGIN - photos table labels overlay cells */
+td {
+ padding: 3px;
+}
+td sup {
+ display: block;
+}
+td a {
+ display: block;
+ margin: 3px 0px;
+ text-align: center;
+}
+/* END - photos table labels overlay cells */

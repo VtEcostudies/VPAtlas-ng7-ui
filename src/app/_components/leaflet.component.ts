@@ -93,7 +93,7 @@ export class LeafletComponent implements OnInit, OnChanges {
   zoomLevel = 0; //global value that tracks the map zoomLevel
   zoomCenter = this.vtCenter; //global value that tracks the map zoomCenter
   zoomStats = true; //flag to show zoom stats
-    
+
   /*
     https://leafletjs.com/reference-1.5.0.html#domevent eg. L.DomEvent.on(div, 'click', e => onDivClick(e))
     https://leafletjs.com/reference-1.5.0.html#domutil
@@ -938,17 +938,19 @@ export class LeafletComponent implements OnInit, OnChanges {
     var exclude = ['count']; //an array of column names to exclude from the popup list of values from the db
     var include = [ //an array of column names to include in the popup list of values from the db
       'poolId',
-      'mappedLatitude',
-      'mappedLongitude',
+      //'mappedLatitude',
+      //'mappedLongitude',
+      'latitude',
+      'longitude',
       //'mappedTown',
       //'visitTown',
       'townName',
       'poolStatus',
-      'mappedDateText',
-      'mappedDate',
+      //'mappedDateText',
+      //'mappedDate',
       'visitDate',
-      'mappedMethod',
-      'mappedByUser',
+      //'mappedMethod',
+      //'mappedByUser',
       'visitUserName',
       'visitPoolPhoto'
       ];
@@ -956,6 +958,8 @@ export class LeafletComponent implements OnInit, OnChanges {
       'poolId':'Pool ID',
       'mappedLatitude':'Mapped Latitude',
       'mappedLongitude':'Mapped Longitude',
+      'latitude':'Latitude',
+      'longitude':'Longitude',
       //'mappedTown':'Mapped Town',
       //'visitTown':'Visit Town',
       'townName': 'Town',
@@ -998,6 +1002,18 @@ export class LeafletComponent implements OnInit, OnChanges {
         }
       }
     });
+    //https://developers.google.com/maps/documentation/urls/get-started
+    //https://stackoverflow.com/questions/9368166/how-to-put-the-marker-with-google-maps-query-string
+    var gglCord = `${obj.latitude},${obj.longitude}`; //google expects lat,lon
+    var gglZoom = `15z`;
+    var geoUtil = encodeURI(`https://www.google.com/maps/dir/?api=1&destination=${gglCord}&travelmode=recommended`);
+    //http://maps.google.com/maps?q=loc:40.01696,32.33076&z=17
+    //geoUtil = encodeURI(`http://maps.google.com/maps?q=loc:${gglCord}&z=15&marker=color:red|label:${obj.poolId}`);
+    //var gglTest = `https://maps.google.com/maps?q=HOME+to:+${obj.poolId}&saddr=HOME&daddr=${obj.poolId}&hl=en&ll=${gglCord}&sll=${gglCord}`;
+    //geoUtil = encodeURI(gglTest);
+    var geoCord = [obj.longitude,obj.latitude]; //geoJson is lon/lat
+    var geoJson = {"type":"Point","coordinates":geoCord};
+    text += `<tr><td>Directions</td><td><a href="${geoUtil}" target=_blank>Google Map</a></tr>`;
     text += '</table>';
 
     return text;
