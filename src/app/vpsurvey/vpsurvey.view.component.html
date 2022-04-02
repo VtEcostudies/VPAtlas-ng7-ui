@@ -135,15 +135,16 @@
           </tr>
         </table>
       </div>
-      <div *ngIf="survey.surveyPhotoUrls">
+      <div *ngIf="survey.surveyPhotos">
         <p><u><b>
           They took the following photos:
         </b></u></p>
         <table>
           <tr>
-            <td *ngFor="let url of survey.surveyPhotoUrls">
-              <a href="{{url}}" target=_blank>
-                <img class="survey-list-photo" src="{{url}}"/>
+            <td *ngFor="let photo of survey.surveyPhotos">
+              {{photo.surveyPhotoSpecies}}
+              <a href="{{photo.surveyPhotoUrl}}" target=_blank>
+                <img class="survey-list-photo" src="{{photo.surveyPhotoUrl}}"/>
               </a>
             </td>
           </tr>
