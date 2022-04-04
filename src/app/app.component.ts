@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from './_services';
 import { User, Auth } from './_models';
+import { environment } from '@environments/environment';
 
 @Component({ selector: 'app', templateUrl: 'app.component.html' })
 export class AppComponent {
@@ -13,6 +14,7 @@ export class AppComponent {
     vceIconPath = '../assets/images/vce_favicon.png';
     fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
     bannerMessage = null;
+    apiUrl = environment.apiUrl;
 
     constructor(
         private router: Router,

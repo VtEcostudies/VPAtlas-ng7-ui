@@ -28,18 +28,21 @@ export const poolsDialogText = {
     <li>Pool ID: The value must be an exact match. Values are case-sensitive.</li>
     <li>Town: Select a town name to see pools in (or Zoom to) a town.</li>
     <li>User: Enter a username to see only pools where a user has contributed data.</li>
+    <li>Indicator Species: Check the box to see only pools where indicator species were observed.</li>
   </ul>
   `,
   zoomFilter:`
   <h3><u>Zoom Only</u></h3>
-  <p>Check this box to use search filters to Zoom to a Pool ID or Town.</p>
+  <p>Check this box to use search filters to Zoom to a <u>Pool ID or Town</u>.</p>
   <p>
   Un-check this box to use search filters to limit data shown on the map and in the tabular view to just your search criteria.
+  </p>
+  <p>
+  This selection has no effect on User and Species filters, which will always filter pools shown.
   </p>
   <ul>
     <li>Pool ID: The value must be an exact match. Values are case-sensitive.</li>
     <li>Town: Select a town name to see pools in (or Zoom to) a town.</li>
-    <li>User: Enter a username to see only pools where a user has contributed data.</li>
   </ul>
   `,
   recordCount:`

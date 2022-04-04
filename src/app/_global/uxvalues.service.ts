@@ -37,6 +37,7 @@ export class UxValuesService {
     public moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
 
     public zoomFilter = true; //flag 'Zoom Only' handling of search filters
+    public visitHasIndicator = false; //flag filter by visits having indicator species
 
     public pageSize = 12;
     public filter:string = '';
@@ -144,6 +145,7 @@ export class UxValuesService {
       if (srch.userName) keep = keep&&((srch.userName==row.mappedByUser)||(srch.userName==row.visitUserName));
       if (srch.mappedMethod) keep = keep&&(srch.mappedMethod==row.mappedMethod);
       if (srch.town) keep = keep&&(row.townName&&srch.town==row.townName);
+      if (srch.visitHasIndicator) keep = keep&&(row.speciesCount>0);
       if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
       if (this.type=='revu') keep = keep &&

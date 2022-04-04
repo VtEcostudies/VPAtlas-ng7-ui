@@ -57,4 +57,8 @@ export class vpSurveyService {
     getCount(filter: string) {
         return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/count?${filter}`);
     }
+
+    delete(surveyId: number) {
+        return this.http.delete<pgApiResults>(`${environment.apiUrl}/survey/${surveyId}`);
+    }
 }

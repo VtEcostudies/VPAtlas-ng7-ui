@@ -136,6 +136,12 @@
             <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="userName" class="form-control"/>
           </td>
         </tr>
+        <tr class="form-group">
+          <td for="visitHasIndicator">Indicator Species</td>
+          <td>
+            <input [checked]="visitHasIndicator" (change)="visitHasIndicatorChecked($event)" type="checkbox" class="form-control radio-button-justify-left"/>
+          </td>
+        </tr>
 <!--
         <tr class="form-group">
           <td>Method</td>

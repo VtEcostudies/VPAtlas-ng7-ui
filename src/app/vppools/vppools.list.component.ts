@@ -24,6 +24,7 @@ export class vpListComponent implements OnInit {
     pageSize = 10;
     loadAllRec = true; //flag to load by page or to load all at once
     zoomFilter = true; //flag to Zoom to selected filters, not filter data
+    visitHasIndicator = false;
     last = 1;
     count: number = 1;
     filter: string = '';
@@ -69,6 +70,7 @@ export class vpListComponent implements OnInit {
       this.mapView = this.uxValuesService.mapView;
       this.loadAllRec = this.uxValuesService.loadAllRec;
       this.zoomFilter = this.uxValuesService.zoomFilter;
+      this.visitHasIndicator = this.uxValuesService.visitHasIndicator;
       this.uxValuesService.loadTowns();
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
@@ -127,6 +129,13 @@ export class vpListComponent implements OnInit {
     filterZoom(e) {
       this.zoomFilter = e.target.checked;
       this.uxValuesService.zoomFilter = this.zoomFilter;
+      this.loadPools(1);
+    }
+
+    //respond to a click on the 'Has Species' checkbox
+      visitHasIndicatorChecked(e) {
+      this.visitHasIndicator = e.target.checked;
+      this.uxValuesService.visitHasIndicator = this.visitHasIndicator;
       this.loadPools(1);
     }
 
@@ -196,10 +205,12 @@ export class vpListComponent implements OnInit {
       if (!this.zoomFilter) {
         if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
         if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
-        if (this.f.userName.value) this.search.userName=this.f.userName.value;
         if (this.f.town.value && this.f.town.value.townName!='All') this.search.town=this.f.town.value.townName;
-        if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
       }
+      if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
+      if (this.f.userName.value) this.search.userName=this.f.userName.value;
+      this.search.visitHasIndicator=this.visitHasIndicator; //variable tracks checkbox value
+      console.log('SEARCH | ', this.search);
     }
 
     async loadUpdated(type='all', page=0) {

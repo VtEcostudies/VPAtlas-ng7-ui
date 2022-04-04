@@ -58,7 +58,6 @@ export class vpSurveyViewComponent implements OnInit {
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/survey/list';
 
       this.vpSurveyForm = this.formBuilder.group({
-
         surveyPoolId: [],
         surveyUserName: [],
         surveyDate: [],
@@ -108,22 +107,26 @@ export class vpSurveyViewComponent implements OnInit {
               });
     }
 
+    deleteSurvey() {
+      if (confirm(`Are you sure you want to delete survey ${this.survey.surveyId}?`)) {
+        this.vpSurveyService.delete(this.survey.surveyId)
+          .pipe(first())
+          .subscribe(
+              data => {
+                  this.alertService.success('Successfully deleted Vernal Pool Survey.', true);
+                  this.router.navigate([`/survey/list`]);
+              },
+              error => {
+                  this.alertService.error(error);
+                  this.dataLoading = false;
+              });
+      }
+    }
+
     // convenience getter for easy access to form fields
     get f() { return this.vpSurveyForm.controls; }
 
-    ToEditMode() {
-      this.router.navigate([`/pools/survey/update/${this.survey.surveyPoolId}`]);
-    }
-
     cancel() {
-      this.router.navigate(['/survey/list']);
+      this.router.navigate([this.returnUrl]);
     }
-
-    //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
-    //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith
-    compareTownFn(t1: vtTown, t2: vtTown) {
-      //console.log('vpsurvey.create.compareTownFn t1:', t1, ' t2:', t2);
-      return t1 && t2 ? t1.townId === t2.townId : t1 === t2;
-    }
-
 }

@@ -61,6 +61,19 @@
               </div>
             </li>
 
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"
+                id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Download
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" target="_blank" href="{{apiUrl}}/pools/csv?download=1">All Data</a>
+                <a class="dropdown-item" target="_blank" href="{{apiUrl}}/mapped/csv?download=1">Mapped Pools</a>
+                <a class="dropdown-item" target="_blank" href="{{apiUrl}}/visit/csv?download=1">Pool Visits</a>
+                <a class="dropdown-item" target="_blank" href="{{apiUrl}}/survey/csv?download=1">Pool Surveys</a>
+              </div>
+            </li>
+
             <li class="nav-item" *ngIf="currentUser&&!userIsAdmin">
               <a class="nav-link" routerLink="/pools/visit/create">Add Pool Data</a>
             </li>
