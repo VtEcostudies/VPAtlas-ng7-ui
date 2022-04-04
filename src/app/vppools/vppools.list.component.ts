@@ -91,14 +91,14 @@ export class vpListComponent implements OnInit {
     //https://stackoverflow.com/questions/47068222/angular-4-checkbox-change-value?rq=1
     //https://stackoverflow.com/questions/50697456/checkbox-not-working-in-angular-4
     //https://stackoverflow.com/questions/51453322/cant-uncheck-programatically-after-manual-check-on-a-checkbox-angular
-    checkBoxValueChanged(e) {
-      //console.log('checkBoxValueChanged: ', e.target.checked);
+    loadAllRecChecked(e) {
+      //console.log('loadAllRecChecked: ', e.target.checked);
       this.loadAllRec = e.target.checked;
       this.uxValuesService.loadAllRec = this.loadAllRec;
       this.loadPools();
     }
 
-    checkBoxSetValue(value=true) {
+    loadAllRecSetValue(value=true) {
       this.loadAllRec = value;
       this.uxValuesService.loadAllRec = this.loadAllRec;
       this.loadPools();
@@ -133,10 +133,14 @@ export class vpListComponent implements OnInit {
     }
 
     //respond to a click on the 'Has Species' checkbox
-      visitHasIndicatorChecked(e) {
+    visitHasIndicatorChecked(e) {
       this.visitHasIndicator = e.target.checked;
       this.uxValuesService.visitHasIndicator = this.visitHasIndicator;
       this.loadPools(1);
+    }
+    visitHasIndicatorSetValue(value=true) {
+      this.visitHasIndicator = value;
+      this.uxValuesService.visitHasIndicator = this.visitHasIndicator;
     }
 
     loadPools(page=0) {
@@ -292,6 +296,7 @@ export class vpListComponent implements OnInit {
       this.filterForm.controls['userName'].setValue('');
       this.filterForm.controls['town'].setValue({townId:0, townName:"All", townCountyId:0});
       this.filterForm.controls['mappedMethod'].setValue('');
+      this.visitHasIndicatorSetValue(false);
       this.loadPools(1);
     }
 }

@@ -74,10 +74,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     setStatusLoadPools(status=null) {
-      if (status=="Monitored") {
-        this.alertService.error("Monitored Pools are not implemented in VPAtlas yet.");
-        return;
-      }
       if (status) {
         this.filter = `poolStatus=${status}`;
       }

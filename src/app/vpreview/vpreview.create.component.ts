@@ -123,7 +123,7 @@ export class vpReviewCreateComponent implements OnInit {
         reviewQANotes: [''],
         reviewQADate: [(this.create?Moment().format('YYYY-MM-DD'):''), Validators.required],
         reviewPoolStatus: ['', Validators.required],
-        reviewPoolLocator: [''],
+        reviewPoolLocator: [false],
         reviewUpdatedAt: ['']
       });
     } //end createFormControls()
@@ -199,10 +199,12 @@ export class vpReviewCreateComponent implements OnInit {
         //reviewForm - some fields are disabled, so use getRawValue()
         Object.assign(objAll, this.reviewForm.getRawValue());
 
-        //Remove reviewId from the POST data if creating a New pool. Its value is '(New)'.
+        //Remove reviewId from the POST data if creating a New Review. Its value is '(New)'.
         if (!this.update) {
           delete objAll.reviewId;
         }
+
+        console.log('Review POST Object | ', objAll);
 
         this.dataLoading = true;
         this.vpReviewService.createOrUpdate(this.update, this.reviewId, objAll)

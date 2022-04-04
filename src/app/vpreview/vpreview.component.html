@@ -85,7 +85,7 @@
       <div class="form-group">
           <label >QA Code</label>
           <i (click)="openModal('vpatlas_help_info', 'reviewQACode')" class="fa fa-info-circle no-margins link"></i>
-          <select formControlName="reviewQACode" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewVisitId.errors }">
+          <select formControlName="reviewQACode" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewQACode.errors }">
             <option *ngFor="let code of QACodes" [ngValue]="code">
               {{ code }}
             </option>
@@ -124,7 +124,7 @@
       <div class="form-group">
           <label >Pool Status</label>
           <i (click)="openModal('vpatlas_help_info', 'reviewPoolStatus')" class="fa fa-info-circle no-margins link"></i>
-          <select formControlName="reviewPoolStatus" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewVisitId.errors }">
+          <select formControlName="reviewPoolStatus" class="form-control" [ngClass]="{ 'is-invalid': submitted && r.reviewPoolStatus.errors }">
             <option *ngFor="let status of statuses" [ngValue]="status">
               {{ status }}
             </option>

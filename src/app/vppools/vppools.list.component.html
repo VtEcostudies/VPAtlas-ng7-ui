@@ -170,7 +170,7 @@
           <i (click)="openModal('vppools_help_info', 'mapViewTableView')" class="fa fa-info-circle link"></i>
         </div>
         <label class="btn btn-link info-icon-padding">
-          <input [checked]="loadAllRec" (change)="checkBoxValueChanged($event)" type="checkbox" class="radio-button-justify-left"/>
+          <input [checked]="loadAllRec" (change)="loadAllRecChecked($event)" type="checkbox" class="radio-button-justify-left"/>
           <span>Load All</span>
         </label>
         <div>
