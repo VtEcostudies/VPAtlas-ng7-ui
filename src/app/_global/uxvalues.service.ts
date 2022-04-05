@@ -145,7 +145,12 @@ export class UxValuesService {
       if (srch.userName) keep = keep&&((srch.userName==row.mappedByUser)||(srch.userName==row.visitUserName));
       if (srch.mappedMethod) keep = keep&&(srch.mappedMethod==row.mappedMethod);
       if (srch.town) keep = keep&&(row.townName&&srch.town==row.townName);
-      if (srch.visitHasIndicator) keep = keep&&(row.speciesCount>0);
+      if (srch.visitHasIndicator) keep = keep && (
+          (row.speciesCount+0>0) ||
+          (row.sumMacros+0>0) ||
+          (row.sumAmphib&&row.sumAmphib[0]+0>0) ||
+          (row.sumAmphib&&row.sumAmphib[1]+0>0)
+        )
       if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
       if (this.type=='revu') keep = keep &&

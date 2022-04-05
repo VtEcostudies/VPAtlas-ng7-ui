@@ -61,7 +61,7 @@
               </div>
             </li>
 
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" *ngIf="userIsAdmin">
               <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 CSV
               </a>
@@ -73,13 +73,13 @@
                 </ul>
             </li>
 
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" *ngIf="userIsAdmin">
               <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 GeoJson
               </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" target="_blank" href="{{apiUrl}}/mapped/geojson?download=1">Mapped Pools</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/visit/gejson?download=1">Pool Visits</a>
+                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/visit/geojson?download=1">Pool Visits</a>
                   <a class="dropdown-item" target="_blank" href="{{apiUrl}}/survey/geojson?download=1">Pool Surveys</a>
                 </ul>
             </li>
