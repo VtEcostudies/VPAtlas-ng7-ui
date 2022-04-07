@@ -48,6 +48,17 @@ export class UxValuesService {
     public parcels:any = {}; //an object of geoJson town parcel layers by town name
     public geoLayers:any = {}; //an object of geoJson useful boundaries by layer name (State, County, Town, Biophysical, ...)
 
+    public surveyListParams = {
+        "surveyId":null,
+        "surveyPoolId":'All', //{surveyPoolId: 'All'}
+        "surveyType":0, //{surveyTypeId:0, surveyTypeName:'All'},
+        "surveyYear":'All', //{surveyYear:'All'},
+        "surveyDateBeg":null,
+        "surveyDateEnd":null,
+        "surveyUser":'All', //{surveyUserEmail:'All'},
+        "surveyObserver":'All' //{surveyObserverEmail:'All'}
+      };
+
     public userContext:any = {};
 
     constructor(

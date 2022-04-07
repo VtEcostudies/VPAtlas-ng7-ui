@@ -26,13 +26,13 @@
 
       <div class="row"> <!-- sub-row -->
         <label class="col-sm-2" for="surveyS123LoadOffset">Offset</label>
-        <i class="fa fa-info-circle no-margins link" (click)="openModal('vpsurvey_help_info', 'surveyS123Load_Offset')"></i>
+        <i (click)="openModal('vpsurvey_help_info', 'surveyS123Load_Offset')" class="fa fa-info-circle no-margins link"></i>
         <div class="col-sm-3">
           <input class="form-control" type="number" min="1" max="1000" formControlName="surveyS123LoadOffset" />
         </div>
 
         <label class="col-sm-2" for="surveyS123LoadLimit">Limit</label>
-        <i class="fa fa-info-circle no-margins link" (click)="openModal('vpsurvey_help_info', 'surveyS123Load_Limit')"></i>
+        <i (click)="openModal('vpsurvey_help_info', 'surveyS123Load_Limit')" class="fa fa-info-circle no-margins link" (click)="openModal('vpsurvey_help_info', 'surveyS123Load_Limit')"></i>
         <div class="col-sm-3">
           <input class="form-control" type="number" min="1" max="500" formControlName="surveyS123LoadLimit" />
         </div>

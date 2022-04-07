@@ -22,7 +22,7 @@
     </div>
     <div class="form-group col-2">
       <label>Survey Type</label>
-      <select (change)="LoadSurveys()" formControlName="surveyTypeId" class="form-control">
+      <select (change)="LoadSurveys()" formControlName="surveyType" class="form-control">
         <option *ngFor="let type of surveyTypes" [ngValue]="type">
           {{ type.surveyTypeName }}
         </option>

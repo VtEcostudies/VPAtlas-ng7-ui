@@ -105,7 +105,7 @@ export class vpVisitS123LoadComponent implements OnInit {
         }
       }
       if (confirmLoad && limit > this.maxLimit) {
-        if (!confirm(`${this.maxLimit} is a lot of visits to load. Are you sure you want to load proceed?`)) {
+        if (!confirm(`${limit} is a lot of visits to load. Are you sure you want to proceed?`)) {
           confirmLoad = 0;
         }
       }
