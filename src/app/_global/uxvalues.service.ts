@@ -50,13 +50,13 @@ export class UxValuesService {
 
     public surveyListParams = {
         "surveyId":null,
-        "surveyPoolId":'All', //{surveyPoolId: 'All'}
-        "surveyType":0, //{surveyTypeId:0, surveyTypeName:'All'},
-        "surveyYear":'All', //{surveyYear:'All'},
+        "surveyPoolId":'All',
+        "surveyType":0,
+        "surveyYear":'All',
         "surveyDateBeg":null,
         "surveyDateEnd":null,
-        "surveyUser":'All', //{surveyUserEmail:'All'},
-        "surveyObserver":'All' //{surveyObserverEmail:'All'}
+        "surveyUser":'All',
+        "surveyObserver":'All'
       };
 
     public userContext:any = {};

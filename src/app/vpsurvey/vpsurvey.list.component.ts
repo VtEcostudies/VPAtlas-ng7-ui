@@ -18,9 +18,9 @@ export class vpSurveyListComponent implements OnInit {
   returnUrl = "/pools/list";
   surveys = [];
   surveyPoolIds = [];
-  surveyObs = [];
   surveyYears = [];
   surveyTypes = []; //['All',1,2,3,4,9];
+  surveyUsers = [];
   count = 0;
   dataLoading = false;
   filterForm: FormGroup = this.formBuilder.group({});
@@ -28,8 +28,6 @@ export class vpSurveyListComponent implements OnInit {
   routeParams: any = {};
   queryParams: any = {};
   loadParams: any = {};
-
-  surveyTypeId = 0;
 
   constructor(
     private router: Router,
@@ -60,6 +58,8 @@ export class vpSurveyListComponent implements OnInit {
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
 
+    //After all that, if there are no route or query params, then we arrived here unconstrained, and we use
+    //uxValuesService values.
     if (Object.keys(this.loadParams).length === 0) {
       this.loadParams = this.uxValuesService.surveyListParams;
     }
@@ -67,45 +67,50 @@ export class vpSurveyListComponent implements OnInit {
     console.log('loadParams AFTER |', this.loadParams);
 
     this.filterForm = this.formBuilder.group({
-        surveyId: [null], //[this.loadParams.surveyId],
-        surveyPoolId: [null], //[{this.loadParams.surveyPoolId}],
-        surveyType: [null], //[this.loadParams.surveyType],
-        surveyYear: [null], //[this.loadParams.surveyYear],
-        surveyDateBeg: [null], //[this.loadParams.surveyDateBeg],
-        surveyDateEnd: [null], //[this.loadParams.surveyDateEnd],
-        surveyUser: [null], //[this.loadParams.surveyUser],
-        surveyObserver: [null] //[this.loadParams.surveyObserver]
+        surveyId: [null],
+        surveyPoolId: [null],
+        surveyType: [null],
+        surveyYear: [null],
+        surveyDateBeg: [null],
+        surveyDateEnd: [null],
+        surveyUser: [null],
+        surveyObserver: [null]
       });
-    await this.LoadSurveyPoolIds(); //these are needed to process loadParams
-    await this.LoadSurveyObervers();
-    await this.LoadSurveyYears();
-    await this.LoadSurveyTypes()
-      .then(count => {
-        this.setFilterFormValues();
-        this.LoadSurveys();
+    this.LoadSurveyPoolIds()
+      .then(res => {
+        this.LoadSurveyYears()
+          .then(res => {
+            this.LoadSurveyTypes()
+              .then(async res => {
+                //this.LoadSurveyUsers()
+                  //.then(async res => {
+                    await this.setFilterFormValues();
+                    this.LoadSurveys();
+                  //})
+              })
+          })
       })
   }
 
+  //NOTE: It's a project to set the value of a SELECT-OPTION populated with an array of object. The
+  //below works. This simple solution came from trying everything else. Don't mess with it.
   setFilterFormValues() {
     this.filterForm.controls['surveyId'].setValue(this.loadParams.surveyId);
 
-    console.log('setFilterFormValues | surveyPoolIds:', this.surveyPoolIds);
     let objPool = this.surveyPoolIds.find(o => {return o.surveyPoolId == this.loadParams.surveyPoolId;});
     this.filterForm.controls['surveyPoolId'].setValue(objPool?objPool:null);
-    console.log('setFilterFormValues | surveyPoolId object search result:', objPool);
 
     let objType = this.surveyTypes.find(o => {return +o.surveyTypeId == +this.loadParams.surveyType;});
     this.filterForm.controls['surveyType'].setValue(objType?objType:null);
-/*
-    console.log('setFilterFormValues | surveyYears:', this.surveyYears);
-    let objYear = this.surveyYears.find(o => {return +o.surveyYear == +this.loadParams.surveyYear;});
+
+    let objYear = this.surveyYears.find(o => {return o.surveyYear == this.loadParams.surveyYear;});
     this.filterForm.controls['surveyYear'].setValue(objYear?objYear:null);
-    console.log('setFilterFormValues | surveyYear object search result:', objYear);
-*/
+
     this.filterForm.controls['surveyDateBeg'].setValue(this.loadParams.surveyDateBeg);
     this.filterForm.controls['surveyDateEnd'].setValue(this.loadParams.surveyDateEnd);
-    this.filterForm.controls['surveyUser'].setValue({surveyUserEmail:(this.loadParams.surveyUser||'All')});
-    this.filterForm.controls['surveyObserver'].setValue({surveyObserverEmail:(this.loadParams.surveyObserver||'All')});
+
+    let objUser = this.surveyUsers.find(o => {return o.surveyUserName == this.loadParams.surveyUser;});
+    this.filterForm.controls['surveyUser'].setValue(objUser?objUser:null);
   }
 
   filterRow(row:any) {
@@ -116,6 +121,19 @@ export class vpSurveyListComponent implements OnInit {
       row.surveyMacros = JSON.stringify(row.surveyMacros);
     }
     return row;
+  }
+
+  async Init() {
+    this.loadParams['surveyId']=null;
+    this.loadParams['surveyPoolId']='All';
+    this.loadParams['surveyType']=0;
+    this.loadParams['surveyYear']='All';
+    this.loadParams['surveyDateBeg']=null;
+    this.loadParams['surveyDateEnd']=null;
+    this.loadParams['surveyUser']='All';
+    this.loadParams['surveyObserver']='All';
+    await this.setFilterFormValues();
+    this.LoadSurveys();
   }
 
   setUxValues() {
@@ -129,18 +147,13 @@ export class vpSurveyListComponent implements OnInit {
     this.uxValuesService.surveyListParams.surveyObserver = this.f.surveyObserver.value?this.f.surveyObserver.value.surveyObserverEmail:null;
   }
 
-  SurveyTypeChange() {
-    console.log('surveyTypeChange |', this.f.surveyType.value, this.f.surveyType.value.surveyTypeId);
-    //this.uxValuesService.surveyListParams.surveyType = this.f.surveyType.value.surveyTypeId;
-    this.LoadSurveys();
-  }
-
   async LoadSurveys() {
-    this.setUxValues();
-    await this.getFilter();
-    this.dataLoading = true;
-    this.alertService.clear();
-    this.surveyService.getAll(this.filter)
+    return new Promise(async (resolve, reject) => {
+      this.setUxValues();
+      await this.getFilter();
+      this.dataLoading = true;
+      this.alertService.clear();
+      this.surveyService.getAll(this.filter)
         .pipe(first())
         .subscribe(
             data => {
@@ -149,29 +162,34 @@ export class vpSurveyListComponent implements OnInit {
               this.dataLoading = false;
             },
             error => {
-                this.alertService.error(error);
-                this.dataLoading = false;
+              this.alertService.error(error);
+              this.dataLoading = false;
             });
+    });
   }
 
   LoadSurveyPoolIds() {
-    this.surveyService.getPoolIds()
+    return new Promise((resolve, reject) => {
+      this.surveyService.getPoolIds()
         .pipe(first())
         .subscribe(
             data => {
               this.surveyPoolIds = [{surveyPoolId:'All'}];
               data.rows.forEach(pool => {
                 this.surveyPoolIds.push(pool);
-              })
+              });
+              resolve(this.surveyPoolIds.length);
             },
             error => {
-                this.alertService.error(error);
+              this.alertService.error(error);
+              reject(0);
             });
+    });
   }
 
   LoadSurveyTypes() {
-  return new Promise((resolve, reject) => {
-    this.surveyService.getTypes()
+    return new Promise((resolve, reject) => {
+      this.surveyService.getTypes()
         .pipe(first())
         .subscribe(
             data => {
@@ -182,44 +200,48 @@ export class vpSurveyListComponent implements OnInit {
               resolve(this.surveyTypes.length);
             },
             error => {
-                this.alertService.error(error);
-                reject(0);
+              this.alertService.error(error);
+              reject(0);
             });
-    })
+    });
   }
 
-  LoadSurveyObervers() {
-    this.surveyService.getObservers()
+  LoadSurveyUsers() {
+    return new Promise((resolve, reject) => {
+      this.surveyService.getObservers()
         .pipe(first())
         .subscribe(
             data => {
-              this.surveyObs = [{surveyObserver:'All'}];
-              data.rows.forEach(obs => {
-                this.surveyObs.push(obs);
-              })
+              this.surveyUsers = [{surveyUserName:'All'}];
+              data.rows.forEach(user => {
+                this.surveyUsers.push(user);
+              });
+              resolve(this.surveyUsers.length);
             },
             error => {
-                this.alertService.error(error);
+              this.alertService.error(error);
+              reject(0)
             });
+    });
   }
 
   LoadSurveyYears() {
-    this.surveyService.getYears()
+    return new Promise((resolve, reject) => {
+      this.surveyService.getYears()
         .pipe(first())
         .subscribe(
             data => {
               this.surveyYears = [{surveyYear:'All'}];
               data.rows.forEach(year => {
                 this.surveyYears.push(year);
-              })
-              console.log('LoadSurveyYears | surveyYears:', this.surveyYears);
-              let objYear = this.surveyYears.find(o => {return o.surveyYear == this.loadParams.surveyYear;});
-              this.filterForm.controls['surveyYear'].setValue(objYear?objYear:null);
-              console.log('LoadSurveyYears | surveyYear object search result:', objYear);
+              });
+              resolve(this.surveyYears.length);
             },
             error => {
-                this.alertService.error(error);
+              this.alertService.error(error);
+              reject(0);
             });
+    });
   }
 
   // convenience getter for easy access to form fields
@@ -258,7 +280,8 @@ export class vpSurveyListComponent implements OnInit {
       this.filter += `surveyDateEnd=${this.f.surveyDateEnd.value}`;
     }
 
-    if (this.f.surveyUser.value && this.f.surveyUser.value.surveyUserEmail != 'All') {
+    //NOTE: we search and use parameters by surveyUserName, but we query by surveyUserEmail
+    if (this.f.surveyUser.value && this.f.surveyUser.value.surveyUserName != 'All') {
       if (this.filter) {this.filter += `&logical${++i}=AND&`;}
       var filterValue = `${this.f.surveyUser.value.surveyUserEmail}`;
       if (filterValue.includes('*')) {
@@ -304,18 +327,12 @@ export class vpSurveyListComponent implements OnInit {
   }
 
   Add() {
-    this.router.navigate(['/survey/upload']);
+    this.router.navigate(['/survey/s123load']);
   }
-
+  Clear() {
+    this.Init()
+  }
   Cancel() {
     this.router.navigate([this.returnUrl]);
   }
-
-  comparePoolIdFn(p1: any, p2: string) {
-    console.log('vpsurvey.list.comparePoolIdFn p1:', p1, ' p2:', p2);
-    //return p1 && p2 ? p1.surveyPoolId === p2 : p1 === p2;
-    console.log('p1 type:', typeof p1, 'p2 type:', typeof p2, p1.surveyTypeId ==- p2, p1.surveyTypeId == p2, `${p1.surveyPoolId}` === `${p2}`);
-    return `${p1.surveyPoolId}` === `${p2}`;
-  }
-
 }
