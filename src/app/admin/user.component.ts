@@ -19,7 +19,7 @@ export class UserComponent implements OnInit, OnDestroy {
     count = 0;
     filterForm: FormGroup = this.formBuilder.group({});
     filter = '';
-    statuses = ['All', 'registration', 'reset', 'new_email', 'confirmed', 'invalid'];
+    statuses = ['All', 'registration', 'reset', 'new_email', 'confirmed', 'invalid', 'auto-gen'];
     roles = ['All', 'admin', 'user'];
 
     constructor(

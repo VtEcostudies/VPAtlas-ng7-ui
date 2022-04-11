@@ -20,7 +20,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     loading = false;
     submitted = false;
     roles = ['user','admin'];
-    statuses = ['registration', 'reset', 'new_email', 'confirmed', 'invalid'];
+    statuses = ['registration', 'reset', 'new_email', 'confirmed', 'invalid', 'auto-gen'];
 
     constructor(
         private formBuilder: FormBuilder,

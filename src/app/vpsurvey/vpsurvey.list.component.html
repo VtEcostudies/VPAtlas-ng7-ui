@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     ﻿<h3><u>VPAtlas Surveys</u></h3>
-    <button (click)="Add()" class="btn btn-primary">Add</button>
+    <button *ngIf="userIsAdmin" (click)="Add()" class="btn btn-primary">Add</button>
     <button (click)="Clear()" class="btn">Clear Filters</button>
     <button (click)="Cancel()" class="btn">Cancel</button>
     <label>Count: {{count}}</label>
@@ -95,12 +95,23 @@
         <td>{{survey.surveyTypeName}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyAmphibJson)">{{survey.sumAmphib?survey.sumAmphib[0]+'/'+survey.sumAmphib[1]:'0'}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">{{survey.sumMacros?survey.sumMacros:'0'}}</td>
+
+        <td *ngFor="let photo of survey.surveyPhotos">
+          <sup>{{photo.surveyPhotoSpecies}}</sup>
+          <a href="{{photo.surveyPhotoUrl}}">
+            <img class="survey-list-photo" src="{{photo.surveyPhotoUrl}}"/>
+          </a>
+        </td>
+        <td *ngIf="!survey.surveyPhotos"></td>
+<!--
+        <td *ngIf="!survey.surveyPhotoJson"></td>
         <td *ngFor="let url of survey.surveyPhotoUrls">
           <a href="{{url}}">
             <img class="survey-list-photo" src="{{url}}"/>
           </a>
         </td>
         <td *ngIf="!survey.surveyPhotoJson"></td>
+-->
     </tr>
   </tbody>
 </table>

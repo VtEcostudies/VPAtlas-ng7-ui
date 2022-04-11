@@ -26,6 +26,7 @@ export class vpSurveyViewComponent implements OnInit {
     mapPoints = true; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     mapMarker = false; //flag to show/hide a moveable mapMarker. In view mode, this is always false.
     locMarker = null; //data to locate moveable mapMmarker, passed to map via [locMarker]="locMarker" - null when mapMarker not shown.
+    zoomTo = {option:'Vermont', value:{}};
     itemType = "View Pool Survey";
     viewOnly = true; //flag that this is view-mode
     routeParams = {};
