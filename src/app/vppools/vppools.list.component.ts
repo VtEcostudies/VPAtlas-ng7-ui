@@ -252,18 +252,35 @@ export class vpListComponent implements OnInit {
               });
     }
 
-    //// TODO: distinguish btw viewing mapped pool and pool visit
+    ViewVisit(visitId) {
+      if (visitId) this.router.navigate([`/pools/visit/view/${visitId}`], {queryParams: {returnUrl: this.router.url}});
+    }
+    CreateVisit(poolId) {
+      if (poolId) this.router.navigate([`/pools/visit/create/${poolId}`], {queryParams: {returnUrl: this.router.url}});
+    }
     viewPoolVisit(visitId) {
-      this.router.navigate([`/pools/view/${visitId}`]);
+      if (visitId) this.router.navigate([`/pools/view/${visitId}`], {queryParams: {returnUrl: this.router.url}});
     }
 
     //// TODO: distinguish btw viewing mapped pool and pool visit
     viewMappedPool(poolId) {
-      this.router.navigate([`/pools/mapped/view/${poolId}`]);
+      this.router.navigate([`/pools/mapped/view/${poolId}`], {queryParams: {returnUrl: this.router.url}});
     }
 
     GetVisitReviews(visitId) {
-      this.router.navigate([`review/list/${visitId}`], {queryParams:{returnUrl:this.router.url}});
+      if (visitId) this.router.navigate([`review/list/${visitId}`], {queryParams: {returnUrl: this.router.url}});
+    }
+    ViewReview(reviewId) {
+      if (reviewId) {this.router.navigate([`/review/view/${reviewId}`], {queryParams: {returnUrl: this.router.url}});}
+    }
+    CreateReview(visitId) {
+      if (visitId) {this.router.navigate([`/review/create/${visitId}`], {queryParams: {returnUrl: this.router.url}});}
+    }
+    ViewSurvey(surveyId) {
+      if (surveyId) {this.router.navigate([`/survey/view/${surveyId}`], {queryParams: {returnUrl: this.router.url }});}
+    }
+    ViewSurveyPool(surveyPoolId) {
+      if (surveyPoolId) {this.router.navigate([`/survey/pool/${surveyPoolId}`], {queryParams: {returnUrl: this.router.url}});}
     }
 
     async showMap() {

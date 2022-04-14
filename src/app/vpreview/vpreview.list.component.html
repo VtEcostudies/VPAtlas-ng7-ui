@@ -39,7 +39,7 @@
   </div>
 </form>
 
-<div class="row">
+<div *ngIf="!dataLoading" class="row">
 <table class="table table-striped">
     <tr>
       <th>Review ID</th>
@@ -71,3 +71,7 @@
     </tr>
 </table>
 </div> <!-- row -->
+
+<div *ngIf="dataLoading" class="loading_overlay show_loading_overlay">
+  <!-- <div class="center">{{seconds}}</div> -->
+</div>

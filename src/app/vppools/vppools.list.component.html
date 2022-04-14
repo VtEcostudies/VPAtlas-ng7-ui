@@ -230,13 +230,15 @@
                 <!-- Visits -->
                 <span *ngIf="pool.visitId">
                   <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
-                    <a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a>
+                    <!--<a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a>-->
+                    <button (click)="ViewVisit(pool.visitId)" title="View Visit {{pool.visitId}}" class="btn btn-link">{{pool.visitId}}</button>
                   </td>
                 </span>
                 <span *ngIf="!pool.visitId">
                     <td class="vert-aligned body-scroll-align-columns">
                       <span *ngIf="currentUser">
-                        <a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">(+)</a>
+                        <!--<a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">(+)</a>-->
+                        <button (click)="CreateVisit(pool.poolId)" title="Create Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poold}}</button>
                       </span>
                     </td>
                 </span>
@@ -247,21 +249,21 @@
                 <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
                   <span *ngIf="userIsAdmin&&pool.visitId">
                     <span *ngIf="pool.reviewId">
-                        <a [routerLink]="['/review/view/', pool.reviewId]" title="View Review {{pool.reviewId}}"
-                        >{{pool.reviewId}}</a>
+                        <!--<a [routerLink]="['/review/view/', pool.reviewId]" title="View Review {{pool.reviewId}}">{{pool.reviewId}}</a>-->
+                        <button (click)="ViewReview(pool.reviewId)" class="btn btn-link">{{pool.reviewId}}</button>
                     </span>
                     <span *ngIf="!pool.reviewId">
                         <!--<button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>-->
-                        <a [routerLink]="['/review/create/', pool.visitId]" title="Add Review of Visit {{pool.visitId}}"
-                        >(+)</a>
+                        <!--<a [routerLink]="['/review/create/', pool.visitId]" title="Add Review of Visit {{pool.visitId}}">(+)</a>-->
+                        <button (click)="CreateReview(pool.visitId)" title="Add Review of Visit {{pool.visitId}}" class="btn btn-link">(+)</button>
                     </span>
                   </span>
                 </td>
                 <!-- Surveys -->
                 <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
                   <span *ngIf="pool.surveyId">
-                      <a [routerLink]="['/survey/view/', pool.surveyId]" title="View Survey {{pool.surveyId}}"
-                      >{{pool.surveyId}}</a>
+                      <!--<a [routerLink]="['/survey/view/', pool.surveyId]" title="View Survey {{pool.surveyId}}">{{pool.surveyId}}</a>-->
+                      <button (click)="ViewSurvey(pool.surveyId)" title="View Survey {{pool.surveyId}}" class="btn btn-link">{{pool.surveyId}}</button>
                   </span>
                 </td>
             </tr>

@@ -75,6 +75,8 @@ export class vpReviewViewComponent implements OnInit {
     }
 
     async ngOnInit() {
+
+      console.log('vpreview.view.componenent::ngOnInit | queryParams:', this.route.snapshot.queryParams);
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
 
       this.reviewId = this.route.snapshot.params.reviewId;

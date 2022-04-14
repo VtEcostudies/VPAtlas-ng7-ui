@@ -71,7 +71,8 @@ export class LeafletPopupComponent {
     if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   ViewSurvey(surveyId, tab=0) {
-    if (surveyId) {this.router.navigate([`/survey/list/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
+    //if (surveyId) {this.router.navigate([`/survey/list/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (surveyId) {this.router.navigate([`/survey/view/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
   }
   ViewSurveyPool(surveyPoolId, tab=0) {
     if (surveyPoolId) {this.router.navigate([`/survey/pool/${surveyPoolId}`], { queryParams: { returnUrl: this.router.url }} );}

@@ -167,12 +167,15 @@ export class UxValuesService {
       if (this.type=='revu') keep = keep &&
         (
           (row.visitId && !row.reviewId) ||
-          row.mappedUpdatedAt > row.reviewUpdatedAt ||
+          //new db triggers update vpmapped when review saved, so this criterion is bad
+          //row.mappedUpdatedAt > row.reviewUpdatedAt ||
           row.visitUpdatedAt > row.reviewUpdatedAt
         );
+      /*
       if (row.poolId=='SDF791') {
         console.log(row.poolId, row.visitId, row.reviewId, row.mappedUpdatedAt, row.visitUpdatedAt, row.reviewUpdatedAt);
       }
+      */
       if (this.type=='mine' && this.currentUser) keep = keep &&
         (user==row.mappedByUser ||
         user==row.visitUserName ||
