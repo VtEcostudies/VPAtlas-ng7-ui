@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
@@ -24,7 +24,7 @@ export class vpListComponent implements OnInit {
     pageSize = 10;
     loadAllRec = true; //flag to load by page or to load all at once
     zoomFilter = true; //flag to Zoom to selected filters, not filter data
-    visitHasIndicator = false;
+    hasIndicators = false;
     last = 1;
     count: number = 1;
     filter: string = '';
@@ -35,10 +35,14 @@ export class vpListComponent implements OnInit {
     zoomTo = {option:'Vermont', value:{}};
     mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
     seconds = 0;
+    routeParams: any = {};
+    queryParams: any = {};
+    loadParams: any = {};
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
+        private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
         private alertService: AlertService,
         public uxValuesService: UxValuesService,
@@ -57,21 +61,48 @@ export class vpListComponent implements OnInit {
     // convenience getter for easy access to form fields
     get f() { return this.filterForm.controls; }
 
+    booleanValue(x) {
+      return "true" == x;
+    }
+
     async ngOnInit() {
+      this.routeParams = this.route.snapshot.params; //only this arg is allowed. see app.routing.ts
+      this.queryParams = this.route.snapshot.queryParams;
+      Object.assign(this.loadParams, this.routeParams, this.queryParams);
+
+      if (this.loadParams.zoomFilter) {this.loadParams.zoomFilter = ("true" == this.loadParams.zoomFilter);}
+      else {this.loadParams.zoomFilter = this.uxValuesService.zoomFilter;}
+      if (this.loadParams.mapView) {this.loadParams.mapView = ("true" == this.loadParams.mapView);}
+      else {this.loadParams.mapView = this.uxValuesService.mapView;}
+      if (this.loadParams.loadAllRec) {this.loadParams.loadAllRec = ("true" == this.loadParams.loadAllRec);}
+      else {this.loadParams.loadAllRec = this.uxValuesService.loadAllRec;}
+      if (this.loadParams.hasIndicators) {this.loadParams.hasIndicators = ("true" == this.loadParams.hasIndicators);}
+      else {this.loadParams.hasIndicators = this.uxValuesService.hasIndicators;}
+
+      console.log('vppools.list.component.ts::ngOnInit | loadParams', this.loadParams);
+      var towns = [];
+      await this.uxValuesService.loadTowns() //need to load these for logic below
+        .then((res:any) => {
+          towns = res.slice(); //copy array by value
+          if (this.loadParams.townName) {
+            this.loadParams.town = towns.find(t => {return t.townName.toLowerCase() == this.loadParams.townName.toLowerCase();});
+            //console.log('Found Town:', this.loadParams.town);
+          }
+          else {this.loadParams.town = this.uxValuesService.filterTown;}
+        });
       //these are the pool search filter fields
       this.filterForm = this.formBuilder.group({
-          poolDataType: [this.uxValuesService.poolDataType],
-          visitId: [this.uxValuesService.filterVisitId],
-          poolId: [this.uxValuesService.filterPoolId],
-          userName: [this.uxValuesService.filterUserName],
-          town: [this.uxValuesService.filterTown],
+          poolDataType: [this.loadParams.poolDataType || this.uxValuesService.poolDataType],
+          visitId: [this.loadParams.visitId || this.uxValuesService.filterVisitId],
+          poolId: [this.loadParams.poolId || this.uxValuesService.filterPoolId],
+          userName: [this.loadParams.userName || this.uxValuesService.filterUserName],
+          town: [this.loadParams.town], //[this.uxValuesService.filterTown],
           mappedMethod: [this.uxValuesService.filterMappedMethod]
       });
-      this.mapView = this.uxValuesService.mapView;
-      this.loadAllRec = this.uxValuesService.loadAllRec;
-      this.zoomFilter = this.uxValuesService.zoomFilter;
-      this.visitHasIndicator = this.uxValuesService.visitHasIndicator;
-      this.uxValuesService.loadTowns();
+      this.mapView = this.loadParams.mapView; //this.uxValuesService.mapView;
+      this.loadAllRec = this.loadParams.loadAllRec; //this.uxValuesService.loadAllRec;
+      this.zoomFilter = this.loadParams.zoomFilter; //this.uxValuesService.zoomFilter;
+      this.hasIndicators = this.loadParams.hasIndicators; //this.uxValuesService.hasIndicators;
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
       await this.loadPools(1);
@@ -133,14 +164,14 @@ export class vpListComponent implements OnInit {
     }
 
     //respond to a click on the 'Has Species' checkbox
-    visitHasIndicatorChecked(e) {
-      this.visitHasIndicator = e.target.checked;
-      this.uxValuesService.visitHasIndicator = this.visitHasIndicator;
+    hasIndicatorsChecked(e) {
+      this.hasIndicators = e.target.checked;
+      this.uxValuesService.hasIndicators = this.hasIndicators;
       this.loadPools(1);
     }
-    visitHasIndicatorSetValue(value=true) {
-      this.visitHasIndicator = value;
-      this.uxValuesService.visitHasIndicator = this.visitHasIndicator;
+    hasIndicatorsSetValue(value=true) {
+      this.hasIndicators = value;
+      this.uxValuesService.hasIndicators = this.hasIndicators;
     }
 
     loadPools(page=0) {
@@ -207,13 +238,15 @@ export class vpListComponent implements OnInit {
     getSearch() {
       this.search = {};
       if (!this.zoomFilter) {
+      //console.log('vppools.list.component::getSearch | this.f.zoomFilter.value', this.f.zoomFilter.value);
+      //if (!this.f.zoomFilter.value) {
         if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
         if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
         if (this.f.town.value && this.f.town.value.townName!='All') this.search.town=this.f.town.value.townName;
       }
       if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
       if (this.f.userName.value) this.search.userName=this.f.userName.value;
-      this.search.visitHasIndicator=this.visitHasIndicator; //variable tracks checkbox value
+      this.search.hasIndicators=this.hasIndicators; //variable tracks checkbox value
       console.log('SEARCH | ', this.search);
     }
 
@@ -313,7 +346,7 @@ export class vpListComponent implements OnInit {
       this.filterForm.controls['userName'].setValue('');
       this.filterForm.controls['town'].setValue({townId:0, townName:"All", townCountyId:0});
       this.filterForm.controls['mappedMethod'].setValue('');
-      this.visitHasIndicatorSetValue(false);
+      this.hasIndicatorsSetValue(false);
       this.loadPools(1);
     }
 }

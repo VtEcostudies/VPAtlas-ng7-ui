@@ -97,7 +97,8 @@ export class vpSurveyListComponent implements OnInit {
   setFilterFormValues() {
     this.filterForm.controls['surveyId'].setValue(this.loadParams.surveyId);
 
-    let objPool = this.surveyPoolIds.find(o => {return o.surveyPoolId == this.loadParams.surveyPoolId;});
+    console.log('surveyPoolIds:', this.surveyPoolIds);
+    let objPool = this.surveyPoolIds.find(o => {console.log('surveyPoolIds.find:', o); return o.surveyPoolId == this.loadParams.surveyPoolId;});
     this.filterForm.controls['surveyPoolId'].setValue(objPool?objPool:null);
 
     let objType = this.surveyTypes.find(o => {return +o.surveyTypeId == +this.loadParams.surveyType;});

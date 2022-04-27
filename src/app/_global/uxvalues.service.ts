@@ -21,7 +21,7 @@ export class UxValuesService {
     public filterPoolId = null;
     public filterVisitId = null;
     public filterUserName = null
-    public filterTown = {townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null};
+    public filterTown = {townId:0, townName:"All", townCountyId:0, townAlias:null};
     public filterMappedMethod = "";
     public overlaySelected = {'potential':1, 'probable':1, 'confirmed':1, 'duplicate':0, 'eliminated':0,
                               'state':0, 'county':0, 'town':0, 'biophysical':0, 'parcel':0};
@@ -37,7 +37,7 @@ export class UxValuesService {
     public moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
 
     public zoomFilter = true; //flag 'Zoom Only' handling of search filters
-    public visitHasIndicator = false; //flag filter by visits having indicator species
+    public hasIndicators = false; //flag filter by visits having indicator species
 
     public pageSize = 12;
     public filter:string = '';
@@ -156,7 +156,7 @@ export class UxValuesService {
       if (srch.userName) keep = keep&&((srch.userName==row.mappedByUser)||(srch.userName==row.visitUserName));
       if (srch.mappedMethod) keep = keep&&(srch.mappedMethod==row.mappedMethod);
       if (srch.town) keep = keep&&(row.townName&&srch.town==row.townName);
-      if (srch.visitHasIndicator) keep = keep && (
+      if (srch.hasIndicators) keep = keep && (
           (row.speciesCount+0>0) ||
           (row.sumMacros+0>0) ||
           (row.sumAmphib&&row.sumAmphib[0]+0>0) ||
@@ -199,7 +199,6 @@ export class UxValuesService {
     public async loadUpdated(type='all', search:any={}, page=0) {
       this.search = search;
       this.type = type;
-      //await this.getFilter(type); //, search); only filter db results by type now that we have fast 'filterData()' here.
       console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data.timestamp} | filter:${this.filter} | search:`, search);
       return new Promise((resolve, reject) => {
         var result;
@@ -218,124 +217,6 @@ export class UxValuesService {
               reject(error);
             });
       });
-    }
-
-
-    /*
-      This is Deprecated.
-
-      WE NO LONGER USE THIS TO FILTER RESULTS BY 'search'. Instead, we load
-      by 'type', then post-filter results client-side by calling 'filterData()'.
-      This reduces server-calls, and is much faster.
-
-      Construct an SQL WHERE clause search filter to be passed to vppools.service
-      API route to filter db query results.
-
-      We have a problem with Search and the combined UX of Pools and Visits.
-      We are looking up into 2 tables, both of which have userNames, poolIds,
-      and more duplicate values. How do we handle this? There are lots of ways,
-      and they're all a lot of work.
-
-      NOTE: Implemented this on both ends by removing the default AND condition
-      and requiring logical operators be sent as below. Not easy.
-    */
-    getFilter(type='all', search:any={}) {
-
-      console.log(`BEFORE uxvalues.service::getFilter(type:${type}, search:${JSON.stringify(search)})`);
-      this.filter = ''; //must clear first to undo filters
-      var i = 0;
-
-      //visited pools
-      if (type == 'visi') {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `visitPoolId|!=NULL`;
-      }
-
-      //monitored pools
-/*
-      if (type == 'moni') {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `surveyPoolId|!=NULL`;
-      }
-*/
-      //review pools
-      //a more complex where clause is hard-coded into the API endpoint. Don't add another here.
-/*
-      if (type == 'revu') {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `reviewId=NULL&logical${++i}=AND&visitId|!=NULL`;
-      }
-*/
-      if (type=='mine' && this.currentUser) {
-        search.username=this.currentUser.username;
-      }
-
-      if (search.visitId) {
-        this.filter += `visitId=${search.visitId}`;
-      }
-      //this search item was removed from the form. leave the code in case it is revived.
-      if (search.poolId) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `logical${++i}=(`;
-        this.filter += `&mappedPoolId=${search.poolId}`; //exact match
-        this.filter += `&logical${++i}=OR`;
-        this.filter += `&visitPoolId=${search.poolId}`;
-        this.filter += `&logical${++i}=)`;
-      }
-
-      if (search.username) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `logical${++i}=(`;
-        this.filter += `&mappedByUser|LIKE=%${search.username}%`;
-        this.filter += `&logical${++i}=OR`;
-        this.filter += `&visitUserName|LIKE=%${search.username}%`;
-        this.filter += `&logical${++i}=)`;
-      }
-
-      if (search.town) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `logical${++i}=(`;
-        this.filter += `&mappedtown."townName"|LIKE=%${search.town}%`;
-        this.filter += `&logical${++i}=OR`;
-        this.filter += `&visittown."townName"|LIKE=%${search.town}%`;
-        this.filter += `&logical${++i}=OR`;
-        this.filter += `&townName|LIKE=%${search.town}%`;
-        this.filter += `&logical${++i}=)`;
-      }
-
-      if (search.mappedMethod) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `mappedMethod=${search.mappedMethod}`;
-      }
-
-      /*
-        filter hidden pools (duplicate, eliminated) if user is not admin
-        this is not necessary with new map control UX
-      */
-      if (!this.userIsAdmin) {
-        if (this.filter) {
-          this.filter += `&logical${++i}=AND&`;
-        }
-        this.filter += `mappedPoolStatus|NOT IN=Eliminated`;
-        this.filter += `&`;
-        this.filter += `mappedPoolStatus|NOT IN=Duplicate`;
-      }
-
-      console.log('AFTER uxvalues.service::getfilter()', this.filter);
     }
 
     addPrevZoom(level, center) {
@@ -392,20 +273,22 @@ export class UxValuesService {
     }
 
     loadTowns() {
+      return new Promise((resolve, reject) => {
       this.InfoService.getTowns()
           .pipe(first())
           .subscribe(
               data => {
-                //this.towns = data.rows;
-                var all = {townId:0, townName:"All", townCountyId:0, townCentroid:null, townBorder:null};
-                this.towns.push(all);
+                this.towns = [{townId:0, townName:"All", townCountyId:0, townAlias:null}];
                 data.rows.forEach(row => {
                   this.towns.push(row);
                 });
+                resolve(this.towns);
               },
               error => {
                 this.alertService.error(error);
+                reject(this.towns);
               });
+      })
     }
     //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
     //https://www.concretepage.com/angular/angular-select-option-reactive-form#comparewith

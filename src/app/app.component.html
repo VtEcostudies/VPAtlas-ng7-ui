@@ -84,7 +84,8 @@
                 </ul>
             </li>
 
-            <li class="nav-item" *ngIf="currentUser&&!userIsAdmin">
+            <!--<li class="nav-item" *ngIf="currentUser&&!userIsAdmin">-->
+            <li class="nav-item" *ngIf="!userIsAdmin">
               <a class="nav-link" routerLink="/pools/visit/create">Add Pool Data</a>
             </li>
 

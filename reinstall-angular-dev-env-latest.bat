@@ -7,12 +7,15 @@ Solution: go get a previous working version from Github
 
 reinstalled proper package.json
 
+(install node/npm if missing)
 npm install
 ng version
 Angular CLI: 13.3.3
 Node: 16.14.2
 Package Manager: npm 8.5.0
 OS: win32 x64
+
+
 
 Angular: 13.3.3
 ... animations, cdk, cli, common, compiler, compiler-cli, core
@@ -28,6 +31,7 @@ Package                         Version
 @schematics/angular             13.3.3
 rxjs                            6.6.7
 typescript                      4.6.3
+
 npm install -g @angular/cli@latest (this showed nothing new with 'ng version')
 npm install --save-dev @angular/cli@latest (this showed nothing new with 'ng version')
 ng serve

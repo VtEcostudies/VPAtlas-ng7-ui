@@ -90,19 +90,19 @@
     <h4><u>Filter Pools/Visits</u>
       <i (click)="openModal('vppools_help_info', 'searchFilters')" class="fa fa-info-circle no-margins link"></i>
     </h4>
-    <label class="btn btn-link info-icon-padding">
-      <input [checked]="zoomFilter" (change)="filterZoom($event)" type="checkbox" class="radio-button-justify-left"/>
-      <span>Zoom Only</span>
-    </label>
-    <i (click)="openModal('vppools_help_info', 'zoomFilter')" class="fa fa-info-circle no-margins link"></i>
-    <button (click)="ClearFilters()" class="btn btn-link">Clear Search Filters</button>
-    <!--
-    There's a performance issue here with search filters:
-    - use keyup if the result set is small (<100)
-    - use keyup.enter and keyup.tab otherwise
-    - to be safe, do the latter
-    -->
     <form [formGroup]="filterForm">
+      <label class="btn btn-link info-icon-padding">
+        <input [checked]="zoomFilter" (change)="filterZoom($event)" type="checkbox" class="radio-button-justify-left"/>
+        <span>Zoom Only</span>
+      </label>
+      <i (click)="openModal('vppools_help_info', 'zoomFilter')" class="fa fa-info-circle no-margins link"></i>
+      <button (click)="ClearFilters()" class="btn btn-link">Clear Search Filters</button>
+      <!--
+      There's a performance issue here with search filters:
+      - use keyup if the result set is small (<100)
+      - use keyup.enter and keyup.tab otherwise
+      - to be safe, do the latter
+      -->
       <table class="table table-sm"> <!-- odd discovery: table without <tr>, <td> does nice things -->
         <th style="width: 35%;"></th>
         <th style="width: 65%;"></th>
@@ -137,9 +137,9 @@
           </td>
         </tr>
         <tr class="form-group">
-          <td for="visitHasIndicator">Indicator Species</td>
+          <td for="hasIndicators">Indicator Species</td>
           <td>
-            <input [checked]="visitHasIndicator" (change)="visitHasIndicatorChecked($event)" type="checkbox" class="form-control radio-button-justify-left"/>
+            <input [checked]="hasIndicators" (change)="hasIndicatorsChecked($event)" type="checkbox" class="form-control radio-button-justify-left"/>
           </td>
         </tr>
 <!--

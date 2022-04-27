@@ -30,6 +30,9 @@ export const poolsDialogText = {
     <li>User: Enter a username to see only pools where a user has contributed data.</li>
     <li>Indicator Species: Check the box to see only pools where indicator species were observed.</li>
   </ul>
+  <p>
+  Note: if you type quickly, the drop-down list of Towns behaves like an auto-complete field.
+  </p>
   `,
   zoomFilter:`
   <h3><u>Zoom Only</u></h3>
