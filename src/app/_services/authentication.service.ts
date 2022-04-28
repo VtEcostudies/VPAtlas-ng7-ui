@@ -56,7 +56,8 @@ export class AuthenticationService {
             this.logout();
           });
         } else {
-          resolve({"message": "valid token"});
+          //resolve({"message": "No current user"});
+          reject({"message": "No current user"});
         }
       });
     }

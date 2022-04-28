@@ -61,10 +61,6 @@ export class vpListComponent implements OnInit {
     // convenience getter for easy access to form fields
     get f() { return this.filterForm.controls; }
 
-    booleanValue(x) {
-      return "true" == x;
-    }
-
     async ngOnInit() {
       this.routeParams = this.route.snapshot.params; //only this arg is allowed. see app.routing.ts
       this.queryParams = this.route.snapshot.queryParams;
@@ -238,8 +234,6 @@ export class vpListComponent implements OnInit {
     getSearch() {
       this.search = {};
       if (!this.zoomFilter) {
-      //console.log('vppools.list.component::getSearch | this.f.zoomFilter.value', this.f.zoomFilter.value);
-      //if (!this.f.zoomFilter.value) {
         if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
         if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
         if (this.f.town.value && this.f.town.value.townName!='All') this.search.town=this.f.town.value.townName;

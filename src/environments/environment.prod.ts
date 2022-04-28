@@ -15,6 +15,7 @@
 */
 export const environment = {
   production: true,
+  uiHost: 'https://vpatlas.org',
   apiUrl: 'https://vpatlas.org:4322',
   s3PhotoBucket: 'vpatlas.photos',
   s3SoundBucket: 'vpatlas.sounds'

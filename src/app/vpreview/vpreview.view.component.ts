@@ -64,14 +64,17 @@ export class vpReviewViewComponent implements OnInit {
           private vpReviewService: vpReviewService,
           private modalService: ModalService
     ) {
-      this.authenticationService.check();
+      //this.authenticationService.check();
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
         this.userIsAdmin = this.currentUser.userrole == 'admin';
       }
+/* Change this to allow the public to view Reviews.
+   Note: this also requires a change to API permissions to allow GETs on /review/* in jwt.js
       if (!this.userIsAdmin) {
         this.router.navigate(['/']);
       }
+*/
     }
 
     async ngOnInit() {
@@ -80,6 +83,8 @@ export class vpReviewViewComponent implements OnInit {
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/review/list';
 
       this.reviewId = this.route.snapshot.params.reviewId;
+
+      console.log('vpreview.view.componenent::ngOnInit | queryParams', this.route.snapshot.queryParams);
 
       await this.createFormControls();
 
@@ -157,6 +162,7 @@ export class vpReviewViewComponent implements OnInit {
     }
 
     CancelReview() {
+      console.log('vpreview.view.component::CancelReview | returnUrl', this.returnUrl);
       this.router.navigate([this.returnUrl]);
     }
 }

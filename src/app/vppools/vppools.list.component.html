@@ -247,7 +247,7 @@
                 <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
                 <!-- Reviews -->
                 <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
-                  <span *ngIf="userIsAdmin&&pool.visitId">
+                  <span *ngIf="pool.visitId">
                     <span *ngIf="pool.reviewId">
                         <!--<a [routerLink]="['/review/view/', pool.reviewId]" title="View Review {{pool.reviewId}}">{{pool.reviewId}}</a>-->
                         <button (click)="ViewReview(pool.reviewId)" class="btn btn-link">{{pool.reviewId}}</button>

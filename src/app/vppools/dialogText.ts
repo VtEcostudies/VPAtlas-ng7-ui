@@ -1,3 +1,6 @@
+import { environment } from '@environments/environment';
+const uiHost = environment.uiHost;
+
 export const poolsDialogText = {
 
   radioSearch:`
@@ -20,7 +23,7 @@ export const poolsDialogText = {
   <h3><u>Search Pools/Visits</u></h3>
   <p>
   You can further refine your Vernal Pool search by entering a Pool ID, a Username,
-  a Town, or a Mapped Method.</p>
+  a Town, or by checking 'Indicator Species'.</p>
   <p>Note: radio buttons can be combined with multiple search terms to filter pools
   by multiple criteria. Further refine the view using the pool status checkboxes
   on the map.</p>
@@ -31,7 +34,32 @@ export const poolsDialogText = {
     <li>Indicator Species: Check the box to see only pools where indicator species were observed.</li>
   </ul>
   <p>
-  Note: if you type quickly, the drop-down list of Towns behaves like an auto-complete field.
+  Note: if you type quickly, the drop-down list of Towns behaves like an auto-complete field, allowing
+  you to enter multiple letters and match a Town Name exactly.
+  </p>
+  <p>
+  Note: you can create a packaged URL to show filtered Vernal Pool data using query parameters. For example:
+  <ul>
+    <li><a href="${uiHost}/pools/list?poolId=NEW100&zoomFilter=false">
+        Pool ID NEW100.
+        </a></li>
+    <li><a href="${uiHost}/pools/list?townName=Brunswick&zoomFilter=false">
+        All vernal pools in the town of Brunswick.
+        </a></li>
+    <li><a href="${uiHost}/pools/list?townName=fair haven&zoomFilter=false&hasIndicators=true&loadAllRec=true&mapView=false">
+        Vernal pools with indicator species in the town of Fair Haven. Show the table view.
+        </a></li>
+    <li><a href="${uiHost}/pools/list?poolDataType=Visited&hasIndicators=true&zoomFilter=false&loadAllRec=true&mapView=false">
+        Visited pools having indicator species. Show the table view.
+        </a></li>
+    <li><a href="${uiHost}/pools/list?poolDataType=Monitored&townName=Randolph&zoomFilter=false">
+        Monitored pools in the town of Randolph.
+        </a></li>
+    <li><a href="${uiHost}/pools/list?poolDataType=Monitored&userName=kevtolan">
+        Monitored pools associeated with user 'kevtolan'.
+        </a></li>
+
+  </ul>
   </p>
   `,
   zoomFilter:`

@@ -18,6 +18,7 @@
 */
 export const environment = {
   production: false,
+  uiHost: 'http://localhost:4200',
   apiUrl: 'http://localhost:4000',
   s3PhotoBucket: 'vpatlas.data',
   s3SoundBucket: 'vpatlas.data'
