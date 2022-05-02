@@ -56,7 +56,7 @@ export const poolsDialogText = {
         Monitored pools in the town of Randolph.
         </a></li>
     <li><a href="${uiHost}/pools/list?poolDataType=Monitored&userName=kevtolan">
-        Monitored pools associeated with user 'kevtolan'.
+        Monitored pools associated with user 'kevtolan'.
         </a></li>
 
   </ul>
