@@ -26,7 +26,7 @@ export class vpSurveyS123LoadComponent implements OnInit {
     s123counts = <any> {};
     s123results = <any> [];
     s123errors = <any> [];
-    maxOffset = 500;
+    maxOffset = 1000;
     maxLimit = 100;
 
     constructor(

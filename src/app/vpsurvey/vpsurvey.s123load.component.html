@@ -94,10 +94,10 @@
         <tbody>
           <tr *ngFor="let survey of s123results">
               <td>
-                <a [routerLink]="['/survey/list', survey.data.surveyId]" class="btn btn-link">{{survey.data.surveyId}}</a>
+                <a [routerLink]="['/survey/list', survey.data.surveyId]" target="_blank" class="btn btn-link">{{survey.data.surveyId}}</a>
               </td>
               <td>
-                <a [routerLink]="['/survey/pool', survey.data.surveyPoolId]" class="btn btn-link">{{survey.data.surveyPoolId}}</a>
+                <a [routerLink]="['/survey/pool', survey.data.surveyPoolId]" target="_blank" class="btn btn-link">{{survey.data.surveyPoolId}}</a>
               </td>
               <td *ngIf="survey.data.surveyDataUrl">
                 <a href="{{survey.data.surveyDataUrl?(survey.data.surveyDataUrl.split('?')[0]):null}}"
