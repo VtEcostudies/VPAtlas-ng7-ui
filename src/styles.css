@@ -6,6 +6,18 @@
 */
 /*@import '@angular/material/prebuilt-themes/deeppurple-amber.css';*/
 @import './app/vpvisit/styles.css';
+
+/* Define bootstrap zero columns, a.k.a. hidden */
+.col-xs-0, 
+.col-sm-0,
+.col-md-0,
+.col-lg-0 {
+  flex: 0 0 0;
+  max-width: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+
 /*
   cursor pointer for info icons, etc.
 */
@@ -52,6 +64,36 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
 .nav-item .nav-link {
   padding-top:0px !important;
   padding-bottom:0px !important;
+}
+
+/*
+  Attempt vert menu on small screen
+*/
+.navbar-nav {
+  text-align: center;
+}
+.navbar .navbar-nav .nav-item .nav-link:hover, 
+.navbar .navbar-nav .nav-item .nav-link:active 
+{
+  color: cyan;
+}
+
+/* Make top-menu vertical for screen-size less than pixels below */
+@media (max-width: 600px) 
+{
+  .navbar, 
+  /*.navbar-nav, */
+  .navbar .navbar-nav,
+  /*.navbar .navbar-nav.nav-item, */
+  .navbar .navbar-nav .nav-item .nav-link {
+    display: inline;
+  }
+  li .nav-item .dropdown,
+  li div .dropdown-menu .show,
+  li div
+  {
+    text-align: right;
+  }
 }
 
 /*

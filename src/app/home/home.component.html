@@ -4,72 +4,77 @@
   </div>
 </div>
 
-<div class="row"> <!-- New scrolling main top -->
-  <div class="col-1"><!-- spacer col --></div>
-  <div class="col-10">
-    <p>
-      Welcome to the Vermont Vernal Pool Atlas (VPAtlas), an online, interactive database that compiles and
-      archives data for VCE's
-      <a href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/" target="_blank">
-      Vermont Vernal Pool Mapping Project</a>
-      and the
-      <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-monitoring-project/" target="_blank">
-      Vermont Vernal Pool Monitoring Project</a>.
-    </p>
-    <p>
-      You can browse real-time data about suspected and confirmed vernal pools by using the interactive map on the
-      'Search Pools' tab in the menu bar, where you can also filter your search (e.g., by town). If you'd like to
-      contribute field data and add pool locations, login (or register if you're a first-time user) and the "Add
-      Pool Data" menu tab will appear. You'll find instructions and tips on entering data in that portal - look
-      for the <i class="fa fa-info-circle no-margins link"></i> symbol near most fields for more info. To learn
-      what field data to submit, go to the "Field-Data Guides" menu tab to download a data sheet, data sheet
-      instructions, and an amphibian identification guide. If you have any questions or suggestions, please
-      contact us at <a href="mailto:vpatlas@vtecostudies.org" target="_blank">vpatlas@vtecostudies.org</a>.
-    </p>
-    <p>
-      VPAtlas is currently in General Release. The data displayed are reviewed by VPAtlas administrators on a
-      regular basis. A new phase of development to include Vernal Pool Monitoring Data, and new features to
-      enhance search, improve data, allow interoperability and encourage public use are under way in 2022.
-    </p>
-    <div class="row">
-      <div class="col-7">
-    <p>
-      The VPAtlas Project is funded by a State Wildlife Grant from
-      <a href="https://vtfishandwildlife.com/" target="_blank">
-        Vermont Fish & Wildlife
-      </a>,
-      with matching grants from the
-      <a href="https://www.lintilhacfoundation.org/" target="_blank">
-        Lintilhac Foundation
-      </a>
-      and the
-      <a href="https://dec.vermont.gov/water-investment/cwi/grants/co-opportunities#Watershed" target="_blank">
-        Vermont Watershed Grants Program.
-      </a>
-    </p>
-      </div>
-      <div class="col-4">
-        <a href="https://dec.vermont.gov/water-investment/cwi/grants/co-opportunities#Watershed" target="_blank">
-          <img style="padding-left:100px; vertical-align:top; max-height: 50px; max-width: 400px;" src='../assets/images/fnw_license_plates_logo.jpg'>
-        </a>
-      </div>
-    </div> <!-- row  -->
-  </div> <!-- col main section -->
-</div> <!-- row New scrolling main: top -->
+<div class="container-fluid">
+  <div class="row"> <!-- New scrolling main top -->
+    <div class="col-lg-12">
+      <p>
+        Welcome to the Vermont Vernal Pool Atlas (VPAtlas), an online, interactive database that compiles and
+        archives data for VCE's
+        <a href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/" target="_blank">
+        Vermont Vernal Pool Mapping Project</a>
+        and the
+        <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-monitoring-project/" target="_blank">
+        Vermont Vernal Pool Monitoring Project</a>.
+      </p>
+      <p>
+        You can browse real-time data about suspected and confirmed vernal pools by using the interactive map on the
+        'Search Pools' tab in the menu bar, where you can also filter your search (e.g., by town). If you'd like to
+        contribute field data and add pool locations, login (or register if you're a first-time user) and the "Add
+        Pool Data" menu tab will appear. You'll find instructions and tips on entering data in that portal - look
+        for the <i class="fa fa-info-circle no-margins link"></i> symbol near most fields for more info. To learn
+        what field data to submit, go to the "Field-Data Guides" menu tab to download a data sheet, data sheet
+        instructions, and an amphibian identification guide. If you have any questions or suggestions, please
+        contact us at <a href="mailto:vpatlas@vtecostudies.org" target="_blank">vpatlas@vtecostudies.org</a>.
+      </p>
+      <p>
+        VPAtlas is currently in General Release. The data displayed are reviewed by VPAtlas administrators on a
+        regular basis. A new phase of development to include Vernal Pool Monitoring Data, and new features to
+        enhance search, improve data, allow interoperability and encourage public use are under way in 2022.
+      </p>
+      <div class="row">
+        <div class="col-lg-7 col-md-6 col-sm-12">
+          <p>
+            The VPAtlas Project is funded by a State Wildlife Grant from
+            <a href="https://vtfishandwildlife.com/" target="_blank">
+              Vermont Fish & Wildlife
+            </a>,
+            with matching grants from the
+            <a href="https://www.lintilhacfoundation.org/" target="_blank">
+              Lintilhac Foundation
+            </a>
+            and the
+            <a href="https://dec.vermont.gov/water-investment/cwi/grants/co-opportunities#Watershed" target="_blank">
+              Vermont Watershed Grants Program.
+            </a>
+          </p>
+        </div>
+        <div class="col-lg-5 col-md-6 col-sm-12">
+          <a href="https://dec.vermont.gov/water-investment/cwi/grants/co-opportunities#Watershed" target="_blank">
+            <img 
+            style="padding-left:100px; vertical-align:top; max-height: 50px; max-width: 400px;"
+            src='../assets/images/fnw_license_plates_logo.jpg'
+            >
+          </a>
+        </div>
+      </div> <!-- row  -->
+    </div> <!-- col main section -->
+  </div> <!-- row New scrolling main: top -->
 
-<div class="row"> <!-- New scrolling main: bot  -->
-  <div class="col-1"></div>
-  <div class="col-10">
-    <div *ngIf="!loading">
-      <app-map-comp
-        [mapPoints]="mapPoints"
-        [mapValues]="pools"
-        [itemType]="itemType"
-        >
-      </app-map-comp>
-    </div> <!-- !loading -->
-    <div *ngIf="loading">
-      ...Loading
-    </div> <!-- loading... -->
-  </div> <!-- col -->
-</div> <!-- row New scrolling main -->
+  <div class="row"> <!-- New scrolling main: bot  -->
+    <div class="col-lg-2 col-md-1"></div>
+    <div class="col-lg-8 col-md-10 col-sm-12">
+      <div *ngIf="!loading">
+        <app-map-comp
+          [mapPoints]="mapPoints"
+          [mapValues]="pools"
+          [itemType]="itemType"
+          >
+        </app-map-comp>
+      </div> <!-- !loading -->
+      <div *ngIf="loading">
+        ...Loading
+      </div> <!-- loading... -->
+    </div> <!-- col -->
+  </div> <!-- row New scrolling main -->
+
+</div> <!-- end container -->

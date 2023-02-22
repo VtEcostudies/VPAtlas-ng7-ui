@@ -7,13 +7,17 @@
 </jw-modal>
 
 <div class="row">
-  <div class="col-2 content-left-border-right">
+  <div class="col-1 d-none d-sm-block"></div> <!-- Add spacer to center content for sm -->
+  <div class="col-2 d-none d-md-block"></div> <!-- Add spacer to center content for md -->
+  <div class="col-lg-2 col-md-8 col-sm-10 col-xs-12"> <!-- Sidebar for large screens -->
     <h4><u>Vernal Pool Atlas</u>
     <i (click)="openModal('vppools_help_info', 'radioSearch')" class="fa fa-info-circle no-margins link"></i>
     </h4>
-<form [formGroup]="filterForm">
+
+    <form [formGroup]="filterForm">
 
     <fieldset id="poolStatus"> <!-- for radio-button grouping -->
+
     <table class="table table-sm">
       <th style="width: 70%;"></th>
       <th style="width: 30%;"></th>
@@ -45,7 +49,6 @@
         </td>
         <td>{{stats.mine}}</td>
       </tr>
-
       <tr *ngIf="userIsAdmin">
         <td><label>
             <input formControlName="poolDataType" type="radio" value="Review" class="radio-button-justify-left"
@@ -83,9 +86,9 @@
 
     </table>
 
-    </fieldset>
+    </fieldset> <!-- for radio-button grouping -->
 
-</form>
+    </form>
 
     <h4><u>Filter Pools/Visits</u>
       <i (click)="openModal('vppools_help_info', 'searchFilters')" class="fa fa-info-circle no-margins link"></i>
@@ -106,14 +109,6 @@
       <table class="table table-sm"> <!-- odd discovery: table without <tr>, <td> does nice things -->
         <th style="width: 35%;"></th>
         <th style="width: 65%;"></th>
-<!--
-        <tr class="form-group">
-          <td for="visitId">Visit ID</td>
-          <td>
-            <input (change)="loadPools(1)" type="text" formControlName="visitId" class="form-control"/>
-          </td>
-        </tr>
--->
         <tr class="form-group">
           <td for="poolId">Pool ID</td>
           <td>
@@ -142,24 +137,11 @@
             <input [checked]="hasIndicators" (change)="hasIndicatorsChecked($event)" type="checkbox" class="form-control radio-button-justify-left"/>
           </td>
         </tr>
-<!--
-        <tr class="form-group">
-          <td>Method</td>
-          <td>
-            <select (change)="loadPools(1)" formControlName="mappedMethod" class="form-control">
-              <option value="">All</option>
-              <option value="Aerial">Aerial</option>
-              <option value="Known">Known</option>
-              <option value="Visit">Visit</option>
-            </select>
-          </td>
-        </tr>
--->
       </table>
     </form>
-  </div> <!-- col-2 -->
-
-  <div class="col-10">
+  </div> <!-- End col-2 -->
+  
+  <div class="col-lg-10 col-md-8 col-sm-10 col-xs-12"> <!-- Side by side for lg. Own row for the rest. -->
     <!-- <div *ngIf="!loading"> -->
       <div class="row">
         <div> <!-- OMFG, all vertical alignment issues were due to different div levels!!! -->
@@ -288,6 +270,6 @@
       <!-- <div class="center">{{seconds}}</div> -->
     </div>
 
-  </div><!-- col-10 -->
+  </div><!-- col-lg-10 -->
 
 </div><!-- row -->

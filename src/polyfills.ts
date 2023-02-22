@@ -17,6 +17,11 @@
 /***************************************************************************************************
  * BROWSER POLYFILLS
  */
+/*
+    JTL added per https://stackoverflow.com/questions/50313745/angular-6-process-is-not-defined-when-trying-to-serve-application
+*/
+import * as process from 'process';
+window.process = process;
 
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents
@@ -42,9 +47,10 @@
  *
  */
 
+
 /***************************************************************************************************
- * Zone JS is required by default for Angular itself.
- */
+* Zone JS is required by default for Angular itself.
+*/
 import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 

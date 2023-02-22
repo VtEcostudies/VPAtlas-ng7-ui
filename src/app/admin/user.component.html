@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-12">
-    ﻿<h3><u>VPAtlas Users</u></h3>
+    <h3><u>VPAtlas Users</u></h3>
     <a [routerLink]="['/user/profile/create']" class="btn btn-link">Add User</a>
     <button (click)="Cancel()" class="btn">Cancel</button>
     <label><u>Count: {{count}}</u></label>
@@ -9,29 +9,29 @@
 
 <form [formGroup]="filterForm">
   <div class="row">
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Username</label>
       <input (change)="LoadUsers()" type="text" formControlName="username" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>First Name</label>
       <input (change)="LoadUsers()" type="text" formControlName="firstname" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Last Name</label>
       <input (change)="LoadUsers()" type="text" formControlName="lastname" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Email</label>
       <input (change)="LoadUsers()" type="text" formControlName="email" class="form-control"/>
     </div>
     <!--
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Alias</label>
       <input (change)="LoadUsers()" type="text" formControlName="alias" class="form-control"/>
     </div>
     -->
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Status</label>
       <select (change)="LoadUsers()" formControlName="status" class="form-control">
         <option *ngFor="let status of statuses" [ngValue]="status">
@@ -39,7 +39,7 @@
         </option>
       </select>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Role</label>
       <select (change)="LoadUsers()" formControlName="role" class="form-control">
         <option *ngFor="let role of roles" [ngValue]="role">
@@ -52,18 +52,18 @@
 
 <div class="row">
   <div class="table-wrapper">
-<table class="table table-striped">
-    <tr>
-      <th>Username</th>
-      <th>First</th>
-      <th>Last</th>
-      <th>Email</th>
-      <th>Alias</th>
-      <th>Status</th>
-      <th>Role</th>
-      <th>Updated</th>
-    </tr>
-    <tr *ngFor="let user of users">
+    <table class="table table-striped">
+      <tr>
+        <th>Username</th>
+        <th>First</th>
+        <th>Last</th>
+        <th>Email</th>
+        <th>Alias</th>
+        <th>Status</th>
+        <th>Role</th>
+        <th>Updated</th>
+      </tr>
+      <tr *ngFor="let user of users">
         <td class="td-large">
           <!--
           Could not get td stuyle in styles.css to affect <a> sub-tag having bootstrap class="btn btn-link".
@@ -79,7 +79,7 @@
         <td class="td-small">{{user.userrole}}</td>
         <td class="td-large">{{user.updatedAt}}</td>
         <td *ngIf="user.id!=0 && user.id!=currentUser.user.id"><a (click)="deleteUser(user.id, user.username)" class="td-small text-danger">Delete</a></td>
-    </tr>
-</table>
-</div>
+      </tr>
+    </table>
+  </div>
 </div> <!-- row -->

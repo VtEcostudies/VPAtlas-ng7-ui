@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-12">
-    ﻿<h3><u>VPAtlas Reviews</u></h3>
+    <h3><u>VPAtlas Reviews</u></h3>
     <button *ngIf="singleVisit && singleVisit==f.visitId.value" (click)="AddReview()" class="btn btn-primary">Add Review</button>
     <button (click)="Cancel()" class="btn">Cancel</button>
     <label><u>Count: {{count}}</u></label>
@@ -8,27 +8,27 @@
 </div>
 <form [formGroup]="filterForm">
   <div class="row">
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Review ID</label>
       <input (change)="LoadReviews()" type="text" formControlName="reviewId" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>User</label>
       <input (change)="LoadReviews()" type="text" formControlName="userName" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Visit ID</label>
       <input (change)="LoadReviews()" type="text" formControlName="visitId" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Pool ID</label>
       <input (change)="LoadReviews()" type="text" formControlName="poolId" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>QA Person</label>
       <input (change)="LoadReviews()" type="text" formControlName="QAPerson" class="form-control"/>
     </div>
-    <div class="form-group col-2">
+    <div class="form-group col-lg-2 col-md-6 col-sm-12">
       <label>Status</label>
       <select (change)="LoadReviews()" formControlName="status" class="form-control">
         <option *ngFor="let status of statuses" [ngValue]="status">
@@ -40,36 +40,38 @@
 </form>
 
 <div *ngIf="!dataLoading" class="row">
-<table class="table table-striped">
-    <tr>
-      <th>Review ID</th>
-      <th>User</th>
-      <th>Visit ID</th>
-      <th>Pool ID</th>
-      <th>QA Code</th>
-      <th>QA Alt</th>
-      <th>QA Person</th>
-      <th>QA Date</th>
-      <th>Status</th>
-      <th>Locator</th>
-      <th>Updated</th>
-    </tr>
-    <tr *ngFor="let review of reviews">
-        <td>
-          <a [routerLink]="['/review/view/', review.reviewId]" class="btn btn-link">{{review.reviewId}}</a>
-        </td>
-        <td>{{review.reviewUserName}}</td>
-        <td>{{review.reviewVisitId}}</td>
-        <td>{{review.reviewPoolId}}</td>
-        <td>{{review.reviewQACode}}</td>
-        <td>{{review.reviewQAAlt}}</td>
-        <td>{{review.reviewQAPerson}}</td>
-        <td>{{review.reviewQADate}}</td>
-        <td>{{review.reviewPoolStatus}}</td>
-        <td>{{review.reviewPoolLocator}}</td>
-        <td>{{review.reviewUpdatedAt}}</td>
-    </tr>
-</table>
+  <div class="table-wrapper">
+    <table class="table table-striped table-responsive ">
+      <tr>
+        <th>Review ID</th>
+        <th>User</th>
+        <th>Visit ID</th>
+        <th>Pool ID</th>
+        <th>QA Code</th>
+        <th>QA Alt</th>
+        <th>QA Person</th>
+        <th>QA Date</th>
+        <th>Status</th>
+        <th>Locator</th>
+        <th>Updated</th>
+      </tr>
+      <tr *ngFor="let review of reviews">
+          <td>
+            <a [routerLink]="['/review/view/', review.reviewId]" class="btn btn-link">{{review.reviewId}}</a>
+          </td>
+          <td>{{review.reviewUserName}}</td>
+          <td>{{review.reviewVisitId}}</td>
+          <td>{{review.reviewPoolId}}</td>
+          <td>{{review.reviewQACode}}</td>
+          <td>{{review.reviewQAAlt}}</td>
+          <td>{{review.reviewQAPerson}}</td>
+          <td>{{review.reviewQADate}}</td>
+          <td>{{review.reviewPoolStatus}}</td>
+          <td>{{review.reviewPoolLocator}}</td>
+          <td>{{review.reviewUpdatedAt}}</td>
+      </tr>
+    </table>
+  </div>
 </div> <!-- row -->
 
 <div *ngIf="dataLoading" class="loading_overlay show_loading_overlay">
