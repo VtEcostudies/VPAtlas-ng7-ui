@@ -6,7 +6,7 @@ import { AppComponent } from '@app/app.component';
 import { AlertService, UserService } from '@app/_services';
 import { MustMatch } from '@app/_helpers/must-match.validator';
 
-@Component({templateUrl: 'Confirm.component.html'})
+@Component({templateUrl: 'confirm.component.html'})
 export class ConfirmComponent implements OnInit {
     confirmForm: FormGroup;
     loading = false;

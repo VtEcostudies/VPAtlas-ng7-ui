@@ -20,9 +20,10 @@
 /*
     JTL added per https://stackoverflow.com/questions/50313745/angular-6-process-is-not-defined-when-trying-to-serve-application
 */
-import * as process from 'process';
-window.process = process;
-
+// aws-sdk requires global to exist
+(window as any).global = window;
+(window as any).global.util = (window as any).global.util || require("util").util;
+(window as any).global.Buffer = (window as any).global.Buffer || require('buffer').Buffer;
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents
  * user can disable parts of macroTask/DomEvents patch by setting following flags
@@ -51,12 +52,9 @@ window.process = process;
 /***************************************************************************************************
 * Zone JS is required by default for Angular itself.
 */
-import 'zone.js/dist/zone';  // Included with Angular CLI.
-
+//import 'zone.js/dist/zone';  // Included with Angular CLI.
+import 'zone.js';  // Included with Angular CLI.
 
 /***************************************************************************************************
  * APPLICATION IMPORTS
- */
- // aws-sdk requires global to exist
-(window as any).global = window;
-(window as any).global.util = (window as any).global.util || require("util").util;
+*/

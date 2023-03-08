@@ -17,6 +17,7 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 export class vpListComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
+    dataTypeForm: FormGroup;
     filterForm: FormGroup;
     loading = null;
     stats = { total:0, total_data:0, potential:0, probable:0, confirmed:0, eliminated:0, duplicate:0, visited:0, monitored:0 }; //need a default to prevent pre-load errors?
@@ -33,13 +34,13 @@ export class vpListComponent implements OnInit {
     pools: vpMapped[] = []; //data array from db having lat and lon values to plot on map
     itemType = 'List Pools/Visits'; //used by leaflet map to format popup content, etc.
     zoomTo = {option:'Vermont', value:{}};
-    mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
+    mapView = true; //flag to toggle between table and map view. This value is always set to the uxValuesService value so it's consisitent across page loads.77
     seconds = 0;
     routeParams: any = {};
     queryParams: any = {};
     loadParams: any = {};
 
-    constructor(
+    constructor (
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
@@ -47,7 +48,7 @@ export class vpListComponent implements OnInit {
         private alertService: AlertService,
         public uxValuesService: UxValuesService,
         private vpMappedService: vpMappedService,
-        private vpPoolsService: vpPoolsService,
+        //private vpPoolsService: vpPoolsService,
         private modalService: ModalService,
     ) {
       if (this.authenticationService.currentUserValue) {
@@ -59,7 +60,11 @@ export class vpListComponent implements OnInit {
     }
 
     // convenience getter for easy access to form fields
-    get f() { return this.filterForm.controls; }
+    get f() { 
+      let t = this.dataTypeForm.controls;
+      let o = this.filterForm.controls;
+      return Object.assign(o, t); 
+    }
 
     async ngOnInit() {
       this.routeParams = this.route.snapshot.params; //only this arg is allowed. see app.routing.ts
@@ -87,18 +92,21 @@ export class vpListComponent implements OnInit {
           else {this.loadParams.town = this.uxValuesService.filterTown;}
         });
       //these are the pool search filter fields
+      this.dataTypeForm = this.formBuilder.group({
+        poolDataType: [this.loadParams.poolDataType || this.uxValuesService.poolDataType]
+      });
       this.filterForm = this.formBuilder.group({
-          poolDataType: [this.loadParams.poolDataType || this.uxValuesService.poolDataType],
-          visitId: [this.loadParams.visitId || this.uxValuesService.filterVisitId],
-          poolId: [this.loadParams.poolId || this.uxValuesService.filterPoolId],
-          userName: [this.loadParams.userName || this.uxValuesService.filterUserName],
-          town: [this.loadParams.town], //[this.uxValuesService.filterTown],
-          mappedMethod: [this.uxValuesService.filterMappedMethod]
+        //poolDataType: [this.loadParams.poolDataType || this.uxValuesService.poolDataType],
+        poolId: [this.loadParams.poolId || this.uxValuesService.filterPoolId],
+        userName: [this.loadParams.userName || this.uxValuesService.filterUserName],
+        town: [this.loadParams.town]//, //[this.uxValuesService.filterTown],
+        //mappedMethod: [this.uxValuesService.filterMappedMethod]
       });
       this.mapView = this.loadParams.mapView; //this.uxValuesService.mapView;
       this.loadAllRec = this.loadParams.loadAllRec; //this.uxValuesService.loadAllRec;
       this.zoomFilter = this.loadParams.zoomFilter; //this.uxValuesService.zoomFilter;
       this.hasIndicators = this.loadParams.hasIndicators; //this.uxValuesService.hasIndicators;
+      console.log(`vppools.list.component.ts | filterForm.value:`, this.filterForm.value); //debug
       await this.loadPoolStats();
       //and load page 1 (or all if loadAllRec defaults to true)
       await this.loadPools(1);
@@ -170,13 +178,19 @@ export class vpListComponent implements OnInit {
       this.uxValuesService.hasIndicators = this.hasIndicators;
     }
 
-    loadPools(page=0) {
+/*
+TypeError: t is undefined - AngularFixing
+Jul 7, 2022 Solution Usually when you get the TypeError: t is undefined error in your console it's because the script 
+can't process one or more of the variables that it's tried to create based on the input field you've targeted. Most 
+of the time this is due to targeting the incorrect element (i.e. targeting the parent container instead of the actual input).
+*/
+    async loadPools(page=0) {
+      console.log(`loadPools`); //debug
       this.alertService.clear();
       this.uxValuesService.filterPoolId = this.f.poolId.value;
-      this.uxValuesService.filterVisitId = this.f.visitId.value;
-      this.uxValuesService.filterUserName = this.f.userName.value;
       this.uxValuesService.filterTown = this.f.town.value;
-      this.uxValuesService.filterMappedMethod = this.f.mappedMethod.value;
+      this.uxValuesService.filterUserName = this.f.userName.value;
+      //this.uxValuesService.filterMappedMethod = this.f.mappedMethod.value;
 
       if (this.loadAllRec) {
         this.loadUpdated(this.getType());
@@ -231,17 +245,16 @@ export class vpListComponent implements OnInit {
     /*
       retrieve values of search filter items to pass to loadUpdated
     */
-    getSearch() {
+    async getSearch() {
       this.search = {};
       if (!this.zoomFilter) {
-        if (this.f.visitId.value) this.search.visitId=this.f.visitId.value;
         if (this.f.poolId.value) this.search.poolId=this.f.poolId.value;
         if (this.f.town.value && this.f.town.value.townName!='All') this.search.town=this.f.town.value.townName;
       }
-      if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
+      //if (this.f.mappedMethod.value) this.search.mappedMethod=this.f.mappedMethod.value;
       if (this.f.userName.value) this.search.userName=this.f.userName.value;
       this.search.hasIndicators=this.hasIndicators; //variable tracks checkbox value
-      console.log('SEARCH | ', this.search);
+      //console.log('SEARCH | ', this.search);
     }
 
     async loadUpdated(type='all', page=0) {
@@ -262,21 +275,18 @@ export class vpListComponent implements OnInit {
     }
 
     /*
-    Just load pool stats.
+      Just load pool stats.
     */
     async loadPoolStats() {
-      //this.loading = true;
       this.vpMappedService.getStats(this.currentUser ? this.currentUser.username : null)
-          .pipe(first())
-          .subscribe(
-              data => {
-                this.stats = data.rows[0];
-                //this.loading = false;
-              },
-              error => {
-                this.alertService.error(error);
-                //this.loading = false;
-              });
+        .pipe(first())
+        .subscribe(
+          data => {
+            this.stats = data.rows[0];
+          },
+          error => {
+            this.alertService.error(error);
+          });
     }
 
     ViewVisit(visitId) {
@@ -284,9 +294,6 @@ export class vpListComponent implements OnInit {
     }
     CreateVisit(poolId) {
       if (poolId) this.router.navigate([`/pools/visit/create/${poolId}`], {queryParams: {returnUrl: this.router.url}});
-    }
-    viewPoolVisit(visitId) {
-      if (visitId) this.router.navigate([`/pools/view/${visitId}`], {queryParams: {returnUrl: this.router.url}});
     }
 
     //// TODO: distinguish btw viewing mapped pool and pool visit
@@ -303,6 +310,7 @@ export class vpListComponent implements OnInit {
     CreateReview(visitId) {
       if (visitId) {this.router.navigate([`/review/create/${visitId}`], {queryParams: {returnUrl: this.router.url}});}
     }
+    
     ViewSurvey(surveyId) {
       if (surveyId) {this.router.navigate([`/survey/view/${surveyId}`], {queryParams: {returnUrl: this.router.url }});}
     }
@@ -335,11 +343,10 @@ export class vpListComponent implements OnInit {
     }
 
     ClearFilters() {
-      this.filterForm.controls['visitId'].setValue('');
       this.filterForm.controls['poolId'].setValue('');
       this.filterForm.controls['userName'].setValue('');
       this.filterForm.controls['town'].setValue({townId:0, townName:"All", townCountyId:0});
-      this.filterForm.controls['mappedMethod'].setValue('');
+      //this.filterForm.controls['mappedMethod'].setValue('');
       this.hasIndicatorsSetValue(false);
       this.loadPools(1);
     }

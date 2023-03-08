@@ -4,7 +4,7 @@
   EPSG:3857 == WGS84 / Pseudo-Mercator, the 'web mapping standard CRS'
   Leaflet Default Projection: EPSG:3857
 */
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange } from "@angular/core";
 import { AuthenticationService, vpPoolsService, vcgiService } from '@app/_services';
 import { first } from 'rxjs/operators';

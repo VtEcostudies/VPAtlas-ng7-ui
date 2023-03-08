@@ -23,6 +23,8 @@ export class UxValuesService {
     public filterUserName = null
     public filterTown = {townId:0, townName:"All", townCountyId:0, townAlias:null};
     public filterMappedMethod = "";
+    public zoomFilter = true; //flag 'Zoom Only' handling of search filters
+    public hasIndicators = false; //flag filter-by-visits having indicator species
     public overlaySelected = {'potential':1, 'probable':1, 'confirmed':1, 'duplicate':0, 'eliminated':0,
                               'state':0, 'county':0, 'town':0, 'biophysical':0, 'parcel':0};
     public mapView = true; // true:Map View, false:Table View
@@ -35,9 +37,6 @@ export class UxValuesService {
     public zoomCount = 0;
     public zoomUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
     public moveUI = true; //flag a zoom event from map UI (not from zoomPrev or zoomNext)
-
-    public zoomFilter = true; //flag 'Zoom Only' handling of search filters
-    public hasIndicators = false; //flag filter by visits having indicator species
 
     public pageSize = 12;
     public filter:string = '';

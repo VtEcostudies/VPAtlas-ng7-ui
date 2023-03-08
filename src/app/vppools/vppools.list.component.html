@@ -7,14 +7,12 @@
 </jw-modal>
 
 <div class="row">
-  <div class="col-1 d-none d-sm-block"></div> <!-- Add spacer to center content for sm -->
-  <div class="col-2 d-none d-md-block"></div> <!-- Add spacer to center content for md -->
-  <div class="col-lg-2 col-md-8 col-sm-10 col-xs-12"> <!-- Sidebar for large screens -->
+  <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12"> <!-- Sidebar for large screens -->
     <h4><u>Vernal Pool Atlas</u>
     <i (click)="openModal('vppools_help_info', 'radioSearch')" class="fa fa-info-circle no-margins link"></i>
     </h4>
 
-    <form [formGroup]="filterForm">
+    <form [formGroup]="dataTypeForm">
 
     <fieldset id="poolStatus"> <!-- for radio-button grouping -->
 
@@ -36,12 +34,7 @@
       <tr *ngIf="currentUser">
         <td>
           <label>
-            <!--
-            <input formControlName="poolDataType" type="radio" value="Mine" (change)="setDataTypeLoadPools('Mine')" class="radio-button-justify-left" />
-            NOTE: Add a (click) call below for testing...
-            -->
             <input formControlName="poolDataType" type="radio" value="Mine" class="radio-button-justify-left"
-              (click)="setDataTypeLoadPools('Mine')"
               (change)="setDataTypeLoadPools('Mine')"
             />
             <span>My Data</span>
@@ -50,9 +43,9 @@
         <td>{{stats.mine}}</td>
       </tr>
       <tr *ngIf="userIsAdmin">
-        <td><label>
+        <td>
+          <label>
             <input formControlName="poolDataType" type="radio" value="Review" class="radio-button-justify-left"
-              (click)="setDataTypeLoadPools('Review')"
               (change)="setDataTypeLoadPools('Review')"
             />
             <span>Review</span>
@@ -63,7 +56,6 @@
         <td>
           <label>
             <input formControlName="poolDataType" type="radio" value="Visited" class="radio-button-justify-left"
-              (click)="setDataTypeLoadPools('Visited')"
               (change)="setDataTypeLoadPools('Visited')"
             />
             <span>Visited</span>
@@ -75,7 +67,6 @@
         <td>
           <label>
             <input formControlName="poolDataType" type="radio" value="Monitored" class="radio-button-justify-left"
-              (click)="setDataTypeLoadPools('Monitored')"
               (change)="setDataTypeLoadPools('Monitored')"
             />
             <span>Monitored</span>
@@ -141,119 +132,112 @@
     </form>
   </div> <!-- End col-2 -->
   
-  <div class="col-lg-10 col-md-8 col-sm-10 col-xs-12"> <!-- Side by side for lg. Own row for the rest. -->
-    <!-- <div *ngIf="!loading"> -->
-      <div class="row">
-        <div> <!-- OMFG, all vertical alignment issues were due to different div levels!!! -->
-          <button class="btn btn-link info-icon-padding">{{count}} Records</button>
-          <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle link"></i>
-          <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link info-icon-padding">Map View</button>
-          <button *ngIf="mapView" (click)="showTable()" class="btn btn-link info-icon-padding">Table View</button>
-          <i (click)="openModal('vppools_help_info', 'mapViewTableView')" class="fa fa-info-circle link"></i>
-        </div>
-        <label class="btn btn-link info-icon-padding">
-          <input [checked]="loadAllRec" (change)="loadAllRecChecked($event)" type="checkbox" class="radio-button-justify-left"/>
-          <span>Load All</span>
-        </label>
-        <div>
-          <i (click)="openModal('vppools_help_info', 'loadAll')" class="fa fa-info-circle link info-icon"></i>
-        </div>
-        <span *ngIf="!loadAllRec">
-          <button (click)="firstPage()" class="btn btn-link">|< First</button>
-          <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
-          <button class="btn btn-link">Page {{page}}</button>
-          <button (click)="nextPage()" class="btn btn-link">Next >></button>
-          <button (click)="lastPage()" class="btn btn-link">Last >|</button>
-        </span>
+  <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12"> <!-- Side by side for lg. Own row for the rest. -->
+    <div class="row">
+      <div> <!-- OMG, all vertical alignment issues were due to different div levels!!! -->
+        <button class="btn btn-link info-icon-padding">{{count}} Records</button>
+        <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle link"></i>
+        <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link info-icon-padding">Map View</button>
+        <button *ngIf="mapView" (click)="showTable()" class="btn btn-link info-icon-padding">Table View</button>
+        <i (click)="openModal('vppools_help_info', 'mapViewTableView')" class="fa fa-info-circle link"></i>
       </div>
+      <label class="btn btn-link info-icon-padding">
+        <input [checked]="loadAllRec" (change)="loadAllRecChecked($event)" type="checkbox" class="radio-button-justify-left"/>
+        <span>Load All</span>
+      </label>
+      <div>
+        <i (click)="openModal('vppools_help_info', 'loadAll')" class="fa fa-info-circle link info-icon"></i>
+      </div>
+      <span *ngIf="!loadAllRec">
+        <button (click)="firstPage()" class="btn btn-link">|< First</button>
+        <button (click)="prevPage()" class="btn btn-link"><< Prev</button>
+        <button class="btn btn-link">Page {{page}}</button>
+        <button (click)="nextPage()" class="btn btn-link">Next >></button>
+        <button (click)="lastPage()" class="btn btn-link">Last >|</button>
+      </span>
+    </div>
 
-      <!--
-      https://stackoverflow.com/questions/11891065/css-only-scrollable-table-with-fixed-headers
-      -->
-      <div *ngIf="!loading">
+    <!--
+    https://stackoverflow.com/questions/11891065/css-only-scrollable-table-with-fixed-headers
+    -->
+    <div *ngIf="!loading">
       <div *ngIf="!mapView"> <!-- <div *ngIf="!mapView" class="container-fluid"> -->
         <div class="pools-table-div"> <!-- style="display: inline-block; height:550px; overflow:auto;"> -->
-        <table> <!-- class="table table-sm table-responsive"> responsive mucks overflow, etc. -->
-          <thead>
-            <tr>
-                <th class="body-scroll-align-columns">Pool ID</th>
-                <th class="body-scroll-align-columns">User (Mapped)</th>
-                <th class="body-scroll-align-columns">Town</th>
-                <th class="body-scroll-align-columns">Method</th>
-                <th class="body-scroll-align-columns">Status</th>
-                <th class="body-scroll-align-columns">Latitude</th>
-                <th class="body-scroll-align-columns">Longitude</th>
+          <table> <!-- class="table table-sm table-responsive"> responsive mucks overflow, etc. -->
+            <thead>
+              <tr>
+                  <th class="body-scroll-align-columns">Pool ID</th>
+                  <th class="body-scroll-align-columns">User (Mapped)</th>
+                  <th class="body-scroll-align-columns">Town</th>
+                  <th class="body-scroll-align-columns">Method</th>
+                  <th class="body-scroll-align-columns">Status</th>
+                  <th class="body-scroll-align-columns">Latitude</th>
+                  <th class="body-scroll-align-columns">Longitude</th>
 
-                <th class="body-scroll-align-columns">Visit</th>
-                <th class="body-scroll-align-columns">User (Visit)</th>
-                <th class="body-scroll-align-columns">Visit Date</th>
-                <th class="body-scroll-align-columns">Vernal Pool?</th>
-                <!-- <span *ngIf="userIsAdmin"> -->
-                <th class="body-scroll-align-columns">Review</th>
-                <!-- <th class="body-scroll-align-columns">User(Review)</th> -->
-                <!-- </span> -->
-                <th class="body-scroll-align-columns">Survey</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let pool of pools">
-                <!--
-                <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a></td>
-                -->
-                <td title="Add a visit for pool {{pool.poolId}}" class="vert-aligned body-scroll-align-columns">
-                  <a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a>
-                </td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.townName}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.poolStatus}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.latitude}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.longitude}}</td>
-                <!-- Visits -->
-                <span *ngIf="pool.visitId">
-                  <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
-                    <!--<a [routerLink]="['/pools/visit/view/', pool.visitId]" class="btn btn-link">{{pool.visitId}}</a>-->
-                    <button (click)="ViewVisit(pool.visitId)" title="View Visit {{pool.visitId}}" class="btn btn-link">{{pool.visitId}}</button>
+                  <th class="body-scroll-align-columns">Visit</th>
+                  <th class="body-scroll-align-columns">User (Visit)</th>
+                  <th class="body-scroll-align-columns">Visit Date</th>
+                  <th class="body-scroll-align-columns">Vernal Pool?</th>
+                  <!-- <span *ngIf="userIsAdmin"> -->
+                  <th class="body-scroll-align-columns">Review</th>
+                  <!-- <th class="body-scroll-align-columns">User(Review)</th> -->
+                  <!-- </span> -->
+                  <th class="body-scroll-align-columns">Survey</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pool of pools">
+                  <!--
+                  <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a></td>
+                  -->
+                  <td title="Add a visit for pool {{pool.poolId}}" class="vert-aligned body-scroll-align-columns">
+                    <a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a>
                   </td>
-                </span>
-                <span *ngIf="!pool.visitId">
-                    <td class="vert-aligned body-scroll-align-columns">
-                      <span *ngIf="currentUser">
-                        <!--<a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">(+)</a>-->
-                        <button (click)="CreateVisit(pool.poolId)" title="Create Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poold}}</button>
-                      </span>
-                    </td>
-                </span>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
-                <!-- Reviews -->
-                <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.townName}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.poolStatus}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.latitude}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.longitude}}</td>
+                  <!-- Visits -->
                   <span *ngIf="pool.visitId">
-                    <span *ngIf="pool.reviewId">
-                        <!--<a [routerLink]="['/review/view/', pool.reviewId]" title="View Review {{pool.reviewId}}">{{pool.reviewId}}</a>-->
-                        <button (click)="ViewReview(pool.reviewId)" class="btn btn-link">{{pool.reviewId}}</button>
-                    </span>
-                    <span *ngIf="!pool.reviewId">
-                        <!--<button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>-->
-                        <!--<a [routerLink]="['/review/create/', pool.visitId]" title="Add Review of Visit {{pool.visitId}}">(+)</a>-->
-                        <button (click)="CreateReview(pool.visitId)" title="Add Review of Visit {{pool.visitId}}" class="btn btn-link">(+)</button>
-                    </span>
+                    <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
+                      <button (click)="ViewVisit(pool.visitId)" title="View Visit {{pool.visitId}}" class="btn btn-link">{{pool.visitId}}</button>
+                    </td>
                   </span>
-                </td>
-                <!-- Surveys -->
-                <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
-                  <span *ngIf="pool.surveyId">
-                      <!--<a [routerLink]="['/survey/view/', pool.surveyId]" title="View Survey {{pool.surveyId}}">{{pool.surveyId}}</a>-->
-                      <button (click)="ViewSurvey(pool.surveyId)" title="View Survey {{pool.surveyId}}" class="btn btn-link">{{pool.surveyId}}</button>
+                  <span *ngIf="!pool.visitId">
+                      <td class="vert-aligned body-scroll-align-columns">
+                        <span *ngIf="currentUser">
+                          <button (click)="CreateVisit(pool.poolId)" title="Create Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poold}}</button>
+                        </span>
+                      </td>
                   </span>
-                </td>
-            </tr>
-          </tbody>
-        </table>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
+                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
+                  <!-- Reviews -->
+                  <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                    <span *ngIf="pool.visitId">
+                      <span *ngIf="pool.reviewId">
+                          <button (click)="ViewReview(pool.reviewId)" class="btn btn-link">{{pool.reviewId}}</button>
+                      </span>
+                      <span *ngIf="!pool.reviewId">
+                          <!--<button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>-->
+                          <button (click)="CreateReview(pool.visitId)" title="Add Review of Visit {{pool.visitId}}" class="btn btn-link">(+)</button>
+                      </span>
+                    </span>
+                  </td>
+                  <!-- Surveys -->
+                  <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                    <span *ngIf="pool.surveyId">
+                        <button (click)="ViewSurvey(pool.surveyId)" title="View Survey {{pool.surveyId}}" class="btn btn-link">{{pool.surveyId}}</button>
+                    </span>
+                  </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      </div>
-
       <div *ngIf="mapView">
         <app-map-comp
           [mapPoints]="mapPoints"
@@ -263,13 +247,12 @@
           >
         </app-map-comp>
       </div>
-
-    </div> <!-- loading -->
+    </div> <!-- !loading -->
 
     <div *ngIf="loading" class="loading_overlay show_loading_overlay">
       <!-- <div class="center">{{seconds}}</div> -->
     </div>
 
-  </div><!-- col-lg-10 -->
+  </div><!-- col-lg-10 col-md-12 -->
 
 </div><!-- row -->
