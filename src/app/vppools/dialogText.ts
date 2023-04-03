@@ -20,7 +20,7 @@ export const poolsDialogText = {
   </ul>
   `,
   searchFilters:`
-  <h3><u>Search Pools/Visits</u></h3>
+  <h3><u>Filter Pools</u></h3>
   <p>
   You can further refine your Vernal Pool search by entering a Pool ID, a Username,
   a Town, or by checking 'Indicator Species'.</p>
@@ -64,12 +64,12 @@ export const poolsDialogText = {
   `,
   zoomFilter:`
   <h3><u>Zoom Only</u></h3>
-  <p>Check this box to use search filters to Zoom to a <u>Pool ID or Town</u>.</p>
+  <p>Check this box to use search filters to Zoom to a <u>Pool ID</u> or <u>Town</u>, leaving other pools visible.</p>
   <p>
-  Un-check this box to use search filters to limit data shown on the map and in the tabular view to just your search criteria.
+  Un-check this box to use search filters to limit the data shown on the map (and in the tabular view) to just your search criteria.
   </p>
   <p>
-  This selection has no effect on User and Species filters, which will always filter pools shown.
+  This selection has no effect on <u>User</u> and <u>Inidicator Species</u> filters, which will always limit the data shown.
   </p>
   <ul>
     <li>Pool ID: The value must be an exact match. Values are case-sensitive.</li>
@@ -83,7 +83,7 @@ export const poolsDialogText = {
   </p>
   <ul>
     <li>Radio Buttons: counts are the number of pools displayed on the map.</li>
-    <li>Records: a count of all records, including multiple visits per pool. For example,
+    <li>Records: a count of all records, including multiple Visits to pools or Surveys of pools. For example,
     if a pool has 3 visits, 'Records' will show a value of 3, while the pool-count will be 1.</li>
   </ul>
   `,

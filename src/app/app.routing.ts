@@ -66,7 +66,8 @@ const appRoutes: Routes = [
 
     //new UI/UX combining 'Mapped Pools' and 'Pool Visits'
     { path: 'pools/list', component: vpListComponent },
-    { path: 'pools/view/:poolId', component: vpViewComponent },
+    { path: 'pools/list/:poolId', component: vpListComponent },
+    //{ path: 'pools/view/:poolId', component: vpViewComponent },
 
     { path: 'review/list', component: vpReviewListComponent, canActivate: [AuthGuard] },
     { path: 'review/list/:visitId', component: vpReviewListComponent, canActivate: [AuthGuard] },

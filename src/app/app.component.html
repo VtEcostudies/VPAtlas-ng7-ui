@@ -37,13 +37,16 @@
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" target="_blank" href="https://vtecostudies.org/wp-content/uploads/2020/04/VPAtlas_Datasheet_2020-fillable.pdf">
-                  VPMap Data Sheet
+                  VPVisit Data Sheet
                 </a>
                 <a class="dropdown-item" target="_blank" href="https://vtecostudies.org/wp-content/uploads/2020/03/VPAtlas-Field-Form-Instructions_2020.pdf">
-                  VPMap Instructions
+                  VPVisit Instructions
                 </a>
                 <a class="dropdown-item" target="_blank" href="https://vtecostudies.org/wp-content/uploads/2020/03/Indicator-Species-ID-Sheet-1.pdf">
                   Indicator Species Identification Aids
+                </a>
+                <a class="dropdown-item" target="_blank" href="assets/images/VPAtlas_S123_Visits.png">
+                  VPVisit Survey 123 Mobile Application Instructions
                 </a>
               </div>
             </li>
@@ -86,16 +89,16 @@
 
             <!--<li class="nav-item" *ngIf="currentUser&&!userIsAdmin">-->
             <li class="nav-item" *ngIf="!userIsAdmin">
-              <a class="nav-link" routerLink="/pools/visit/create">Add Pool Data</a>
+              <a class="nav-link" routerLink="/pools/visit/create">Add Data</a>
             </li>
 
             <li class="nav-item dropdown" *ngIf="userIsAdmin">
               <a class="nav-link dropdown-toggle"
                 id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Add Pool Data
+                Add Data
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" routerLink="/pools/visit/create">Add Pool Data</a>
+                <a class="dropdown-item" routerLink="/pools/visit/create">Add Pool Visit</a>
                 <a class="dropdown-item" routerLink="/pools/mapped/create">(Add Mapped Pool)</a>
                 <a class="dropdown-item" routerLink="/pools/visit/upload">(Visit CSV Upload)</a>
                 <a class="dropdown-item" routerLink="/pools/visit/s123load">(Visit API Load)</a>

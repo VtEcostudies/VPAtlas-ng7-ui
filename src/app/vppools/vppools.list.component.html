@@ -7,12 +7,16 @@
 </jw-modal>
 
 <div class="row">
-  <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12"> <!-- Sidebar for large screens -->
-    <h4><u>Vernal Pool Atlas</u>
-    <i (click)="openModal('vppools_help_info', 'radioSearch')" class="fa fa-info-circle no-margins link"></i>
-    </h4>
+  <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12"> <!-- Sidebar for large screens fullrow for small screens -->
+    
+<div class="row">
+  <div class="col-lg-12 col-md-6 col-sm-6 col-xs-6">
 
-    <form [formGroup]="dataTypeForm">
+    <h4><u>Vernal Pool Atlas</u>
+      <i (click)="openModal('vppools_help_info', 'radioSearch')" class="fa fa-info-circle no-margins pointer"></i>
+    </h4>
+  
+    <form [formGroup]="filterForm">
 
     <fieldset id="poolStatus"> <!-- for radio-button grouping -->
 
@@ -23,8 +27,7 @@
         <td>
           <label>
             <input checked formControlName="poolDataType" type="radio" value="All" class="radio-button-justify-left"
-              (click)="setDataTypeLoadPools('')"
-              (change)="setDataTypeLoadPools('')"
+              (change)="setDataTypeLoadPools('All')"
             />
             <span>All Pools</span>
           </label>
@@ -81,29 +84,38 @@
 
     </form>
 
-    <h4><u>Filter Pools/Visits</u>
-      <i (click)="openModal('vppools_help_info', 'searchFilters')" class="fa fa-info-circle no-margins link"></i>
-    </h4>
-    <form [formGroup]="filterForm">
-      <label class="btn btn-link info-icon-padding">
-        <input [checked]="zoomFilter" (change)="filterZoom($event)" type="checkbox" class="radio-button-justify-left"/>
-        <span>Zoom Only</span>
-      </label>
-      <i (click)="openModal('vppools_help_info', 'zoomFilter')" class="fa fa-info-circle no-margins link"></i>
-      <button (click)="ClearFilters()" class="btn btn-link">Clear Search Filters</button>
+  </div> <!-- end col-lg-12 col-*-6 -->
+  <div class="col-lg-12 col-md-6 col-sm-6 col-xs-6">
+
+    <div class="row" style="margin-left:0px;">
+        <h4><u>Filter Pools</u>
+          <i (click)="openModal('vppools_help_info', 'searchFilters')" class="fa fa-info-circle no-margins pointer"></i>
+        </h4>
+
+        <label>
+          <span class="btn btn-link info-icon-nomargin-padding">
+            <input [checked]="zoomFilter" (change)="filterZoom($event)" type="checkbox" class="radio-button-justify-left"/>
+            Zoom Only
+          </span>
+        </label>
+        <i (click)="openModal('vppools_help_info', 'zoomFilter')" class="fa fa-info-circle no-margins info-icon-padding pointer"></i>
+        
+        <label (click)="ClearFilters()" class="btn btn-link info-icon-nomargin-padding">
+          Clear Filters
+        </label>
+    </div>
       <!--
-      There's a performance issue here with search filters:
-      - use keyup if the result set is small (<100)
-      - use keyup.enter and keyup.tab otherwise
-      - to be safe, do the latter
+        EXTREMELY IMPORTANT: Putting the above button *inside* the below formGroup caused the above button to receive a click
+        event when the below input fields receive a change event. 
       -->
+      <form [formGroup]="filterForm">
       <table class="table table-sm"> <!-- odd discovery: table without <tr>, <td> does nice things -->
         <th style="width: 35%;"></th>
         <th style="width: 65%;"></th>
         <tr class="form-group">
           <td for="poolId">Pool ID</td>
           <td>
-            <input (change)="loadPools(1)" type="text"  formControlName="poolId" class="form-control"/>
+            <input (keyup)="filterPoolId($event)" (change)="loadPools(1)" type="text" formControlName="poolId" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
@@ -119,7 +131,7 @@
         <tr class="form-group">
           <td for="userName">User</td>
           <td>
-            <input (keyup.enter)="loadPools(1)" (change)="loadPools(1)" formControlName="userName" class="form-control"/>
+            <input (change)="loadPools(1)" formControlName="userName" class="form-control"/>
           </td>
         </tr>
         <tr class="form-group">
@@ -130,23 +142,25 @@
         </tr>
       </table>
     </form>
-  </div> <!-- End col-2 -->
+  </div> <!-- end col-lg-12 col-*-6 -->
+</div> <!-- end sub-row -->
+</div> <!-- End col-lg-2 -->
   
-  <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12"> <!-- Side by side for lg. Own row for the rest. -->
+  <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12"> <!-- Side by side for lg. Own row for the rest. -->
     <div class="row">
       <div> <!-- OMG, all vertical alignment issues were due to different div levels!!! -->
-        <button class="btn btn-link info-icon-padding">{{count}} Records</button>
-        <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle link"></i>
-        <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link info-icon-padding">Map View</button>
-        <button *ngIf="mapView" (click)="showTable()" class="btn btn-link info-icon-padding">Table View</button>
-        <i (click)="openModal('vppools_help_info', 'mapViewTableView')" class="fa fa-info-circle link"></i>
+        <button class="btn btn-link info-icon-nomargin-padding">{{count}} Records</button>
+        <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle pointer"></i>
+        <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link info-icon-nomargin-padding">Map View</button>
+        <button *ngIf="mapView" (click)="showTable()" class="btn btn-link info-icon-nomargin-padding">Table View</button>
+        <i (click)="openModal('vppools_help_info', 'mapViewTableView')" class="fa fa-info-circle pointer"></i>
       </div>
-      <label class="btn btn-link info-icon-padding">
+      <label class="btn btn-link info-icon-nomargin-padding">
         <input [checked]="loadAllRec" (change)="loadAllRecChecked($event)" type="checkbox" class="radio-button-justify-left"/>
         <span>Load All</span>
       </label>
       <div>
-        <i (click)="openModal('vppools_help_info', 'loadAll')" class="fa fa-info-circle link info-icon"></i>
+        <i (click)="openModal('vppools_help_info', 'loadAll')" class="fa fa-info-circle info-icon-padding pointer"></i>
       </div>
       <span *ngIf="!loadAllRec">
         <button (click)="firstPage()" class="btn btn-link">|< First</button>
@@ -167,7 +181,7 @@
             <thead>
               <tr>
                   <th class="body-scroll-align-columns">Pool ID</th>
-                  <th class="body-scroll-align-columns">User (Mapped)</th>
+                  <th class="body-scroll-align-columns">Mapped By</th>
                   <th class="body-scroll-align-columns">Town</th>
                   <th class="body-scroll-align-columns">Method</th>
                   <th class="body-scroll-align-columns">Status</th>
@@ -175,64 +189,74 @@
                   <th class="body-scroll-align-columns">Longitude</th>
 
                   <th class="body-scroll-align-columns">Visit</th>
-                  <th class="body-scroll-align-columns">User (Visit)</th>
+                  <th class="body-scroll-align-columns">Visited By</th>
                   <th class="body-scroll-align-columns">Visit Date</th>
-                  <th class="body-scroll-align-columns">Vernal Pool?</th>
-                  <!-- <span *ngIf="userIsAdmin"> -->
+                  <th class="body-scroll-align-columns">Vernal Pool</th>
                   <th class="body-scroll-align-columns">Review</th>
-                  <!-- <th class="body-scroll-align-columns">User(Review)</th> -->
-                  <!-- </span> -->
                   <th class="body-scroll-align-columns">Survey</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let pool of pools">
-                  <!--
-                  <td class="vert-aligned body-scroll-align-columns"><a [routerLink]="['/pools/mapped/view/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a></td>
-                  -->
-                  <td title="Add a visit for pool {{pool.poolId}}" class="vert-aligned body-scroll-align-columns">
-                    <a [routerLink]="['/pools/visit/create/', pool.poolId]" class="btn btn-link">{{pool.poolId}}</a>
+                <!-- Pool ID -->
+                <span *ngIf="pool.visitId">
+                  <td class="vert-aligned body-scroll-align-columns">
+                    <button (click)="ViewPoolVisits(pool.poolId)" title="View Pool Visits {{pool.poolId}}" class="btn btn-link">{{pool.poolId}}</button>
                   </td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.townName}}</td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.poolStatus}}</td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.latitude}}</td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.longitude}}</td>
-                  <!-- Visits -->
-                  <span *ngIf="pool.visitId">
-                    <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
-                      <button (click)="ViewVisit(pool.visitId)" title="View Visit {{pool.visitId}}" class="btn btn-link">{{pool.visitId}}</button>
+                </span>
+                <span *ngIf="!pool.visitId">
+                  <span *ngIf="pool.surveyId">
+                    <td class="vert-aligned body-scroll-align-columns">
+                      <button (click)="ViewPoolSurveys(pool.poolId)" title="View Pool Surveys {{pool.poolId}}" class="btn btn-link">{{pool.poolId}}</button>
                     </td>
                   </span>
-                  <span *ngIf="!pool.visitId">
-                      <td class="vert-aligned body-scroll-align-columns">
-                        <span *ngIf="currentUser">
-                          <button (click)="CreateVisit(pool.poolId)" title="Create Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poold}}</button>
-                        </span>
-                      </td>
+                  <span *ngIf="!pool.surveyId">
+                    <td class="vert-aligned body-scroll-align-columns">
+                      <button (click)="CreateVisit(pool.poolId)" title="Add Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poolId}}</button>
+                    </td>
                   </span>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
-                  <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
-                  <!-- Reviews -->
-                  <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
-                    <span *ngIf="pool.visitId">
-                      <span *ngIf="pool.reviewId">
-                          <button (click)="ViewReview(pool.reviewId)" class="btn btn-link">{{pool.reviewId}}</button>
-                      </span>
-                      <span *ngIf="!pool.reviewId">
-                          <!--<button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>-->
-                          <button (click)="CreateReview(pool.visitId)" title="Add Review of Visit {{pool.visitId}}" class="btn btn-link">(+)</button>
-                      </span>
-                    </span>
+                </span>
+                <!-- End Pool ID -->
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.townName}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.poolStatus}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.latitude}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.longitude}}</td>
+                <!-- Visits -->
+                <span *ngIf="pool.visitId">
+                  <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
+                    <button (click)="ViewVisit(pool.visitId)" title="View Visit {{pool.visitId}}" class="btn btn-link">{{pool.visitId}}</button>
                   </td>
-                  <!-- Surveys -->
-                  <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
-                    <span *ngIf="pool.surveyId">
-                        <button (click)="ViewSurvey(pool.surveyId)" title="View Survey {{pool.surveyId}}" class="btn btn-link">{{pool.surveyId}}</button>
+                </span>
+                <span *ngIf="!pool.visitId">
+                    <td class="vert-aligned body-scroll-align-columns">
+                      <span *ngIf="currentUser">
+                        <button (click)="CreateVisit(pool.poolId)" title="Create Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poold}}</button>
+                      </span>
+                    </td>
+                </span>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
+                <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
+                <!-- Reviews -->
+                <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                  <span *ngIf="pool.visitId">
+                    <span *ngIf="pool.reviewId">
+                        <button (click)="ViewReview(pool.reviewId)" class="btn btn-link">{{pool.reviewId}}</button>
                     </span>
-                  </td>
+                    <span *ngIf="!pool.reviewId">
+                        <!--<button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>-->
+                        <button (click)="CreateReview(pool.visitId)" title="Add Review of Visit {{pool.visitId}}" class="btn btn-link">(+)</button>
+                    </span>
+                  </span>
+                </td>
+                <!-- Surveys -->
+                <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                  <span *ngIf="pool.surveyId">
+                      <button (click)="ViewSurvey(pool.surveyId)" title="View Survey {{pool.surveyId}}" class="btn btn-link">{{pool.surveyId}}</button>
+                  </span>
+                </td>
               </tr>
             </tbody>
           </table>

@@ -47,7 +47,7 @@ const iconDefault = icon({
   shadowSize: [41, 41]
 });
 Marker.prototype.options.icon = iconDefault;
-import * as EL from  "esri-leaflet";
+import * as EL from  "esri-leaflet"; //this is used to import LIDAR layers from VCGIS
 
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
 import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
@@ -147,7 +147,6 @@ export class LeafletComponent implements OnInit, OnChanges {
   probableColors = ["Cyan"];
   confirmedColors = ["Navy"];
   eliminatedColors = ["Black"];
-  monitoredColors = ["LightSteelBlue"];
   objPoolIds = {}; //object of poolIds to manage one shapeMarker per poolId
   allGroup = L.featureGroup(); //allGroup is not shown but used for zoomTo, etc.
   potnGroup = L.featureGroup(null, {name:'Potential', id:'potential'});
@@ -246,7 +245,7 @@ export class LeafletComponent implements OnInit, OnChanges {
       name: 'VCGI CIR',
       zIndex: 0,
       maxZoom: 20,
-      attribution: 'Map data: VCGI Data'
+      attribution: 'Map data: VCGI CIR Data'
     } as any);
   vcgiLidar0 = EL.imageMapLayer({
       url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARHILLSHD_WM_CACHE_v1/ImageServer',
@@ -287,6 +286,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     private applRef: ApplicationRef,
     private componentFactoryResolver: ComponentFactoryResolver
     ) {
+    console.log('****************************LEAFLET CONSTRUCTOR****************************')
     /*
       preserve baseLayer shown across page loads with outside service
       which holds baseLayers[] array index of last-selected baseLayer.
@@ -362,9 +362,6 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.zoomControl.addTo(this.map);
     this.zoomLevel = this.map.getZoom();
-
-    //this.printControl.position('topright');
-    //this.printControl.addTo(this.map);
 
     this.baseLayers[this.baseLayer].addTo(this.map);
 
@@ -541,7 +538,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     //console.log('leaflet.component.ngOnChanges(changes), changes:', changes);
     //console.log('leaflet.component.ngOnChanges() | mapMarker:', this.mapMarker, ' | update: ', this.update)
     //console.log('leaflet.component.ngOnChanges | poolCount', this.mapValues.length);
-    await this.clearPools(); //OMG. Always? Yikes.
+    this.clearPools(); //OMG. Always? Yikes.
     if (this.mapPoints) {
       await this.plotPoolShapes(this.mapValues);
     }
@@ -836,9 +833,10 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   //iterate through all plotted pools in the featureGroup and alter each radius
   setEachPointRadius(radius = this.smRadius) {
-    this.allGroup.eachLayer((cmLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
-      //radius = this.GetRadiusForPool(cmLayer.options); //we hung pool properties on each plotted pool shape for use here
-      cmLayer.setRadius(radius);
+    //console.log(`setEachPointRadius | featureGroup allGroup:`, this.allGroup);
+    this.allGroup.eachLayer((smLayer: L.CircleMarker) => { //typescript complains that plain layer doesn't have setRadius(). CircleMarker does, so cast it.
+      //radius = this.GetRadiusForPool(smLayer.options); //we hung specific pool properties on each plotted pool shape's options for use here
+      smLayer.setRadius(radius);
     });
   }
 
@@ -1060,10 +1058,8 @@ export class LeafletComponent implements OnInit, OnChanges {
     Original idea from Alex to set the radius based upon mappedLocationUncertainty.
     This is not curerntly implemented, but should be easily done.
   */
-  private GetRadiusForPool(objPool:any) {
-    var radius = this.smRadius;
-
-    return radius;
+  private GetRadiusForPool(options: any) {
+    return this.smRadius;
 /*
     switch (objPool.mappedLocationUncertainty) {
       case null:
@@ -1171,9 +1167,6 @@ export class LeafletComponent implements OnInit, OnChanges {
         case 'Eliminated': //eliminate pools should NOT be displayed
           ptColor = this.eliminatedColors[0];
           break;
-        case 'Monitored':
-          ptColor = this.monitoredColors[0];
-          break;
         case 'Confirmed':
           ptColor = this.confirmedColors[0];
           break;
@@ -1187,15 +1180,14 @@ export class LeafletComponent implements OnInit, OnChanges {
       }
 
       /*
-        Set the shapeMarker's shape based upon
-        - Pool Status
-        - Visit Data
-        - Monitored or Not.
+        Set the shapeMarker's shape based upon poolDataType
+        - Monitored = diamond
+        - Visited = triangle
+        - Mapped = circle
         See https://github.com/rowanwins/Leaflet.SvgShapeMarkers
         for options, shapes, etc.
       */
       if (vpools[i].surveyId) {
-        //ptShape = "square";
         ptShape = "diamond";
       } else if (vpools[i].visitId) {
         ptShape = "triangle";
@@ -1203,23 +1195,27 @@ export class LeafletComponent implements OnInit, OnChanges {
         ptShape = "circle";
       }
 
+      let options =  <any> {
+        shape: ptShape,
+        radius: ptRadius, //applies to all shapes
+        fillColor: ptColor, //interior color
+        fillOpacity: 0.8, //values from 0 to 1
+        color: "black", //border color
+        weight: 1, //border thickness
+        index: i, //event.sourceTarget.options.index
+        poolId: vpools[i].poolId, //event.sourceTarget.options.poolId
+        poolStatus: vpools[i].poolStatus,
+        //mappedConfidence: vpools[i].mappedConfidence,
+        //mappedLocationUncertainty: vpools[i].mappedLocationUncertainty //original, abandoned idea: set pool shapes's radius relative to this. see GetRadiusForPool.
+      }
       /*
         See https://leafletjs.com/reference-1.3.4.html#path-weight for Path options.
       */
-      //shape = L.circleMarker(llLoc, <any> {
-      shape = L.shapeMarker(llLoc, <any> {
-          shape: ptShape,
-          radius: ptRadius, //applies to all shapes
-          fillColor: ptColor, //interior color
-          fillOpacity: 0.8, //values from 0 to 1
-          color: "black", //border color
-          weight: 1, //border thickness
-          index: i, //event.sourceTarget.options.index
-          poolId: vpools[i].poolId, //event.sourceTarget.options.poolId
-          poolStatus: vpools[i].poolStatus,
-          mappedConfidence: vpools[i].mappedConfidence,
-          mappedLocationUncertainty: vpools[i].mappedLocationUncertainty
-      });
+      if ('circle' == ptShape) {
+        shape = L.circleMarker(llLoc, options);
+      } else {
+        shape = L.shapeMarker(llLoc, options);
+      }
 
       //shape.on("click", e => this.onCircleGroupClick(e)); //
 
@@ -1284,7 +1280,7 @@ export class LeafletComponent implements OnInit, OnChanges {
           document.getElementById(obj.id).innerHTML = `${this.statusGroups[idx].name} (${ptCount[obj.id]})`;
       }
     });
-  } // plotPoolShapes()
+  } // end plotPoolShapes()
 
   changeColor(index=null) {
 

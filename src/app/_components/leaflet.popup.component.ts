@@ -38,43 +38,43 @@ export class LeafletPopupComponent {
   }
 
   ViewMapped(poolId) {
-    if (poolId) {this.router.navigate([`/pools/mapped/view/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (poolId) {this.router.navigate([`/pools/mapped/view/${poolId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
   }
   EditMapped(poolId) {
-    if (poolId) {this.router.navigate([`/pools/mapped/update/${poolId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (poolId) {this.router.navigate([`/pools/mapped/update/${poolId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
   }
   ViewVisit(visitId, tab=0) {
     if (visitId) {
-      //this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );
-      var url = `/pools/visit/view/${visitId}?returnUrl=${this.router.url}`;
+      //this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );
+      var url = `/pools/visit/view/${visitId}?returnUrl=${this.router.url.split('?')[0]}`;
       if (tab) {window.open(url, "_blank");}
-      else {this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+      else {this.router.navigate([`/pools/visit/view/${visitId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
     }
   }
   EditVisit(visitId, tab=0) {
     if (visitId) {
-      //this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );
-      var url = `/pools/visit/update/${visitId}?returnUrl=${this.router.url}`;
+      //this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );
+      var url = `/pools/visit/update/${visitId}?returnUrl=${this.router.url.split('?')[0]}`;
       if (tab) {window.open(url, "_blank");}
-      else {this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+      else {this.router.navigate([`/pools/visit/update/${visitId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
     }
   }
   CreateVisit() {
     if (this.poolObj.poolId) {
-      this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`], { queryParams: { returnUrl: this.router.url }} );
+      this.router.navigate([`/pools/visit/create/${this.poolObj.poolId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );
     }
   }
   ViewReview(reviewId) {
-    if (reviewId) {this.router.navigate([`/review/view/${reviewId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (reviewId) {this.router.navigate([`/review/view/${reviewId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
   }
   CreateReview(visitId) {
-    if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (visitId) {this.router.navigate([`/review/create/${visitId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
   }
   ViewSurvey(surveyId, tab=0) {
-    //if (surveyId) {this.router.navigate([`/survey/list/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
-    if (surveyId) {this.router.navigate([`/survey/view/${surveyId}`], { queryParams: { returnUrl: this.router.url }} );}
+    //if (surveyId) {this.router.navigate([`/survey/list/${surveyId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
+    if (surveyId) {this.router.navigate([`/survey/view/${surveyId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
   }
   ViewSurveyPool(surveyPoolId, tab=0) {
-    if (surveyPoolId) {this.router.navigate([`/survey/pool/${surveyPoolId}`], { queryParams: { returnUrl: this.router.url }} );}
+    if (surveyPoolId) {this.router.navigate([`/survey/pool/${surveyPoolId}`], { queryParams: { returnUrl: this.router.url.split('?')[0] }} );}
   }
 }

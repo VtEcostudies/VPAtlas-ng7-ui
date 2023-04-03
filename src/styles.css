@@ -19,9 +19,15 @@
 }
 
 /*
-  cursor pointer for info icons, etc.
+  make our own linked text
 */
 .link {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+}
+
+.pointer {
   cursor: pointer;
 }
 

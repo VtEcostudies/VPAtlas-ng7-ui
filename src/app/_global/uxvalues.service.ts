@@ -17,19 +17,23 @@ export class UxValuesService {
     public pointColorIndex = 0;
     public smRadius = 3; //plotted pool shape marker radius
     public autoRadius = 0; //flag automatic smRadius set from zoomLevel
-    public poolDataType = 'All'; //radio button selection
-    public filterPoolId = null;
-    public filterVisitId = null;
-    public filterUserName = null
-    public filterTown = {townId:0, townName:"All", townCountyId:0, townAlias:null};
-    public filterMappedMethod = "";
-    public zoomFilter = true; //flag 'Zoom Only' handling of search filters
-    public hasIndicators = false; //flag filter-by-visits having indicator species
-    public overlaySelected = {'potential':1, 'probable':1, 'confirmed':1, 'duplicate':0, 'eliminated':0,
-                              'state':0, 'county':0, 'town':0, 'biophysical':0, 'parcel':0};
-    public mapView = true; // true:Map View, false:Table View
-    public loadAllRec = true;
-
+    //filterParams is UX parameters for the primary view
+    public filterParams = {
+      poolDataType:'All', //radio button selection values set in 
+      poolId:null,
+      visitId:null,
+      userName:null,
+      town:{townId:0, townName:"All", townCountyId:0, townAlias:null},
+      zoomFilter:false, //flag 'Zoom Only' handling of search filters: true: Show all pools, Zoom to pool/town, false: Show just pool/town, Zoom to pool/town
+      hasIndicators:false, //flag filter-by-pools having indicator species, either from visits or surveys
+      mapView:true, //true: Map View, false: Table View
+      loadAllRec:true //true: Load All Records, false: Load 1 page of Records
+    };
+    //map component specific parameters
+    public overlaySelected = {
+      'potential':1, 'probable':1, 'confirmed':1, 'duplicate':0, 'eliminated':0, 
+      'state':0, 'county':0, 'town':0, 'biophysical':0, 'parcel':0
+      };
     public vtCenter = {lat:43.916944,lng:-72.668056};
     public prevZoomLevel = [8];
     public prevZoomCenter = [this.vtCenter];
@@ -48,15 +52,15 @@ export class UxValuesService {
     public geoLayers:any = {}; //an object of geoJson useful boundaries by layer name (State, County, Town, Biophysical, ...)
 
     public surveyListParams = {
-        "surveyId":null,
-        "surveyPoolId":'All',
-        "surveyType":0,
-        "surveyYear":'All',
-        "surveyDateBeg":null,
-        "surveyDateEnd":null,
-        "surveyUser":'All',
-        "surveyObserver":'All'
-      };
+      "surveyId":null,
+      "surveyPoolId":'All',
+      "surveyType":0,
+      "surveyYear":'All',
+      "surveyDateBeg":null,
+      "surveyDateEnd":null,
+      "surveyUser":'All',
+      "surveyObserver":'All'
+    };
 
     public userContext:any = {};
 
@@ -67,12 +71,12 @@ export class UxValuesService {
       private alertService: AlertService,
       private vcgiService: vcgiService
     ) {
+      console.log('****************************UXVALUES CONSTRUCTOR****************************')
       if (this.authenticationService.currentUserValue) {
         this.currentUser = this.authenticationService.currentUserValue.user;
         this.userIsAdmin = this.currentUser.userrole == 'admin';
       }
       //this.getUserContext();
-      console.log('****************************UXVALUES CONSTRUCTOR****************************')
     }
 /*
     public setUserContext() {
@@ -195,7 +199,7 @@ export class UxValuesService {
     /*
       Primary entrypoint for loading data.
     */
-    public async loadUpdated(type='all', search:any={}, page=0) {
+    public loadUpdated(type='all', search:any={}, page=0) {
       this.search = search;
       this.type = type;
       console.log(`uxvalues.service::loadUpdated(${type}) | timestamp:${this.data.timestamp} | filter:${this.filter} | search:`, search);
@@ -203,9 +207,11 @@ export class UxValuesService {
         var result;
         result = this.vpPoolsService.getOverview(this.data.timestamp, this.filter);
         result.pipe(first()).subscribe(
-            async data => {
-              await this.updateData(type, data.rows); //sync old data with updates
-              var res = this.data.pools.filter(row => this.filterData(row)); //filter global: 'data' by selectors, etc.
+            //async data => {
+              //await this.updateData(type, data.rows); //sync old data with updates
+              data => {
+                this.updateData(type, data.rows); //sync old data with updates
+                var res = this.data.pools.filter(row => this.filterData(row)); //filter global: 'data' by selectors, etc.
               var len = res.length;
               var chg = data.rowCount > 0;
               if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
@@ -273,20 +279,20 @@ export class UxValuesService {
 
     loadTowns() {
       return new Promise((resolve, reject) => {
-      this.InfoService.getTowns()
+        this.InfoService.getTowns()
           .pipe(first())
           .subscribe(
-              data => {
-                this.towns = [{townId:0, townName:"All", townCountyId:0, townAlias:null}];
-                data.rows.forEach(row => {
-                  this.towns.push(row);
-                });
-                resolve(this.towns);
-              },
-              error => {
-                this.alertService.error(error);
-                reject(this.towns);
+            data => {
+              this.towns = [{townId:0, townName:"All", townCountyId:0, townAlias:null}];
+              data.rows.forEach(row => {
+                this.towns.push(row);
               });
+              resolve(this.towns);
+            },
+            error => {
+              this.alertService.error(error);
+              reject(this.towns);
+            });
       })
     }
     //https://angular.io/api/forms/SelectControlValueAccessor#customizing-option-selection
