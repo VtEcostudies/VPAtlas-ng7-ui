@@ -240,32 +240,49 @@ export class LeafletComponent implements OnInit, OnChanges {
       attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     } as any);
     //https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_CIR_WM_CACHE/ImageServer
-    vcgiCIR = L.tileLayer('https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_CIR_WM_CACHE/ImageServer/tile/{z}/{y}/{x}', {
-      id: 'vcgi.cir',
-      name: 'VCGI CIR',
-      zIndex: 0,
-      maxZoom: 20,
-      attribution: 'Map data: VCGI CIR Data'
+  vcgiCIR = L.tileLayer('https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_CIR_WM_CACHE/ImageServer/tile/{z}/{y}/{x}', {
+    id: 'vcgi.cir',
+    name: 'VCGI CIR',
+    zIndex: 0,
+    maxZoom: 20,
+    attribution: 'Map data: VCGI CIR Data'
     } as any);
   vcgiLidar0 = EL.imageMapLayer({
-      url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARHILLSHD_WM_CACHE_v1/ImageServer',
-      id: 'vcgi.lidar.0',
-      name: 'VCGI Lidar DEM Hill Shade',
-      zIndex: 0,
-      maxZoom: 20,
-      attribution: 'Map data: VCGI Lidar Data'
+    url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARHILLSHD_WM_CACHE_v1/ImageServer',
+    id: 'vcgi.lidar.0',
+    name: 'VCGI Lidar DEM Hill Shade',
+    zIndex: 0,
+    maxZoom: 20,
+    attribution: 'Map data: VCGI Lidar Data'
     } as any);
   vcgiLidar1 = EL.imageMapLayer({
-      url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARDSMHILLSHD_SP_CACHE_v1/ImageServer/',
-      id: 'vcgi.lidar.1',
-      name: 'VCGI Lidar DSM Hill Shade',
-      zIndex: 0,
-      maxZoom: 20,
-      attribution: 'Map data: VCGI Lidar Data'
+    url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARDSMHILLSHD_SP_CACHE_v1/ImageServer/',
+    id: 'vcgi.lidar.1',
+    name: 'VCGI Lidar DSM Hill Shade',
+    zIndex: 0,
+    maxZoom: 20,
+    attribution: 'Map data: VCGI Lidar Data'
     } as any);
-
+  vcgiLidar2 = EL.imageMapLayer({
+    url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARSLOPE_SP_NOCACHE_v1/ImageServer/',
+    id: 'vcgi.lidar.2',
+    name: 'VCGI Lidar Slope',
+    zIndex: 0,
+    maxZoom: 20,
+    attribution: 'Map data: VCGI Lidar Data'
+    } as any);
+  vcgiLidar3 = EL.imageMapLayer({
+    url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARSLOPESYM_SP_NOCACHE_v1/ImageServer/',
+    id: 'vcgi.lidar.3',
+    name: 'VCGI Lidar Slope Sym',
+    zIndex: 0,
+    maxZoom: 20,
+    attribution: 'Map data: VCGI Lidar Data'
+    } as any);
+    
   baseLayer = 0; //holds the baseLayers[] array index of the baseLayer last shown
-  baseLayers = [this.esriTopo,
+  baseLayers = [
+    this.esriTopo,
     this.esriWorld,
     this.openTopo,
     this.googleSat,
@@ -274,7 +291,9 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.mapboxSat,
     this.vcgiCIR,
     this.vcgiLidar0,
-    this.vcgiLidar1
+    this.vcgiLidar1,
+    //this.vcgiLidar2,
+    this.vcgiLidar3
   ]; //make esriTopo default b/c openTopo often loads slowly
 
   constructor(
@@ -399,7 +418,7 @@ export class LeafletComponent implements OnInit, OnChanges {
 
   /*
    This removes any parcel maps from parcelGroup, then loads/adds/shows one town's parcel map.
-   It also pushes parcelgroup to back, the pushes bndryGroup to back, so that parcel content
+   It also pushes parcelgroup to back, then pushes bndryGroup to back, so that parcel content
    and pool content are clickable. Since parcelGroup polygons completely cover town polygons,
    towns are not clickable when viewing parcel maps.
   */
