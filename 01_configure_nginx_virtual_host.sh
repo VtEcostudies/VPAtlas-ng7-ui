@@ -6,8 +6,8 @@ sudo cp ./nginx_vpatlas.conf /etc/nginx/sites-available/vpatlas
 # enable vpatlas nginx site
 host = $(hostname)
 if ["$host" = "dev.vpatlas.org"]; then
-    sudo ln -s /etc/nginx/sites-enabled/dev.vpatlas /etc/nginx/sites-available/dev.vpatlas
+    sudo ln -s /etc/nginx/sites-available/dev.vpatlas /etc/nginx/sites-enabled/dev.vpatlas
 fi
 if ["$host" = "vpatlas.org"]; then
-    sudo ln -s /etc/nginx/sites-enabled/vpatlas /etc/nginx/sites-available/vpatlas
+    sudo ln -s /etc/nginx/sites-available/vpatlas /etc/nginx/sites-enabled/vpatlas
 fi
