@@ -1,6 +1,6 @@
 # vpatlas-angular-ui
 
-The Angular 9+ VPAtlas using Angular CLI.
+The VPAtlas UI using Angular CLI.
 
 Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
