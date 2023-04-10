@@ -13,7 +13,7 @@ export class AppComponent {
     vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';
     vceIconPath = '../assets/images/vce_favicon.png';
     fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
-    bannerMessage = null;
+    bannerMessage = '****************** This is the VPAtlas Version 3 Staging Server ******************';
     apiUrl = environment.apiUrl;
 
     constructor(
