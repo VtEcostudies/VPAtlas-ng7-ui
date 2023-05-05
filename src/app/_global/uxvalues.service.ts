@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { first } from 'rxjs/operators';
-import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+import { Moment } from 'moment'; //https://momentjs.com/docs/#/use-it/typescript/
 import { AuthenticationService, AlertService, vpPoolsService, vtInfoService } from '@app/_services';
 import { vcgiService } from '@app/_services';
 import { vtTown } from '@app/_models';
