@@ -7,7 +7,8 @@ import { UxValuesService } from '@app/_global';
 import { vpMapped, vpVisit } from '@app/_models';
 import { poolsDialogText } from '@app/vppools/dialogText';
 import { ModalService } from '@app/_modal';
-import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
+//NOTE: since Moment is a PITA in Angular, for dates use eg. new Date().toISOString() for date now.
+//import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 //@add_component_here
 @Component({
@@ -62,7 +63,7 @@ export class vpListComponent implements OnInit {
     // convenience getter for easy access to form fields
     get f() { 
       let ffc = this.filterForm.controls;
-      console.log(`getter-f controls:`, ffc);
+      //console.log(`getter-f controls:`, ffc);
       return ffc; 
     }
 

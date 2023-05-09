@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { first } from 'rxjs/operators';
-import { Moment } from 'moment'; //https://momentjs.com/docs/#/use-it/typescript/
+//import { Moment } from 'moment'; //https://momentjs.com/docs/#/use-it/typescript/
 import { AuthenticationService, AlertService, vpPoolsService, vtInfoService } from '@app/_services';
 import { vcgiService } from '@app/_services';
 import { vtTown } from '@app/_models';
@@ -8,6 +8,8 @@ import { vtTown } from '@app/_models';
 @Injectable({ providedIn: 'root' }) //this makes a service single-instance?
 
 export class UxValuesService {
+    //public datFmt = new Intl.DateTimeFormat('en-US', {timeZone: "UTC"});
+
     private currentUser = null;
     private userIsAdmin = false;
 
@@ -16,7 +18,7 @@ export class UxValuesService {
     public baseLayerIndex = 0;
     public pointColorIndex = 0;
     public smRadius = 3; //plotted pool shape marker radius
-    public autoRadius = 0; //flag automatic smRadius set from zoomLevel
+    public autoRadius = 0; //flag automatic smRadius set from zoomLeve
     //filterParams is UX parameters for the primary view
     public filterParams = {
       poolDataType:'All', //radio button selection values set in 
@@ -46,7 +48,8 @@ export class UxValuesService {
     public filter:string = '';
     public search:any = {};
     public type:any = {};
-    public data:any = {timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0};
+    //public data:any = {timestamp:Moment.utc('1970-01-01').format(), pools:[], count:0};
+    public data:any = {timestamp:'1970-01-01', pools:[], count:0};
     public towns:any = [];
     public parcels:any = {}; //an object of geoJson town parcel layers by town name
     public geoLayers:any = {}; //an object of geoJson useful boundaries by layer name (State, County, Town, Biophysical, ...)
@@ -105,20 +108,20 @@ export class UxValuesService {
       type = 'all';
       console.log(`uxValues.service::updateData(${type}) | incoming data count:`, pools.length, ` | timestamp: ${this.data.timestamp}`);
       if (this.data.pools.length == 0) { //initial load
-        this.data.timestamp = Moment.utc().format();
+        this.data.timestamp = '1970-01-01'; //Moment.utc().format();
         this.data.pools = pools;
         this.data.count = pools.length;
       } else {
-        this.data.timestamp = Moment.utc().format();
+        this.data.timestamp = new Date().toISOString(); //ISO is YYYY-MM-DDTHH:MM:SS.XXXZ //Moment.utc().format();
         //update existing array with new data
         pools.forEach(upd => { //iterate over incoming rows, each as 'upd'
           var found = false; //flag that the incoming row, 'upd' was found in this pass through 'old' pools
           var match = {pool:false, visit:false, review:false, survey:false}; //instantaneous match of the idxth element
           var vpmap = [];
-          console.log(`searching ${type} for ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
+          //console.log(`searching ${type} for ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
           this.data.pools.find((old, idx, arr) => {
             if (upd.poolId==old.poolId&&!old.visitId) {
-              console.log(`FOUND Existing VPMap[${old.poolId}]=${idx}`);
+              //console.log(`FOUND Existing VPMap[${old.poolId}]=${idx}`);
               vpmap[old.poolId]=idx;}
             match = {
               pool: upd.poolId==old.poolId,
@@ -128,17 +131,17 @@ export class UxValuesService {
             };
             if ((match.pool && match.visit && match.review && match.survey)) {
               found = true; //flag that we found a match so we don't duplicate it.
-              console.log(`FOUND match: ${match}. UPDATING.`);
+              //console.log(`FOUND match: ${match}. UPDATING.`);
               this.data.pools[idx] = upd; //update row
             }
             return found;
           })
           if (!found) { //searched all rows for the current incoming value. not found. add it.
-            console.log(`ADDING ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
+            //console.log(`ADDING ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
             this.data.pools.push(upd); //add row
           }
           if (upd.visitId && vpmap[upd.poolId]) { //if new row has visit delete old row without...
-            console.log(`DELETING ${upd.poolId} from data.pools[${type}] at index ${vpmap[upd.poolId]}`);
+            //console.log(`DELETING ${upd.poolId} from data.pools[${type}] at index ${vpmap[upd.poolId]}`);
             delete this.data.pools[vpmap[upd.poolId]];
           }
         });
@@ -186,9 +189,9 @@ export class UxValuesService {
         user==row.surveyUserName);
       if (this.type=='visi') keep = keep&&row.visitId;
       if (this.type=='moni') keep = keep&&row.surveyId;
-      if (row.mappedDateText) row.mappedDateText = Moment(row.mappedDateText).format('YYYY-MM-DD');
-      if (row.visitDate) row.visitDate = Moment(row.visitDate).format('YYYY-MM-DD');
-      if (row.reviewQADate) row.reviewQADate = Moment(row.reviewQADate).format('YYYY-MM-DD');
+      if (row.mappedDateText) row.mappedDateText = row.mappedDateText.split('T')[0]; //Moment(row.mappedDateText).format('YYYY-MM-DD');
+      if (row.visitDate) row.visitDate = row.visitDate.split('T')[0]; //Moment(row.visitDate).format('YYYY-MM-DD');
+      if (row.reviewQADate) row.reviewQADate = row.reviewQADate.split('T')[0]; //Moment(row.reviewQADate).format('YYYY-MM-DD');
       if (row.mappedLatitude) row.mappedLatitude = Number(row.mappedLatitude).toFixed(5);
       if (row.mappedLongitude) row.mappedLongitude = Number(row.mappedLongitude).toFixed(5);
       if (row.visitLatitude) row.visitLatitude = Number(row.visitLatitude).toFixed(5);
@@ -208,14 +211,14 @@ export class UxValuesService {
         result = this.vpPoolsService.getOverview(this.data.timestamp, this.filter);
         result.pipe(first()).subscribe(
             //async data => {
-              //await this.updateData(type, data.rows); //sync old data with updates
-              data => {
-                this.updateData(type, data.rows); //sync old data with updates
-                var res = this.data.pools.filter(row => this.filterData(row)); //filter global: 'data' by selectors, etc.
+            //await this.updateData(type, data.rows); //sync old data with updates
+            data => {
+              this.updateData(type, data.rows); //sync old data with updates
+              var res = this.data.pools.filter(row => this.filterData(row)); //filter global: 'data' by selectors, etc.
               var len = res.length;
               var chg = data.rowCount > 0;
-              if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed: chg});}
-              else {resolve({pools:res, count:len, changed: chg});}
+              if (page) {resolve({pools:res.slice(this.pageSize*(page-1), this.pageSize*page), count:len, changed:chg});}
+              else {resolve({pools:res, count:len, changed:chg});}
             },
             error => {
               this.alertService.error(error);
