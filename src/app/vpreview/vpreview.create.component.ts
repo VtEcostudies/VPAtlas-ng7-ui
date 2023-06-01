@@ -13,7 +13,7 @@ import { ModalService } from '@app/_modal';
 
 @Component({
   templateUrl: 'vpreview.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpreview.styles.css']
 })
 export class vpReviewCreateComponent implements OnInit {
     view = false;

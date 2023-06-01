@@ -29,18 +29,21 @@
               "src/favicon.ico",
               "src/assets",
               {
-                 "glob": "**/*",
-                 "input": "node_modules/leaflet/dist/images/",
-                 "output": "./assets/"
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images/",
+                "output": "./assets/"
               }
             ],
             "styles": [
               "src/assets/bootstrap-4.1.3/css/bootstrap.min.css",
               "src/assets/leaflet-1.7.1/leaflet.css",
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/datatables.net-dt/css/jquery.dataTables.min.css"
             ],
             "scripts": [
-              "src/assets/bootstrap-4.1.3/js/bootstrap.min.js"
+              "src/assets/bootstrap-4.1.3/js/bootstrap.min.js",
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/datatables.net/js/jquery.dataTables.min.js"
             ]
           },
           "configurations": {
@@ -81,7 +84,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-                "namedChunks": false,
+              "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,

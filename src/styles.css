@@ -250,20 +250,6 @@ handle buttons on top of text inputs
     width: 75%;
 }
 
-/*
-  align table elements vertically. use <td class="vert-aligned"> for
-  each <td> in a table.
-*/
-.table tbody > tr > td.vert-aligned {
-  vertical-align: middle;
-}
-
-/* note: this didn't work... */
-.table tbody > tr > td.body-scroll-align-columns th.body-scroll-align-columns {
-    horizontal-align: left;
-    /* width: 10px !important;*/ /* doesn't override default */
-}
-
 .btn-link .btn a {
   padding: 0px;
 }

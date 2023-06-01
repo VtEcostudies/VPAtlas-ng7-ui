@@ -106,13 +106,14 @@ export class UxValuesService {
     */
     updateData(type='all', pools:any) {
       type = 'all';
-      console.log(`uxValues.service::updateData(${type}) | incoming data count:`, pools.length, ` | timestamp: ${this.data.timestamp}`);
+      console.log(`uxValues.service::updateData(${type}) | incoming data count:`, pools.length, ` | local data count:`, this.data.pools.length, `| timestamp: ${this.data.timestamp}`);
       if (this.data.pools.length == 0) { //initial load
-        this.data.timestamp = '1970-01-01'; //Moment.utc().format();
+        console.log('uxValues.service::updateData | INIT');
+        this.data.timestamp = new Date().toISOString(); //Date NOW. ISO is YYYY-MM-DDTHH:MM:SS.XXXZ //Moment.utc().format();
         this.data.pools = pools;
         this.data.count = pools.length;
       } else {
-        this.data.timestamp = new Date().toISOString(); //ISO is YYYY-MM-DDTHH:MM:SS.XXXZ //Moment.utc().format();
+        this.data.timestamp = new Date().toISOString(); //Date NOW. ISO is YYYY-MM-DDTHH:MM:SS.XXXZ //Moment.utc().format();
         //update existing array with new data
         pools.forEach(upd => { //iterate over incoming rows, each as 'upd'
           var found = false; //flag that the incoming row, 'upd' was found in this pass through 'old' pools
@@ -120,7 +121,7 @@ export class UxValuesService {
           var vpmap = [];
           //console.log(`searching ${type} for ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
           this.data.pools.find((old, idx, arr) => {
-            if (upd.poolId==old.poolId&&!old.visitId) {
+            if (upd.poolId==old.poolId && !old.visitId) { //make a list of vpMapped pools without visits
               //console.log(`FOUND Existing VPMap[${old.poolId}]=${idx}`);
               vpmap[old.poolId]=idx;}
             match = {
@@ -129,19 +130,20 @@ export class UxValuesService {
               review: upd.reviewId==old.reviewId,
               survey: upd.surveyId==old.surveyId
             };
-            if ((match.pool && match.visit && match.review && match.survey)) {
+            if (match.pool) { //(match.pool && match.visit && match.review && match.survey) {
               found = true; //flag that we found a match so we don't duplicate it.
-              //console.log(`FOUND match: ${match}. UPDATING.`);
+              console.log('FOUND match. UPDATING | match:', match, 'before:', this.data.pools[idx]);
               this.data.pools[idx] = upd; //update row
+              console.log('FOUND match. UPDATED | after:', this.data.pools[idx]);
             }
             return found;
           })
           if (!found) { //searched all rows for the current incoming value. not found. add it.
-            //console.log(`ADDING ${upd.poolId}/${upd.visitId}/${upd.reviewId}`);
+            console.log(`ADDING ${upd.poolId}/visitId:${upd.visitId}/reviewId:${upd.reviewId}/surveyId:${upd.usrveyId}`);
             this.data.pools.push(upd); //add row
           }
           if (upd.visitId && vpmap[upd.poolId]) { //if new row has visit delete old row without...
-            //console.log(`DELETING ${upd.poolId} from data.pools[${type}] at index ${vpmap[upd.poolId]}`);
+            console.log(`DELETING ${upd.poolId} from data.pools[${type}] at index ${vpmap[upd.poolId]}`);
             delete this.data.pools[vpmap[upd.poolId]];
           }
         });
@@ -152,6 +154,9 @@ export class UxValuesService {
       Filter client-side global this.data array after loading/updating. This replaces the API Query Filters by 'Search'.
       This is called after loading a dataSet by 'Type' (All, Visi, Mine, Revu, Moni)
     */
+    private listVisits:any = {};
+    private listPools:any = {};
+
     filterData(row:any) {
       var srch:any = this.search;
       var keep:boolean = true;
@@ -168,20 +173,27 @@ export class UxValuesService {
           (row.sumAmphib&&row.sumAmphib[0]+0>0) ||
           (row.sumAmphib&&row.sumAmphib[1]+0>0)
         )
-      if (!this.userIsAdmin) keep = keep&&(row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');
+      if (!this.userIsAdmin) {keep = keep && (row.poolStatus!='Eliminated')&&(row.poolStatus!='Duplicate');}
       // TODO: add search by date here: //if (srch.begDate) keep = keep&&((row.mappedDateText>=srch.begDate)||(row.visitDate>=srch.begDate));
-      if (this.type=='revu') keep = keep &&
+      if (this.type=='revu') {
+        keep = keep &&
         (
-          (row.visitId && !row.reviewId) ||
-          //new db triggers update vpmapped when review saved, so this criterion is bad
-          //row.mappedUpdatedAt > row.reviewUpdatedAt ||
-          row.visitUpdatedAt > row.reviewUpdatedAt
-        );
-      /*
-      if (row.poolId=='SDF791') {
-        console.log(row.poolId, row.visitId, row.reviewId, row.mappedUpdatedAt, row.visitUpdatedAt, row.reviewUpdatedAt);
+          (row.visitId && !row.reviewId)
+          //New db triggers update vpmapped when review saved, so this criterion is bad.
+          //|| row.mappedUpdatedAt > row.reviewUpdatedAt
+          //With S123-Visit, too many pools get updated frequently. This criterion is a nuisance.
+          //|| row.visitUpdatedAt > row.reviewUpdatedAt
+        )
+        && !this.listVisits[row.visitId]; //for 'Review' pools, only allow one row per visitId (not eg. one row for each surveyId)
+      } else { //for all others, allow one row per visitId as well (condense surveys into one row)
+        keep = keep && (!this.listPools[row.poolId] || (row.visitId && !this.listVisits[row.visitId]));
       }
-      */
+      if (row.poolId) {
+        this.listPools[row.poolId]=row.poolId; //keep a list of previously-added pool rows
+      }
+      if (row.visitId) {
+        this.listVisits[row.visitId]=row.visitId; //keep a list of previously-added visit rows
+      }
       if (this.type=='mine' && this.currentUser) keep = keep &&
         (user==row.mappedByUser ||
         user==row.visitUserName ||
@@ -214,6 +226,7 @@ export class UxValuesService {
             //await this.updateData(type, data.rows); //sync old data with updates
             data => {
               this.updateData(type, data.rows); //sync old data with updates
+              this.listVisits = {}; this.listPools = {}; //initialize on each data load
               var res = this.data.pools.filter(row => this.filterData(row)); //filter global: 'data' by selectors, etc.
               var len = res.length;
               var chg = data.rowCount > 0;

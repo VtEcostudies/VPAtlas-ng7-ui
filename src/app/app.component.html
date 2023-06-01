@@ -68,23 +68,42 @@
               <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 CSV
               </a>
+                <!--
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/pools/csv?download=1">All Data</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/mapped/csv?download=1">Mapped Pools</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/visit/csv?download=1">Pool Visits</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/survey/csv?download=1">Pool Surveys</a>
+                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/pools/csv?download=1{{downloadParamsText}}">All Data</a>
+                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/mapped/csv?download=1{{downloadParamsText}}">Mapped Pools</a>
+                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/visit/csv?download=1{{downloadParamsText}}">Pool Visits</a>
+                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/survey/csv?download=1{{downloadParamsText}}">Pool Surveys</a>
                 </ul>
-            </li>
+                -->
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" (click)="download('pools', 'csv')">All Pools</a>
+                  <a class="dropdown-item" (click)="download('mapped', 'csv')">Mapped Pools</a>
+                  <a class="dropdown-item" (click)="download('visit', 'csv')">Pool Visits</a>
+                  <a class="dropdown-item" (click)="download('survey', 'csv')">Pool Surveys</a>
+                </div>
+              </li>
 
             <li class="nav-item dropdown" *ngIf="userIsAdmin">
               <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 GeoJson
               </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/mapped/geojson?download=1">Mapped Pools</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/visit/geojson?download=1">Pool Visits</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/survey/geojson?download=1">Pool Surveys</a>
-                </ul>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" (click)="download('mapped', 'geojson')">Mapped Pools</a>
+                <a class="dropdown-item" (click)="download('visit', 'geojson')">Pool Visits</a>
+                <a class="dropdown-item" (click)="download('survey', 'geojson')">Pool Surveys</a>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown" *ngIf="userIsAdmin">
+              <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Shape File
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" (click)="download('mapped', 'shapefile')">Mapped Pools</a>
+                <a class="dropdown-item" (click)="download('visit', 'shapefile')">Pool Visits</a>
+                <a class="dropdown-item" (click)="download('survey', 'shapefile')">Pool Surveys</a>
+              </div>
             </li>
 
             <!--<li class="nav-item" *ngIf="currentUser&&!userIsAdmin">-->

@@ -305,7 +305,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     private applRef: ApplicationRef,
     private componentFactoryResolver: ComponentFactoryResolver
     ) {
-    console.log('****************************LEAFLET CONSTRUCTOR****************************')
+    //console.log('****************************LEAFLET CONSTRUCTOR****************************')
     /*
       preserve baseLayer shown across page loads with outside service
       which holds baseLayers[] array index of last-selected baseLayer.

@@ -55,6 +55,7 @@ export class vpVisitCreateComponent implements OnInit {
     visitId = null; //visitId passed via routeParams- indicates an edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
     visit: vpVisit = new vpVisit(); //not passed to map, used by the forms
+    reviewId = null; //loaded with visit so we can handle logic behind new Review button on View Visit page
     mapPoints = false; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
     @Input() itemType = 'Edit Visit'; //passed to map via [itemType]="itemType"
@@ -544,6 +545,7 @@ export class vpVisitCreateComponent implements OnInit {
                 console.log('vpvisit.create.component.LoadVisitData result:', data);
                 this.pools = [data.rows[0].both.mapped]; //[data.rows[0].both.visit, data.rows[0].both.mapped];
                 this.visit = data.rows[0].both.visit;
+                this.reviewId = data.rows[0].reviewId;
                 this.poolId = data.rows[0].both.visit.poolId;
                 console.log('VisitPoolPhoto', this.visit.visitPoolPhoto);
                 this.locMarker = {
@@ -922,6 +924,15 @@ export class vpVisitCreateComponent implements OnInit {
                 this.alertService.error(error);
                 this.dataLoading = false;
             });
+    }
+  }
+
+  visitReviews() {
+    console.log('vppools.view.compononent::visitReviews | visitId;', this.visitId, '| reviewId', this.reviewId);
+    if (this.reviewId) {
+      this.router.navigate([`/review/view/${this.reviewId}`], {queryParams: {returnUrl: this.router.url.split('?')[0] }});
+    } else {
+      this.router.navigate([`/review/create/${this.visitId}`], {queryParams: {returnUrl: this.router.url.split('?')[0] }});
     }
   }
 

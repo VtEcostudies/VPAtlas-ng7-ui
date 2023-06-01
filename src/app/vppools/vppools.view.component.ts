@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-﻿import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -49,6 +49,7 @@ export class vpViewComponent implements OnInit {
     visitId = null; //visitId passed via routeParams- indicates a view/edit/update of an existing visit
     poolId = null; //poolId passed via routeParams - indicates the creation of a new visit
     visit: vpVisit = new vpVisit(); //not passed to map, used by the forms
+    reviewId = null; //loaded with visit so we can handle logic behind new Review button on View Visit page
     mapPoints = false; //flag to plot pools on map as circleMarkers, passed to map via [mapPoints]="mapPoints"
     pools = []; //passed to map via [mapValues]="pools" - plots extant pools as circleMarkers
     @Input() itemType = 'View Visit'; //passed to map via [itemType]="itemType"
@@ -83,11 +84,11 @@ export class vpViewComponent implements OnInit {
         this.userIsAdmin = false;
       }
       this.loadTowns();
-      console.log('*********@Input in vppools.view.componenet::constructor | reviewVistiId:', this.reviewVisitId);
+      console.log('*********@Input in vppools.view.componenet::constructor | reviewVisitId:', this.reviewVisitId);
     }
 
     async ngOnInit() {
-      console.log('*********@Input in vppools.view.componenet::ngOnInit | reviewVistiId:', this.reviewVisitId);
+      console.log('*********@Input in vppools.view.componenet::ngOnInit | reviewVisitId:', this.reviewVisitId);
       //get poolId or visitId or from route params and load visit data from db
       this.visitId = this.route.snapshot.params.visitId;
       this.poolId = this.route.snapshot.params.poolId;
@@ -461,6 +462,7 @@ export class vpViewComponent implements OnInit {
                 //console.log('vppools.view.component.loadPage result:', data);
                 this.pools = [data.rows[0].both.visit, data.rows[0].both.mapped]; //this.pools = data.rows[0]; //sets map data
                 this.visit = data.rows[0].both.visit; //this.visit = data.rows[0]; //sets form data
+                this.reviewId = data.rows[0].reviewId;
                 this.poolId = this.visit.poolId; //needed for photos
                 this.setFormValues();
                 this.dataLoading = false;
@@ -526,6 +528,15 @@ export class vpViewComponent implements OnInit {
 
   ToEditMode() {
     this.router.navigate([`/pools/visit/update/${this.visitId}`]);
+  }
+
+  visitReviews() {
+    console.log('vppools.view.compononent::visitReviews | visitId;', this.visitId, '| reviewId', this.reviewId);
+    if (this.reviewId) {
+      this.router.navigate([`/review/view/${this.reviewId}`], {queryParams: {returnUrl: this.router.url.split('?')[0] }});
+    } else {
+      this.router.navigate([`/review/create/${this.visitId}`], {queryParams: {returnUrl: this.router.url.split('?')[0] }});
+    }
   }
 
   nextPage(direction) {

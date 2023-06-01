@@ -34,7 +34,7 @@
       <p><u><b>
         They recorded these status items:
       </b></u></p>
-      <table class="table table-sm">
+      <table class="table table-sm survey-view-table">
         <thead class="scroll-thead">
           <tr>
             <th>Item</th>
@@ -141,7 +141,7 @@
         </b></u></p>
         <table>
           <tr>
-            <td *ngFor="let photo of survey.surveyPhotos">
+            <td *ngFor="let photo of survey.surveyPhotos" class="cell-survey-photo">
               <sup>{{photo.surveyPhotoSpecies}}</sup>
               <a href="{{photo.surveyPhotoUrl}}" target=_blank>
                 <img class="survey-list-photo" src="{{photo.surveyPhotoUrl}}"/>

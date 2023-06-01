@@ -8,7 +8,7 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({
   templateUrl: 'vpreview.list.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpreview.styles.css']
 })
 
 export class vpReviewListComponent implements OnInit {

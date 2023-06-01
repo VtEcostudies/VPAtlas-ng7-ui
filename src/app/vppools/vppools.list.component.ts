@@ -7,7 +7,8 @@ import { UxValuesService } from '@app/_global';
 import { vpMapped, vpVisit } from '@app/_models';
 import { poolsDialogText } from '@app/vppools/dialogText';
 import { ModalService } from '@app/_modal';
-//NOTE: since Moment is a PITA in Angular, for dates use eg. new Date().toISOString() for date now.
+//NOTE: since Moment is a PITA in Angular, for dates use eg. new Date().toISOString() for timestamp now.
+//With all dates formatted as ISO strings (which postgres does, as well), it's easy to parse. eg. timestamp.split('T')[0] is date parsed
 //import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 //@add_component_here

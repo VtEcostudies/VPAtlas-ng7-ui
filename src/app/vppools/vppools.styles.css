@@ -1,3 +1,5 @@
+/* Begin styling primary table */
+
 .pools-table-div {
   display: inline-block;
   width: 100%;
@@ -8,27 +10,52 @@
 .pools-table-div th {
   position: -webkit-sticky;
   position: sticky;
-  top: 0; /*must be zero for sticky to work*/
-  background: lightgray;
+  top: 0; /* must be zero for sticky to work */
+  background: oldlace;
+  z-index: 99999;
 }
 
-.pools-table-div td {
+.pools-table th, td {
+  padding-left: 5px;
+}
+
+.pools-table {
+  border-collapse: collapse;
+  width: 100%;
+  overflow-y: scroll !important;
+}
+
+.pools-table tr {
+  border: solid;
+  border-width: 1px 0; /* This is how to add row top/bottom borders without side/row-end borders */
+  border-color: lightgray;
+  height: 50px;
+}
+
+.pools-table tr:nth-child(odd) {
+  background-color: #0000000d;
+}
+
+.pools-table td {
+  vertical-align: center;
   font-size: 14px;
+  margin-top: 0px;
 }
 
-
-.pools-table-div th, td {
-  padding: .1em .1em;
+.pools-table td .btn-link {
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
-
-.pools-table-div table tr {
-  color: #212121;
+.cell-scrollable-list { /* Applied directly to td tag or div wrapper to make surveyIds a vertically-scrollable list */
+  overflow-y: auto; 
+  overflow-x: hidden; 
+  max-height: 100px !important;
+  direction: rtl; /* Move scrollbar to left */
+  text-align: right; /* Align scrollable contents to right */
 }
 
-.pools-table-div table tr:nth-child(odd) {
-  background-color: #BBDEFB;
-}
+/* END primary table styling */
 
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window

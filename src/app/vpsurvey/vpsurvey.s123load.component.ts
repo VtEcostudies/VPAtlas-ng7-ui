@@ -10,7 +10,7 @@ import { ModalService } from '@app/_modal';
 
 @Component({
   templateUrl: 'vpsurvey.s123load.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpsurvey.styles.css']
 })
 export class vpSurveyS123LoadComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one

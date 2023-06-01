@@ -61,8 +61,8 @@
 
 </form>
 
-<div class="row">
-<table class="table table-striped">
+<div class="row list-table-div">
+<table class="table table-striped list-table">
   <thead>
     <tr>
       <th>Survey ID</th>
@@ -95,14 +95,16 @@
         <td>{{survey.surveyTypeName}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyAmphibJson)">{{survey.sumAmphib?survey.sumAmphib[0]+'/'+survey.sumAmphib[1]:'0'}}</td>
         <td class="btn-link" (click)="ShowJson(survey.surveyMacroJson)">{{survey.sumMacros?survey.sumMacros:'0'}}</td>
-
-        <td *ngFor="let photo of survey.surveyPhotos">
-          <sup>{{photo.surveyPhotoSpecies}}</sup>
-          <a href="{{photo.surveyPhotoUrl}}">
-            <img class="survey-list-photo" src="{{photo.surveyPhotoUrl}}"/>
-          </a>
+        <td>
+          <div *ngIf="survey.surveyPhotos" class="cell-scrollable-list cell-survey-photo">
+            <div *ngFor="let photo of survey.surveyPhotos">
+              <sup>{{photo.surveyPhotoSpecies}}</sup>
+              <a href="{{photo.surveyPhotoUrl}}">
+                <img class="survey-list-photo" src="{{photo.surveyPhotoUrl}}"/>
+              </a>
+            </div>
+          </div>
         </td>
-        <td *ngIf="!survey.surveyPhotos"></td>
 <!--
         <td *ngIf="!survey.surveyPhotoJson"></td>
         <td *ngFor="let url of survey.surveyPhotoUrls">

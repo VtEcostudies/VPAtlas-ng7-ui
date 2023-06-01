@@ -177,85 +177,91 @@
     <div *ngIf="!loading">
       <div *ngIf="!mapView"> <!-- <div *ngIf="!mapView" class="container-fluid"> -->
         <div class="pools-table-div"> <!-- style="display: inline-block; height:550px; overflow:auto;"> -->
-          <table> <!-- class="table table-sm table-responsive"> responsive mucks overflow, etc. -->
+          <!-- <table datatable [dtOptions]="dtOptions" class="row-border hover"></table> -->
+          <table datatable class="pools-table row-border hover"> <!-- class="table table-sm table-responsive"> responsive mucks overflow, etc. -->
             <thead>
               <tr>
-                  <th class="body-scroll-align-columns">Pool ID</th>
-                  <th class="body-scroll-align-columns">Mapped By</th>
-                  <th class="body-scroll-align-columns">Town</th>
-                  <th class="body-scroll-align-columns">Method</th>
-                  <th class="body-scroll-align-columns">Status</th>
-                  <th class="body-scroll-align-columns">Latitude</th>
-                  <th class="body-scroll-align-columns">Longitude</th>
+                  <th>Pool ID</th>
+                  <th>Town</th>
+                  <!--
+                  <th>Mapped By</th>
+                  <th>Method</th>
+                  -->
+                  <th>Status</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
 
-                  <th class="body-scroll-align-columns">Visit</th>
-                  <th class="body-scroll-align-columns">Visited By</th>
-                  <th class="body-scroll-align-columns">Visit Date</th>
-                  <th class="body-scroll-align-columns">Vernal Pool</th>
-                  <th class="body-scroll-align-columns">Review</th>
-                  <th class="body-scroll-align-columns">Survey</th>
+                  <th>Visit</th>
+                  <th>Visited By</th>
+                  <th>Visit Date</th>
+                  <th>Vernal Pool</th>
+                  <th>Visit Updated</th>
+                  <th>Review</th>
+                  <th>Surveys</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let pool of pools">
+              <tr *ngFor="let pool of pools" style="max-height:50px;">
                 <!-- Pool ID -->
-                <span *ngIf="pool.visitId">
-                  <td class="vert-aligned body-scroll-align-columns">
+                <td>
+                  <span *ngIf="pool.visitId">
                     <button (click)="ViewPoolVisits(pool.poolId)" title="View Pool Visits {{pool.poolId}}" class="btn btn-link">{{pool.poolId}}</button>
-                  </td>
-                </span>
-                <span *ngIf="!pool.visitId">
-                  <span *ngIf="pool.surveyId">
-                    <td class="vert-aligned body-scroll-align-columns">
+                  </span>
+                  <span *ngIf="!pool.visitId">
+                    <span *ngIf="pool.surveyId">
                       <button (click)="ViewPoolSurveys(pool.poolId)" title="View Pool Surveys {{pool.poolId}}" class="btn btn-link">{{pool.poolId}}</button>
-                    </td>
-                  </span>
-                  <span *ngIf="!pool.surveyId">
-                    <td class="vert-aligned body-scroll-align-columns">
+                    </span>
+                    <span *ngIf="!pool.surveyId">
                       <button (click)="CreateVisit(pool.poolId)" title="Add Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poolId}}</button>
-                    </td>
+                    </span>
                   </span>
-                </span>
+                </td>
                 <!-- End Pool ID -->
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedByUser}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.townName}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.mappedMethod}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.poolStatus}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.latitude}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.longitude}}</td>
+                <td>{{pool.townName}}</td>
+                <!--
+                <td>{{pool.mappedByUser}}</td>
+                <td>{{pool.mappedMethod}}</td>
+                -->
+                <td>{{pool.poolStatus}}</td>
+                <td>{{pool.latitude}}</td>
+                <td>{{pool.longitude}}</td>
                 <!-- Visits -->
-                <span *ngIf="pool.visitId">
-                  <td title="View visit {{pool.visitId}}" class="vert-aligned body-scroll-align-columns">
+                <td>
+                  <span *ngIf="pool.visitId">
                     <button (click)="ViewVisit(pool.visitId)" title="View Visit {{pool.visitId}}" class="btn btn-link">{{pool.visitId}}</button>
-                  </td>
-                </span>
-                <span *ngIf="!pool.visitId">
-                    <td class="vert-aligned body-scroll-align-columns">
-                      <span *ngIf="currentUser">
-                        <button (click)="CreateVisit(pool.poolId)" title="Create Visit for pool {{pool.poolId}}" class="btn btn-link">{{pool.poold}}</button>
-                      </span>
-                    </td>
-                </span>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitUserName}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitDate}}</td>
-                <td class="vert-aligned body-scroll-align-columns">{{pool.visitVernalPool}}</td>
+                  </span>
+                  <span *ngIf="!pool.visitId">
+                      <button (click)="CreateVisit(pool.poolId)" title="Add Visit for Pool {{pool.poolId}}" class="btn btn-link">(+)</button>
+                  </span>
+                </td>
+                <td>{{pool.visitUserName}}</td>
+                <td>{{pool.visitDate}}</td>
+                <td>{{pool.visitVernalPool}}</td>
+                <td>{{pool.visitUpdatedAt ? pool.visitUpdatedAt.split('T')[0] : ''}}</td>
                 <!-- Reviews -->
-                <td class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                <td>
                   <span *ngIf="pool.visitId">
                     <span *ngIf="pool.reviewId">
-                        <button (click)="ViewReview(pool.reviewId)" class="btn btn-link">{{pool.reviewId}}</button>
+                        <button (click)="ViewReview(pool.reviewId)" title="View Review {{pool.reviewId}}" class="btn btn-link">{{pool.reviewId}}</button>
                     </span>
-                    <span *ngIf="!pool.reviewId">
+                    <span *ngIf="!pool.reviewId && userIsAdmin">
                         <!--<button (click)="GetVisitReviews(pool.visitId)" class="btn btn-link no-margin-rt">View/Add</button>-->
                         <button (click)="CreateReview(pool.visitId)" title="Add Review of Visit {{pool.visitId}}" class="btn btn-link">(+)</button>
                     </span>
                   </span>
                 </td>
                 <!-- Surveys -->
-                <td title="" class="vert-aligned body-scroll-align-columns" style="inline-block;">
+                <td>
+                  <!--
                   <span *ngIf="pool.surveyId">
                       <button (click)="ViewSurvey(pool.surveyId)" title="View Survey {{pool.surveyId}}" class="btn btn-link">{{pool.surveyId}}</button>
                   </span>
+                  -->
+                  <div class="cell-scrollable-list"> <!-- Must wrap list in div to enable scrollable list -->
+                    <div *ngFor="let survey of pool.surveys">
+                      <button (click)="ViewSurvey(survey)" title="View Survey {{survey}}" class="btn btn-link">{{survey}}</button>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </tbody>

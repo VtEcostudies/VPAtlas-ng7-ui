@@ -10,7 +10,7 @@ import { ModalService } from '@app/_modal';
 
 @Component({
   templateUrl: 'vpsurvey.upload.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpsurvey.styles.css']
 })
 export class vpSurveyUploadComponent implements OnInit {
     create = false; //aka insert

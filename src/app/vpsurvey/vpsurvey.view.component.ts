@@ -9,7 +9,7 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({
   templateUrl: 'vpsurvey.view.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpsurvey.styles.css']
 })
 export class vpSurveyViewComponent implements OnInit {
     currentUser = null;
