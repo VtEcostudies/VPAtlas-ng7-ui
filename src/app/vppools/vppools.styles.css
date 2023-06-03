@@ -12,7 +12,7 @@
   position: sticky;
   top: 0; /* must be zero for sticky to work */
   background: oldlace;
-  z-index: 99999;
+  z-index: auto;
 }
 
 .pools-table th, td {

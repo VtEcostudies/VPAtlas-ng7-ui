@@ -13,7 +13,7 @@ import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
 
 @Component({
   templateUrl: 'vpreview.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpreview.styles.css']
 })
 export class vpReviewViewComponent implements OnInit {
   view = true;
@@ -158,7 +158,7 @@ export class vpReviewViewComponent implements OnInit {
     }
 
     ToEditMode() {
-      this.router.navigate([`/review/update/${this.reviewId}`]);
+      this.router.navigate([`/review/update/${this.reviewId}`], {queryParams: {returnUrl: this.router.url }});
     }
 
     CancelReview() {

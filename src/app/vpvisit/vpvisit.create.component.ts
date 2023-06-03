@@ -31,6 +31,7 @@ export class vpVisitCreateComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
     userIsOwner = false;
+    returnUrl = '/pools/list';
     visitObserverForm: FormGroup = this.formBuilder.group({});
     visitPoolMappedForm: FormGroup = this.formBuilder.group({});
     visitLocationForm: FormGroup = this.formBuilder.group({});
@@ -97,6 +98,9 @@ export class vpVisitCreateComponent implements OnInit {
 
     async ngOnInit() {
       this.authenticationService.check();
+
+      console.log('vpvisit.create.componenent::ngOnInit | queryParams:', this.route.snapshot.queryParams);
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
 
       //get poolId or visitId or from route params and load visit data from db
       this.visitId = this.route.snapshot.params.visitId; if (this.visitId) this.visitId=this.visitId.split('?')[0];
@@ -903,7 +907,9 @@ export class vpVisitCreateComponent implements OnInit {
     }
 
     if (confirm(`Are you sure you want to cancel edits ${msgTxt}?`)) {
-      this.router.navigate([navUrl]);
+      //this.router.navigate([navUrl]);
+      console.log('vpvisit.craete.component::CancelVisit | returnUrl', this.returnUrl);
+      this.router.navigate([this.returnUrl]);
     } else {
       //console.log('visit NOT cancelled');
     }
@@ -927,8 +933,8 @@ export class vpVisitCreateComponent implements OnInit {
     }
   }
 
-  visitReviews() {
-    console.log('vppools.view.compononent::visitReviews | visitId;', this.visitId, '| reviewId', this.reviewId);
+  visitReview() {
+    console.log('vpvisit.create.compononent::visitReview | visitId;', this.visitId, '| reviewId', this.reviewId);
     if (this.reviewId) {
       this.router.navigate([`/review/view/${this.reviewId}`], {queryParams: {returnUrl: this.router.url.split('?')[0] }});
     } else {

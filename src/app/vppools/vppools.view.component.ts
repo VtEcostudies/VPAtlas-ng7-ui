@@ -25,6 +25,7 @@ export class vpViewComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
     userIsOwner = false;
+    returnUrl = '/pools/list';
     visitObserverForm: FormGroup = this.formBuilder.group({});
     visitPoolMappedForm: FormGroup = this.formBuilder.group({});
     visitLocationForm: FormGroup = this.formBuilder.group({});
@@ -88,6 +89,9 @@ export class vpViewComponent implements OnInit {
     }
 
     async ngOnInit() {
+      console.log('vppools.view.componenent::ngOnInit | queryParams:', this.route.snapshot.queryParams);
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/pools/list';
+
       console.log('*********@Input in vppools.view.componenet::ngOnInit | reviewVisitId:', this.reviewVisitId);
       //get poolId or visitId or from route params and load visit data from db
       this.visitId = this.route.snapshot.params.visitId;
@@ -527,11 +531,11 @@ export class vpViewComponent implements OnInit {
   }
 
   ToEditMode() {
-    this.router.navigate([`/pools/visit/update/${this.visitId}`]);
+    this.router.navigate([`/pools/visit/update/${this.visitId}`], {queryParams: {returnUrl: this.router.url.split('?')[0] }});
   }
 
-  visitReviews() {
-    console.log('vppools.view.compononent::visitReviews | visitId;', this.visitId, '| reviewId', this.reviewId);
+  visitReview() {
+    console.log('vppools.view.compononent::visitReview | visitId;', this.visitId, '| reviewId', this.reviewId);
     if (this.reviewId) {
       this.router.navigate([`/review/view/${this.reviewId}`], {queryParams: {returnUrl: this.router.url.split('?')[0] }});
     } else {
@@ -555,9 +559,11 @@ export class vpViewComponent implements OnInit {
   }
 
   cancelVisit() {
-    var navUrl = `/pools/list`;
-    this.router.navigate([navUrl]);
-  }
+    //var navUrl = `/pools/list`;
+    //this.router.navigate([navUrl]);
+    console.log('vppools.view.component::cancelVisit | returnUrl', this.returnUrl);
+    this.router.navigate([this.returnUrl]);
+}
 
   PhotoFileEvent(e) {
     console.log('NOTE: PhotoFileEvent(e) - photos are NOT uploadable from View Visit');

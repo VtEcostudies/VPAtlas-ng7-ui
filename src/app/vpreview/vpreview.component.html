@@ -16,6 +16,18 @@
   </div> <!-- col -->
 
   <div class="col-8">
+    <!-- Action buttons -->
+    <div class="form-group form-inline">
+      <button [disabled]="(!r.reviewVisitId)" *ngIf="update || create" class="btn btn-primary" (click)="CreateReview()">
+        Save</button>
+      <img *ngIf="dataLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+      <button *ngIf="update && userIsAdmin" (click)="DeleteReview()" [disabled]="dataLoading" class="btn">
+        Delete</button>
+      <button *ngIf="!update && userIsAdmin && reviewId" class="btn btn-primary" (click)="ToEditMode()">
+        Edit</button>
+      <button (click)="CancelReview()" class="btn">
+        Cancel</button>
+    </div>
   </div> <!-- col -->
 </div> <!-- row -->
 
@@ -146,9 +158,8 @@
   </div> <!-- row -->
 </form> <!-- reviewReviewForm -->
 
-<!--
-  Action buttons
--->
+<!-- Action buttons
+  
 <div class="form-group form-inline">
     <button [disabled]="(!r.reviewVisitId)" *ngIf="update || create" class="btn btn-primary" (click)="CreateReview()">
       Save</button>
@@ -160,7 +171,10 @@
     <button (click)="CancelReview()" class="btn">
       Cancel</button>
 </div>
+-->
+
 <hr>
+
 <div *ngIf="!dataLoading">
   <pool-data-view
   [itemType]="itemType"

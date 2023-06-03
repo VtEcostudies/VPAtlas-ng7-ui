@@ -46,7 +46,6 @@ hr {
   position: sticky;
   top: 0; /* Must be zero for sticky to work. Any non-zero value allow header to scroll. */
   background: oldlace;
-  z-index: 99999;
 }
 
 /* END styles to primary survey list table */
@@ -96,14 +95,22 @@ hr {
 .cell-survey-photo {
   padding: 3px;
  }
- .cell-survey-photo sup {
+
+ .cell-survey-photo sup { /* Photos in Survey View small table */
   display: block;
-  top: 3px;
-  left: 3px;
+  top: 0px;
+  left: 5px;
  }
- .cell-survey-photo a {
+
+ .cell-survey-photo-rtl sup { /* Photos in Survey List with scrollbar on left */
   display: block;
-  margin: 3px 0px;
+  top: 0px;
+  right: 45px;
+  padding-top: 5px; 
+ }
+
+ .cell-survey-photo a { /* All Survey photo thumbnails are linked to their source photo */
+  display: block;
   text-align: center;
  }
  /* END - table photos' superscript labels overlay cells */

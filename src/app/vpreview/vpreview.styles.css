@@ -29,23 +29,7 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0; /* Must be zero for sticky to work. Any non-zero value allow header to scroll. */
   background: oldlace;
-  z-index: 99999;
+  z-index: auto
 }
 
 /* END styles to primary survey list table */
-
-/*
-.table-wrapper {
-  max-height: 650px;
-  width: 100% !important;
-  display: block !important;
-  overflow-x: auto !important;
-}
-
-table {
-  max-height: 650px;
-  width: 100% !important;
-  display: block !important;
-  overflow-x: auto !important;
-}
-*/
