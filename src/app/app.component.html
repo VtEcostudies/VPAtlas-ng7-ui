@@ -64,34 +64,39 @@
               </div>
             </li>
 
+            <li class="nav-item dropdown" *ngIf="!userIsAdmin && currentUser">
+              <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Download
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" (click)="download('csv')">CSV</a>
+                <a class="dropdown-item" (click)="download('geojson')">GeoJson</a>
+                <a class="dropdown-item" (click)="download('shapefile')">Shape File</a>
+              </div>
+            </li>
+
             <li class="nav-item dropdown" *ngIf="userIsAdmin">
               <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 CSV
               </a>
-                <!--
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/pools/csv?download=1{{downloadParamsText}}">All Data</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/mapped/csv?download=1{{downloadParamsText}}">Mapped Pools</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/visit/csv?download=1{{downloadParamsText}}">Pool Visits</a>
-                  <a class="dropdown-item" target="_blank" href="{{apiUrl}}/survey/csv?download=1{{downloadParamsText}}">Pool Surveys</a>
-                </ul>
-                -->
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" (click)="download('pools', 'csv')">All Pools</a>
-                  <a class="dropdown-item" (click)="download('mapped', 'csv')">Mapped Pools</a>
-                  <a class="dropdown-item" (click)="download('visit', 'csv')">Pool Visits</a>
-                  <a class="dropdown-item" (click)="download('survey', 'csv')">Pool Surveys</a>
+                  <a class="dropdown-item" (click)="download('csv')">Selected Pools</a>
+                  <a class="dropdown-item" (click)="download('csv', 'pools')">All Pools</a>
+                  <a class="dropdown-item" (click)="download('csv', 'mapped')">Mapped Pools</a>
+                  <a class="dropdown-item" (click)="download('csv', 'visit')">Pool Visits</a>
+                  <a class="dropdown-item" (click)="download('csv', 'survey')">Pool Surveys</a>
                 </div>
-              </li>
+            </li>
 
             <li class="nav-item dropdown" *ngIf="userIsAdmin">
               <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 GeoJson
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" (click)="download('mapped', 'geojson')">Mapped Pools</a>
-                <a class="dropdown-item" (click)="download('visit', 'geojson')">Pool Visits</a>
-                <a class="dropdown-item" (click)="download('survey', 'geojson')">Pool Surveys</a>
+                <a class="dropdown-item" (click)="download('geojson')">Selected Pools</a>
+                <a class="dropdown-item" (click)="download('geojson', 'mapped')">Mapped Pools</a>
+                <a class="dropdown-item" (click)="download('geojson', 'visit')">Pool Visits</a>
+                <a class="dropdown-item" (click)="download('geojson', 'survey')">Pool Surveys</a>
               </div>
             </li>
 
@@ -100,9 +105,10 @@
                 Shape File
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" (click)="download('mapped', 'shapefile')">Mapped Pools</a>
-                <a class="dropdown-item" (click)="download('visit', 'shapefile')">Pool Visits</a>
-                <a class="dropdown-item" (click)="download('survey', 'shapefile')">Pool Surveys</a>
+                <a class="dropdown-item" (click)="download('shapefile')">Selected Pools</a>
+                <a class="dropdown-item" (click)="download('shapefile', 'mapped')">Mapped Pools</a>
+                <a class="dropdown-item" (click)="download('shapefile', 'visit')">Pool Visits</a>
+                <a class="dropdown-item" (click)="download('shapefile', 'survey')">Pool Surveys</a>
               </div>
             </li>
 
