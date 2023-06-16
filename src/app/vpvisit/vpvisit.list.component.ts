@@ -6,7 +6,10 @@ import { AlertService, UserService, AuthenticationService, vpVisitService } from
 import { vpVisit } from '@app/_models';
 
 //@add_component_here
-@Component({templateUrl: 'vpvisit.list.component.html'})
+@Component({
+  templateUrl: 'vpvisit.list.component.html',
+  styleUrls: ['vpvisit.styles.css']
+})
 export class vpVisitListComponent implements OnInit {
     filterForm: FormGroup;
     loading = false;

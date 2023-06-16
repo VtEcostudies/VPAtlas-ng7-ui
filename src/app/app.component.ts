@@ -5,7 +5,11 @@ import { AuthenticationService } from './_services';
 import { User, Auth } from './_models';
 import { environment } from '@environments/environment';
 import { UxValuesService } from '@app/_global';
-@Component({ selector: 'app', templateUrl: 'app.component.html' })
+@Component({
+  selector: 'app', 
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.styles.css']
+})
 export class AppComponent {
     currentUserSubscription: Subscription;
     currentUser: Auth; //type Auth is {token: string, user: User}
@@ -74,6 +78,30 @@ export class AppComponent {
       }
       let url = `${this.apiUrl}/${dataType}/${fileType}?${this.downloadParamsText}`;
       window.open(url);
+    }
+
+    downloadTopLevelClick(e) {
+      this.clearAllSubMenus();
+    }
+
+    clearAllSubMenus() {
+      let dids = ['dropCsv','dropGeo','dropShp']; //dropdown list-item element ids
+      for (const did of dids) {
+          document.getElementById(did).classList.remove('dropdown-submenu-show');
+      }
+    }
+    dropdownSubMenuToggle(e, id) {
+      let dids = ['dropCsv','dropGeo','dropShp']; //dropdown list-item element ids
+      //console.log('dropdownToggle', id, e);
+      for (const did of dids) {
+        if (did != id) {
+          document.getElementById(did).classList.remove('dropdown-submenu-show');
+        }
+      }
+      let ele = document.getElementById(id) as any;
+      ele.classList.toggle('dropdown-submenu-show');
+      e.stopPropagation();
+      e.preventDefault();
     }
 
     getQueryParams() {

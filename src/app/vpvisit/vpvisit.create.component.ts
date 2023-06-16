@@ -22,7 +22,7 @@ import { DOCUMENT } from '@angular/common';
 
 @Component({
   templateUrl: 'vpvisit.create.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpvisit.styles.css']
 })
 export class vpVisitCreateComponent implements OnInit {
     update = false; //flag for html config that we are editing an existing visit, not creating a new one

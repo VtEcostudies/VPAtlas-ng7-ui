@@ -10,7 +10,7 @@ import { ModalService } from '@app/_modal';
 
 @Component({
   templateUrl: 'vpvisit.upload.component.html',
-  styleUrls: ['styles.css']
+  styleUrls: ['vpvisit.styles.css']
 })
 export class vpVisitUploadComponent implements OnInit {
     create = false; //aka insert

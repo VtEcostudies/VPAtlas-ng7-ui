@@ -5,7 +5,7 @@
   it's  not imposing that look.
 */
 /*@import '@angular/material/prebuilt-themes/deeppurple-amber.css';*/
-@import './app/vpvisit/styles.css';
+@import './app/vpvisit/vpvisit.styles.css';
 
 /* Define bootstrap zero columns, a.k.a. hidden */
 .col-xs-0, 
