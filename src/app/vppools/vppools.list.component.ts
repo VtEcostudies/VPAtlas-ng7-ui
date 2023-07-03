@@ -83,6 +83,15 @@ export class vpListComponent implements OnInit {
       if (this.loadParams.hasIndicators) {this.loadParams.hasIndicators = ("true" == this.loadParams.hasIndicators);}
       else {this.loadParams.hasIndicators = this.uxValuesService.filterParams.hasIndicators;}
 
+      //initialize filterFrom *outside* of town lookup below...these are the pool search filter fields
+      //setting filterForm ***MUST*** be done ahead of town lookup, below, else it causes errors!
+      this.filterForm = this.formBuilder.group({
+        poolDataType: [this.loadParams.poolDataType || this.uxValuesService.filterParams.poolDataType],
+        poolId: [this.loadParams.poolId || this.uxValuesService.filterParams.poolId],
+        userName: [this.loadParams.userName || this.uxValuesService.filterParams.userName],
+        town: [this.uxValuesService.filterParams.town], //initialize this to something known, modify below
+      });
+
       console.log('vppools.list.component.ts::ngOnInit | loadParams', this.loadParams);
       var towns = [];
       let townPromise = this.uxValuesService.loadTowns(); //need to load these for logic below
@@ -96,13 +105,8 @@ export class vpListComponent implements OnInit {
           this.loadParams.town = this.uxValuesService.filterParams.town;
           this.loadParams.townName = this.uxValuesService.filterParams.town.townName;
         }
-        //these are the pool search filter fields
-        this.filterForm = this.formBuilder.group({
-          poolDataType: [this.loadParams.poolDataType || this.uxValuesService.filterParams.poolDataType],
-          poolId: [this.loadParams.poolId || this.uxValuesService.filterParams.poolId],
-          userName: [this.loadParams.userName || this.uxValuesService.filterParams.userName],
-          town: [this.loadParams.town], //merging with uxValues is done above
-        });
+        //just set filterForm's town after town object lookup from townName query param
+        this.filterForm.controls['town'].setValue(this.loadParams.town);
         this.mapView = this.loadParams.mapView;
         this.loadAllRec = this.loadParams.loadAllRec;
         this.zoomFilter = this.loadParams.zoomFilter;
@@ -112,7 +116,7 @@ export class vpListComponent implements OnInit {
         //and load page 1 (or all if loadAllRec defaults to true)
         this.loadPools(1)
       });
-    }
+  }
 
     openModal(id: string, infoId=null, e=null) {
         if (e) {e.stopPropagation();}
