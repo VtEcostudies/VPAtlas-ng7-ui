@@ -17,7 +17,7 @@ export class AppComponent {
     vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';
     vceIconPath = '../assets/images/vce_favicon.png';
     fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
-    bannerMessage = '****************** This is the VPAtlas Version 3 Staging Server ******************';
+    bannerMessage = '';
     apiUrl = environment.apiUrl;
     downloadParamsText = '';
 
@@ -32,6 +32,7 @@ export class AppComponent {
             this.userIsAdmin = this.currentUser.user.userrole == 'admin';
           }
         });
+        this.bannerMessage = environment.bannerMessage;
         this.onLogin();
     }
 

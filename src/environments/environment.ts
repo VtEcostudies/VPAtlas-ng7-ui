@@ -18,6 +18,7 @@
 */
 export const environment = {
   production: false,
+  bannerMessage: 'Local Development Server',
   uiHost: 'http://localhost:4200',
   apiUrl: 'http://localhost:4000',
   s3PhotoBucket: 'vpatlas.data',

@@ -14,7 +14,8 @@
       ng build --configuration=dev-remote
 */
 export const environment = {
-  production: true,
+  production: false,
+  bannerMessage: 'Remote Staging Server',
   uiHost: 'https://dev.vpatlas.org',
   apiUrl: 'https://dev.vpatlas.org:4322',
   s3PhotoBucket: 'vpatlas.data',
