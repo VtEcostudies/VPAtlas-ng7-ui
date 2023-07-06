@@ -8,6 +8,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // NOTE: this could be used as a local database option
 import { fakeBackendProvider } from './_helpers';
 
+import { DataTablesModule } from "angular-datatables";
+
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 
@@ -58,7 +60,8 @@ import { UxValuesService } from './_global';
         FormsModule,
         HttpClientModule,
         routing,
-        ModalModule
+        ModalModule,
+        DataTablesModule
     ],
     //@add_component_here
     declarations: [

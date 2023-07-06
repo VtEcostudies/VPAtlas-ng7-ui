@@ -40,6 +40,7 @@ export class vpListComponent implements OnInit {
     routeParams: any = {};
     queryParams: any = {};
     loadParams: any = {};
+    dtOptions: any = {};
 
     constructor (
         private formBuilder: FormBuilder,
@@ -115,6 +116,21 @@ export class vpListComponent implements OnInit {
         this.loadPoolStats();
         //and load page 1 (or all if loadAllRec defaults to true)
         this.loadPools(1)
+/*
+        this.dtOptions = {
+          ajax: 'pools',
+          columns: [{
+            title: 'Pool ID',
+            data: 'poolId'
+          }, {
+            title: 'Town',
+            data: 'townName'
+          }, {
+            title: 'Status',
+            data: 'mappedPoolStatus'
+          }]
+        };
+*/
       });
   }
 
