@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { vpMapped } from '@app/_models';
 import { vtTown } from '@app/_models';
@@ -15,7 +15,7 @@ export class vpSurveyViewComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
     update = false;
-    vpSurveyForm: FormGroup;
+    vpSurveyForm: UntypedFormGroup;
     towns = [];
     townCount = 0;
     dataLoading = false;
@@ -33,7 +33,7 @@ export class vpSurveyViewComponent implements OnInit {
     returnUrl = null;
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,

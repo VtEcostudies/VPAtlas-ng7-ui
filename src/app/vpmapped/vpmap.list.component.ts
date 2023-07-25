@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, UserService, AuthenticationService, vpMappedService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
@@ -13,7 +13,7 @@ import { UxValuesService } from '@app/_global';
 export class vpMapListComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
-    filterForm: FormGroup;
+    filterForm: UntypedFormGroup;
     loading = false;
     page = 1;
     pageSize = 10;
@@ -29,7 +29,7 @@ export class vpMapListComponent implements OnInit {
     mapView = true; //flag to toggle between table and map view - TODO: setting should persist across data loads
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
         public uxValuesService: UxValuesService,

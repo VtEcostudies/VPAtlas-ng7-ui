@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpReviewService, vpVisitService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
@@ -23,7 +23,7 @@ export class vpReviewCreateComponent implements OnInit {
     userIsAdmin = false;
     userIsOwner = false;
     returnUrl = '/review/list';
-    reviewForm: FormGroup = this.formBuilder.group({});
+    reviewForm: UntypedFormGroup = this.formBuilder.group({});
     dataLoading = false; //flag that the form data is loading
     submitted = false; //flag that the form was submitted to create/update a visit
     itemType = 'Review Visit';
@@ -55,7 +55,7 @@ export class vpReviewCreateComponent implements OnInit {
     ]
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,

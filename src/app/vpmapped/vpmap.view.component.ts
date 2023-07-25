@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { vpMapped } from '@app/_models';
 import { vtTown } from '@app/_models';
@@ -12,8 +12,8 @@ export class vpMapViewComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
     update = false;
-    vpMappedForm: FormGroup;
-    vpLandOwnForm: FormGroup;
+    vpMappedForm: UntypedFormGroup;
+    vpLandOwnForm: UntypedFormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
     methods = ['Aerial', 'Known', 'Visit', 'Survey']; //https://angular.io/api/forms/SelectControlValueAccessor
     statuses = ['Potential', 'Probable', 'Confirmed', 'Eliminated', 'Duplicate'];
@@ -30,7 +30,7 @@ export class vpMapViewComponent implements OnInit {
     viewOnly = true; //flag that this is view-mode
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,

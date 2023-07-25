@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpPoolsService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
@@ -19,7 +19,7 @@ import { ModalService } from '@app/_modal';
 export class vpListComponent implements OnInit {
     currentUser = null;
     userIsAdmin = false;
-    filterForm: FormGroup;
+    filterForm: UntypedFormGroup;
     loading = null;
     stats = { total:0, total_data:0, potential:0, probable:0, confirmed:0, eliminated:0, duplicate:0, visited:0, monitored:0 }; //need a default to prevent pre-load errors?
     page = 1;
@@ -43,7 +43,7 @@ export class vpListComponent implements OnInit {
     dtOptions: any = {};
 
     constructor (
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,

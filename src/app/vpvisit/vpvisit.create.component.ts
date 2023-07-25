@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vpVisitService, vpPoolsService, vtInfoService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
@@ -32,13 +32,13 @@ export class vpVisitCreateComponent implements OnInit {
     userIsAdmin = false;
     userIsOwner = false;
     returnUrl = '/pools/list';
-    visitObserverForm: FormGroup = this.formBuilder.group({});
-    visitPoolMappedForm: FormGroup = this.formBuilder.group({});
-    visitLocationForm: FormGroup = this.formBuilder.group({});
-    visitLandOwnForm: FormGroup = this.formBuilder.group({});
-    visitFieldVerificationForm: FormGroup = this.formBuilder.group({});
-    visitPoolCharacteristicsForm: FormGroup = this.formBuilder.group({});
-    visitIndicatorSpeciesForm:FormGroup = this.formBuilder.group({});
+    visitObserverForm: UntypedFormGroup = this.formBuilder.group({});
+    visitPoolMappedForm: UntypedFormGroup = this.formBuilder.group({});
+    visitLocationForm: UntypedFormGroup = this.formBuilder.group({});
+    visitLandOwnForm: UntypedFormGroup = this.formBuilder.group({});
+    visitFieldVerificationForm: UntypedFormGroup = this.formBuilder.group({});
+    visitPoolCharacteristicsForm: UntypedFormGroup = this.formBuilder.group({});
+    visitIndicatorSpeciesForm:UntypedFormGroup = this.formBuilder.group({});
     visitPage = {index: 0, values: [
                   {name:"Pool-Location", enabled:true},
                   {name:"Landowner-Info", enabled:(this.userIsAdmin||this.userIsOwner)},
@@ -73,7 +73,7 @@ export class vpVisitCreateComponent implements OnInit {
     modalTitle: string;
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,

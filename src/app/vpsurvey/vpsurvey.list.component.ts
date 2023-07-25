@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpSurveyService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
@@ -23,7 +23,7 @@ export class vpSurveyListComponent implements OnInit {
   surveyUsers = [];
   count = 0;
   dataLoading = false;
-  filterForm: FormGroup = this.formBuilder.group({});
+  filterForm: UntypedFormGroup = this.formBuilder.group({});
   filter = '';
   routeParams: any = {};
   queryParams: any = {};
@@ -32,7 +32,7 @@ export class vpSurveyListComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     public uxValuesService: UxValuesService,

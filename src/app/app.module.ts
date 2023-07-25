@@ -8,8 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // NOTE: this could be used as a local database option
 import { fakeBackendProvider } from './_helpers';
 
-import { DataTablesModule } from "angular-datatables";
-
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 
@@ -52,6 +50,8 @@ import { ModalModule } from './_modal';
 
 import { UxValuesService } from './_global';
 
+//import { DataTablesModule } from "angular-datatables";
+
 @NgModule({
     imports: [
         BrowserModule,
@@ -61,7 +61,7 @@ import { UxValuesService } from './_global';
         HttpClientModule,
         routing,
         ModalModule,
-        DataTablesModule
+        //DataTablesModule,
     ],
     //@add_component_here
     declarations: [
@@ -76,26 +76,21 @@ import { UxValuesService } from './_global';
         ProfileComponent,
         LeafletComponent,
         LeafletPopupComponent,
-
         vpMapListComponent,
         vpMapViewComponent,
         vpMapCreateComponent,
-
         vpVisitUploadComponent,
         vpVisitS123LoadComponent,
         vpVisitListComponent,
         //vpVisitViewComponent,
         vpVisitCreateComponent,
-
         vpReviewListComponent,
         vpReviewViewComponent,
         vpReviewCreateComponent,
-
         vpSurveyUploadComponent,
         vpSurveyS123LoadComponent,
         vpSurveyListComponent,
         vpSurveyViewComponent,
-
         vpListComponent,
         vpViewComponent,
     ],
@@ -105,10 +100,7 @@ import { UxValuesService } from './_global';
         UxValuesService
         //fakeBackendProvider // provider used to create fake backend
     ],
-    bootstrap: [AppComponent],
-    entryComponents: [
-      LeafletPopupComponent
-    ]
+    bootstrap: [AppComponent]
 })
 
 export class AppModule { }

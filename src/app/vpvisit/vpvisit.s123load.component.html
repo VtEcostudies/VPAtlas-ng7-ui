@@ -15,42 +15,62 @@
   <div class="row">
     <div class="col-4">
 
-      <div class="row">
-        <div class="form-group form-inline">
+      <div class="row">  <!-- sub-row serviceId select drop-down -->
+        <div class="form-group form-inline col-12">
+          <label>S123 Visit Service ID</label>
+          <i (click)="openModal('vpvisit_help_info', 'visitS123ServiceId')" class="fa fa-info-circle no-margins link"></i>
+          <select style="width:100%;" class="form-control" (change)="HandleServiceIdSelect() "formControlName="visitS123ServiceId">
+            <option class="form-control" *ngFor="let service of s123services" [ngValue]="service">
+              {{ service.visitServiceId }}
+            </option>
+          </select>
+        </div>
+      </div> <!-- sub-row -->
+
+      <div class="row">  <!-- sub-row insert or update checkbox -->
+        <div class="form-group form-inline col-12">
             <label for="visitS123LoadUpdate">Overwrite existing visit data?</label>
             <i (click)="openModal('vpvisit_help_info', 'visitS123LoadUpdate')" class="fa fa-info-circle no-margins link"></i>
-            <input type="checkbox" formControlName="visitS123LoadUpdate" />
+            <input class="form-control" type="checkbox" formControlName="visitS123LoadUpdate" />
             <label>Yes</label>
         </div>
-      </div> <!-- sub-row -->
+      </div>
 
-      <div class="row"> <!-- sub-row -->
-        <label class="col-sm-2" for="visitS123LoadOffset">Offset</label>
-        <i class="fa fa-info-circle no-margins link" (click)="openModal('vpvisit_help_info', 'visitS123Load_Offset')"></i>
-        <div class="col-sm-3">
-          <input class="form-control" type="number" min="1" max="1000" formControlName="visitS123LoadOffset" />
-        </div>
-
-        <label class="col-sm-2" for="visitS123LoadLimit">Limit</label>
-        <i class="fa fa-info-circle no-margins link" (click)="openModal('vpvisit_help_info', 'visitS123Load_Limit')"></i>
-        <div class="col-sm-3">
-          <input class="form-control" type="number" min="1" max="500" formControlName="visitS123LoadLimit" />
-        </div>
-      </div> <!-- sub-row -->
-
-    </div> <!-- main col-3 -->
+    </div> <!-- main col-4 -->
 
     <div class="col-4">
-      <!--
-        Action buttons
-      -->
-      <div class="form-group">
-          <button [disabled]="" class="btn btn-primary btn-default" (click)="S123LoadVisits()">Load Data</button>
-          <img *ngIf="upLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-          <button (click)="AbortS123Load()" class="btn">Abort</button>
-          <button (click)="CancelS123Load()" class="btn">Cancel</button>
+      <div class="row">
+        <!--
+          Action buttons
+        -->
+        <div class="form-group">
+            <button [disabled]="" class="btn btn-primary btn-default" (click)="UploadS123Visits()">Load Data</button>
+            <img *ngIf="upLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            <button (click)="AbortS123Load()" class="btn">Abort</button>
+            <button (click)="CancelS123Load()" class="btn">Cancel</button>
+        </div>
       </div>
+  
+      <div class="row"> <!-- sub-row s123 objectId offset and limit -->
+        <div class="col-6">
+          <label for="visitS123LoadOffset">Offset</label>
+          <i class="fa fa-info-circle no-margins link" (click)="openModal('vpvisit_help_info', 'visitS123Load_Offset')"></i>
+          <input style="width:80px; min-width: 75px;" class="form-control" type="number" min="1" max="1000" formControlName="visitS123LoadOffset" />
+        </div>
+
+        <div class="col-6">
+          <label for="visitS123LoadLimit">Limit</label>
+          <i class="fa fa-info-circle no-margins link" (click)="openModal('vpvisit_help_info', 'visitS123Load_Limit')"></i>
+          <input style="width:80px; min-width: 75px;" class="form-control" type="number" min="1" max="500" formControlName="visitS123LoadLimit" />
+        </div>
+      </div> <!-- sub-row -->
+
     </div>
+
+    <!--
+      Current Upload stats bar in the top-right.
+      Use this for Previous Uploads as well, putting a row-count in Success and Total.
+    -->
     <div class="col-4" *ngIf="s123counts">
       <table class="table table-striped">
         <thead>
@@ -72,13 +92,63 @@
           </tr>
         </tbody>
       </table>
-    </div> <!-- col-9 -->
+
+    </div> <!-- main col-4 -->
     <hr>
   </div> <!-- row -->
 
-</form> <!-- visitVisitForm -->
+</form> <!-- visitForm -->
 
-  <div class="row">
+<!--
+  Full-width tables of results - Previous Uploads, Current Uploads, Current Upload Errors.
+-->
+<div class="row">
+  <div class="col-12" *ngIf="s123uploads.length>0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Uploaded Visit ID</th>
+          <th>Uploaded Pool ID</th>
+          <th>Upload Created</th>
+          <th>Upload Updated</th>
+          <th>S123 Data</th>
+          <th>S123 Global ID</th>
+          <th>S123 Photos</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let visit of s123uploads">
+          <td>
+            <a [routerLink]="['/pools/visit/view', visit.visitId]" target='_blank' class="btn btn-link">{{visit.visitId}}</a>
+          </td>
+          <td>
+            <a [routerLink]="['/pools/list', visit.visitPoolId]" target='_blank' class="btn btn-link">{{visit.visitPoolId}}</a>
+          </td>
+          <td>{{visit.createdAt}}</td>
+          <td>{{visit.updatedAt}}</td>
+          <td *ngIf="visit.visitDataUrl">
+            <a href="{{visit.visitDataUrl?(visit.visitDataUrl.split('?')[0]):null}}"
+            target="_blank" class="btn btn-link">{{visit.visitObjectId}}</a>
+          </td>
+          <td *ngIf="!visit.visitDataUrl">
+            {{visit.visitObjectId}}
+          </td>
+          <td>{{visit.visitGlobalId}} </td>
+          <td>
+            <div *ngIf="visit.photos" class="cell-scrollable-list cell-survey-photo-rtl">
+              <div *ngFor="let photo of visit.photos">
+              <a href="{{photo}}" target=_blank>
+                <img style="width:30px;height:30px;" src="{{photo}}"></a>
+              </div>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+    </table>
+  </div>
+</div> <!-- sub-col, sub-row -->
+
+<div class="row">
     <div class="col-12" *ngIf="s123results.length>0">
       <table class="table table-striped">
         <thead>

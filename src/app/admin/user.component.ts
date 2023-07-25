@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { User, Auth } from '@app/_models';
 import { AlertService, UserService, AuthenticationService } from '@app/_services';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
     templateUrl: 'user.component.html',
@@ -17,7 +17,7 @@ export class UserComponent implements OnInit, OnDestroy {
     currentUserSubscription: Subscription;
     users: User[] = [];
     count = 0;
-    filterForm: FormGroup = this.formBuilder.group({});
+    filterForm: UntypedFormGroup = this.formBuilder.group({});
     filter = '';
     statuses = ['All', 'registration', 'reset', 'new_email', 'confirmed', 'invalid', 'auto-gen'];
     roles = ['All', 'admin', 'user'];
@@ -28,7 +28,7 @@ export class UserComponent implements OnInit, OnDestroy {
         private authenticationService: AuthenticationService,
         private userService: UserService,
         private alertService: AlertService,
-        private formBuilder: FormBuilder
+        private formBuilder: UntypedFormBuilder
     ) {
         this.currentUserSubscription = this.authenticationService.currentUser.subscribe(user => {
             this.currentUser = user;

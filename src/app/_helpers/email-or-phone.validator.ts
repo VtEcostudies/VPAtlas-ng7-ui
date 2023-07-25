@@ -1,8 +1,8 @@
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 // custom validator to check that email OR phone is filled
 export function EmailOrPhone(phoneControlName: string, emailControlName: string) {
-    return (formGroup: FormGroup) => {
+    return (formGroup: UntypedFormGroup) => {
         const emailControl = formGroup.controls[emailControlName];
         const phoneControl = formGroup.controls[phoneControlName];
 /*

@@ -501,5 +501,21 @@ visitS123LoadUpdate:`
 </li>
 when an S123 Visit has been previously loaded.
 </p>
+`,
+visitS123ServiceId:`
+<h3><u>VPVisit S123 API Data Load - S123 Visit Service ID</u></h3>
+<p>
+This utility loads data from an ERSI Arcgis Online Service.
+</p><p>
+Choose the S123 Service ID you'd like to upload VPVisit data from.
+</p><p>
+Over time, the VPVisit S123 App evolves with the inclusion of new
+data fields, different data definitions, etc. When that occurs, ESRI
+forces us to create a new S123 Service.
+</p><p>
+VPAtlas stores the data for each uploaded S123 VPVisit record with its
+Service ID. This allows VPAtlas to maintain the data structure that each
+S123 Visit used when it was uploaded.
+</p>
 `
 };

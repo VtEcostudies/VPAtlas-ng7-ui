@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AppComponent } from '@app/app.component';
 import { AlertService, UserService } from '@app/_services';
@@ -8,14 +8,14 @@ import { MustMatch } from '@app/_helpers/must-match.validator';
 
 @Component({templateUrl: 'confirm.component.html'})
 export class ConfirmComponent implements OnInit {
-    confirmForm: FormGroup;
+    confirmForm: UntypedFormGroup;
     loading = false;
     submitted = false;
     token = null;
     invalid = false;
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private route: ActivatedRoute,
         private router: Router,
         private userService: UserService,

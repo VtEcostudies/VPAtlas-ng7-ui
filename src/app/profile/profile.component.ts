@@ -2,14 +2,14 @@
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { User, Auth } from '@app/_models';
 import { AlertService, UserService, AuthenticationService } from '@app/_services';
 import { MustMatch } from '@app/_helpers/must-match.validator';
 
 @Component({ templateUrl: 'profile.component.html' })
 export class ProfileComponent implements OnInit, OnDestroy {
-    profileForm: FormGroup;
+    profileForm: UntypedFormGroup;
     currentUserSubscription: Subscription;
     currentUser = null;
     userIsAdmin = false;
@@ -23,7 +23,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     statuses = ['registration', 'reset', 'new_email', 'confirmed', 'invalid', 'auto-gen'];
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,

@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
 import { AlertService, UserService, AuthenticationService } from '@app/_services';
@@ -9,13 +9,13 @@ import { MustMatch } from '@app/_helpers/must-match.validator';
 
 @Component({templateUrl: 'register.component.html'})
 export class RegisterComponent implements OnInit {
-    registerForm: FormGroup;
+    registerForm: UntypedFormGroup;
     loading = false;
     submitted = false;
     success = false;
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
         private userService: UserService,

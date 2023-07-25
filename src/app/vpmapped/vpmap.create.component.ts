@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpMappedService, vtInfoService } from '@app/_services';
 import Moment from "moment"; //https://momentjs.com/docs/#/use-it/typescript/
@@ -14,8 +14,8 @@ export class vpMapCreateComponent implements OnInit {
     update = false; //flag for html config that this is create (vpmap.create.component.html is used by vpmap.create..ts and vpmap.update..ts)
     currentUser = null;
     userIsAdmin = false;
-    vpLandOwnForm: FormGroup;
-    vpMappedForm: FormGroup;
+    vpLandOwnForm: UntypedFormGroup;
+    vpMappedForm: UntypedFormGroup;
     locUncs = ['10', '50', '100', '>100']; //https://angular.io/api/forms/SelectControlValueAccessor
     methods = ['Aerial', 'Known', 'Visit', 'Survey']; //https://angular.io/api/forms/SelectControlValueAccessor
     statuses = ['Potential', 'Probable', 'Confirmed', 'Eliminated', 'Duplicate'];
@@ -34,7 +34,7 @@ export class vpMapCreateComponent implements OnInit {
     viewOnly = false; //flag that this is edit-mode (update or create)
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,
@@ -105,9 +105,9 @@ export class vpMapCreateComponent implements OnInit {
         mappedLandowner: [{disabled: true}, this.vpLandOwnForm],
 
         mappedLandownerInfo: ['', Validators.nullValidator],
-        mappedLocationUncertainty: ['50', new FormControl(this.locUncs[4], Validators.required)],
-        mappedMethod: ['Visit', new FormControl(this.methods[4], Validators.required)],
-        mappedPoolStatus: ['Potential', new FormControl(this.statuses[5], Validators.required)],
+        mappedLocationUncertainty: ['50', new UntypedFormControl(this.locUncs[4], Validators.required)],
+        mappedMethod: ['Visit', new UntypedFormControl(this.methods[4], Validators.required)],
+        mappedPoolStatus: ['Potential', new UntypedFormControl(this.statuses[5], Validators.required)],
         mappedComments: ['', Validators.nullValidator],
       });
       //Reactive form controls cannot be properly disabled with markup

@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpSurveyService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
@@ -18,7 +18,7 @@ export class vpSurveyS123LoadComponent implements OnInit {
     userIsAdmin = false;
     userIsOwner = false;
     returnUrl = '/survey/list';
-    surveyForm: FormGroup = this.formBuilder.group({});
+    surveyForm: UntypedFormGroup = this.formBuilder.group({});
     upLoading = false; //flag that the form data is loading
     submitted = false; //flag that the form was submitted
     itemType = 'Survey123 Load Survey';
@@ -30,7 +30,7 @@ export class vpSurveyS123LoadComponent implements OnInit {
     maxLimit = 100;
 
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private route: ActivatedRoute,
         private authenticationService: AuthenticationService,

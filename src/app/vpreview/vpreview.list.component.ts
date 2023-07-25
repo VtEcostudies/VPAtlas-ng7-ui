@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService, vpReviewService } from '@app/_services';
 import { UxValuesService } from '@app/_global';
@@ -20,14 +20,14 @@ export class vpReviewListComponent implements OnInit {
   count = 0;
   singleVisit = null; //if the lookup resolves to a single visitId, set this value
   dataLoading = false;
-  filterForm: FormGroup = this.formBuilder.group({});
+  filterForm: UntypedFormGroup = this.formBuilder.group({});
   filter = '';
   statuses = ['All','Eliminated','Duplicate','Potential','Probable','Confirmed'];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private reviewService: vpReviewService
