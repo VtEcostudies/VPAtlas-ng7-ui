@@ -502,7 +502,7 @@ visitS123LoadUpdate:`
 when an S123 Visit has been previously loaded.
 </p>
 `,
-visitS123ServiceId:`
+visitS123Service:`
 <h3><u>VPVisit S123 API Data Load - S123 Visit Service ID</u></h3>
 <p>
 This utility loads data from an ERSI Arcgis Online Service.

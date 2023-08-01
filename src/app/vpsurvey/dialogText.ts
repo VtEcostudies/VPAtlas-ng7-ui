@@ -73,6 +73,21 @@ surveyS123LoadUpdate:`
 <li>
 'duplicate key value violates unique constraint "vpvisit_unique_globalId"'
 </li>
-when an S123 Survey has been previously loaded.
+when an S123 Survey has been previously loaded.`,
+surveyS123Service:`
+<h3><u>VPMon S123 API Data Load - S123 Survey Service ID</u></h3>
+<p>
+This utility loads data from an ERSI Arcgis Online Service.
+</p><p>
+Choose the S123 Service ID you'd like to upload VPMon data from.
+</p><p>
+Over time, the VPMon S123 App evolves with the inclusion of new
+data fields, different data definitions, etc. When that occurs, ESRI
+forces us to create a new S123 Service.
+</p><p>
+VPAtlas stores the data for each uploaded S123 VPMon Survey record with its
+Service ID. This allows VPAtlas to maintain the data structure that each
+S123 Survey used when it was uploaded.
+</p>
 `
 };
