@@ -26,7 +26,7 @@ export class vpVisitS123LoadComponent implements OnInit {
     s123counts = <any> {};
     s123results = <any> [];
     s123errors = <any> [];
-    maxOffset = 500;
+    maxOffset = 5000;
     maxLimit = 100;
 
     s123services = <any> [{visitServiceId:'New Service ID',visitObjectId:-1}]; //vpvisit S123 services previously used to load data from S123->VPAtlas
@@ -80,7 +80,7 @@ export class vpVisitS123LoadComponent implements OnInit {
 
       this.visitForm = this.formBuilder.group({
         visitUserName: [{value: this.currentUser.username, disabled: true}, Validators.required],
-        visitS123ServiceId: [],
+        visitS123Service: [],
         visitS123LoadUpdate: [false],
         visitS123LoadOffset: [this.objectId],
         visitS123LoadLimit: [1],
@@ -103,7 +103,7 @@ export class vpVisitS123LoadComponent implements OnInit {
 
     SetSelectedServiceId(serviceId) {
       let objService = this.s123services.find(o => {return o.visitServiceId == serviceId;});
-      this.visitForm.controls['visitS123ServiceId'].setValue(objService?objService:null);
+      this.visitForm.controls['visitS123Service'].setValue(objService?objService:null);
       this.serviceId = objService.visitServiceId;
       this.objectId = objService.visitObjectId+1;
       this.visitForm.controls['visitS123LoadOffset'].setValue(this.objectId);
@@ -136,7 +136,7 @@ export class vpVisitS123LoadComponent implements OnInit {
     }
 
     HandleServiceIdSelect() {
-      let serviceSelected = this.visitForm.controls['visitS123ServiceId'].value;
+      let serviceSelected = this.visitForm.controls['visitS123Service'].value;
       if (serviceSelected.visitObjectId < 0) {
         let servicePrompt = prompt("Please enter a new S123 Visit ServiceId", "service_");
         if (servicePrompt != null) {
@@ -183,7 +183,7 @@ export class vpVisitS123LoadComponent implements OnInit {
     UploadS123Visits() {
       var objArgs:any = {}; //target object to copy all form-object data to for submitting to API
       Object.assign(objArgs, this.visitForm.getRawValue());
-      const service = objArgs.visitS123ServiceId;
+      const service = objArgs.visitS123Service;
       const update = this.visitForm.get('visitS123LoadUpdate').value;
       const offset = this.visitForm.get('visitS123LoadOffset').value;
       const limit = this.visitForm.get('visitS123LoadLimit').value;

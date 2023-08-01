@@ -25,9 +25,9 @@
     <div *ngIf="viewOnly">
       <p>
         On {{survey.surveyDate}} at {{survey.surveyTime}},
-        <u><i>{{survey.surveyAmphibObs1?survey.surveyAmphibObs1:'Unknown Observer 1'}}</i></u>
-        and
-        <u><i>{{survey.surveyAmphibObs2?survey.surveyAmphibObs2:'Unknown Observer 2'}}</i></u>
+        <u><i>{{survey.surveyAmphibObs1?survey.surveyAmphibObs1:(survey.surveyAmphibObs1Email?survey.surveyAmphibObs1Email:'Unknown Observer 1')}}</i></u>
+        {{survey.surveyAmphibObs2Email?'and':''}}
+        <u><i>{{survey.surveyAmphibObs2?survey.surveyAmphibObs2:(survey.surveyAmphibObs2Email?survey.surveyAmphibObs2Email:'')}}</i></u>
         visited Vernal Pool {{survey.surveyPoolId}} in {{survey.townName}} for the
         {{survey.surveyTypeName}}.
       </p>
@@ -80,8 +80,8 @@
             <th>Species</th>
             <th>{{survey.surveyAmphibObs1?survey.surveyAmphibObs1:'Observer 1'}} Edge</th>
             <th>{{survey.surveyAmphibObs1?survey.surveyAmphibObs1:'Observer 1'}} Interior</th>
-            <th>{{survey.surveyAmphibObs2?survey.surveyAmphibObs2:'Observer 2'}} Edge</th>
-            <th>{{survey.surveyAmphibObs2?survey.surveyAmphibObs2:'Observer 2'}} Interior</th>
+            <th>{{survey.surveyAmphibObs2?survey.surveyAmphibObs2:(survey.surveyAmphibObs2Email?survey.surveyAmphibObs2Email:'')}} Edge</th>
+            <th>{{survey.surveyAmphibObs2?survey.surveyAmphibObs2:(survey.surveyAmphibObs2Email?survey.surveyAmphibObs2Email:'')}} Interior</th>
           </tr>
           </thead>
           <tbody>

@@ -12,8 +12,16 @@ import { pgApiResults  } from '@app/_models';
 export class vpSurveyService {
     constructor(private http: HttpClient) { }
 
-    s123LoadData(args:any = {}, update:boolean = false, offset:number = 1, limit:number = 1) {
-        return this.http.post<any>(`${environment.apiUrl}/survey/s123/all?update=${update}&offset=${offset}&limit=${limit}`, args);
+    getS123Services() {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/s123/services`);
+    }
+
+    getS123Uploads(serviceId: string) {
+        return this.http.get<pgApiResults>(`${environment.apiUrl}/survey/s123/uploads?surveyServiceId=${serviceId}`);
+    }
+
+    s123LoadData(args:any = {}, serviceId:string, update:boolean = false, offset:number = 1, limit:number = 1) {
+        return this.http.post<any>(`${environment.apiUrl}/survey/s123/all?serviceId=${serviceId}&update=${update}&offset=${offset}&limit=${limit}`, args);
     }
 
     s123AbortLoad(args:any = {}) {

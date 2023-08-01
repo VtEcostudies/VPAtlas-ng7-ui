@@ -15,6 +15,18 @@
   <div class="row">
     <div class="col-4">
 
+      <div class="row">  <!-- sub-row serviceId select drop-down -->
+        <div class="form-group form-inline col-12">
+          <label>S123 Survey Service ID</label>
+          <i (click)="openModal('vpsurvey_help_info', 'surveyS123Service')" class="fa fa-info-circle no-margins link"></i>
+          <select style="width:100%;" class="form-control" (change)="HandleServiceIdSelect()" formControlName="surveyS123Service">
+            <option class="form-control" *ngFor="let service of s123services" [ngValue]="service">
+              {{ service.surveyServiceId }}
+            </option>
+          </select>
+        </div>
+      </div> <!-- sub-row -->
+
       <div class="row">
         <div class="form-group form-inline">
             <label for="surveyS123LoadUpdate">Overwrite existing survey data?</label>
@@ -23,6 +35,21 @@
             <label>Yes</label>
         </div>
       </div> <!-- sub-row -->
+
+    </div> <!-- main col-4 -->
+
+    <div class="col-4">
+      <div class="row">
+        <!--
+          Action buttons
+        -->
+        <div class="form-group">
+          <button [disabled]="" class="btn btn-primary btn-default" (click)="S123LoadSurveys()">Load Data</button>
+          <img *ngIf="upLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+          <button (click)="AbortS123Load()" class="btn">Abort</button>
+          <button (click)="CancelS123Load()" class="btn">Cancel</button>
+        </div>
+      </div>
 
       <div class="row"> <!-- sub-row -->
         <label class="col-sm-2" for="surveyS123LoadOffset">Offset</label>
@@ -38,19 +65,8 @@
         </div>
       </div> <!-- sub-row -->
 
-    </div> <!-- main col-3 -->
+    </div> <!-- main col-4 -->
 
-    <div class="col-4">
-      <!--
-        Action buttons
-      -->
-      <div class="form-group">
-          <button [disabled]="" class="btn btn-primary btn-default" (click)="S123LoadSurveys()">Load Data</button>
-          <img *ngIf="upLoading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-          <button (click)="AbortS123Load()" class="btn">Abort</button>
-          <button (click)="CancelS123Load()" class="btn">Cancel</button>
-      </div>
-    </div>
     <div class="col-4" *ngIf="s123counts">
       <table class="table table-striped">
         <thead>
@@ -77,9 +93,59 @@
   </div> <!-- row -->
 
 </form> <!-- surveySurveyForm -->
+<!--
+  Full-width tables of results - Previous Uploads, Current Uploads, Current Upload Errors.
+-->
+<div class="row">
+  <div class="col-12" *ngIf="s123uploads.length>0">
+    <div style="text-align:center;"><h3><u>Previous Uploads</u></h3></div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Uploaded Survey ID</th>
+          <th>Uploaded Pool ID</th>
+          <th>Upload Created</th>
+          <th>Upload Updated</th>
+          <th>S123 Data</th>
+          <th>S123 Global ID</th>
+          <th>S123 Photos</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let survey of s123uploads">
+          <td>
+            <a [routerLink]="['/survey/view', survey.surveyId]" target='_blank' class="btn btn-link">{{survey.surveyId}}</a>
+          </td>
+          <td>
+            <a [routerLink]="['/pools/list', survey.surveyPoolId]" target='_blank' class="btn btn-link">{{survey.surveyPoolId}}</a>
+          </td>
+          <td>{{survey.createdAt}}</td>
+          <td>{{survey.updatedAt}}</td>
+          <td *ngIf="survey.surveyDataUrl">
+            <a href="{{survey.surveyDataUrl?(survey.surveyDataUrl.split('?')[0]):null}}"
+            target="_blank" class="btn btn-link">{{survey.surveyObjectId}}</a>
+          </td>
+          <td *ngIf="!survey.surveyDataUrl">
+            {{survey.surveyObjectId}}
+          </td>
+          <td>{{survey.surveyGlobalId}} </td>
+          <td>
+            <div *ngIf="survey.photos" class="cell-scrollable-list cell-survey-photo-rtl">
+              <div *ngFor="let photo of survey.photos">
+              <a href="{{photo}}" target=_blank>
+                <img style="width:30px;height:30px;" src="{{photo}}"></a>
+              </div>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+    </table>
+  </div>
+</div> <!-- sub-col, sub-row -->
 
   <div class="row">
     <div class="col-12" *ngIf="s123results.length>0">
+      <div style="text-align:center;"><h3><u>Successful Upload Results</u></h3></div>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -117,6 +183,7 @@
 
   <div class="row">
     <div class="col-12" *ngIf="s123errors.length>0">
+      <div style="text-align:center;"><h3><u>Failed Upload Errors</u></h3></div>
       <table class="table table-striped">
         <thead>
           <tr>

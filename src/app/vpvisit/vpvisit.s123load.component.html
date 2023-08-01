@@ -18,8 +18,8 @@
       <div class="row">  <!-- sub-row serviceId select drop-down -->
         <div class="form-group form-inline col-12">
           <label>S123 Visit Service ID</label>
-          <i (click)="openModal('vpvisit_help_info', 'visitS123ServiceId')" class="fa fa-info-circle no-margins link"></i>
-          <select style="width:100%;" class="form-control" (change)="HandleServiceIdSelect() "formControlName="visitS123ServiceId">
+          <i (click)="openModal('vpvisit_help_info', 'visitS123Service')" class="fa fa-info-circle no-margins link"></i>
+          <select style="width:100%;" class="form-control" (change)="HandleServiceIdSelect() "formControlName="visitS123Service">
             <option class="form-control" *ngFor="let service of s123services" [ngValue]="service">
               {{ service.visitServiceId }}
             </option>
@@ -55,7 +55,7 @@
         <div class="col-6">
           <label for="visitS123LoadOffset">Offset</label>
           <i class="fa fa-info-circle no-margins link" (click)="openModal('vpvisit_help_info', 'visitS123Load_Offset')"></i>
-          <input style="width:80px; min-width: 75px;" class="form-control" type="number" min="1" max="1000" formControlName="visitS123LoadOffset" />
+          <input style="width:80px; min-width: 75px;" class="form-control" type="number" min="1" max="5000" formControlName="visitS123LoadOffset" />
         </div>
 
         <div class="col-6">
@@ -104,6 +104,7 @@
 -->
 <div class="row">
   <div class="col-12" *ngIf="s123uploads.length>0">
+    <div style="text-align:center;"><h3><u>Previous Uploads</u></h3></div>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -150,6 +151,7 @@
 
 <div class="row">
     <div class="col-12" *ngIf="s123results.length>0">
+      <div style="text-align:center;"><h3><u>Successful Upload Results</u></h3></div>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -187,6 +189,7 @@
 
   <div class="row">
     <div class="col-12" *ngIf="s123errors.length>0">
+      <div style="text-align:center;"><h3><u>Failed Upload Errors</u></h3></div>
       <table class="table table-striped">
         <thead>
           <tr>
