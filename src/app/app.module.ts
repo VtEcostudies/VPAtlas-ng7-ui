@@ -21,6 +21,7 @@ import { ResetComponent } from './reset_confirm';
 import { ConfirmComponent } from './reset_confirm';
 import { UserComponent } from './admin';
 import { ProfileComponent } from './profile';
+import { EmailTimerComponent } from './admin';
 
 import { LeafletComponent } from './_components';
 import { LeafletPopupComponent } from './_components';
@@ -93,6 +94,7 @@ import { UxValuesService } from './_global';
         vpSurveyViewComponent,
         vpListComponent,
         vpViewComponent,
+        EmailTimerComponent,
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

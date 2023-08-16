@@ -1,0 +1,56 @@
+  <div class="row">
+    <div class="col-8 offset-2">
+      <h2>Keep-alive Timer Utility for Google Email send account</h2>
+    </div>
+  </div>
+  <form [formGroup]="emailTimerForm" (ngSubmit)="setEmailTimer()">
+    <div class="row">
+        <div class="col-3 offset-2 form-group">
+            <label for="email">Email</label>
+            <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                <div *ngIf="f.email.errors.required">email is required</div>
+                <div *ngIf="f.email.errors.email">invalid email format</div>
+            </div>
+        </div>
+        <div class="col-2 form-group">
+          <label for="intervalType">Interval</label>
+          <select formControlName="intervalType" class="form-control">
+            <option *ngFor="let type of types" [ngValue]="type">
+              {{ type }}
+            </option>
+          </select>
+        </div>
+        <div class="col-1 form-group">
+            <label for="intervalCount">Count</label>
+            <input formControlName="intervalCount" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.intervalCount.errors }" />
+            <div *ngIf="submitted && f.intervalCount.errors" class="invalid-feedback">
+                <div *ngIf="f.intervalCount.errors.required">Count is required</div>
+            </div>
+        </div>
+    </div> <!-- row -->
+    <div class="row">
+      <div class="col-4 offset-2">
+        <div class="form-group">
+          <button [disabled]="loading" class="btn btn-primary">Set</button>
+          <img *ngIf="loading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+          <a (click)="deleteEmailTimer()" class="btn">Delete</a>
+          <a (click)="cancel()" class="btn">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="row">
+    <div class="col-8 offset-2">
+      <table class="table table-striped">
+        <tr>
+          <th>Email</th>
+          <th>Interval (seconds)</th>
+        </tr>
+        <tr *ngFor="let timer of timers">
+          <td><button (click)="selectEmail(timer.email)" class="btn btn-link">{{timer.email}}</button></td>
+          <td>{{timer.interval}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>

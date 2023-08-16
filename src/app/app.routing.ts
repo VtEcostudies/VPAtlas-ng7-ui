@@ -8,6 +8,7 @@ import { ConfirmComponent } from './reset_confirm';
 import { UserComponent } from './admin';
 import { ProfileComponent } from './profile';
 import { AuthGuard } from './_guards';
+import { EmailTimerComponent } from './admin';
 
 import { LeafletComponent } from './_components';
 
@@ -49,6 +50,7 @@ const appRoutes: Routes = [
     { path: 'user/profile/view/:userId', component: ProfileComponent },
     { path: 'user/profile/update/:userId', component: ProfileComponent },
     { path: 'user/profile/create', component: ProfileComponent },
+    { path: 'utils/timer', component: EmailTimerComponent, canActivate: [AuthGuard] },
 
     { path: 'pools/mapped/list', component: vpMapListComponent },
     { path: 'pools/mapped/view/:mappedPoolId', component: vpMapViewComponent },

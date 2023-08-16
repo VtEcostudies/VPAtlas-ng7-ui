@@ -9,3 +9,4 @@ export * from './vpsurvey.service';
 export * from './vppools.service';
 export * from './aws-s3.service';
 export * from './vcgi.service';
+export * from './util.service';
