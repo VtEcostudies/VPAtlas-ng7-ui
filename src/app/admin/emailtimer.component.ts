@@ -67,7 +67,7 @@ export class EmailTimerComponent implements OnInit, OnDestroy {
       this.emailTimerForm.controls['email'].setValue(email);
     }
 
-    getEmailTimers(email=null) {
+    getEmailTimers(email='') {
 
         this.timerService.get(email).pipe(first()).subscribe(timers => {
             console.log('emailTimer.component::loadTimers|', timers);
@@ -100,7 +100,7 @@ export class EmailTimerComponent implements OnInit, OnDestroy {
         .subscribe(
             data => {
               this.loading = false;
-              this.alertService.success(data.message);
+              //this.alertService.success(data.message);
               this.getEmailTimers();
             },
             error => {
