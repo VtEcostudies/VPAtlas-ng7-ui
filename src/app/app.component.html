@@ -84,24 +84,25 @@
                   <a class="dropdown-item" (click)="dropdownSubMenuToggle($event, 'dropCsv')">CSV <span class="fa-caret"></span></a>
                     <ul id="dropCsv" class="dropdown-menu">
                       <!--<a class="dropdown-item" (click)="download('csv')">Selected Pools</a>-->
-                      <a class="dropdown-item" (click)="download('csv', 'pools')">All Data</a>
-                      <a class="dropdown-item" (click)="download('csv', 'mapped')">Mapped Pools</a>
-                      <a class="dropdown-item" (click)="download('csv', 'visit')">Pool Visits</a>
-                      <a class="dropdown-item" (click)="download('csv', 'survey')">Pool Surveys</a>
+                      <a class="dropdown-item" (click)="download('csv', 'pools')">All Data (.csv)</a>
+                      <a class="dropdown-item" (click)="download('csv', 'mapped')">Mapped Pools (.csv)</a>
+                      <a class="dropdown-item" (click)="download('csv', 'visit')">Pool Visits (.csv)</a>
+                      <a class="dropdown-item" (click)="download('csv', 'survey')">Pool Surveys (.csv)</a>
                     </ul>
                   <a class="dropdown-item" (click)="dropdownSubMenuToggle($event, 'dropGeo')">GeoJSON <span class="fa-caret"></span></a>
                     <ul id="dropGeo" class="dropdown-menu">
                       <!--<a class="dropdown-item" (click)="download('geojson')">Selected Pools</a>-->
-                      <a class="dropdown-item" (click)="download('geojson', 'mapped')">Mapped Pools</a>
-                      <a class="dropdown-item" (click)="download('geojson', 'visit')">Pool Visits</a>
-                      <a class="dropdown-item" (click)="download('geojson', 'survey')">Pool Surveys</a>
+                      <a class="dropdown-item" (click)="download('geojson', 'mapped')">Mapped Pools (.geojson)</a>
+                      <a class="dropdown-item" (click)="download('geojson', 'visit')">Pool Visits (.geojson)</a>
+                      <a class="dropdown-item" (click)="download('geojson', 'survey')">Pool Surveys (.geojson)</a>
                     </ul>
                   <a class="dropdown-item" (click)="dropdownSubMenuToggle($event, 'dropShp')">Shapefile <span class="fa-caret"></span></a>
                     <ul id="dropShp" class="dropdown-menu">
                       <!--<a class="dropdown-item" (click)="download('shapefile')">Selected Pools</a>-->
-                      <a class="dropdown-item" (click)="download('shapefile', 'mapped')">Mapped Pools</a>
-                      <a class="dropdown-item" (click)="download('shapefile', 'visit')">Pool Visits</a>
-                      <a class="dropdown-item" (click)="download('shapefile', 'survey')">Pool Surveys</a>
+                      <a class="dropdown-item" (click)="download('shapefile', 'mapped')">Mapped Pools (tar.gz)</a>
+                      <a class="dropdown-item" (click)="download('shapefile', 'visit')">Pool Visits (tar.gz)</a>
+                      <a class="dropdown-item" (click)="download('shapefile', 'survey')">Pool Surveys (tar.gz)</a>
+                      <a class="dropdown-item" (click)="downloadUtil('untar')">Windows Untar (.bat)</a>
                     </ul>
                 </div>
             </li>

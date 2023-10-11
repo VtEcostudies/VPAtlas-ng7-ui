@@ -81,6 +81,11 @@ export class AppComponent {
       window.open(url);
     }
 
+    downloadUtil(route='untar') {
+      let url = `${this.apiUrl}/utils/${route}`;
+      window.open(url);
+    }
+
     downloadTopLevelClick(e) {
       this.clearAllSubMenus();
     }
