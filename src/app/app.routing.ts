@@ -38,8 +38,8 @@ import { vpViewComponent } from './vppools';
 
 //@add_component_here
 const appRoutes: Routes = [
-    { path: '', component: HomeComponent },
-    //{ path: '', component: vpListComponent },
+    //{ path: '', component: HomeComponent },
+    { path: '', component: vpListComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'reset', component: ResetComponent },

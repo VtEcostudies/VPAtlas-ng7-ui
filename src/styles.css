@@ -7,6 +7,27 @@
 /*@import '@angular/material/prebuilt-themes/deeppurple-amber.css';*/
 @import './app/vpvisit/vpvisit.styles.css';
 
+/* Global font styles */
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: black;
+}
+
+h1, h2, h3, h4, h5, h6,
+.title, .page-title, .section-title {
+  font-family: 'Spectral', serif;
+  font-weight: 500;
+  color: #00554a;
+  text-decoration: none;
+}
+
+/* Ensure title links have no underline */
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+.title a, .page-title a, .section-title a {
+  text-decoration: none;
+  color: #00554a;
+}
+
 /* Define bootstrap zero columns, a.k.a. hidden */
 .col-xs-0, 
 .col-sm-0,
@@ -31,7 +52,7 @@
 }
 
 .vce-green {
-  background: #235650;
+  background: #00554a;
   color: white;
 }
 

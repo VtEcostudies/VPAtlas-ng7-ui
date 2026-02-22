@@ -14,7 +14,7 @@ export class AppComponent {
     currentUserSubscription: Subscription;
     currentUser: Auth; //type Auth is {token: string, user: User}
     userIsAdmin = false;
-    vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';
+    vceLogoPath = '../assets/images/vce_logo_no_tagline.png';
     vceIconPath = '../assets/images/vce_favicon.png';
     fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
     bannerMessage = '';
