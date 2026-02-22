@@ -1,0 +1,101 @@
+diff --git a/package.json b/package.json
+index 387bd11..cbed58e 100644
+--- a/package.json
++++ b/package.json
+@@ -25,6 +25,8 @@
+     "aws-sdk": "^2.855.0",
+     "core-js": "^3.9.1",
+     "esri-leaflet": "^3.0.8",
++    "georaster": "^1.6.0",
++    "georaster-layer-for-leaflet": "^3.10.0",
+     "leaflet": "^1.7.1",
+     "leaflet-svg-shape-markers": "^1.4.0",
+     "minimist": "^1.2.5",
+diff --git a/src/app/_components/leaflet.component.ts b/src/app/_components/leaflet.component.ts
+index d0b1fa9..78a6452 100644
+--- a/src/app/_components/leaflet.component.ts
++++ b/src/app/_components/leaflet.component.ts
+@@ -48,6 +48,8 @@ const iconDefault = icon({
+ });
+ Marker.prototype.options.icon = iconDefault;
+ import * as EL from  "esri-leaflet"; //this is used to import LIDAR layers from VCGIS
++import parseGeoraster from "georaster";
++import GeoRasterLayer from "georaster-layer-for-leaflet";
+ 
+ import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
+ import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
+@@ -384,6 +386,9 @@ export class LeafletComponent implements OnInit, OnChanges {
+ 
+     this.baseLayers[this.baseLayer].addTo(this.map);
+ 
++    // Load COG base layers asynchronously
++    this.loadCogBaseLayers();
++
+     this.map.on("baselayerchange", e => this.OnBaseLayerChange(e));
+     this.map.on("overlayadd", e => this.OnMapOverlayChange(e,1));
+     this.map.on("overlayremove", e => this.OnMapOverlayChange(e,0));
+@@ -402,6 +407,35 @@ export class LeafletComponent implements OnInit, OnChanges {
+     if (this.itemType === "Home") {this.zoomVermontLeft();}
+   }
+ 
++  /*
++    Load Cloud Optimized GeoTIFF (COG) layers asynchronously.
++    COGs require HTTP range request parsing before the layer is ready,
++    so they can't be defined synchronously like tile layers.
++  */
++  async loadCogBaseLayers() {
++    var cogLayers = [
++      {
++        url: 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/Imagery/STATEWIDE_2021-2022_30cm_LeafOFF_4Band.tif',
++        name: 'VT 2021-22 Leaf-Off Imagery'
++      }
++    ];
++
++    for (const cog of cogLayers) {
++      try {
++        const georaster = await parseGeoraster(cog.url);
++        const layer = new GeoRasterLayer({
++          georaster: georaster,
++          opacity: 1,
++          resolution: 256
++        } as any);
++        this.baseLayerControl.addBaseLayer(layer, cog.name);
++        console.log(`COG layer loaded: ${cog.name}`);
++      } catch (err) {
++        console.error(`Failed to load COG layer: ${cog.name}`, err);
++      }
++    }
++  }
++
+   addPoolStatusLayer(poolStatusGroup) {
+     //find poolStatusGroup index within our custom array by searching for the .group element
+     var idx = this.statusGroups.findIndex(elm => {
+diff --git a/src/tsconfig.app.json b/src/tsconfig.app.json
+index 622b6d8..540b1aa 100644
+--- a/src/tsconfig.app.json
++++ b/src/tsconfig.app.json
+@@ -14,6 +14,7 @@
+     },
+   "files": [
+     "main.ts",
+-    "polyfills.ts"
++    "polyfills.ts",
++    "typings.d.ts"
+   ]
+ }
+diff --git a/src/typings.d.ts b/src/typings.d.ts
+new file mode 100644
+index 0000000..2417f53
+--- /dev/null
++++ b/src/typings.d.ts
+@@ -0,0 +1,10 @@
++declare module 'georaster' {
++  export default function parseGeoraster(input: any): Promise<any>;
++}
++
++declare module 'georaster-layer-for-leaflet' {
++  export default class GeoRasterLayer {
++    constructor(options: any);
++    addTo(map: any): this;
++  }
++}

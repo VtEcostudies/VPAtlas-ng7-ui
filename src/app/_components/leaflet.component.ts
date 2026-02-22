@@ -48,8 +48,6 @@ const iconDefault = icon({
 });
 Marker.prototype.options.icon = iconDefault;
 import * as EL from  "esri-leaflet"; //this is used to import LIDAR layers from VCGIS
-import parseGeoraster from "georaster";
-import GeoRasterLayer from "georaster-layer-for-leaflet";
 
 import state from '@app/_geojson/Polygon_VT_State_Boundary.geo.json';
 import counties from '@app/_geojson/Polygon_VT_County_Boundaries.geo.json';
@@ -249,6 +247,13 @@ export class LeafletComponent implements OnInit, OnChanges {
     maxZoom: 20,
     attribution: 'Map data: VCGI CIR Data'
     } as any);
+  vcgiCLR = L.tileLayer('https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_CLR_WM_CACHE/ImageServer/tile/{z}/{y}/{x}', {
+    id: 'vcgi.clr',
+    name: 'VCGI Leaf-Off Imagery',
+    zIndex: 0,
+    maxZoom: 20,
+    attribution: 'Map data: VCGI 2021-22 Leaf-Off Imagery'
+    } as any);
   vcgiLidar0 = EL.imageMapLayer({
     url: 'https://maps.vcgi.vermont.gov/arcgis/rest/services/EGC_services/IMG_VCGI_LIDARHILLSHD_WM_CACHE_v1/ImageServer',
     id: 'vcgi.lidar.0',
@@ -292,6 +297,7 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.light,
     this.mapboxSat,
     this.vcgiCIR,
+    this.vcgiCLR,
     this.vcgiLidar0,
     this.vcgiLidar1,
     //this.vcgiLidar2,
@@ -386,9 +392,6 @@ export class LeafletComponent implements OnInit, OnChanges {
 
     this.baseLayers[this.baseLayer].addTo(this.map);
 
-    // Load COG base layers asynchronously
-    this.loadCogBaseLayers();
-
     this.map.on("baselayerchange", e => this.OnBaseLayerChange(e));
     this.map.on("overlayadd", e => this.OnMapOverlayChange(e,1));
     this.map.on("overlayremove", e => this.OnMapOverlayChange(e,0));
@@ -405,35 +408,6 @@ export class LeafletComponent implements OnInit, OnChanges {
     this.map.addControl(new this.legendControl(this.map));
 
     if (this.itemType === "Home") {this.zoomVermontLeft();}
-  }
-
-  /*
-    Load Cloud Optimized GeoTIFF (COG) layers asynchronously.
-    COGs require HTTP range request parsing before the layer is ready,
-    so they can't be defined synchronously like tile layers.
-  */
-  async loadCogBaseLayers() {
-    var cogLayers = [
-      {
-        url: 'https://s3.us-east-2.amazonaws.com/vtopendata-prd/Imagery/STATEWIDE_2021-2022_30cm_LeafOFF_4Band.tif',
-        name: 'VT 2021-22 Leaf-Off Imagery'
-      }
-    ];
-
-    for (const cog of cogLayers) {
-      try {
-        const georaster = await parseGeoraster(cog.url);
-        const layer = new GeoRasterLayer({
-          georaster: georaster,
-          opacity: 1,
-          resolution: 256
-        } as any);
-        this.baseLayerControl.addBaseLayer(layer, cog.name);
-        console.log(`COG layer loaded: ${cog.name}`);
-      } catch (err) {
-        console.error(`Failed to load COG layer: ${cog.name}`, err);
-      }
-    }
   }
 
   addPoolStatusLayer(poolStatusGroup) {

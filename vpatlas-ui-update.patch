@@ -1,0 +1,237 @@
+diff --git a/src/app/app.component.html b/src/app/app.component.html
+index b826eef..8a13a6b 100644
+--- a/src/app/app.component.html
++++ b/src/app/app.component.html
+@@ -7,25 +7,21 @@
+   <div class="col-lg-2"></div>
+ </div>
+ 
+-<div class="row vce-green">
++<div class="row vce-green" style="display:flex; align-items:center; flex-wrap:nowrap;">
+ 
+-  <div class="col-lg-1 col-md-1 col-sm-12 col-xs-12 vce-logo-noshrink">
++  <div class="vce-logo-noshrink" style="padding-left:15px;">
+     <!--
+     <a href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/">
+     -->
+-    <a href="src/vpatlas_banner.jpg">
+-      <img [src]="vceLogoPath" height="30px" alt="VCE Vernal Pool Mapping Project">
++    <a href="src/vpatlas_banner.jpg" style="display:inline-block; background:white; padding:2px 4px; border-radius:2px; line-height:0;">
++      <img [src]="vceLogoPath" height="26px" alt="VCE Vernal Pool Mapping Project">
+     </a>
+   </div>
+ 
+-  <div class="col-lg-9">
++  <div style="flex:1;">
+     <nav class="navbar navbar-expand navbar-dark vce-green">
+         <ul class="navbar-nav">
+ 
+-            <li class="nav-item">
+-              <a class="nav-link" routerLink="/">VPAtlas Home</a>
+-            </li>
+-
+             <li class="nav-item" *ngIf="!userIsAdmin">
+               <a class="nav-link" routerLink="/pools/list">View Pools</a>
+             </li>
+@@ -43,25 +39,12 @@
+               </div>
+             </li>
+ 
+-            <li class="nav-item dropdown">
+-              <a class="nav-link dropdown-toggle"
+-                id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+-                Field-Data Guides
+-              </a>
+-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+-                <a class="dropdown-item" target="_blank" href="https://vtecostudies.org/wp-content/uploads/2020/04/VPAtlas_Datasheet_2020-fillable.pdf">
+-                  VPVisit Data Sheet
+-                </a>
+-                <a class="dropdown-item" target="_blank" href="https://vtecostudies.org/wp-content/uploads/2020/03/VPAtlas-Field-Form-Instructions_2020.pdf">
+-                  VPVisit Instructions
+-                </a>
+-                <a class="dropdown-item" target="_blank" href="https://vtecostudies.org/wp-content/uploads/2020/03/Indicator-Species-ID-Sheet-1.pdf">
+-                  Indicator Species Identification Aids
+-                </a>
+-                <a class="dropdown-item" target="_blank" href="assets/images/VPAtlas_S123_Visits.png">
+-                  VPVisit Survey 123 Mobile Application Instructions
+-                </a>
+-              </div>
++            <li class="nav-item">
++              <a class="nav-link" href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/">About VPAtlas</a>
++            </li>
++
++            <li class="nav-item">
++              <a class="nav-link" href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/help-us-find-and-map-vernal-pools/">Volunteer How To</a>
+             </li>
+ <!--
+             <li class="nav-item dropdown" *ngIf="!userIsAdmin && currentUser">
+@@ -131,7 +114,7 @@
+             </li>
+ 
+             <li class="nav-item">
+-              <a class="nav-item nav-link" routerLink="/survey/list">Surveys</a>
++              <a class="nav-item nav-link" routerLink="/survey/list">Explore Surveys</a>
+             </li>
+ 
+             <li class="nav-item dropdown" *ngIf="userIsAdmin">
+@@ -151,51 +134,12 @@
+               <a class="nav-item nav-link" (click)="profile()">Profile</a>
+             </li>
+ 
+-            <li class="nav-item">
+-              <a class="nav-link" (click)="logout()" *ngIf="currentUser" >Logout ({{currentUser.user.username}})</a>
+-              <a class="nav-link" routerLink="/login" *ngIf="!currentUser" >Login/Register</a>
+-            </li>
+-
+-            <!--
+-            <a class="nav-item nav-link" routerLink="/pools/list" >View Pools</a>
+-            <a class="nav-item nav-link" routerLink="/pools/mapped/list" *ngIf="userIsAdmin" >(Mapped Pools)</a>
+-            <a class="nav-item nav-link" routerLink="/pools/visit/list" *ngIf="userIsAdmin" >(Pool Visits)</a>
+-            <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="userIsAdmin" >Add Visit</a>
+-            <a class="nav-item nav-link" routerLink="/pools/mapped/create" *ngIf="userIsAdmin" >(Add Mapped Pool)</a>
+-            <a class="nav-item nav-link" routerLink="/pools/visit/create" *ngIf="currentUser" >Add Pool Data</a>
+-            -->
+-            <!--
+-            <a class="nav-item nav-link" routerLink="/pools/mapped/import" >Import Pools</a>
+-            <a class="nav-item nav-link" routerLink="/user" *ngIf="currentUser" >Profile</a>
+-            -->
+-            <!--
+-            <a class="nav-item nav-link" routerLink="/admin" *ngIf="userIsAdmin" >Admin</a>
+-            <a class="nav-item nav-link" (click)="logout()" *ngIf="currentUser" >Logout ({{currentUser.username}})</a>
+-            <a class="nav-item nav-link" routerLink="/login" *ngIf="!currentUser" >Login/Register</a>
+-            -->
+-            <!-- interesting menu-bar search option...
+-            <form class="form-inline my-2 my-lg-0">
+-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+-            </form>
+-            -->
+         </ul>
+-<!--
+-        <ul class="navbar-nav ml-auto">
+-            <li class="nav-item">
+-              <a class="nav-link" href="https://vtfishandwildlife.com/">
+-                <img [src]="fNwLogoPath" height="20" alt="VT F&W">
+-                Vermont Fish & Wildlife
+-              </a>
+-            </li>
+-        </ul>
+--->
+       </nav>
+-  </div> <!-- col:navbar -->
+-  <div class="col-lg-1 ml-auto" style="padding-bottom:5px;"> <!-- NOTE: ml-auto is class that pushes this content to the right... -->
+-    <a href="https://vtfishandwildlife.com/" style="margin-left:5px;" title="VT F&W">
+-      <img [src]="fNwLogoPath" height="20" alt="VT F&W">
+-    </a>
++  </div> <!-- flex:1 navbar -->
++  <div style="white-space:nowrap; padding-right:15px;">
++    <a class="nav-link" style="color:white; cursor:pointer;" (click)="logout()" *ngIf="currentUser">Logout ({{currentUser.user.username}})</a>
++    <a class="nav-link" style="color:white;" routerLink="/login" *ngIf="!currentUser">Login/Register</a>
+   </div>
+ </div> <!-- row:navbar -->
+ 
+@@ -218,7 +162,7 @@
+   <div class="row">
+     <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+       <a href="https://vtecostudies.org/projects/forests/vernal-pool-conservation/vermont-vernal-pool-mapping-project/">
+-        <img [src]="vceLogoPath">
++        <img [src]="vceLogoPath" height="50px">
+       </a>
+     </div>
+     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+diff --git a/src/app/app.component.ts b/src/app/app.component.ts
+index 08b9606..c414489 100644
+--- a/src/app/app.component.ts
++++ b/src/app/app.component.ts
+@@ -14,7 +14,7 @@ export class AppComponent {
+     currentUserSubscription: Subscription;
+     currentUser: Auth; //type Auth is {token: string, user: User}
+     userIsAdmin = false;
+-    vceLogoPath = '../assets/images/vce logo new clr w tag_225.jpg';
++    vceLogoPath = '../assets/images/vce_logo_no_tagline.png';
+     vceIconPath = '../assets/images/vce_favicon.png';
+     fNwLogoPath = 'https://vtfishandwildlife.com/sites/fishandwildlife/files/vfw-crest.png';
+     bannerMessage = '';
+diff --git a/src/app/app.routing.ts b/src/app/app.routing.ts
+index e1446d6..9ff345c 100644
+--- a/src/app/app.routing.ts
++++ b/src/app/app.routing.ts
+@@ -38,8 +38,8 @@ import { vpViewComponent } from './vppools';
+ 
+ //@add_component_here
+ const appRoutes: Routes = [
+-    { path: '', component: HomeComponent },
+-    //{ path: '', component: vpListComponent },
++    //{ path: '', component: HomeComponent },
++    { path: '', component: vpListComponent },
+     { path: 'login', component: LoginComponent },
+     { path: 'register', component: RegisterComponent },
+     { path: 'reset', component: ResetComponent },
+diff --git a/src/app/home/styles.css b/src/app/home/styles.css
+index f196ad9..965a037 100644
+--- a/src/app/home/styles.css
++++ b/src/app/home/styles.css
+@@ -42,7 +42,7 @@
+   position: absolute;
+   bottom: 0%;
+   color: white;
+-  background: #235650;
++  background: #00554a;
+   opacity: 0.7;
+   width: 100%;
+ }
+diff --git a/src/index.html b/src/index.html
+index 8f046a5..40acca7 100644
+--- a/src/index.html
++++ b/src/index.html
+@@ -12,6 +12,9 @@
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+     -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
++    <link rel="preconnect" href="https://fonts.googleapis.com">
++    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Spectral:wght@500&display=swap" rel="stylesheet">
+     
+     <style>
+         a { cursor: pointer }
+diff --git a/src/styles.css b/src/styles.css
+index 5bc0b5f..2ff8fd1 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -7,6 +7,27 @@
+ /*@import '@angular/material/prebuilt-themes/deeppurple-amber.css';*/
+ @import './app/vpvisit/vpvisit.styles.css';
+ 
++/* Global font styles */
++body {
++  font-family: 'Open Sans', sans-serif;
++  color: black;
++}
++
++h1, h2, h3, h4, h5, h6,
++.title, .page-title, .section-title {
++  font-family: 'Spectral', serif;
++  font-weight: 500;
++  color: #00554a;
++  text-decoration: none;
++}
++
++/* Ensure title links have no underline */
++h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
++.title a, .page-title a, .section-title a {
++  text-decoration: none;
++  color: #00554a;
++}
++
+ /* Define bootstrap zero columns, a.k.a. hidden */
+ .col-xs-0, 
+ .col-sm-0,
+@@ -31,7 +52,7 @@
+ }
+ 
+ .vce-green {
+-  background: #235650;
++  background: #00554a;
+   color: white;
+ }
+ 

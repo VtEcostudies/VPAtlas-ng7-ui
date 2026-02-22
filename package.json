@@ -25,8 +25,6 @@
     "aws-sdk": "^2.855.0",
     "core-js": "^3.9.1",
     "esri-leaflet": "^3.0.8",
-    "georaster": "^1.6.0",
-    "georaster-layer-for-leaflet": "^3.10.0",
     "leaflet": "^1.7.1",
     "leaflet-svg-shape-markers": "^1.4.0",
     "minimist": "^1.2.5",
