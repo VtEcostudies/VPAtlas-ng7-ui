@@ -151,17 +151,17 @@
   <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12"> <!-- Side by side for lg. Own row for the rest. -->
     <div class="row">
       <div> <!-- OMG, all vertical alignment issues were due to different div levels!!! -->
-        <button class="btn btn-link info-icon-nomargin-padding">{{count}} Records</button>
+        <span class="info-icon-nomargin-padding" style="font-size:inherit;">{{count}} Records</span>
         <i (click)="openModal('vppools_help_info', 'recordCount')" class="fa fa-info-circle pointer"></i>
         <button *ngIf="!mapView" (click)="showMap()" class="btn btn-link info-icon-nomargin-padding">Map View</button>
         <button *ngIf="mapView" (click)="showTable()" class="btn btn-link info-icon-nomargin-padding">Table View</button>
         <i (click)="openModal('vppools_help_info', 'mapViewTableView')" class="fa fa-info-circle pointer"></i>
       </div>
-      <label class="btn btn-link info-icon-nomargin-padding">
-        <input [checked]="loadAllRec" (change)="loadAllRecChecked($event)" type="checkbox" class="radio-button-justify-left"/>
-        <span>Load All</span>
-      </label>
-      <div>
+      <div style="display:inline-flex; align-items:center;">
+        <label class="btn btn-link info-icon-nomargin-padding" style="margin-bottom:0;">
+          <input [checked]="loadAllRec" (change)="loadAllRecChecked($event)" type="checkbox" class="radio-button-justify-left"/>
+          <span>Load All</span>
+        </label>
         <i (click)="openModal('vppools_help_info', 'loadAll')" class="fa fa-info-circle info-icon-padding pointer"></i>
       </div>
       <span *ngIf="!loadAllRec">

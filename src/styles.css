@@ -29,8 +29,13 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
 }
 
 /* Remove underlines from all links site-wide */
-a, a:hover, a:focus, a:visited {
+a, a:focus, a:visited {
   text-decoration: none;
+  color: #006054;
+}
+a:hover {
+  text-decoration: none;
+  color: #007365;
 }
 
 /* Remove underlines from all <u> tags site-wide */
@@ -54,7 +59,10 @@ u {
 */
 .link {
   cursor: pointer;
-  color: blue;
+  color: #006054;
+}
+.link:hover {
+  color: #007365;
 }
 
 .pointer {
@@ -294,6 +302,14 @@ handle buttons on top of text inputs
 
 .btn-link .btn a {
   padding: 0px;
+}
+
+/* Override Bootstrap btn-link colors */
+.btn-link {
+  color: #006054 !important;
+}
+.btn-link:hover {
+  color: #007365 !important;
 }
 
 .content-left-border-right {
