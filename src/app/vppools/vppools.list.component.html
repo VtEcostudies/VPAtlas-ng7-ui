@@ -92,6 +92,7 @@
           <i (click)="openModal('vppools_help_info', 'searchFilters')" class="fa fa-info-circle no-margins pointer"></i>
         </h4>
 
+        <span style="white-space:nowrap; display:inline-block;">
         <label>
           <span class="btn btn-link info-icon-nomargin-padding">
             <input [checked]="zoomFilter" (change)="filterZoom($event)" type="checkbox" class="radio-button-justify-left"/>
@@ -99,6 +100,7 @@
           </span>
         </label>
         <i (click)="openModal('vppools_help_info', 'zoomFilter')" class="fa fa-info-circle no-margins info-icon-padding pointer"></i>
+        </span>
         
         <label (click)="ClearFilters()" class="btn btn-link info-icon-nomargin-padding">
           Clear Filters
