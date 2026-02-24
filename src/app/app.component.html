@@ -7,19 +7,16 @@
   <div class="col-lg-2"></div>
 </div>
 
-<div class="row vce-green" style="display:flex; align-items:center; flex-wrap:nowrap;">
+<div class="row" style="display:flex; align-items:center; flex-wrap:nowrap; background:white; border-bottom:4px solid #00554a;">
 
-  <div class="vce-logo-noshrink" style="padding-left:15px;">
-    <!--
-    <a href="https://val.vtecostudies.org/projects/vermont-vernal-pool-atlas/">
-    -->
-    <a href="src/vpatlas_banner.jpg" style="display:inline-block; background:white; padding:2px 4px; border-radius:2px; line-height:0;">
+  <div style="padding-left:15px; flex:0 0 auto; width:auto;">
+    <a href="src/vpatlas_banner.jpg" style="display:inline-block; line-height:0;">
       <img [src]="vceLogoPath" height="26px" alt="VCE Vernal Pool Mapping Project">
     </a>
   </div>
 
   <div style="flex:1;">
-    <nav class="navbar navbar-expand navbar-dark vce-green">
+    <nav class="navbar navbar-expand navbar-light" style="background:white;">
         <ul class="navbar-nav">
 
             <li class="nav-item" *ngIf="!userIsAdmin">
@@ -67,7 +64,6 @@
                   <a class="dropdown-item" (click)="dropdownSubMenuToggle($event, 'dropCsv')">CSV <span class="fa-caret"></span></a>
                     <ul id="dropCsv" class="dropdown-menu">
                       <!--<a class="dropdown-item" (click)="download('csv')">Selected Pools</a>-->
-                      <!--<a class="dropdown-item" (click)="download('csv', 'pools')">All Data (.csv)</a>-->
                       <a class="dropdown-item" (click)="download('csv', 'mapped')">Mapped Pools (.csv)</a>
                       <a class="dropdown-item" (click)="download('csv', 'visit')">Pool Visits (.csv)</a>
                       <a class="dropdown-item" (click)="download('csv', 'survey')">Pool Surveys (.csv)</a>
@@ -137,9 +133,9 @@
         </ul>
       </nav>
   </div> <!-- flex:1 navbar -->
-  <div style="white-space:nowrap; padding-right:15px;">
-    <a class="nav-link" style="color:white; cursor:pointer;" (click)="logout()" *ngIf="currentUser">Logout ({{currentUser.user.username}})</a>
-    <a class="nav-link" style="color:white;" routerLink="/login" *ngIf="!currentUser">Login/Register</a>
+  <div style="white-space:nowrap; padding-right:20px; flex:0 0 auto;">
+    <a class="login-link" style="cursor:pointer;" (click)="logout()" *ngIf="currentUser">Logout ({{currentUser.user.username}})</a>
+    <a class="login-link" routerLink="/login" *ngIf="!currentUser">Login/Register</a>
   </div>
 </div> <!-- row:navbar -->
 

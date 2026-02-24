@@ -24,8 +24,18 @@ h1, h2, h3, h4, h5, h6,
 /* Ensure title links have no underline */
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
 .title a, .page-title a, .section-title a {
-  text-decoration: none;
+  text-decoration: none !important;
   color: #00554a;
+}
+
+/* Remove underlines from all links site-wide */
+a, a:hover, a:focus, a:visited {
+  text-decoration: none;
+}
+
+/* Remove underlines from all <u> tags site-wide */
+u {
+  text-decoration: none;
 }
 
 /* Define bootstrap zero columns, a.k.a. hidden */
@@ -81,7 +91,6 @@ html-dialog-app {
 nav, .navbar, .navbar-nav > li > a, .navbar-expand {
   padding-top:5px !important;
   padding-bottom:5px !important;
-  height: 30px;
 }
 
 /*
@@ -90,6 +99,7 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
 .nav-item .nav-link {
   padding-top:0px !important;
   padding-bottom:0px !important;
+  color: #00554a !important;
 }
 
 /*
@@ -97,11 +107,22 @@ nav, .navbar, .navbar-nav > li > a, .navbar-expand {
 */
 .navbar-nav {
   text-align: center;
+  align-items: center;
 }
 .navbar .navbar-nav .nav-item .nav-link:hover, 
 .navbar .navbar-nav .nav-item .nav-link:active 
 {
-  color: cyan;
+  color: #4db8a4 !important;
+}
+
+/* Login/Register link styling to match nav items */
+.login-link {
+  color: #00554a !important;
+  padding: 0;
+  font-size: inherit;
+}
+.login-link:hover {
+  color: #4db8a4 !important;
 }
 
 /* Make top-menu vertical for screen-size less than pixels below */
