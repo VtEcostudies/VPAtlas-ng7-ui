@@ -72,7 +72,7 @@ export class AppComponent {
       this.downloadParamsText += townName ? `&townName=${townName}` : '';
       this.downloadParamsText += userName ? `&username=${userName}` : '';
       this.downloadParamsText += poolId ? `&mappedPoolId=${poolId}` : '';
-      if ('pools' == dataType) {this.downloadParamsText = '';} //this query can't easily handle query params b/c it queries many tables.
+      if ('pools' == dataType) {this.downloadParamsText = 'download=1';} //this query can't easily handle query params b/c it queries many tables.
 
       if ('shapefile' == fileType) { //authUser used to create filesystem download by user to handle simultaneity
         this.downloadParamsText += `&authUser=${this.currentUser.user.username}`;
